@@ -2,6 +2,7 @@ package model.dao;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -48,10 +49,14 @@ public class RoleDAOImpl implements RoleDAO {
 	}
 
 	public Role find(String name) {
-		Query q = entityManager.createNamedQuery("Role.findByName");
-		q.setParameter("name", name);
-		Role role = (Role) q.getSingleResult();
+		Role role;
+		try {
+			Query q = entityManager.createNamedQuery("Role.findByName");
+			q.setParameter("name", name);
+			role = (Role) q.getSingleResult();
+		} catch (NoResultException e) {
+			role = null;
+		}
 		return role;
 	}
-
 }

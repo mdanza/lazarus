@@ -43,6 +43,11 @@
 			<version>1.2.17</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>net.iharder</groupId>
+			<artifactId>base64</artifactId>
+			<version>2.3.8</version>
+		</dependency>
 	</dependencies>
 	<reporting>
 		<plugins>

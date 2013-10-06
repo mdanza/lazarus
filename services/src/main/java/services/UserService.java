@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 
 import model.Role;
 import model.User;
+import model.dao.RoleDAO;
 import model.dao.UserDAO;
 
 import org.apache.log4j.Logger;
@@ -22,6 +23,9 @@ public class UserService {
 
 	@EJB(name = "UserDAO")
 	UserDAO userDAO;
+	
+	@EJB(name = "RoleDAO")
+	RoleDAO roleDAO;
 
 	@GET
 	@Path("/register")
@@ -32,10 +36,12 @@ public class UserService {
 		user.setPassword(password);
 
 		Role role = new Role();
-		role.setName("probando");
+		role.setName("user");
 		user.setRole(role);
 
 		userDAO.add(user);
 		return "User added successfuly";
 	}
+	
+	
 }

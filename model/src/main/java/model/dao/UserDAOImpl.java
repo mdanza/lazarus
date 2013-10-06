@@ -3,6 +3,7 @@ package model.dao;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -29,16 +30,20 @@ public class UserDAOImpl implements UserDAO {
 		if (password == null || password == "")
 			throw new IllegalArgumentException(
 					"password cannot be null nor empty");
-		User possibleDuplicate = find(username);
-		if (possibleDuplicate != null)
-			throw new IllegalArgumentException("username already exists");
-		if (role == null)
-			throw new IllegalArgumentException("role cannot be null");
-		Role possibleRole = roleDAO.find(role.getName());
-		if (possibleRole == null)
-			throw new IllegalArgumentException("role is not valid");
-		user.setRole(possibleRole);
-		entityManager.persist(user);
+		Role possibleRole = null;
+		try {
+			if (role == null)
+				throw new IllegalArgumentException("role cannot be null");
+			possibleRole = roleDAO.find(role.getName());
+			User possibleDuplicate = find(username);
+			if (possibleDuplicate != null)
+				throw new IllegalArgumentException("username already exists");
+		} catch (NoResultException e) {
+			if (possibleRole == null)
+				throw new IllegalArgumentException("role is not valid");
+			user.setRole(possibleRole);
+			entityManager.persist(user);
+		}
 	}
 
 	public void delete(User user) {

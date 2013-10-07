@@ -58,20 +58,17 @@ public class UserService {
 	@Path("/login")
 	public String login(@QueryParam("username") String username,
 			@QueryParam("password") String password) {
-		User user = userDAO.find(username);
-		if(user==null){
-			throw new IllegalArgumentException("Invalid credentials");
-		}
-		if (user.isActive()) {
-			return authenticationService.authenticate(user);
-		} else {
-			throw new IllegalArgumentException("User is not active");
-		}
+		if (username == null || username == "" || password == null
+				|| password == "")
+			throw new IllegalArgumentException(
+					"No nulls nor empty strings allowd");
+		return authenticationService.authenticate(username, password);
 	}
 
 	@DELETE
 	@Path("/delete")
-	public String delete(@QueryParam("token") String token, @QueryParam("username") String username) {
+	public String delete(@QueryParam("token") String token,
+			@QueryParam("username") String username) {
 		User actionUser = authenticationService.authenticate(token);
 		User deleting = userDAO.find(username);
 		if (actionUser.getUsername().equals(username)

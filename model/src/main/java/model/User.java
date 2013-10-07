@@ -1,5 +1,8 @@
 package model;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import services.authentication.security.PasswordHash;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +33,12 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+
+	@Column(nullable = false)
+	private String salt;
+
+	@Column(nullable = false)
+	private int cryptographicIterations;
 
 	@Column(unique = true)
 	private String email;
@@ -64,7 +75,15 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		try {
+			hashPassword(password);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String getEmail() {
@@ -119,6 +138,23 @@ public class User {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public int getCryptographicIterations() {
+		return cryptographicIterations;
+	}
+
+	private void hashPassword(String password) throws NoSuchAlgorithmException,
+			InvalidKeySpecException {
+		byte[] salt = PasswordHash.generateRandomSalt();
+		int iterations = PasswordHash.getIterationCount();
+		this.password = PasswordHash.createHash(password, salt, iterations);
+		this.salt = PasswordHash.toHex(salt);
+		this.cryptographicIterations = iterations;
 	}
 
 }

@@ -8,5 +8,5 @@ import model.User;
 public interface AuthenticationService {
 	public User authenticate(String token);
 
-	public String authenticate(User user);
+	public String authenticate(String username, String password);
 }

@@ -64,8 +64,6 @@ public class Token {
             logger.warn("getToken token not valid");
             throw new InvalidTokenException();
         }
-    }
-
-	
+    }	
 
 }

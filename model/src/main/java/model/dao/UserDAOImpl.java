@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import model.Role;
 import model.User;
+import services.authentication.AuthenticationService;
 
 @Stateless(name = "UserDAO")
 public class UserDAOImpl implements UserDAO {
@@ -23,6 +24,10 @@ public class UserDAOImpl implements UserDAO {
 			throw new IllegalArgumentException("user cannot be null");
 		String username = user.getUsername();
 		String password = user.getPassword();
+		String secretQuestion = user.getSecretQuestion();
+		String secretAnswer = user.getSecretAnswer();
+		String email = user.getEmail();
+		String cellphone = user.getCellphone();
 		Role role = user.getRole();
 		if (username == null || username == "")
 			throw new IllegalArgumentException(
@@ -30,20 +35,32 @@ public class UserDAOImpl implements UserDAO {
 		if (password == null || password == "")
 			throw new IllegalArgumentException(
 					"password cannot be null nor empty");
-		Role possibleRole = null;
-		try {
-			if (role == null)
-				throw new IllegalArgumentException("role cannot be null");
-			possibleRole = roleDAO.find(role.getName());
-			User possibleDuplicate = find(username);
+		if (secretAnswer == null || secretAnswer == "")
+			throw new IllegalArgumentException(
+					"secret answer cannot be null nor empty");
+		if (secretQuestion == null || secretQuestion == "")
+			throw new IllegalArgumentException(
+					"secret question cannot be null nor empty");
+		User possibleDuplicate = find(username);
+		if (possibleDuplicate != null)
+			throw new IllegalArgumentException("username already exists");
+		if (email != null) {
+			possibleDuplicate = findByEmail(email);
 			if (possibleDuplicate != null)
-				throw new IllegalArgumentException("username already exists");
-		} catch (NoResultException e) {
-			if (possibleRole == null)
-				throw new IllegalArgumentException("role is not valid");
-			user.setRole(possibleRole);
-			entityManager.persist(user);
+				throw new IllegalArgumentException("email already exists");
 		}
+		if (cellphone != null) {
+			possibleDuplicate = findByCellphone(cellphone);
+			if (possibleDuplicate != null)
+				throw new IllegalArgumentException("cellphone already exists");
+		}
+		if (role == null)
+			throw new IllegalArgumentException("role cannot be null");
+		Role possibleRole = roleDAO.find(role.getName());
+		if (possibleRole == null)
+			throw new IllegalArgumentException("role is not valid");
+		user.setRole(possibleRole);
+		entityManager.persist(user);
 	}
 
 	public void delete(User user) {
@@ -78,9 +95,38 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	public User find(String username) {
-		Query q = entityManager.createNamedQuery("User.findByUsername");
-		q.setParameter("username", username);
-		User user = (User) q.getSingleResult();
+		User user;
+		try {
+			Query q = entityManager.createNamedQuery("User.findByUsername");
+			q.setParameter("username", username);
+			user = (User) q.getSingleResult();
+		} catch (NoResultException e) {
+			user = null;
+		}
+		return user;
+	}
+
+	public User findByEmail(String email) {
+		User user;
+		try {
+			Query q = entityManager.createNamedQuery("User.findByEmail");
+			q.setParameter("email", email);
+			user = (User) q.getSingleResult();
+		} catch (NoResultException e) {
+			user = null;
+		}
+		return user;
+	}
+
+	public User findByCellphone(String cellphone) {
+		User user;
+		try {
+			Query q = entityManager.createNamedQuery("User.findByCellphone");
+			q.setParameter("cellphone", cellphone);
+			user = (User) q.getSingleResult();
+		} catch (NoResultException e) {
+			user = null;
+		}
 		return user;
 	}
 

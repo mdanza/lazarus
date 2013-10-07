@@ -7,12 +7,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
-@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
+@Table(name = "users")
+@NamedQueries({
+		@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+		@NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+		@NamedQuery(name = "User.findByCellphone", query = "SELECT u FROM User u WHERE u.cellphone = :cellphone") })
 public class User {
 
 	@Id
@@ -25,7 +29,19 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 
+	@Column(unique = true)
 	private String email;
+
+	@Column(unique = true)
+	private String cellphone;
+
+	private boolean active;
+
+	@Column(nullable = false)
+	private String secretQuestion;
+
+	@Column(nullable = false)
+	private String secretAnswer;
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
@@ -56,7 +72,8 @@ public class User {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		if (email != "")
+			this.email = email;
 	}
 
 	public Role getRole() {
@@ -66,4 +83,42 @@ public class User {
 	public void setRole(Role role) {
 		this.role = role;
 	}
+
+	public String getCellphone() {
+		return cellphone;
+	}
+
+	public void setCellphone(String cellphone) {
+		if (cellphone != "")
+			this.cellphone = cellphone;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getSecretQuestion() {
+		return secretQuestion;
+	}
+
+	public void setSecretQuestion(String secretQuestion) {
+		this.secretQuestion = secretQuestion;
+	}
+
+	public String getSecretAnswer() {
+		return secretAnswer;
+	}
+
+	public void setSecretAnswer(String secretAnswer) {
+		this.secretAnswer = secretAnswer;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 }

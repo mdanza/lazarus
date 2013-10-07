@@ -1,15 +1,18 @@
 package services.authentication;
 
+<<<<<<< HEAD
 import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import model.Role;
 import model.User;
 import model.dao.UserDAO;
 
 import org.apache.log4j.Logger;
 
+import services.authentication.encryption.Encrypter;
 import services.authentication.encryption.exception.InvalidTokenException;
 import services.authentication.token.Token;
 
@@ -18,10 +21,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private static Logger logger = Logger
 			.getLogger(AuthenticationServiceImpl.class);
+	private Encrypter encrypter;
 	private int duration = 6000;
 
 	@EJB(beanName = "UserDAO")
 	protected UserDAO userDAO;
+
+	public AuthenticationServiceImpl() {
+		this.encrypter = new Encrypter();
+	}
 
 	/**
 	 * sets the default token duration in seconds
@@ -51,16 +59,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			}
 			String username = aToken.getUsername();
 			User user = userDAO.find(username);
-			if (user != null) {
-				if (user.getPassword() != null
-						&& user.getPassword().equals(aToken.getPassword())) {
-					return user;
-				} else {
-					throw new IllegalArgumentException("corrupt token");
-				}
-			} else {
-				throw new IllegalArgumentException("invalid token null user");
-			}
+			return user;
+
 		} catch (InvalidTokenException e) {
 			logger.trace("authenticate: token invalid");
 			throw new IllegalArgumentException("invalid token");
@@ -74,21 +74,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					"authenticate ran with user null");
 		}
 		logger.trace("authenticate ran with user " + user.getUsername());
+		// TODO que pasa si userDAO.find no encuentra nada?
 		User storedUser = userDAO.find(user.getUsername());
-		if (storedUser == null) {
-			throw new IllegalArgumentException("Wrong username");
+		if (storedUser != null
+				&& storedUser.getUsername().equals(user.getUsername())
+				&& storedUser.getPassword().equals(user.getPassword())) {
+			return (new Token(storedUser.getEmail(), storedUser.getPassword()))
+					.toString();
 		} else {
-			if (storedUser.getPassword().equals(user.getPassword())) {
-
-				return (new Token(storedUser.getUsername(),
-						storedUser.getPassword())).toString();
-			} else {
-				logger.trace("authenticate user " + user.getUsername()
-						+ " wrong password");
-				throw new IllegalArgumentException("wrong password");
-			}
+			logger.trace("authenticate user " + user.getUsername()
+					+ " wrong password");
+			throw new IllegalArgumentException("wrong password");
 		}
 
 	}
+=======
+import javax.ejb.Stateless;
+>>>>>>> 14a0a502527cbb343f82be29bf7c5a8d8a1b33b6
 
+import model.User;
+
+@Stateless(name = "AuthenticationService")
+public class AuthenticationServiceImpl implements AuthenticationService{
+
+	public User authenticate(String token) {
+		// TODO
+		return null;
+	}
+
+	public String authenticate(User user) {
+		// TODO
+		return null;
+	}
 }

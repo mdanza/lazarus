@@ -55,15 +55,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			String username = aToken.getUsername();
 			User user = userDAO.find(username);
 			if (user != null) {
-				if (user.getPassword() != null
-						&& user.getPassword().equals(aToken.getPassword())) {
 					return user;
 				} else {
-					throw new IllegalArgumentException("corrupt token");
+					throw new IllegalArgumentException("corrupt token: user of token not found");
 				}
-			} else {
-				throw new IllegalArgumentException("invalid token null user");
-			}
+			
 		} catch (InvalidTokenException e) {
 			logger.info("authenticate: token invalid");
 			throw new IllegalArgumentException("invalid token");
@@ -84,8 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			try {
 				if (PasswordHash.validatePassword(password, hashedPassword,
 						savedSalt, iterations))
-					return (new Token(storedUser.getUsername(),
-							storedUser.getPassword())).toString();
+					return (new Token(storedUser.getUsername())).toString();
 				else {
 					logger.info("authenticate user " + username
 							+ " wrong password");

@@ -7,6 +7,8 @@ import java.security.spec.InvalidKeySpecException;
 
 import org.junit.Test;
 
+import services.authentication.security.PasswordHash;
+
 public class PasswordHashTest {
 
 	@Test

@@ -1,19 +1,15 @@
 package services.shapefiles;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.dbf.DbaseFileReader;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -23,25 +19,6 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.geometry.Geometry;
 
 public class ShapefileLoader {
-
-	public static void readDbf(String url) throws Exception {
-		FileInputStream fileInputStream = new FileInputStream(url);
-		FileChannel in = fileInputStream.getChannel();
-		DbaseFileReader r = new DbaseFileReader(in, true,
-				Charset.defaultCharset());
-		Object[] fields = new Object[r.getHeader().getNumFields()];
-		int j = 0;
-		while (r.hasNext() && j < 20) {
-			Object[] o = r.readEntry(fields);
-			for (int i = 0; i < o.length; i++) {
-				System.out.println(o[i]);
-			}
-			j++;
-		}
-		r.close();
-		in.close();
-		fileInputStream.close();
-	}
 
 	public static void readShp(String url) throws IOException,
 			URISyntaxException {

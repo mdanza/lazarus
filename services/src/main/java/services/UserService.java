@@ -26,7 +26,7 @@ public class UserService {
 	private static final String ADMIN_ROLE_NAME = "admin";
 
 	@EJB(name = "UserDAO")
-	UserDAO userDAO;
+	private UserDAO userDAO;
 
 	@EJB(name = "AuthenticationService")
 	private AuthenticationService authenticationService;

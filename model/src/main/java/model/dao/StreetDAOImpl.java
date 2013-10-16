@@ -30,11 +30,15 @@ public class StreetDAOImpl implements StreetDAO {
 		if (segments == null)
 			throw new IllegalArgumentException("StreetSegments cannot be null");
 		for (StreetSegment segment : segments) {
-			int id = segment.getId();
-			if (id == 0
-					|| streetSegmentDAO.find(Integer.toString(segment.getId())) == null)
+			if (streetSegmentDAO.findByOriginEnd(segment.getOrigin(), segment.getEnd()) == null)
 				throw new IllegalArgumentException("streetSegment of street has not been saved yet");
 		}
+		if(find(street.getName())!=null)
+			throw new IllegalArgumentException("Street has already been saved");
+		if(street.getName()==null)
+			throw new IllegalArgumentException("name of street equals null");
+		if(street.getNameCode()==null)
+			throw new IllegalArgumentException("nameCode of street equals null");
 		System.out.println("Persisting street " + street.getName());
 		entityManager.persist(street);
 	}
@@ -64,9 +68,7 @@ public class StreetDAOImpl implements StreetDAO {
 		if (segments == null)
 			throw new IllegalArgumentException("StreetSegments cannot be null");
 		for (StreetSegment segment : segments) {
-			int id = segment.getId();
-			if (id == 0
-					|| streetSegmentDAO.find(Integer.toString(segment.getId())) == null)
+			if (streetSegmentDAO.findByOriginEnd(segment.getOrigin(), segment.getEnd()) == null)
 				throw new IllegalArgumentException("streetSegment of street has not been saved yet");
 		}
 		entityManager.merge(streetNew);

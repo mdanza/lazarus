@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import model.Position;
 import model.Street;
 import model.StreetSegment;
+import model.dao.PositionDAO;
 import model.dao.StreetDAO;
 import model.dao.StreetSegmentDAO;
 
@@ -32,9 +33,12 @@ public class StreetLoaderImpl implements StreetLoader {
 
 	@EJB(beanName = "StreetDAO")
 	protected StreetDAO streetDAO;
-	
+
 	@EJB(beanName = "StreetSegmentDAO")
 	protected StreetSegmentDAO streetSegmentDAO;
+
+	@EJB(name = "PositionDAO")
+	private PositionDAO positionDAO;
 
 	public void readShp(String url) {
 		try {
@@ -95,30 +99,55 @@ public class StreetLoaderImpl implements StreetLoader {
 			if (coordinates.length != i + 1) {
 				originLongitude = coordinates[i].x;
 				originLatitude = coordinates[i].y;
-				Position origin = new Position(originLatitude, originLongitude);
+				Position origin = positionDAO.findByLatitudeLongitude(
+						originLatitude, originLongitude);
+				if (origin == null) {
+					origin = new Position(originLatitude, originLongitude);
+					positionDAO.add(origin);
+				}
 				endLongitude = coordinates[i].x;
 				endLatitude = coordinates[i].y;
-				Position end = new Position(endLatitude, endLongitude);
-				StreetSegment streetSegment = new StreetSegment(origin, end);
+				Position end = positionDAO.findByLatitudeLongitude(endLatitude,
+						endLongitude);
+				if (end == null) {
+					end = new Position(endLatitude, endLongitude);
+					positionDAO.add(end);
+				}
+				StreetSegment streetSegment = streetSegmentDAO.findByOriginEnd(
+						origin, end);
+				if (streetSegment == null) {
+					streetSegment = new StreetSegment(origin,
+							end);
+					streetSegmentDAO.add(streetSegment);
+				}
 				streetSegments.add(streetSegment);
+				
 			}
-			Street street = new Street(streetName, nameCode.toString(),
-					streetSegments);
-			for (StreetSegment segment : streetSegments) {
-				streetSegmentDAO.add(segment);
-			}
-			Street old = streetDAO.find(streetName);
-			if (old == null) {
-				streetDAO.add(street);
-			} else {
-				street.setId(old.getId());
-				List<StreetSegment> segments = street.getStreetSegments();
-				segments.addAll(old.getStreetSegments());
-				street.setStreetSegments(segments);
-				streetDAO.modify(old, street);
-			}
-
 		}
+		Street street = new Street(streetName, nameCode.toString(),
+				streetSegments);
+		for (StreetSegment segment : streetSegments) {
+			/*
+			StreetSegment streetSegment = streetSegmentDAO.findByOriginEnd(
+					segment.getOrigin(), segment.getEnd());
+			if (streetSegment == null) {
+				streetSegment = new StreetSegment(segment.getOrigin(),
+						segment.getEnd());
+				streetSegmentDAO.add(streetSegment);
+			}
+			*/
+		}
+		Street old = streetDAO.find(streetName);
+		if (old == null) {
+			streetDAO.add(street);
+		} else {
+			street.setId(old.getId());
+			List<StreetSegment> segments = street.getStreetSegments();
+			segments.addAll(old.getStreetSegments());
+			street.setStreetSegments(segments);
+			streetDAO.modify(old, street);
+		}
+		System.out.println("Adding street " + streetName);
 
 	}
 

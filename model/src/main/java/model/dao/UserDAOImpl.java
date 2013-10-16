@@ -9,7 +9,6 @@ import javax.persistence.Query;
 
 import model.Role;
 import model.User;
-import services.authentication.AuthenticationService;
 
 @Stateless(name = "UserDAO")
 public class UserDAOImpl implements UserDAO {

@@ -11,22 +11,23 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "positions")
+@NamedQueries({ @NamedQuery(name = "Position.findByLatitudeLongitude", query = "SELECT p FROM Position p WHERE p.latitude=:latitude AND p.longitude = :longitude") })
 public class Position {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private double latitude;
-	
-	@Column(nullable = false)
+
+	@Column(nullable = false, unique = true)
 	private double longitude;
 
 	public Position() {
 		super();
 	}
-	
+
 	public Position(double latitude, double longitude) {
 		super();
 		this.latitude = latitude;

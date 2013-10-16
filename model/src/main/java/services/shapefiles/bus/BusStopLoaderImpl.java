@@ -28,13 +28,13 @@ public class BusStopLoaderImpl implements BusStopLoader {
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
-
+			int count = 0;
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusStop busStop;
-			while (reader.hasNext()) {
+			while (reader.hasNext() && count < 20) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busStop = new BusStop();
@@ -45,10 +45,12 @@ public class BusStopLoaderImpl implements BusStopLoader {
 					Property value = valuesItr.next();
 					switch (propertyNumber) {
 					case 3:
-						busStop.setVariantCode((Integer) value.getValue());
+						busStop.setVariantCode(Integer.parseInt(value
+								.getValue().toString()));
 						break;
 					case 4:
-						busStop.setOrdinal((Integer) value.getValue());
+						busStop.setOrdinal(Integer.parseInt(value.getValue()
+								.toString()));
 						break;
 					case 5:
 						busStop.setStreetName(value.getValue().toString());
@@ -63,14 +65,17 @@ public class BusStopLoaderImpl implements BusStopLoader {
 						busStop.setCornerStreetCode((Integer) value.getValue());
 						break;
 					case 9:
-						busStop.setX((Double) value.getValue());
+						busStop.setX(Double.parseDouble(value.getValue()
+								.toString()));
 						break;
 					case 10:
-						busStop.setY((Double) value.getValue());
+						busStop.setY(Double.parseDouble(value.getValue()
+								.toString()));
 						break;
 					}
 				}
 				busStopDAO.add(busStop);
+				count++;
 				logger.info("added bus stop");
 			}
 			reader.close();

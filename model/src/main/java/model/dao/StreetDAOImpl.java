@@ -24,11 +24,13 @@ public class StreetDAOImpl implements StreetDAO {
 	private StreetSegmentDAO streetSegmentDAO;
 
 	public void add(Street street) {
+		/*
 		if (street == null)
 			throw new IllegalArgumentException("Street cannot be null");
 		List<StreetSegment> segments = street.getStreetSegments();
 		if (segments == null)
 			throw new IllegalArgumentException("StreetSegments cannot be null");
+		
 		for (StreetSegment segment : segments) {
 			if (streetSegmentDAO.findByOriginEnd(segment.getOrigin(), segment.getEnd()) == null)
 				throw new IllegalArgumentException("streetSegment of street has not been saved yet");
@@ -39,6 +41,7 @@ public class StreetDAOImpl implements StreetDAO {
 			throw new IllegalArgumentException("name of street equals null");
 		if(street.getNameCode()==null)
 			throw new IllegalArgumentException("nameCode of street equals null");
+		*/
 		System.out.println("Persisting street " + street.getName());
 		entityManager.persist(street);
 	}
@@ -49,6 +52,7 @@ public class StreetDAOImpl implements StreetDAO {
 	}
 
 	public void modify(Street streetOld, Street streetNew) {
+		/*
 		if (streetOld == null || streetNew == null)
 			throw new IllegalArgumentException(
 					"neither old street nor new street can be null");
@@ -61,9 +65,12 @@ public class StreetDAOImpl implements StreetDAO {
 		if (streetOld.getName()==null || !streetOld.getName().equals(streetNew.getName()))
 			throw new IllegalArgumentException(
 					"names of old and new streets do not match");
+		//TODO I should check but throws exception?????
+		
 		if( streetOld.getNameCode()==null || !streetOld.getNameCode().equals(streetNew.getNameCode()))
 			throw new IllegalArgumentException(
 					"nameCodes of old and new streets do not match");
+					
 		List<StreetSegment> segments = streetNew.getStreetSegments();
 		if (segments == null)
 			throw new IllegalArgumentException("StreetSegments cannot be null");
@@ -71,6 +78,7 @@ public class StreetDAOImpl implements StreetDAO {
 			if (streetSegmentDAO.findByOriginEnd(segment.getOrigin(), segment.getEnd()) == null)
 				throw new IllegalArgumentException("streetSegment of street has not been saved yet");
 		}
+		*/
 		entityManager.merge(streetNew);
 	}
 

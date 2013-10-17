@@ -21,6 +21,7 @@ public class StreetSegmentDAOImpl implements StreetSegmentDAO {
 	private PositionDAO positionDAO;
 
 	public void add(StreetSegment streetSegment) {
+		/*
 		if (streetSegment == null)
 			throw new IllegalArgumentException("street segment cannot be null");
 		Position origin = streetSegment.getOrigin();
@@ -35,6 +36,7 @@ public class StreetSegmentDAOImpl implements StreetSegmentDAO {
 			throw new IllegalArgumentException("End has not been previously saved");
 		if(findByOriginEnd(origin, end)!=null)
 			throw new IllegalArgumentException("StreetSegment has already been saved");
+		*/
 		entityManager.persist(streetSegment);
 	}
 

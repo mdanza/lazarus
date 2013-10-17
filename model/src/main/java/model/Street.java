@@ -13,6 +13,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.MultiLineString;
+
 @Entity
 @Table(name = "streets")
 @NamedQueries({
@@ -35,6 +39,12 @@ public class Street {
 	@JoinColumn(name = "street_id")
 	private List<StreetSegment> streetSegments;
 
+	/*
+	@Column
+	@Type(type = "org.hibernatespatial.GeometryUserType")
+	private MultiLineString segments;
+	*/
+	
 	public Street() {
 		super();
 	}

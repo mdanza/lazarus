@@ -50,7 +50,7 @@ public class StreetLoaderImpl implements StreetLoader {
 			MultiLineString multiLine = null;
 			String streetName = null;
 			Long nameCode = null;
-			while (reader.hasNext() && count <= 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				Collection<? extends Property> values = feature.getValue();
 				Iterator<? extends Property> valuesItr = values.iterator();
@@ -73,7 +73,6 @@ public class StreetLoaderImpl implements StreetLoader {
 				}
 				saveStreet(multiLine, streetName, nameCode);
 
-				count++;
 			}
 
 			reader.close();

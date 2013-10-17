@@ -15,10 +15,12 @@ public class PositionDAOImpl implements PositionDAO {
 	private EntityManager entityManager;
 
 	public void add(Position position) {
+		/*
 		if(position==null)
 			throw new IllegalArgumentException("Position cannot be null");
 		if(findByLatitudeLongitude(position.getLatitude(), position.getLongitude())!=null)
 			throw new IllegalArgumentException("Position already exists in DB");
+		*/
 		entityManager.persist(position);
 
 	}

@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "street_segments")
-@NamedQueries({
+@NamedQueries({ @NamedQuery(name = "StreetSegment.findById", query = "SELECT s FROM StreetSegment s WHERE s.id = :id"),
 	@NamedQuery(name = "StreetSegment.findByOriginEnd", query = "SELECT s FROM StreetSegment s WHERE s.origin = :origin AND s.end = :end")
 	})
 public class StreetSegment {

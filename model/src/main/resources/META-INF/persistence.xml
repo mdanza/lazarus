@@ -7,7 +7,7 @@
 		<non-jta-data-source>lazarusDBPostgres</non-jta-data-source>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="create" />
-			<property name="hibernate.dialect" value="org.hibernatespatial.postgis.PostgisDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect" />
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -13,6 +13,8 @@ import org.junit.Test;
 import services.shapefiles.bus.BusStopLoaderImpl;
 
 public class ShapefileLoaderTest {
+	
+	/*
 
 	private static EJBContainer ejbContainer;
 
@@ -51,4 +53,5 @@ public class ShapefileLoaderTest {
 		busStopLoader
 				.readShp("/home/santiago/Desktop/shapefile/v_uptu_paradas.shp");
 	}
+	*/
 }

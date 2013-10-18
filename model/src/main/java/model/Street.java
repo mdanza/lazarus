@@ -1,16 +1,12 @@
 package model;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -20,9 +16,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 @Entity
 @Table(name = "streets")
 @NamedQueries({
-	@NamedQuery(name = "Street.findByName", query = "SELECT s FROM Street s WHERE s.name = :name"),
-	@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode")
-})
+		@NamedQuery(name = "Street.findByName", query = "SELECT s FROM Street s WHERE s.name = :name"),
+		@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode") })
 public class Street {
 
 	@Id
@@ -34,32 +29,29 @@ public class Street {
 
 	@Column(nullable = false)
 	private String nameCode;
-	
-	@OneToMany
-	@JoinColumn(name = "street_id")
-	private List<StreetSegment> streetSegments;
 
-	/*
-	@Column
-	@Type(type = "org.hibernatespatial.GeometryUserType")
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private MultiLineString segments;
-	*/
-	
+
 	public Street() {
 		super();
 	}
-	
-	public Street(String name, String nameCode,
-			List<StreetSegment> streetSegments) {
+
+	public Street(String name, String nameCode, MultiLineString segments) {
 		super();
 		this.name = name;
 		this.nameCode = nameCode;
-		this.streetSegments = streetSegments;
+		this.segments = segments;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public int getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -76,18 +68,14 @@ public class Street {
 		this.nameCode = nameCode;
 	}
 
-	public List<StreetSegment> getStreetSegments() {
-		return streetSegments;
+	public MultiLineString getSegments() {
+		return segments;
+
 	}
 
-	public void setStreetSegments(List<StreetSegment> streetSegments) {
-		this.streetSegments = streetSegments;
-	}
+	public void setSegments(MultiLineString segments) {
+		this.segments = segments;
 
-	public int getId() {
-		return id;
 	}
-	
-	
 
 }

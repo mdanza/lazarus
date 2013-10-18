@@ -7,4 +7,5 @@ import services.shapefiles.ShapeLoader;
 @Local
 public interface StreetLoader extends ShapeLoader {
 
+
 }

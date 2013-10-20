@@ -1,6 +1,6 @@
 package services.shapefiles;
 
-import static org.junit.Assert.assertTrue;
+import java.util.Properties;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
@@ -10,17 +10,22 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import services.shapefiles.bus.BusStopLoaderImpl;
+import services.shapefiles.bus.BusStopLoader;
 
 public class ShapefileLoaderTest {
 
 	private static EJBContainer ejbContainer;
 
-	private BusStopLoaderImpl busStopLoader;
+	private BusStopLoader busStopLoader;
 
 	@BeforeClass
 	public static void startTheContainer() {
-		ejbContainer = EJBContainer.createEJBContainer();
+		Properties p = new Properties();
+		p.setProperty("lazarus-persistence-unit.JdbcDriver", "org.postgresql.Driver");
+		p.setProperty("lazarus-persistence-unit.JdbcUrl", " jdbc:postgresql://localhost/lazarus");
+		p.setProperty("lazarus-persistence-unit.UserName", "postgres");
+		p.setProperty("lazarus-persistence-unit.Password", "");		
+		ejbContainer = EJBContainer.createEJBContainer(p);
 	}
 
 	@Before
@@ -28,9 +33,7 @@ public class ShapefileLoaderTest {
 		Object object = ejbContainer.getContext().lookup(
 				"java:global/model/BusStopLoader");
 
-		assertTrue(object instanceof BusStopLoaderImpl);
-
-		busStopLoader = (BusStopLoaderImpl) object;
+		busStopLoader = (BusStopLoader) object;
 	}
 
 	@AfterClass
@@ -48,7 +51,7 @@ public class ShapefileLoaderTest {
 		// .readShp("/home/santiago/Desktop/shapefile/v_uptu_lsv_destinos.shp");
 		// ShapefileLoader
 		// .readShp("/home/santiago/Desktop/shapefile/v_uptu_paradas.shp");
-		busStopLoader
-				.readShp("/home/santiago/Desktop/shapefile/v_uptu_paradas.shp");
+//		busStopLoader
+//				.readShp("/home/santiago/Desktop/shapefile/v_uptu_paradas.shp");
 	}
 }

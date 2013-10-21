@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
+import services.shapefiles.address.AddressLoader;
 import services.shapefiles.bus.BusStopLoader;
 import services.shapefiles.streets.StreetLoader;
 
@@ -27,12 +28,25 @@ public class ShapeService {
 	@EJB(name = "BusStopLoader")
 	private BusStopLoader busStopLoader;
 	
+	@EJB(name = "AddressLoader")
+	private AddressLoader addressLoader;
+	
+	
 	@POST
 	@Path("/uploadStreets")
 	public String uploadStreets(@QueryParam("url") String url) {
 		if(url==null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		streetLoader.readShp(url);
+		return "Done";
+	}
+
+	@POST
+	@Path("/uploadAddresses")
+	public String uploadAddress(@QueryParam("url") String url) {
+		if(url==null || url.equals(""))
+			throw new IllegalArgumentException("Url cannot be empty or null");
+		addressLoader.readShp(url);
 		return "Done";
 	}
 	

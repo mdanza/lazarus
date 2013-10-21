@@ -1,4 +1,4 @@
-package services.shapefiles.streets;
+package services.shapefiles.address;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.Iterator;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import model.Street;
-import model.dao.StreetDAO;
+import model.Address;
+import model.dao.AddressDAO;
 
 import org.geotools.data.FeatureReader;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -19,16 +19,14 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.Geometry;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Point;
 
-@Stateless(name = "StreetLoader")
-public class StreetLoaderImpl implements StreetLoader {
+@Stateless(name = "AddressLoader")
+public class AddressLoaderImpl implements AddressLoader {
 
-	@EJB(beanName = "StreetDAO")
-	protected StreetDAO streetDAO;
+	@EJB(beanName = "AddressDAO")
+	protected AddressDAO addressDAO;
 	
 	GeometryFactory factory = new GeometryFactory();
 
@@ -39,9 +37,13 @@ public class StreetLoaderImpl implements StreetLoader {
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			int position = 0;
-			MultiLineString multiLine = null;
+			Point point = null;
+			long padron = 0;
+			long nameCode = 0;
 			String streetName = null;
-			Long nameCode = null;
+			int number = 0;
+			String letter = null;
+			String paridad = null;
 			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				Collection<? extends Property> values = feature.getValue();
@@ -52,19 +54,31 @@ public class StreetLoaderImpl implements StreetLoader {
 					if (!(value instanceof Geometry)) {
 						switch (position) {
 						case 0:
-							multiLine = (MultiLineString) value.getValue();
+							point = (Point) value.getValue();
 							break;
 						case 1:
-							streetName = (String) value.getValue();
+							padron = (Long) value.getValue();
 							break;
-						case 9:
+						case 2:
 							nameCode = (Long) value.getValue();
 							break;
+						case 3:
+							streetName = (String) value.getValue();
+							break;
+						case 4:
+							number = (Integer) value.getValue();
+							break;
+						case 5:
+							letter = (String) value.getValue();
+							break;
+						case 6:
+							paridad = (String) value.getValue();
+							break;							
 						}
 					}
 					position++;
 				}
-				saveStreet(multiLine, streetName, nameCode);
+				saveAddress(point, padron, nameCode, streetName, number, letter, paridad);
 				count++;
 				System.out.println(count);
 			}
@@ -78,17 +92,9 @@ public class StreetLoaderImpl implements StreetLoader {
 		}
 	}
 
-	private void saveStreet(MultiLineString multiLine, String streetName,
-			Long nameCode) {
-		Street street = null;
-		Street old = streetDAO.find(streetName);
-		if (old == null) {
-			street = new Street(streetName, nameCode.toString(),multiLine);
-			streetDAO.add(street);
-		}
+	private void saveAddress(Point point, long padron, long nameCode,
+			String streetName, int number, String letter, String paridad) {
+			Address address = new Address(point,padron,nameCode,streetName,number,letter,paridad);
+			addressDAO.add(address);
 	}
-
-
-	
-
 }

@@ -1,16 +1,14 @@
 package services.shapefiles;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import services.shapefiles.streets.StreetLoader;
+import services.shapefiles.streets.StreetLoaderImpl;
 
 public class StreetLoaderTest {
 
 	@Test
 	public void test() {
-			//ShapeLoader loader = new StreetLoader();
+			//ShapeLoader loader = new StreetLoaderImpl();
 			//loader.readShp("C:/Users/Mateo/Documents/Escribido/UM/ProyectoFinDeCarrera/Datos/Calles/v_mdg_vias/v_mdg_vias.shp");
 			
 	}

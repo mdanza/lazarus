@@ -29,7 +29,7 @@ public class ShapeService {
 	
 	@POST
 	@Path("/uploadStreets")
-	public String register(@QueryParam("url") String url) {
+	public String uploadStreets(@QueryParam("url") String url) {
 		if(url==null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		streetLoader.readShp(url);

@@ -39,7 +39,7 @@ public class BusStop {
 
 	private long cornerStreetCode;
 
-	@Column(columnDefinition = "Geometry")
+	@Column(columnDefinition = "Geometry", nullable = true)
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 

@@ -17,6 +17,8 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 
+import com.vividsolutions.jts.geom.Point;
+
 @Stateless(name = "BusStopLoader")
 public class BusStopLoaderImpl implements BusStopLoader {
 
@@ -44,6 +46,9 @@ public class BusStopLoaderImpl implements BusStopLoader {
 				while (valuesItr.hasNext()) {
 					Property value = valuesItr.next();
 					switch (propertyNumber) {
+					case 0:
+						busStop.setPoint((Point) value.getValue());
+						break;
 					case 3:
 						busStop.setVariantCode(Integer.parseInt(value
 								.getValue().toString()));
@@ -59,20 +64,13 @@ public class BusStopLoaderImpl implements BusStopLoader {
 						busStop.setCornerStreetName(value.getValue().toString());
 						break;
 					case 7:
-						busStop.setStreetCode((Integer) value.getValue());
+						busStop.setStreetCode((Long) value.getValue());
 						break;
 					case 8:
-						busStop.setCornerStreetCode((Integer) value.getValue());
-						break;
-					case 9:
-						busStop.setX(Double.parseDouble(value.getValue()
-								.toString()));
-						break;
-					case 10:
-						busStop.setY(Double.parseDouble(value.getValue()
-								.toString()));
+						busStop.setCornerStreetCode((Long) value.getValue());
 						break;
 					}
+					propertyNumber++;
 				}
 				busStopDAO.add(busStop);
 				count++;

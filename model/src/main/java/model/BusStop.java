@@ -1,12 +1,15 @@
 package model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.Point;
 
 //Cod_ubic_p    Código de la ubicación de parada
 //Cod_varian    Código de la variante de línea de ómnibus (refiere v_uptu_lsv)
@@ -30,18 +33,15 @@ public class BusStop {
 
 	private String streetName;
 
-	private int streetCode;
+	private long streetCode;
 
 	private String cornerStreetName;
 
-	private int cornerStreetCode;
+	private long cornerStreetCode;
 
-	// @ManyToOne
-	// @JoinColumn(name = "position_id")
-	// private Position position;
-
-	private double x;
-	private double y;
+	@Column(columnDefinition = "Geometry", nullable = true)
+	@Type(type = "org.hibernate.spatial.GeometryType")
+	private Point point;
 
 	public int getVariantCode() {
 		return variantCode;
@@ -67,12 +67,12 @@ public class BusStop {
 		this.streetName = streetName;
 	}
 
-	public int getStreetCode() {
+	public long getStreetCode() {
 		return streetCode;
 	}
 
-	public void setStreetCode(int streetCode) {
-		this.streetCode = streetCode;
+	public void setStreetCode(long sreetCode) {
+		this.streetCode = sreetCode;
 	}
 
 	public String getCornerStreetName() {
@@ -83,28 +83,20 @@ public class BusStop {
 		this.cornerStreetName = cornerStreetName;
 	}
 
-	public int getCornerStreetCode() {
+	public long getCornerStreetCode() {
 		return cornerStreetCode;
 	}
 
-	public void setCornerStreetCode(int cornerStreetCode) {
+	public void setCornerStreetCode(long cornerStreetCode) {
 		this.cornerStreetCode = cornerStreetCode;
 	}
 
-	public double getX() {
-		return x;
+	public Point getPoint() {
+		return point;
 	}
 
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
+	public void setPoint(Point point) {
+		this.point = point;
 	}
 
 	public int getId() {

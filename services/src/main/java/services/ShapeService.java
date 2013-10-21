@@ -2,9 +2,13 @@ package services;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+
+import model.BusStop;
+import model.dao.BusStopDAO;
 
 import org.apache.log4j.Logger;
 
@@ -27,6 +31,9 @@ public class ShapeService {
 	@EJB(name = "BusStopLoader")
 	private BusStopLoader busStopLoader;
 	
+	@EJB(name = "BusStopDAO")
+	private BusStopDAO busStopDAO;
+	
 	@POST
 	@Path("/uploadStreets")
 	public String uploadStreets(@QueryParam("url") String url) {
@@ -44,5 +51,11 @@ public class ShapeService {
 		busStopLoader.readShp(url);
 		return "Done";
 	}
-
+	
+	@GET
+	@Path("/getBusStop")
+	public String getBusStop(@QueryParam("id") int id){
+		BusStop busStop = busStopDAO.find(id); 
+		return  busStop.getPoint().toString();
+	}
 }

@@ -16,12 +16,12 @@
 		<jta-data-source>lazarusDBPostgres</jta-data-source>
 		<non-jta-data-source>lazarusDBPostgres</non-jta-data-source>
 		<properties>
-			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect"
 				value="org.hibernate.spatial.dialect.postgis.PostgisDialect" />
-			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.use_sql_comments" value="true" />
+<!-- 			<property name="hibernate.format_sql" value="true" /> -->
+<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+<!-- 			<property name="hibernate.use_sql_comments" value="true" /> -->
 
 		</properties>
 	</persistence-unit>

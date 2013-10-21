@@ -1,5 +1,7 @@
 package model.dao;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -8,8 +10,6 @@ import javax.persistence.Query;
 
 import model.Street;
 
-import com.vividsolutions.jts.geom.MultiLineString;
-
 @Stateless(name = "StreetDAO")
 public class StreetDAOImpl implements StreetDAO {
 
@@ -17,6 +17,7 @@ public class StreetDAOImpl implements StreetDAO {
 	private EntityManager entityManager;
 
 	public void add(Street street) {
+		/*
 		if (street == null)
 			throw new IllegalArgumentException("Street cannot be null");
 		MultiLineString segments = street.getSegments();
@@ -28,7 +29,7 @@ public class StreetDAOImpl implements StreetDAO {
 			throw new IllegalArgumentException("nameCode of street equals null");
 		if (find(street.getName()) != null)
 			throw new IllegalArgumentException("Street has already been saved");
-		System.out.println("Persisting street " + street.getName());
+			*/
 		entityManager.persist(street);
 	}
 
@@ -38,6 +39,7 @@ public class StreetDAOImpl implements StreetDAO {
 	}
 
 	public void modify(Street streetOld, Street streetNew) {
+		/*
 		if (streetOld == null || streetNew == null)
 			throw new IllegalArgumentException(
 					"neither old street nor new street can be null");
@@ -53,36 +55,41 @@ public class StreetDAOImpl implements StreetDAO {
 					"names of old and new streets do not match");
 		if (streetOld.getNameCode() == null
 				|| !streetOld.getNameCode().equals(streetNew.getNameCode()))
-			throw new IllegalArgumentException(
-					"nameCodes of old and new streets do not match");
+			System.out.println("nameCodes of old and new streets do not match from "+streetOld.getName());
 		MultiLineString segments = streetNew.getSegments();
 		if (segments == null)
 			throw new IllegalArgumentException("StreetSegments cannot be null");
+			*/
 		entityManager.merge(streetNew);
 	}
 
+	
 	public Street find(String name) {
-		Street street;
+		return null;
+	}
+	
+	public List<Street> findByName(String name) {
+		List<Street> streets;
 		try {
 			Query q = entityManager.createNamedQuery("Street.findByName");
 			q.setParameter("name", name);
-			street = (Street) q.getSingleResult();
+			streets = (List<Street>) q.getResultList();
 		} catch (NoResultException e) {
-			street = null;
+			streets = null;
 		}
-		return street;
+		return streets;
 	}
 
-	public Street findByNameCode(String nameCode) {
-		Street street;
+	public List<Street> findByNameCode(String nameCode) {
+		List<Street> streets;
 		try {
 			Query q = entityManager.createNamedQuery("Street.findByNameCode");
 			q.setParameter("nameCode", nameCode);
-			street = (Street) q.getSingleResult();
+			streets = (List<Street>) q.getResultList();
 		} catch (NoResultException e) {
-			street = null;
+			streets = null;
 		}
-		return street;
+		return streets;
 	}
 
 }

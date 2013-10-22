@@ -8,8 +8,8 @@ import java.util.Iterator;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import model.BusStop;
-import model.dao.BusStopDAO;
+import model.BusRouteMaximal;
+import model.dao.BusRouteMaximalDAO;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
@@ -17,15 +17,15 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.MultiLineString;
 
-@Stateless(name = "BusStopLoader")
-public class BusStopLoaderImpl implements BusStopLoader {
+@Stateless(name = "BusRoutesMaximalLoader")
+public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 
-	static Logger logger = Logger.getLogger(BusStopLoaderImpl.class);
+	static Logger logger = Logger.getLogger(BusRoutesMaximalLoaderImpl.class);
 
-	@EJB(name = "BusStopDAO")
-	private BusStopDAO busStopDAO;
+	@EJB(name = "BusRouteMaximalDAO")
+	private BusRouteMaximalDAO busRouteMaximalDAO;
 
 	public void readShp(String url) {
 		try {
@@ -35,11 +35,11 @@ public class BusStopLoaderImpl implements BusStopLoader {
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
-			BusStop busStop;
+			BusRouteMaximal busRouteMaximal;
 			while (reader.hasNext() && count < 20) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
-				busStop = new BusStop();
+				busRouteMaximal = new BusRouteMaximal();
 
 				Collection<? extends Property> values = feature.getValue();
 				Iterator<? extends Property> valuesItr = values.iterator();
@@ -47,42 +47,34 @@ public class BusStopLoaderImpl implements BusStopLoader {
 					Property value = valuesItr.next();
 					switch (propertyNumber) {
 					case 0:
-						busStop.setPoint((Point) value.getValue());
-						break;
-					case 1:
-						busStop.setId(Integer.parseInt(value.getValue()
-								.toString()));
+						busRouteMaximal.setTrajectory((MultiLineString) value
+								.getValue());
 						break;
 					case 3:
-						busStop.setBusRouteMaximalCode(Integer.parseInt(value
-								.getValue().toString()));
-						break;
-					case 4:
-						busStop.setOrdinal(Integer.parseInt(value.getValue()
-								.toString()));
-						break;
-					case 5:
-						busStop.setStreetName(value.getValue().toString());
-						break;
-					case 6:
-						busStop.setCornerStreetName(value.getValue().toString());
+						busRouteMaximal
+								.setLineName(value.getValue().toString());
 						break;
 					case 7:
-						busStop.setStreetCode((Long) value.getValue());
+						busRouteMaximal.setId(Integer.parseInt(value.getValue()
+								.toString()));
 						break;
-					case 8:
-						busStop.setCornerStreetCode((Long) value.getValue());
+					case 9:
+						busRouteMaximal
+								.setMaximalCode(value.getValue() == null ? -1
+										: Integer.parseInt(value.getValue()
+												.toString()));
 						break;
 					}
 					propertyNumber++;
 				}
-				busStopDAO.add(busStop);
+				busRouteMaximalDAO.add(busRouteMaximal);
 				count++;
-				logger.info("added bus stop");
+				logger.info("added bus route maximal");
 			}
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 }

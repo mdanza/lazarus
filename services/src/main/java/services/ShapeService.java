@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import services.authentication.AuthenticationService;
 import services.shapefiles.address.AddressLoader;
 import services.shapefiles.bus.BusStopLoader;
+import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
 
 @Stateless(name = "ShapeService")
@@ -30,6 +31,9 @@ public class ShapeService {
 	
 	@EJB(name = "AddressLoader")
 	private AddressLoader addressLoader;
+	
+	@EJB(name = "CornerLoader")
+	private CornerLoader cornerLoader;
 	
 	
 	@POST
@@ -59,4 +63,13 @@ public class ShapeService {
 		return "Done";
 	}
 
+	@POST
+	@Path("/uploadCorners")
+	public String uploadCorners(@QueryParam("url") String url){
+		if(url==null || url.equals(""))
+			throw new IllegalArgumentException("Url cannot be empty or null");
+		cornerLoader.readShp(url);
+		return "Done";
+	}
+	
 }

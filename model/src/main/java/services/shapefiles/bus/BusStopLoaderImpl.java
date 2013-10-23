@@ -36,7 +36,7 @@ public class BusStopLoaderImpl implements BusStopLoader {
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusStop busStop;
-			while (reader.hasNext() && count < 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busStop = new BusStop();
@@ -79,6 +79,7 @@ public class BusStopLoaderImpl implements BusStopLoader {
 				busStopDAO.add(busStop);
 				count++;
 				logger.info("added bus stop");
+				System.out.println(count);
 			}
 			reader.close();
 		} catch (Exception e) {

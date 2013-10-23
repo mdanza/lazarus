@@ -36,7 +36,7 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusRouteNonMaximal busRouteNonMaximal;
-			while (reader.hasNext() && count < 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busRouteNonMaximal = new BusRouteNonMaximal();
@@ -85,6 +85,7 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 				busRouteNonMaximalDAO.add(busRouteNonMaximal);
 				count++;
 				logger.info("added bus route non maximal");
+				System.out.println(count);
 			}
 			reader.close();
 		} catch (Exception e) {

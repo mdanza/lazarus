@@ -9,7 +9,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.BusRouteMaximal;
+import model.ShapefileWKT;
 import model.dao.BusRouteMaximalDAO;
+import model.dao.ShapefileWKTDAO;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
@@ -26,6 +28,9 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 
 	@EJB(name = "BusRouteMaximalDAO")
 	private BusRouteMaximalDAO busRouteMaximalDAO;
+
+	@EJB(name = "ShapefileWKTDAO")
+	private ShapefileWKTDAO shapefileWKTDAO;
 
 	public void readShp(String url) {
 		try {
@@ -72,6 +77,13 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 				busRouteMaximalDAO.add(busRouteMaximal);
 				logger.info("added bus route maximal");
 			}
+			reader = store.getFeatureReader();
+			Feature feature = reader.next();
+			ShapefileWKT shapefileWKT = new ShapefileWKT();
+			shapefileWKT.setShapefileType(ShapefileWKT.BUS_MAXIMAL);
+			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+					.getDescriptor().getCoordinateReferenceSystem().toWKT());
+			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();

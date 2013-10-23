@@ -11,7 +11,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.Address;
+import model.ShapefileWKT;
 import model.dao.AddressDAO;
+import model.dao.ShapefileWKTDAO;
 
 import org.geotools.data.FeatureReader;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -28,6 +30,9 @@ public class AddressLoaderImpl implements AddressLoader {
 	@EJB(beanName = "AddressDAO")
 	protected AddressDAO addressDAO;
 	
+	@EJB(name = "ShapefileWKTDAO")
+	private ShapefileWKTDAO shapefileWKTDAO;
+
 	GeometryFactory factory = new GeometryFactory();
 
 	public void readShp(String url) {
@@ -73,16 +78,24 @@ public class AddressLoaderImpl implements AddressLoader {
 							break;
 						case 6:
 							paridad = (String) value.getValue();
-							break;							
+							break;
 						}
 					}
 					position++;
 				}
-				saveAddress(point, padron, nameCode, streetName, number, letter, paridad);
+				saveAddress(point, padron, nameCode, streetName, number,
+						letter, paridad);
 				count++;
 				System.out.println(count);
 			}
 
+			reader = store.getFeatureReader();
+			Feature feature = reader.next();
+			ShapefileWKT shapefileWKT = new ShapefileWKT();
+			shapefileWKT.setShapefileType(ShapefileWKT.ADDRESS);
+			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+					.getDescriptor().getCoordinateReferenceSystem().toWKT());
+			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 
 		} catch (MalformedURLException e) {
@@ -94,7 +107,8 @@ public class AddressLoaderImpl implements AddressLoader {
 
 	private void saveAddress(Point point, long padron, long nameCode,
 			String streetName, int number, String letter, String paridad) {
-			Address address = new Address(point,padron,nameCode,streetName,number,letter,paridad);
-			addressDAO.add(address);
+		Address address = new Address(point, padron, nameCode, streetName,
+				number, letter, paridad);
+		addressDAO.add(address);
 	}
 }

@@ -2,9 +2,9 @@ package services.shapefiles.address;
 
 import javax.ejb.Local;
 
-import services.shapefiles.ShapeLoader;
+import services.shapefiles.ShapefileLoader;
 
 @Local
-public interface AddressLoader extends ShapeLoader {
+public interface AddressLoader extends ShapefileLoader {
 
 }

@@ -2,9 +2,9 @@ package services.shapefiles.corner;
 
 import javax.ejb.Local;
 
-import services.shapefiles.ShapeLoader;
+import services.shapefiles.ShapefileLoader;
 
 @Local
-public interface CornerLoader extends ShapeLoader {
+public interface CornerLoader extends ShapefileLoader {
 
 }

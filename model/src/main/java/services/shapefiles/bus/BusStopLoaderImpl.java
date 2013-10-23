@@ -9,7 +9,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.BusStop;
+import model.ShapefileWKT;
 import model.dao.BusStopDAO;
+import model.dao.ShapefileWKTDAO;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
@@ -27,6 +29,9 @@ public class BusStopLoaderImpl implements BusStopLoader {
 	@EJB(name = "BusStopDAO")
 	private BusStopDAO busStopDAO;
 
+	@EJB(name = "ShapefileWKTDAO")
+	private ShapefileWKTDAO shapefileWKTDAO;
+	
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
@@ -78,6 +83,13 @@ public class BusStopLoaderImpl implements BusStopLoader {
 				busStopDAO.add(busStop);
 				logger.info("added bus stop");
 			}
+			reader = store.getFeatureReader();
+			Feature feature = reader.next();
+			ShapefileWKT shapefileWKT = new ShapefileWKT();
+			shapefileWKT.setShapefileType(ShapefileWKT.BUS_STOP);
+			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+					.getDescriptor().getCoordinateReferenceSystem().toWKT());
+			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -22,7 +22,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 @Stateless(name = "BusRoutesLoader")
 public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader {
 
-	static Logger logger = Logger.getLogger(BusRoutesNonMaximalLoaderImpl.class);
+	static Logger logger = Logger
+			.getLogger(BusRoutesNonMaximalLoaderImpl.class);
 
 	@EJB(name = "BusRouteNonMaximalDAO")
 	private BusRouteNonMaximalDAO busRouteNonMaximalDAO;
@@ -30,13 +31,12 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
-			int count = 0;
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusRouteNonMaximal busRouteNonMaximal;
-			while (reader.hasNext() && count < 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busRouteNonMaximal = new BusRouteNonMaximal();
@@ -52,11 +52,11 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 										.getValue());
 						break;
 					case 2:
-						busRouteNonMaximal.setId(Integer.parseInt(value
-								.getValue().toString()));
+						busRouteNonMaximal.setVariantCode(Integer
+								.parseInt(value.getValue().toString()));
 						break;
 					case 3:
-						busRouteNonMaximal.setVariantCode(Integer
+						busRouteNonMaximal.setMaximalVariantCode(Integer
 								.parseInt(value.getValue().toString()));
 						break;
 					case 4:
@@ -83,7 +83,6 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 					propertyNumber++;
 				}
 				busRouteNonMaximalDAO.add(busRouteNonMaximal);
-				count++;
 				logger.info("added bus route non maximal");
 			}
 			reader.close();

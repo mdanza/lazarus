@@ -30,13 +30,12 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
-			int count = 0;
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusRouteMaximal busRouteMaximal;
-			while (reader.hasNext() && count < 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busRouteMaximal = new BusRouteMaximal();
@@ -54,21 +53,23 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 						busRouteMaximal
 								.setLineName(value.getValue().toString());
 						break;
+					case 6:
+						busRouteMaximal.setSubLineDescription(value.getValue()
+								.toString());
+						break;
 					case 7:
-						busRouteMaximal.setId(Integer.parseInt(value.getValue()
-								.toString()));
+						busRouteMaximal.setVariantCode(Integer.parseInt(value
+								.getValue().toString()));
 						break;
 					case 9:
-						busRouteMaximal
-								.setMaximalCode(value.getValue() == null ? -1
-										: Integer.parseInt(value.getValue()
-												.toString()));
+						if (value != null && value.getValue() != null)
+							busRouteMaximal.setMaximalVariantCode(Integer
+									.parseInt(value.getValue().toString()));
 						break;
 					}
 					propertyNumber++;
 				}
 				busRouteMaximalDAO.add(busRouteMaximal);
-				count++;
 				logger.info("added bus route maximal");
 			}
 			reader.close();

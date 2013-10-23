@@ -30,13 +30,12 @@ public class BusStopLoaderImpl implements BusStopLoader {
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
-			int count = 0;
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int propertyNumber;
 			BusStop busStop;
-			while (reader.hasNext() && count < 20) {
+			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				propertyNumber = 0;
 				busStop = new BusStop();
@@ -50,11 +49,11 @@ public class BusStopLoaderImpl implements BusStopLoader {
 						busStop.setPoint((Point) value.getValue());
 						break;
 					case 1:
-						busStop.setId(Integer.parseInt(value.getValue()
-								.toString()));
+						busStop.setBusStopCode(Integer.parseInt(value
+								.getValue().toString()));
 						break;
 					case 3:
-						busStop.setBusRouteMaximalCode(Integer.parseInt(value
+						busStop.setVariantCode(Integer.parseInt(value
 								.getValue().toString()));
 						break;
 					case 4:
@@ -77,7 +76,6 @@ public class BusStopLoaderImpl implements BusStopLoader {
 					propertyNumber++;
 				}
 				busStopDAO.add(busStop);
-				count++;
 				logger.info("added bus stop");
 			}
 			reader.close();

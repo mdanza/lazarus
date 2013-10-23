@@ -9,7 +9,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.BusStop;
+import model.ShapefileWKT;
 import model.dao.BusStopDAO;
+import model.dao.ShapefileWKTDAO;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
@@ -27,10 +29,12 @@ public class BusStopLoaderImpl implements BusStopLoader {
 	@EJB(name = "BusStopDAO")
 	private BusStopDAO busStopDAO;
 
+	@EJB(name = "ShapefileWKTDAO")
+	private ShapefileWKTDAO shapefileWKTDAO;
+	
 	public void readShp(String url) {
 		try {
 			URL shapeURL = new File(url).toURI().toURL();
-			int count = 0;
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
@@ -50,11 +54,11 @@ public class BusStopLoaderImpl implements BusStopLoader {
 						busStop.setPoint((Point) value.getValue());
 						break;
 					case 1:
-						busStop.setId(Integer.parseInt(value.getValue()
-								.toString()));
+						busStop.setBusStopCode(Integer.parseInt(value
+								.getValue().toString()));
 						break;
 					case 3:
-						busStop.setBusRouteMaximalCode(Integer.parseInt(value
+						busStop.setVariantCode(Integer.parseInt(value
 								.getValue().toString()));
 						break;
 					case 4:
@@ -77,10 +81,16 @@ public class BusStopLoaderImpl implements BusStopLoader {
 					propertyNumber++;
 				}
 				busStopDAO.add(busStop);
-				count++;
 				logger.info("added bus stop");
 				System.out.println(count);
 			}
+			reader = store.getFeatureReader();
+			Feature feature = reader.next();
+			ShapefileWKT shapefileWKT = new ShapefileWKT();
+			shapefileWKT.setShapefileType(ShapefileWKT.BUS_STOP);
+			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+					.getDescriptor().getCoordinateReferenceSystem().toWKT());
+			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();

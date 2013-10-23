@@ -2,9 +2,9 @@ package services.shapefiles.bus;
 
 import javax.ejb.Local;
 
-import services.shapefiles.ShapeLoader;
+import services.shapefiles.ShapefileLoader;
 
 @Local
-public interface BusRoutesNonMaximalLoader extends ShapeLoader{
+public interface BusRoutesNonMaximalLoader extends ShapefileLoader{
 
 }

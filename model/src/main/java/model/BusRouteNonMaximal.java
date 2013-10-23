@@ -1,6 +1,9 @@
 package model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -25,33 +28,46 @@ import com.vividsolutions.jts.geom.MultiLineString;
 @Table(name = "bus_routes_non_maximal")
 public class BusRouteNonMaximal {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+
+	@Column(name = "variant_code")
+	private int variantCode;
+
+	@Column(name = "maximal_variant_code")
+	private int maximalVariantCode;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private MultiLineString trajectory;
 
 	private String description;
 
-	private int variantCode;
-
+	@Column(name = "origin_bus_stop_code")
 	private int originBusStopCode;
 
+	@Column(name = "end_bus_stop_code")
 	private int endBusStopCode;
 
+	@Column(name = "origin_bus_stop_ordinal")
 	private int originBusStopOrdinal;
 
+	@Column(name = "end_bus_stop_ordinal")
 	private int endBusStopOrdinal;
 
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public int getVariantCode() {
 		return variantCode;
+	}
+
+	public int getMaximalVariantCode() {
+		return maximalVariantCode;
+	}
+
+	public void setMaximalVariantCode(int maximalVariantCode) {
+		this.maximalVariantCode = maximalVariantCode;
 	}
 
 	public void setVariantCode(int variantCode) {

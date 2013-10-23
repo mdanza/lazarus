@@ -1,6 +1,5 @@
 package model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,9 +25,12 @@ import com.vividsolutions.jts.geom.Point;
 @NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id")
 public class BusStop {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private int busRouteMaximalCode;
+	private int busStopCode;
+
+	private int variantCode;
 
 	private int ordinal;
 
@@ -43,20 +45,28 @@ public class BusStop {
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 
-	public int getBusRouteMaximalCode() {
-		return busRouteMaximalCode;
-	}
-
-	public void setBusRouteMaximalCode(int variantCode) {
-		this.busRouteMaximalCode = variantCode;
-	}
-
 	public int getOrdinal() {
 		return ordinal;
 	}
 
 	public void setOrdinal(int ordinal) {
 		this.ordinal = ordinal;
+	}
+
+	public int getBusStopCode() {
+		return busStopCode;
+	}
+
+	public void setBusStopCode(int busStopCode) {
+		this.busStopCode = busStopCode;
+	}
+
+	public int getVariantCode() {
+		return variantCode;
+	}
+
+	public void setVariantCode(int variantCode) {
+		this.variantCode = variantCode;
 	}
 
 	public String getStreetName() {
@@ -101,9 +111,5 @@ public class BusStop {
 
 	public int getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 }

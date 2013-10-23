@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import services.shapefiles.bus.BusRoutesMaximalLoaderImpl;
 import services.shapefiles.bus.BusStopLoader;
 
 public class ShapefileLoaderTest {
@@ -47,10 +48,11 @@ public class ShapefileLoaderTest {
 */
 	@Test
 	public void printFieldsShp() throws Exception {
+//		ShapefileLoader l = new BusRoutesMaximalLoaderImpl();
+//		l.readShp("/home/santiago/Desktop/shapefile/v_uptu_lsv_destinos.shp");
+		
 //		 ShapefileLoader
-//		 .readShp("/home/santiago/Desktop/shapefile/uptu_variante_no_maximal.shp");
-//		 ShapefileLoader
-//		 .readShp("/home/santiago/Desktop/shapefile/v_uptu_lsv_destinos.shp");
+//		 .readShp("/home/santiago/Desktop/shapefile/uptu_variante_no_maximal.shp")
 //		 ShapefileLoader
 //		 .readShp("/home/santiago/Desktop/shapefile/v_uptu_paradas.shp");
 	}

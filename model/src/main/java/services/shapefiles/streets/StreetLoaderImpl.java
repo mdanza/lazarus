@@ -10,7 +10,9 @@ import java.util.Iterator;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import model.ShapefileWKT;
 import model.Street;
+import model.dao.ShapefileWKTDAO;
 import model.dao.StreetDAO;
 
 import org.geotools.data.FeatureReader;
@@ -29,6 +31,9 @@ public class StreetLoaderImpl implements StreetLoader {
 
 	@EJB(beanName = "StreetDAO")
 	protected StreetDAO streetDAO;
+	
+	@EJB(name = "ShapefileWKTDAO")
+	private ShapefileWKTDAO shapefileWKTDAO;
 	
 	GeometryFactory factory = new GeometryFactory();
 
@@ -68,7 +73,13 @@ public class StreetLoaderImpl implements StreetLoader {
 				count++;
 				System.out.println(count);
 			}
-
+			reader = store.getFeatureReader();
+			Feature feature = reader.next();
+			ShapefileWKT shapefileWKT = new ShapefileWKT();
+			shapefileWKT.setShapefileType(ShapefileWKT.STREET);
+			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+					.getDescriptor().getCoordinateReferenceSystem().toWKT());
+			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 
 		} catch (MalformedURLException e) {

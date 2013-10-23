@@ -2,12 +2,10 @@ package services;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import model.BusStop;
 import model.dao.BusStopDAO;
 
 import org.apache.log4j.Logger;
@@ -45,11 +43,10 @@ public class ShapeService {
 	private BusStopDAO busStopDAO;
 	@EJB(name = "AddressLoader")
 	private AddressLoader addressLoader;
-	
+
 	@EJB(name = "CornerLoader")
 	private CornerLoader cornerLoader;
-	
-	
+
 	@POST
 	@Path("/uploadStreets")
 	public String uploadStreets(@QueryParam("url") String url) {
@@ -95,20 +92,13 @@ public class ShapeService {
 		return "Done";
 	}
 
-	@GET
-	@Path("/getBusStop")
-	public String getBusStop(@QueryParam("id") int id) {
-		BusStop busStop = busStopDAO.find(id);
-		return busStop.getPoint().toString();
-	}
-
 	@POST
 	@Path("/uploadCorners")
-	public String uploadCorners(@QueryParam("url") String url){
-		if(url==null || url.equals(""))
+	public String uploadCorners(@QueryParam("url") String url) {
+		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		cornerLoader.readShp(url);
 		return "Done";
 	}
-	
+
 }

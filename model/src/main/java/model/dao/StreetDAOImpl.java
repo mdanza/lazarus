@@ -10,6 +10,12 @@ import javax.persistence.Query;
 
 import model.Street;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+import com.vividsolutions.jts.geom.Point;
+
 @Stateless(name = "StreetDAO")
 public class StreetDAOImpl implements StreetDAO {
 
@@ -90,6 +96,22 @@ public class StreetDAOImpl implements StreetDAO {
 			streets = null;
 		}
 		return streets;
+	}
+	
+	public Street findClosestToPoint(Point point){
+		Street street;
+		try {
+			Query q = entityManager.createNamedQuery("Street.findClosestToPoint");
+			//SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+			//Session session = sessionFactory.openSession();
+			//Query q = (Query) session.createSQLQuery("select streets FROM corners, streets WHERE corners.id='1' ORDER BY ST_Distance(corners.point, streets.segments) limit 1;").addEntity(Street.class);
+			q.setParameter("point", point);
+			q.setMaxResults(1);
+			street =(Street) q.getSingleResult();
+		} catch (NoResultException e) {
+			street = null;
+		}
+		return street;	
 	}
 
 }

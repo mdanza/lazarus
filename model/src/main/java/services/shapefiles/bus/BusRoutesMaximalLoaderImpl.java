@@ -76,7 +76,6 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 				}
 				busRouteMaximalDAO.add(busRouteMaximal);
 				logger.info("added bus route maximal");
-				System.out.println(count);
 			}
 			reader = store.getFeatureReader();
 			Feature feature = reader.next();

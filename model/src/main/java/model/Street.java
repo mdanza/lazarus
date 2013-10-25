@@ -17,7 +17,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 @Table(name = "streets")
 @NamedQueries({
 		@NamedQuery(name = "Street.findByName", query = "SELECT s FROM Street s WHERE s.name = :name"),
-		@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode") })
+		@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode"),
+		@NamedQuery(name = "Street.findClosestToPoint", query = "select s FROM Street s ORDER BY distance(:point, s.segments)")})
 public class Street {
 
 	@Id

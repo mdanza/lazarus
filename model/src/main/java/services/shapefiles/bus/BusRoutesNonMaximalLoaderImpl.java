@@ -89,7 +89,6 @@ public class BusRoutesNonMaximalLoaderImpl implements BusRoutesNonMaximalLoader 
 				}
 				busRouteNonMaximalDAO.add(busRouteNonMaximal);
 				logger.info("added bus route non maximal");
-				System.out.println(count);
 			}
 			reader = store.getFeatureReader();
 			Feature feature = reader.next();

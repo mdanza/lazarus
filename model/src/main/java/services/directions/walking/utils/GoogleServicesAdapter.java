@@ -1,4 +1,4 @@
-package services.directions.walking;
+package services.directions.walking.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

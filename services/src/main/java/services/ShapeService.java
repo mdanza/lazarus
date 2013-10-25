@@ -22,7 +22,7 @@ import services.shapefiles.streets.StreetLoader;
 @Path("/api/shapes")
 public class ShapeService {
 
-	static Logger logger = Logger.getLogger(UserService.class);
+	static Logger logger = Logger.getLogger(ShapeService.class);
 
 	@EJB(name = "StreetLoader")
 	private StreetLoader streetLoader;

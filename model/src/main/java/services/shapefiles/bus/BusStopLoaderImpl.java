@@ -82,7 +82,6 @@ public class BusStopLoaderImpl implements BusStopLoader {
 				}
 				busStopDAO.add(busStop);
 				logger.info("added bus stop");
-				System.out.println(count);
 			}
 			reader = store.getFeatureReader();
 			Feature feature = reader.next();

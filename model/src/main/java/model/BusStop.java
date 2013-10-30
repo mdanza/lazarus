@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -22,7 +23,9 @@ import com.vividsolutions.jts.geom.Point;
 //Y             Coordenada Y de la ubicación (SIRGAS2000 UTM 21s)
 @Entity
 @Table(name = "bus_stops")
-@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id")
+@NamedQueries({
+		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"),
+		@NamedQuery(name = "BusStop.findNearPoint", query = "SELECT b FROM BusStop b WHERE dwithin(b.point, :point, :distance) = true") })
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

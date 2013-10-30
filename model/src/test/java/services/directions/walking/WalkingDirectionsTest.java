@@ -37,27 +37,27 @@ public class WalkingDirectionsTest {
 		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.Username", "postgres");
-		p.put("lazarus-persistence-unit.Password", "mateo");
+		p.put("lazarus-persistence-unit.Password", "postgres");
 
 		Context context = new InitialContext(p);
 
 		walkingDirectionsService = (WalkingDirectionsService) context.lookup("WalkingDirectionsServiceLocal");
 	}
 
-	@Test
-	public void test(){
-		GeometryFactory f = new GeometryFactory();
-		Coordinate c = new Coordinate(-56.176965,-34.897758);
-		Point p = f.createPoint(c);
-		walkingDirectionsService.getWalkingDirections(c, c);
-		/*
-		Point converted = coordinateConverter.convertToWGS84(p, ShapefileWKT.BUS_STOP);
-		
-		Point reConverted = coordinateConverter.convertFromWGS84(converted, ShapefileWKT.BUS_STOP);
-		
-		assertTrue(p.getX() - reConverted.getX() < 0.001);
-		assertTrue(p.getY() - reConverted.getY() < 0.001);
-		*/
-	}
+//	@Test
+//	public void test(){
+//		GeometryFactory f = new GeometryFactory();
+//		Coordinate c = new Coordinate(-56.176965,-34.897758);
+//		Point p = f.createPoint(c);
+//		walkingDirectionsService.getWalkingDirections(c, c);
+//		/*
+//		Point converted = coordinateConverter.convertToWGS84(p, ShapefileWKT.BUS_STOP);
+//		
+//		Point reConverted = coordinateConverter.convertFromWGS84(converted, ShapefileWKT.BUS_STOP);
+//		
+//		assertTrue(p.getX() - reConverted.getX() < 0.001);
+//		assertTrue(p.getY() - reConverted.getY() < 0.001);
+//		*/
+//	}
 
 }

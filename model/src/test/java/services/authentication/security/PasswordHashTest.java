@@ -10,7 +10,6 @@ import org.junit.Test;
 import services.authentication.security.PasswordHash;
 
 public class PasswordHashTest {
-
 	@Test
 	public void hashTest() throws NoSuchAlgorithmException,
 			InvalidKeySpecException {

@@ -1,11 +1,20 @@
 package model.dao;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import model.Address;
 import model.Corner;
+import model.Street;
 
 @Stateless(name = "CornerDAO")
 public class CornerDAOImpl implements CornerDAO {
@@ -31,6 +40,25 @@ public class CornerDAOImpl implements CornerDAO {
 	public Corner find(Integer uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Corner> findCornersWithinRadius(Point point,
+			Double radius) {
+		List<Corner> corners;
+		try {
+			Query q = entityManager.createNamedQuery("Corner.findWithinRadius");
+			//SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+			//Session session = sessionFactory.openSession();
+			//Query q = (Query) session.createSQLQuery("select streets FROM corners, streets WHERE corners.id='1' ORDER BY ST_Distance(corners.point, streets.segments) limit 1;").addEntity(Street.class);
+			GeometryFactory factory = new GeometryFactory();
+			q.setParameter("point", point);
+			q.setParameter("radius", radius);
+			corners = (List<Corner>) q.getResultList();
+		} catch (NoResultException e) {
+			corners = null;
+		}
+		return corners;	
 	}
 
 }

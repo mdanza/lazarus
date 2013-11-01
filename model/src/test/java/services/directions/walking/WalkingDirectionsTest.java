@@ -1,25 +1,17 @@
 package services.directions.walking;
 
 
-import static org.junit.Assert.assertTrue;
-
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import model.ShapefileWKT;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 public class WalkingDirectionsTest {
 	
 	private WalkingDirectionsService walkingDirectionsService;
@@ -37,7 +29,7 @@ public class WalkingDirectionsTest {
 		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.Username", "postgres");
-		p.put("lazarus-persistence-unit.Password", "mateo");
+		p.put("lazarus-persistence-unit.Password", "postgres");
 
 		Context context = new InitialContext(p);
 
@@ -46,18 +38,12 @@ public class WalkingDirectionsTest {
 
 	@Test
 	public void test(){
-		GeometryFactory f = new GeometryFactory();
-		Coordinate c = new Coordinate(-56.176965,-34.897758);
-		Point p = f.createPoint(c);
-		walkingDirectionsService.getWalkingDirections(c, c);
-		/*
-		Point converted = coordinateConverter.convertToWGS84(p, ShapefileWKT.BUS_STOP);
-		
-		Point reConverted = coordinateConverter.convertFromWGS84(converted, ShapefileWKT.BUS_STOP);
-		
-		assertTrue(p.getX() - reConverted.getX() < 0.001);
-		assertTrue(p.getY() - reConverted.getY() < 0.001);
-		*/
+		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
+		//Coordinate end = new Coordinate(-34.895118,-56.251466);
+		Coordinate origin = new Coordinate(-34.920044,-56.158807);
+		Coordinate end = new Coordinate(-34.900249,-56.14046);
+		List<Object[]> instructions  = walkingDirectionsService.getWalkingDirections(origin, end);
+		return;
 	}
 
 }

@@ -99,7 +99,7 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-spatial</artifactId>
 			<version>4.0-M1</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- the Postgis JDBC driver -->
@@ -107,7 +107,7 @@
 			<groupId>org.postgis</groupId>
 			<artifactId>postgis-jdbc</artifactId>
 			<version>1.5.2</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

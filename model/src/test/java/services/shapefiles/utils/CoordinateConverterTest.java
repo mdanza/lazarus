@@ -21,8 +21,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class CoordinateConverterTest {
-	
-	/*
 
 	private CoordinateConverter coordinateConverter;
 
@@ -58,5 +56,5 @@ public class CoordinateConverterTest {
 		assertTrue(p.getX() - reConverted.getX() < 0.001);
 		assertTrue(p.getY() - reConverted.getY() < 0.001);
 	}
-	*/
+	
 }

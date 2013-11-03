@@ -80,7 +80,7 @@ public class ObstacleServiceTest {
 
 	@Test
 	public void testReportObstacle() {
-		Coordinate position = new Coordinate(-34.919789,-56.158468);
+		Coordinate position = new Coordinate(-34.902651,-56.162756);
 		GeometryFactory factory = new GeometryFactory();
 		Point point = factory.createPoint(position);
 
@@ -89,7 +89,7 @@ public class ObstacleServiceTest {
 		}
 
 		User user = userDAO.find("mateo");
-		obstacleService.reportObstacle(point, 2, user);
+		obstacleService.reportObstacle(point, 2, user, null);
 		boolean added = false;
 		Obstacle obstacle = obstacleDAO.find(point);
 		if (obstacle != null && point.equals(obstacle.getCentre())

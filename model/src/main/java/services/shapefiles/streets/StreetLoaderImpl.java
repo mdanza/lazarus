@@ -47,7 +47,6 @@ public class StreetLoaderImpl implements StreetLoader {
 			MultiLineString multiLine = null;
 			String streetName = null;
 			Long nameCode = null;
-			/*
 			while (reader.hasNext()) {
 				Feature feature = reader.next();
 				Collection<? extends Property> values = feature.getValue();
@@ -74,7 +73,6 @@ public class StreetLoaderImpl implements StreetLoader {
 				count++;
 				System.out.println(count);
 			}
-			*/
 			reader = store.getFeatureReader();
 			Feature feature = reader.next();
 			ShapefileWKT shapefileWKT = new ShapefileWKT();

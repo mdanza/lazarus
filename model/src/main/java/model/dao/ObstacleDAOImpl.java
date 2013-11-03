@@ -1,5 +1,7 @@
 package model.dao;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -7,8 +9,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import model.Corner;
 import model.Obstacle;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "ObstacleDAO")
@@ -81,6 +86,25 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 			obstacle = null;
 		}
 		return obstacle;
+	}
+	
+	@Override
+	public List<Obstacle> findByDistance(Geometry geometry,
+			Double distance) {
+		List<Obstacle> obstacles = null;
+		try {
+			Query q = entityManager.createNamedQuery("Obstacle.findByDistance");
+			GeometryFactory factory = new GeometryFactory();
+			q.setParameter("geometry", geometry);
+			q.setParameter("distance", distance);
+			obstacles = (List<Obstacle>) q.getResultList();
+			if(obstacles!=null && obstacles.isEmpty()){
+				return null;
+			}
+		} catch (NoResultException e) {
+			obstacles = null;
+		}
+		return obstacles;	
 	}
 
 }

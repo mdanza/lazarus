@@ -17,22 +17,23 @@ import net.sf.json.JSONSerializer;
 
 import org.jsoup.Jsoup;
 
+import services.directions.walking.WalkingPosition;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class GoogleServicesAdapter {
 
 	/**
-	 * Get smoothed path from startPoint to endPoint using Google directions api
-	 * 
+	 * Get path from startPoint to endPoint using Google directions api
 	 * @param startPoint
 	 * @param endPoint
-	 * @return
+	 * @return list of different routes, each one being a list of Object[] with Object[0] coordinate (Coordinate) and Object[1] instruction (String)
 	 * @throws IOException
 	 */
-	public static List<List<Object[]>> getRoutes(
+	public static List<List<WalkingPosition>> getRoutes(
 			Coordinate startPoint, Coordinate endPoint) throws IOException {
 
-		List<List<Object[]>> routesReturn = new ArrayList<List<Object[]>>();
+		List<List<WalkingPosition>> routesReturn = new ArrayList<List<WalkingPosition>>();
 
 		String start = startPoint.x + "," + startPoint.y;
 		String finish = endPoint.x + "," + endPoint.y;
@@ -49,7 +50,7 @@ public class GoogleServicesAdapter {
 			JSONArray legs = route.getJSONArray("legs");
 			Iterator legsIterator = legs.iterator();
 			JSONObject leg;
-			List<Object[]> routeCoordinates = new ArrayList<Object[]>();
+			List<WalkingPosition> routeCoordinates = new ArrayList<WalkingPosition>();
 			
 			while (legsIterator.hasNext()) {
 				leg = (JSONObject) legsIterator.next();
@@ -67,14 +68,13 @@ public class GoogleServicesAdapter {
 					if (coordinates != null) {
 						for (int i = 0; i < coordinates.size(); i++) {
 							if(i==0){
-								Object[] entry = new Object[2];
-								entry[0]=coordinates.get(i);
-								entry[1]=instructions;
+								WalkingPosition entry = new WalkingPosition();
+								entry.setCoordinate(coordinates.get(i));
+								entry.setInstruction(instructions);
 								routeCoordinates.add(entry);
 							}else{
-								Object[] entry = new Object[2];
-								entry[0]=coordinates.get(i);
-								entry[1]=null;
+								WalkingPosition entry = new WalkingPosition();
+								entry.setCoordinate(coordinates.get(i));
 								routeCoordinates.add(entry);
 							}
 						}
@@ -83,14 +83,6 @@ public class GoogleServicesAdapter {
 
 			}
 			routesReturn.add(routeCoordinates);
-
-			/*
-			 * JSONObject overviewPolyline = route
-			 * .getJSONObject("overview_polyline"); String points = (String)
-			 * overviewPolyline.get("points"); List<Coordinate> coordinates =
-			 * decodePoly(points); routesReturn.add(coordinates);
-			 */
-
 		}
 
 		return routesReturn;

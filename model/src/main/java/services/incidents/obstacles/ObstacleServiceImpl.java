@@ -9,9 +9,13 @@ import model.dao.ObstacleDAO;
 import model.dao.UserDAO;
 
 import org.apache.log4j.Logger;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+
+import services.shapefiles.utils.CoordinateConverter;
 
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geomgraph.Position;
 
 @Stateless(name = "ObstacleService")
 public class ObstacleServiceImpl implements ObstacleService {
@@ -25,27 +29,52 @@ public class ObstacleServiceImpl implements ObstacleService {
 	@EJB(beanName = "ObstacleDAO")
 	private ObstacleDAO obstacleDAO;
 
+	@EJB(beanName = "CoordinateConverter")
+	private CoordinateConverter coordinateConverter;
+
 	@Override
-	public void reportObstacle(Point position, int radius, User user) {
-		if(position==null || user==null)
-			throw new IllegalArgumentException("Position or user cannot be null");
+	public void reportObstacle(Point position, int radius, User user, String description) {
+		if (position == null || user == null)
+			throw new IllegalArgumentException(
+					"Position or user cannot be null");
 		User possibleUser = userDAO.find(user.getUsername());
-		if(possibleUser==null)
+		if (possibleUser == null)
 			throw new IllegalArgumentException("User does not exists");
-		if(obstacleDAO.find(position)!=null)
-			throw new IllegalArgumentException("Obstacle already exists in that position");
-		Obstacle obstacle = new Obstacle(position,radius,possibleUser);
-		obstacleDAO.add(obstacle);
+		if (obstacleDAO.find(position) != null)
+			throw new IllegalArgumentException(
+					"Obstacle already exists in that position");
+		try {
+			Point newPosition = coordinateConverter.convertFromWGS84(position,
+					"obstacle");
+			Obstacle obstacle = new Obstacle(newPosition, radius, possibleUser, description);
+			obstacleDAO.add(obstacle);
+		} catch (MismatchedDimensionException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (FactoryException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (TransformException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 
 	@Override
 	public void deactivateObstacle(Point position) {
-		if(position==null)
+		if (position == null)
 			throw new IllegalArgumentException("position is null");
-		Obstacle possibleObstacle = obstacleDAO.find(position);
-		if(possibleObstacle==null)
-			throw new IllegalArgumentException("obstacle does not exist");
-		obstacleDAO.delete(possibleObstacle);
+		try {
+			Point newPosition = coordinateConverter.convertFromWGS84(position,
+					"obstacle");
+			Obstacle possibleObstacle = obstacleDAO.find(newPosition);
+			if (possibleObstacle == null)
+				throw new IllegalArgumentException("obstacle does not exist");
+			obstacleDAO.delete(possibleObstacle);
+		} catch (MismatchedDimensionException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (FactoryException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (TransformException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 
 }

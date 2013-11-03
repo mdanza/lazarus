@@ -8,6 +8,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import model.Obstacle;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,10 +42,23 @@ public class WalkingDirectionsTest {
 	public void test(){
 		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
 		//Coordinate end = new Coordinate(-34.895118,-56.251466);
-		Coordinate origin = new Coordinate(-34.920044,-56.158807);
-		Coordinate end = new Coordinate(-34.900249,-56.14046);
-		List<Object[]> instructions  = walkingDirectionsService.getWalkingDirections(origin, end);
-		return;
+		Coordinate origin = new Coordinate(-34.911062,-56.154312);
+		Coordinate end = new Coordinate(-34.905713,-56.202303);
+		List<WalkingPosition> walkingDirections  = walkingDirectionsService.getWalkingDirections(origin, end);
+		StringBuilder buildReturn = new StringBuilder();
+		for (WalkingPosition walkingPosition : walkingDirections) {
+			Coordinate coordinate = walkingPosition.getCoordinate();
+			String instruction = walkingPosition.getInstruction();
+			Obstacle obstacle = walkingPosition.getObstacle();
+			buildReturn.append(coordinate.x+","+coordinate.y+",");
+			if (instruction != null) {
+				buildReturn.append(instruction);
+			} else if (obstacle != null) {
+				buildReturn.append("obstacle,radius:"+obstacle.getRadius()+",description:"+obstacle.getDescription());
+			}
+			buildReturn.append(System.getProperty("line.separator"));
+		}
+		System.out.println(buildReturn.toString());
 	}
 
 }

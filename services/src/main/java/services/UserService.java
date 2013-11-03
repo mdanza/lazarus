@@ -102,10 +102,11 @@ public class UserService {
 	}
 
 	@POST
-	@Path("/resportObstacle")
+	@Path("/reportObstacle")
 	public String reportObstacle(@QueryParam("token") String token,
 			@QueryParam("coordinates") String coordinates,
-			@QueryParam("radius") String radius) {
+			@QueryParam("radius") String radius,
+			@QueryParam("description") String description) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals("") || radius == null
 				|| radius.equals(""))
@@ -118,10 +119,10 @@ public class UserService {
 		int intRadius = Integer.valueOf(radius);
 		GeometryFactory factory = new GeometryFactory();
 		Point point = factory.createPoint(position);
-		obstacleService.reportObstacle(point, intRadius, user);
+		obstacleService.reportObstacle(point, intRadius, user, description);
 		return "Done";
 	}
-	
+
 	@POST
 	@Path("/deactivateObstacle")
 	public String deactivateObstacle(@QueryParam("token") String token,

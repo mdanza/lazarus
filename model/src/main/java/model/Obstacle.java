@@ -20,7 +20,9 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 @Entity
 @Table(name = "obstacle")
-@NamedQueries({ @NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre") })
+@NamedQueries({ @NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre"),
+	@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true")
+})
 public class Obstacle {
 
 	@Id
@@ -40,6 +42,8 @@ public class Obstacle {
 	private User user;
 
 	private Date createdAt;
+	
+	private String description;
 
 	public Obstacle() {
 		this.createdAt = new Date();
@@ -56,7 +60,7 @@ public class Obstacle {
 		this.createdAt = new Date();
 	}
 
-	public Obstacle(Point centre, int radius, User user) {
+	public Obstacle(Point centre, int radius, User user, String description) {
 		this.centre = centre;
 		this.radius = radius;
 		this.user = user;
@@ -66,6 +70,7 @@ public class Obstacle {
 		fac.setCentre(centre.getCoordinate());
 		this.circle = fac.createCircle();
 		this.createdAt = new Date();
+		this.description = description;
 	}
 
 	public int getId() {
@@ -116,6 +121,15 @@ public class Obstacle {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

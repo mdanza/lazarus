@@ -18,6 +18,7 @@ public class ShapefileWKT {
 	public static final String ADDRESS = "address";
 	public static final String STREET = "street";
 	public static final String CORNER = "corner";
+	public static final String OBSTACLE = "obstacle";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +46,7 @@ public class ShapefileWKT {
 		if (shapefile == CORNER || shapefile == BUS_NON_MAXIMAL
 				|| shapefile == CORNER || shapefile == BUS_MAXIMAL
 				|| shapefile == BUS_STOP || shapefile == ADDRESS
-				|| shapefile == STREET || shapefile == CORNER)
+				|| shapefile == STREET || shapefile == CORNER || shapefile == OBSTACLE)
 			this.shapefileType = shapefile;
 	}
 

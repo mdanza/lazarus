@@ -1,25 +1,19 @@
 package services.directions.walking;
 
 
-import static org.junit.Assert.assertTrue;
-
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import model.ShapefileWKT;
+import model.Obstacle;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 public class WalkingDirectionsTest {
 	
 	private WalkingDirectionsService walkingDirectionsService;
@@ -46,18 +40,25 @@ public class WalkingDirectionsTest {
 
 //	@Test
 //	public void test(){
-//		GeometryFactory f = new GeometryFactory();
-//		Coordinate c = new Coordinate(-56.176965,-34.897758);
-//		Point p = f.createPoint(c);
-//		walkingDirectionsService.getWalkingDirections(c, c);
-//		/*
-//		Point converted = coordinateConverter.convertToWGS84(p, ShapefileWKT.BUS_STOP);
-//		
-//		Point reConverted = coordinateConverter.convertFromWGS84(converted, ShapefileWKT.BUS_STOP);
-//		
-//		assertTrue(p.getX() - reConverted.getX() < 0.001);
-//		assertTrue(p.getY() - reConverted.getY() < 0.001);
-//		*/
+//		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
+//		//Coordinate end = new Coordinate(-34.895118,-56.251466);
+//		Coordinate origin = new Coordinate(-34.911062,-56.154312);
+//		Coordinate end = new Coordinate(-34.905713,-56.202303);
+//		List<WalkingPosition> walkingDirections  = walkingDirectionsService.getWalkingDirections(origin, end);
+//		StringBuilder buildReturn = new StringBuilder();
+//		for (WalkingPosition walkingPosition : walkingDirections) {
+//			Coordinate coordinate = walkingPosition.getCoordinate();
+//			String instruction = walkingPosition.getInstruction();
+//			Obstacle obstacle = walkingPosition.getObstacle();
+//			buildReturn.append(coordinate.x+","+coordinate.y+",");
+//			if (instruction != null) {
+//				buildReturn.append(instruction);
+//			} else if (obstacle != null) {
+//				buildReturn.append("obstacle,radius:"+obstacle.getRadius()+",description:"+obstacle.getDescription());
+//			}
+//			buildReturn.append(System.getProperty("line.separator"));
+//		}
+//		System.out.println(buildReturn.toString());
 //	}
 
 }

@@ -7,36 +7,37 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-import org.xml.sax.SAXException;
+import org.jsoup.Jsoup;
+
+import services.directions.walking.WalkingPosition;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class GoogleServicesAdapter {
 
 	/**
-	 * Get smoothed path from startPoint to endPoint using Google directions api
+	 * Get path from startPoint to endPoint using Google directions api
 	 * @param startPoint
 	 * @param endPoint
-	 * @return
+	 * @return list of different routes, each one being a list of Object[] with Object[0] coordinate (Coordinate) and Object[1] instruction (String)
 	 * @throws IOException
 	 */
-	public static List<List<Coordinate>> getRoutes(Coordinate startPoint,
-			Coordinate endPoint) throws IOException {
+	public static List<List<WalkingPosition>> getRoutes(
+			Coordinate startPoint, Coordinate endPoint) throws IOException {
 
-		List<List<Coordinate>> routesReturn = new ArrayList<List<Coordinate>>();
+		List<List<WalkingPosition>> routesReturn = new ArrayList<List<WalkingPosition>>();
 
 		String start = startPoint.x + "," + startPoint.y;
 		String finish = endPoint.x + "," + endPoint.y;
-		String url = "http://maps.googleapis.com/maps/api/directions/json?mode=walking&sensor=false&units=mertics&alternatives=true&origin="
+		String url = "http://maps.googleapis.com/maps/api/directions/json?language=es&mode=walking&sensor=false&units=mertics&alternatives=true&origin="
 				+ start + "&destination=" + finish;
 		JSONObject json = (JSONObject) JSONSerializer
 				.toJSON(getGoogleRoutes(url));
@@ -46,12 +47,42 @@ public class GoogleServicesAdapter {
 		JSONObject route;
 		while (iterator.hasNext()) {
 			route = (JSONObject) iterator.next();
-			JSONObject overviewPolyline = route
-					.getJSONObject("overview_polyline");
-			String points = (String) overviewPolyline.get("points");
-			List<Coordinate> coordinates = decodePoly(points);
-			routesReturn.add(coordinates);
+			JSONArray legs = route.getJSONArray("legs");
+			Iterator legsIterator = legs.iterator();
+			JSONObject leg;
+			List<WalkingPosition> routeCoordinates = new ArrayList<WalkingPosition>();
+			
+			while (legsIterator.hasNext()) {
+				leg = (JSONObject) legsIterator.next();
+				JSONArray steps = leg.getJSONArray("steps");
+				Iterator stepsIterator = steps.iterator();
+				JSONObject step;
+				while (stepsIterator.hasNext()) {
+					step = (JSONObject) stepsIterator.next();
+					String htmlInstructions = step
+							.getString("html_instructions");
+					String instructions = Jsoup.parse(htmlInstructions).text();
+					JSONObject polyline = step.getJSONObject("polyline");
+					String points = (String) polyline.get("points");
+					List<Coordinate> coordinates = decodePoly(points);
+					if (coordinates != null) {
+						for (int i = 0; i < coordinates.size(); i++) {
+							if(i==0){
+								WalkingPosition entry = new WalkingPosition();
+								entry.setCoordinate(coordinates.get(i));
+								entry.setInstruction(instructions);
+								routeCoordinates.add(entry);
+							}else{
+								WalkingPosition entry = new WalkingPosition();
+								entry.setCoordinate(coordinates.get(i));
+								routeCoordinates.add(entry);
+							}
+						}
+					}
+				}
 
+			}
+			routesReturn.add(routeCoordinates);
 		}
 
 		return routesReturn;

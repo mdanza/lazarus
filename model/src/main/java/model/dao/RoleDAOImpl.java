@@ -10,6 +10,7 @@ import model.Role;
 
 @Stateless(name = "RoleDAO")
 public class RoleDAOImpl implements RoleDAO {
+
 	@PersistenceContext(unitName = "lazarus-persistence-unit")
 	private EntityManager entityManager;
 

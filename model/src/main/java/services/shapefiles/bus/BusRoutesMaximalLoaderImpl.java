@@ -58,6 +58,10 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 						busRouteMaximal
 								.setLineName(value.getValue().toString());
 						break;
+					case 5:
+						busRouteMaximal.setSubLineCode(Integer.parseInt(value
+								.getValue().toString()));
+						break;
 					case 6:
 						busRouteMaximal.setSubLineDescription(value.getValue()
 								.toString());
@@ -70,6 +74,8 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 						if (value != null && value.getValue() != null)
 							busRouteMaximal.setMaximalVariantCode(Integer
 									.parseInt(value.getValue().toString()));
+						else
+							busRouteMaximal.setMaximalVariantCode(-1);
 						break;
 					}
 					propertyNumber++;

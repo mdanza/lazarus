@@ -10,6 +10,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import model.ShapefileWKT;
+import model.dao.BusRouteMaximalDAO;
+import model.dao.BusStopDAO;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,8 @@ import org.opengis.referencing.operation.TransformException;
 import services.directions.bus.BusDirectionsService.BusRide;
 import services.shapefiles.utils.CoordinateConverter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -28,9 +32,11 @@ public class BusDirectionsImplTest {
 
 	private BusDirectionsService busDirectionsService;
 	private CoordinateConverter coordinateConverter;
+	private BusStopDAO busStopDAO;
+	private BusRouteMaximalDAO busRouteMaximalDAO;
 
 	@Before
-	public void configure() throws NamingException {
+	public void configure() throws NamingException, MismatchedDimensionException, FactoryException, TransformException {
 		Properties p = new Properties();
 		p.put(Context.INITIAL_CONTEXT_FACTORY,
 				"org.apache.openejb.core.LocalInitialContextFactory");
@@ -41,36 +47,113 @@ public class BusDirectionsImplTest {
 		p.put("lazarus-persistence-unit.JdbcDriver", "org.postgresql.Driver");
 		p.put("lazarus-persistence-unit.JdbcUrl",
 				"jdbc:postgresql://localhost/lazarus");
-		p.put("lazarus-persistence-unit.JdbcUrl",
-				"jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.Username", "postgres");
 		p.put("lazarus-persistence-unit.Password", "postgres");
-
+		//p.put("lazarus-persistence-unit.hibernate.hbm2ddl.auto", "create-drop");
+		p.put("lazarus-persistence-unit.hibernate.dialect", "org.hibernate.spatial.dialect.postgis.PostgisDialect");
+		
 		Context context = new InitialContext(p);
 
 		busDirectionsService = (BusDirectionsService) context
 				.lookup("BusDirectionsServiceLocal");
 		coordinateConverter = (CoordinateConverter) context
 				.lookup("CoordinateConverterLocal");
+		busRouteMaximalDAO = (BusRouteMaximalDAO) context.lookup("BusRouteMaximalDAOLocal");
+		busStopDAO = (BusStopDAO) context.lookup("BusStopDAOLocal");
+		
+//		// add test data
+//		GeometryFactory geometryFactory = new GeometryFactory();
+//		
+//		BusStop busStop = new BusStop();
+//		busStop.setOrdinal(1);
+//		busStop.setVariantCode(10);
+//		Coordinate c = new Coordinate(-56.154924, -34.923942);
+//		Point point = geometryFactory.createPoint(c);
+//		busStop.setPoint(coordinateConverter.convertFromWGS84(point, ShapefileWKT.BUS_STOP));
+//		busStopDAO.add(busStop);
+//		
+//		busStop = new BusStop();
+//		busStop.setOrdinal(2);
+//		busStop.setVariantCode(10);
+//		c = new Coordinate(-56.157371, -34.92271);
+//		point = geometryFactory.createPoint(c);
+//		busStop.setPoint(coordinateConverter.convertFromWGS84(point, ShapefileWKT.BUS_STOP));
+//		busStopDAO.add(busStop);
+//		
+//		busStop = new BusStop();
+//		busStop.setOrdinal(3);
+//		busStop.setVariantCode(10);
+//		c = new Coordinate(-56.160997, -34.920018);
+//		point = geometryFactory.createPoint(c);
+//		busStop.setPoint(coordinateConverter.convertFromWGS84(point, ShapefileWKT.BUS_STOP));
+//		busStopDAO.add(busStop);
+//		
+//		busStop = new BusStop();
+//		busStop.setOrdinal(4);
+//		busStop.setVariantCode(10);
+//		c = new Coordinate(-56.16252, -34.916939);
+//		point = geometryFactory.createPoint(c);
+//		busStop.setPoint(coordinateConverter.convertFromWGS84(point, ShapefileWKT.BUS_STOP));
+//		busStopDAO.add(busStop);
+//		
+//		busStop = new BusStop();
+//		busStop.setOrdinal(5);
+//		busStop.setVariantCode(10);
+//		c = new Coordinate(-56.162778, -34.913332);
+//		point = geometryFactory.createPoint(c);
+//		busStop.setPoint(coordinateConverter.convertFromWGS84(point, ShapefileWKT.BUS_STOP));
+//		busStopDAO.add(busStop);
+//		
+//		BusRouteMaximal busRouteMaximal = new BusRouteMaximal();
+//		busRouteMaximal.setLineName("línea 10");
+//		busRouteMaximal.setSubLineDescription("Munoz y boulevard");
+//		busRouteMaximal.setVariantCode(10);
+//		Coordinate[] coords = new Coordinate[3];
+//		coords[0] = coordinateConverter.convertFromWGS84(geometryFactory.createPoint(new Coordinate(-56.154088, -34.924223)), ShapefileWKT.BUS_MAXIMAL).getCoordinate();
+//		coords[1] = coordinateConverter.convertFromWGS84(geometryFactory.createPoint(new Coordinate(-56.159473, -34.921672)), ShapefileWKT.BUS_MAXIMAL).getCoordinate();
+//		coords[2] = coordinateConverter.convertFromWGS84(geometryFactory.createPoint(new Coordinate(-56.162048, -34.919314)), ShapefileWKT.BUS_MAXIMAL).getCoordinate();
+//		LineString l1 = geometryFactory.createLineString(coords);
 	}
 
-	@Test
-	public void test() throws MismatchedDimensionException, FactoryException,
-			TransformException {
-		int distance = 100;
-		GeometryFactory geo = new GeometryFactory();
-		Coordinate c1 = new Coordinate();
-		Coordinate c2 = new Coordinate();
-		c1.y = -34.886776;
-		c1.x = -56.137919;
-		c2.y = -34.882903;
-		c2.x = -56.083416;
-		Point origin = coordinateConverter.convertFromWGS84(
-				geo.createPoint(c1), ShapefileWKT.BUS_STOP);
-		Point end = coordinateConverter.convertFromWGS84(geo.createPoint(c2),
-				ShapefileWKT.BUS_STOP);
-		List<BusRide> alternatives = busDirectionsService.getRoutes(origin, end,
-				distance);
-		assertTrue(true);
-	}
+//	@Test
+//	public void test() throws MismatchedDimensionException, FactoryException,
+//			TransformException {
+//		int distance = 350;
+//		GeometryFactory geo = new GeometryFactory();
+//		Coordinate c1 = new Coordinate();
+//		Coordinate c2 = new Coordinate();
+//		c1.y = -34.877341;
+//		c1.x = -56.057961;
+//		c2.y = -34.908352;
+//		c2.x = -56.186535;
+//		Point origin = coordinateConverter.convertFromWGS84(
+//				geo.createPoint(c1), ShapefileWKT.BUS_STOP);
+//		Point end = coordinateConverter.convertFromWGS84(geo.createPoint(c2),
+//				ShapefileWKT.BUS_STOP);
+//		List<BusRide> alternatives = busDirectionsService.getRoutes(origin,
+//				end, distance);
+//		for(BusRide alt: alternatives)
+//			System.out.println("line name: " + alt.getLineName() + " ; subLineCode: " + alt.getSubLineCode() + "; subLineDesc" + alt.getSubLineDescription() + "; variant code: " +  alt.getStartStop().getVariantCode() + "; start stop pos code: " + alt.getStartStop().getBusStopCode() + "; end stop pos code: " + alt.getEndStop().getBusStopCode());
+//		assertTrue(true);
+//	}
+	
+//	@Test
+//	public void test() throws MismatchedDimensionException, FactoryException,
+//			TransformException {
+//		int distance = 150;
+//		GeometryFactory geo = new GeometryFactory();
+//		Coordinate c1 = new Coordinate();
+//		Coordinate c2 = new Coordinate();
+//		c1.y = -34.871567;
+//		c1.x = -56.202978;
+//		c2.y = -34.894731;
+//		c2.x = -56.061272;
+//		Point origin = coordinateConverter.convertFromWGS84(
+//				geo.createPoint(c1), ShapefileWKT.BUS_STOP);
+//		Point end = coordinateConverter.convertFromWGS84(geo.createPoint(c2),
+//				ShapefileWKT.BUS_STOP);
+//		List<Transshipment> alternatives = busDirectionsService.getRoutesWithTransshipment(origin,
+//				end, distance);
+//		assertTrue(true);
+//	}
 }

@@ -27,18 +27,26 @@ public interface BusDirectionsService {
 	public class BusRide {
 		private String lineName;
 		private String subLineDescription;
+		private int subLineCode;
 		private BusStop startStop;
 		private BusStop endStop;
 		private LineString trajectory;
+		private List<BusStop> previousStops;
 
 		// constructor. Creates trajectory by sub-setting complete bus line
 		// trajectory and limits it to the path between stops
 		public BusRide(BusStop startStop, BusStop endStop,
-				MultiLineString completeTrajectory, String lineName, String subLineDescription) {
+				MultiLineString completeTrajectory, String lineName,
+				String subLineDescription, int subLineCode,
+				BusStop previousStop, BusStop secondPreviousStop) {
 			this.startStop = startStop;
 			this.endStop = endStop;
 			this.lineName = lineName;
 			this.subLineDescription = subLineDescription;
+			this.subLineCode = subLineCode;
+			this.previousStops = new ArrayList<BusStop>();
+			previousStops.add(previousStop);
+			previousStops.add(secondPreviousStop);
 			List<Coordinate> coordinateSubset = new ArrayList<Coordinate>();
 			GeometryFactory geometryFactory = new GeometryFactory();
 			Coordinate[] allCoordinates = completeTrajectory.getCoordinates();
@@ -58,9 +66,9 @@ public interface BusDirectionsService {
 				coordinateSubset.add(c);
 				i++;
 			}
-			this.trajectory = geometryFactory
-					.createLineString(coordinateSubset.toArray(new Coordinate[coordinateSubset.size()]));		
-			}
+			this.trajectory = geometryFactory.createLineString(coordinateSubset
+					.toArray(new Coordinate[coordinateSubset.size()]));
+		}
 
 		public BusStop getStartStop() {
 			return startStop;
@@ -101,11 +109,32 @@ public interface BusDirectionsService {
 		public void setSubLineDescription(String subLineDescription) {
 			this.subLineDescription = subLineDescription;
 		}
+
+		public int getSubLineCode() {
+			return subLineCode;
+		}
+
+		public void setSubLineCode(int subLineCode) {
+			this.subLineCode = subLineCode;
+		}
+
+		public List<BusStop> getPreviousStops() {
+			return previousStops;
+		}
+
+		public void setPreviousStops(List<BusStop> previousStops) {
+			this.previousStops = previousStops;
+		}
 	}
 
 	public class Transshipment {
 		private BusRide firstRoute;
 		private BusRide secondRoute;
+
+		public Transshipment(BusRide firstRoute, BusRide secondRoute) {
+			this.firstRoute = firstRoute;
+			this.secondRoute = secondRoute;
+		}
 
 		public BusRide getFirstRoute() {
 			return firstRoute;

@@ -25,7 +25,8 @@ import com.vividsolutions.jts.geom.Point;
 @Table(name = "bus_stops")
 @NamedQueries({
 		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"),
-		@NamedQuery(name = "BusStop.findNearPoint", query = "SELECT b FROM BusStop b WHERE dwithin(b.point, :point, :distance) = true") })
+		@NamedQuery(name = "BusStop.findNearPoint", query = "SELECT b FROM BusStop b WHERE dwithin(b.point, :point, :distance) = true"), 
+		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.variantCode = :variantCode AND stop.ordinal = :ordinal")})
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

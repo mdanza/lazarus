@@ -44,6 +44,9 @@ public class BusRouteMaximal {
 	@Column(name = "variant_code")
 	private int variantCode;
 
+	@Column(name = "sub_line_code")
+	private int subLineCode;
+
 	@Column(name = "line_name")
 	private String lineName;
 
@@ -95,6 +98,14 @@ public class BusRouteMaximal {
 
 	public void setSubLineDescription(String subLineDescription) {
 		this.subLineDescription = subLineDescription;
+	}
+
+	public int getSubLineCode() {
+		return subLineCode;
+	}
+
+	public void setSubLineCode(int subLineCode) {
+		this.subLineCode = subLineCode;
 	}
 
 }

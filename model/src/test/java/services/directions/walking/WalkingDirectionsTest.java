@@ -1,19 +1,14 @@
 package services.directions.walking;
 
 
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import model.Obstacle;
+import services.directions.walking.WalkingDirectionsService;
 
 import org.junit.Before;
-import org.junit.Test;
-
-import com.vividsolutions.jts.geom.Coordinate;
 public class WalkingDirectionsTest {
 	
 	private WalkingDirectionsService walkingDirectionsService;

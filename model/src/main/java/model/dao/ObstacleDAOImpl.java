@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import model.Obstacle;
-import model.dao.ObstacleDAO;
+
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -41,7 +41,6 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 		entityManager.persist(obstacle);
 	}
 
-	@Override
 	public void delete(Obstacle obstacle) {
 		if (obstacle == null)
 			throw new IllegalArgumentException("obstacle cannot be null");
@@ -51,7 +50,6 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 		entityManager.remove(obstacle);
 	}
 
-	@Override
 	public void modify(Obstacle obstacleOld, Obstacle obstacleNew) {
 		if (obstacleOld == null || obstacleNew == null)
 			throw new IllegalArgumentException("obtacles cannot be null");
@@ -73,7 +71,6 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 
 	}
 
-	@Override
 	public Obstacle find(Point centre) {
 		Obstacle obstacle;
 		try {
@@ -86,7 +83,6 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 		return obstacle;
 	}
 
-	@Override
 	public List<Obstacle> findByDistance(Geometry geometry, Double distance) {
 		List<Obstacle> obstacles = null;
 		try {

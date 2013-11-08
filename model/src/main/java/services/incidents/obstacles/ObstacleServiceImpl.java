@@ -58,7 +58,6 @@ public class ObstacleServiceImpl implements ObstacleService {
 		}
 	}
 
-	@Override
 	public void deactivateObstacle(Point position) {
 		if (position == null)
 			throw new IllegalArgumentException("position is null");

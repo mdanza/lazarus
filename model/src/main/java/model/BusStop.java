@@ -49,6 +49,21 @@ public class BusStop {
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 
+	public BusStop(){
+		
+	}
+	
+	public BusStop(BusStop anotherBusStop){
+		this.busStopCode = anotherBusStop.busStopCode;
+		this.variantCode = anotherBusStop.variantCode;
+		this.ordinal = anotherBusStop.ordinal;
+		this.streetName = anotherBusStop.streetName;
+		this.streetCode = anotherBusStop.streetCode;
+		this.cornerStreetName = anotherBusStop.cornerStreetName;
+		this.cornerStreetCode = anotherBusStop.cornerStreetCode;
+		this.point = anotherBusStop.point;
+	}
+	
 	public int getOrdinal() {
 		return ordinal;
 	}

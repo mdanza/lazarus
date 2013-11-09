@@ -18,8 +18,8 @@ import org.opengis.referencing.operation.TransformException;
 
 import services.authentication.AuthenticationService;
 import services.directions.bus.BusDirectionsService;
-import services.directions.bus.BusDirectionsService.BusRide;
-import services.directions.bus.BusDirectionsService.Transshipment;
+import services.directions.bus.BusRide;
+import services.directions.bus.Transshipment;
 import services.directions.walking.WalkingDirectionsService;
 import services.directions.walking.WalkingPosition;
 import services.shapefiles.utils.CoordinateConverter;

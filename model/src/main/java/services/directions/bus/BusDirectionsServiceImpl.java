@@ -3,6 +3,7 @@ package services.directions.bus;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -10,12 +11,16 @@ import javax.persistence.Query;
 
 import model.BusRouteMaximal;
 import model.BusStop;
+import model.ShapefileWKT;
+import services.shapefiles.utils.CoordinateConverter;
 
-import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "BusDirectionsService")
 public class BusDirectionsServiceImpl implements BusDirectionsService {
+
+	@EJB(name = "CoordinateConverter")
+	private CoordinateConverter coordinateConverter;
 
 	@PersistenceContext(unitName = "lazarus-persistence-unit")
 	private EntityManager entityManager;
@@ -31,8 +36,8 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 		List<Object[]> queryResult = q.getResultList();
 		List<BusRide> result = new ArrayList<BusRide>();
 		for (Object[] o : queryResult) {
-			BusStop startStop = (BusStop) o[0];
-			BusStop endStop = (BusStop) o[1];
+			BusStop startStop = new BusStop((BusStop) o[0]);
+			BusStop endStop = new BusStop((BusStop) o[1]);
 			BusStop previousStop = null;
 			BusStop secondPreviousStop = null;
 			if (endStop.getOrdinal() - startStop.getOrdinal() >= 1) {
@@ -40,18 +45,39 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 						.createNamedQuery("BusStop.findByOrdinalFromSameLine");
 				q.setParameter("variantCode", startStop.getVariantCode());
 				q.setParameter("ordinal", endStop.getOrdinal() - 1);
-				previousStop = (BusStop) q.getSingleResult();
+				previousStop = new BusStop((BusStop) q.getSingleResult());
 			}
 			if (endStop.getOrdinal() - startStop.getOrdinal() >= 2) {
 				q = entityManager
 						.createNamedQuery("BusStop.findByOrdinalFromSameLine");
 				q.setParameter("variantCode", startStop.getVariantCode());
 				q.setParameter("ordinal", endStop.getOrdinal() - 2);
-				secondPreviousStop = (BusStop) q.getSingleResult();
+				secondPreviousStop = new BusStop((BusStop) q.getSingleResult());
 			}
-			result.add(new BusRide(startStop, endStop, (MultiLineString) o[2],
-					(String) o[3], (String) o[4], (Integer) o[5], previousStop,
+			try {
+
+				startStop.setPoint(coordinateConverter.convertToWGS84(
+						startStop.getPoint(), ShapefileWKT.BUS_STOP));
+
+				endStop.setPoint(coordinateConverter.convertToWGS84(
+						endStop.getPoint(), ShapefileWKT.BUS_STOP));
+
+				previousStop.setPoint(coordinateConverter.convertToWGS84(
+						previousStop.getPoint(), ShapefileWKT.BUS_STOP));
+
+				secondPreviousStop.setPoint(coordinateConverter.convertToWGS84(
+						secondPreviousStop.getPoint(), ShapefileWKT.BUS_STOP));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			result.add(new BusRide(startStop, endStop, (String) o[3],
+					(String) o[4], (Integer) o[5], previousStop,
 					secondPreviousStop));
+			// result.add(new BusRide(startStop, endStop, (MultiLineString)
+			// o[2],
+			// (String) o[3], (String) o[4], (Integer) o[5], previousStop,
+			// secondPreviousStop));
 		}
 		return result;
 	}
@@ -69,12 +95,12 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 		List<Object[]> queryResult = q.getResultList();
 		List<Transshipment> result = new ArrayList<Transshipment>();
 		for (Object[] o : queryResult) {
-			BusStop firstRouteStartStop = (BusStop) o[0];
-			BusStop firstRouteEndStop = (BusStop) o[1];
+			BusStop firstRouteStartStop = new BusStop((BusStop) o[0]);
+			BusStop firstRouteEndStop = new BusStop((BusStop) o[1]);
 			BusStop firstRoutePreviousStop = null;
 			BusStop firstRouteSecondPreviousStop = null;
-			BusStop secondRouteStartStop = (BusStop) o[2];
-			BusStop secondRouteEndStop = (BusStop) o[3];
+			BusStop secondRouteStartStop = new BusStop((BusStop) o[2]);
+			BusStop secondRouteEndStop = new BusStop((BusStop) o[3]);
 			BusStop secondRoutePreviousStop = null;
 			BusStop secondRouteSecondPreviousStop = null;
 			BusRouteMaximal firstRoute = (BusRouteMaximal) o[4];
@@ -87,7 +113,8 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 				q.setParameter("variantCode",
 						firstRouteStartStop.getVariantCode());
 				q.setParameter("ordinal", firstRouteEndStop.getOrdinal() - 1);
-				firstRoutePreviousStop = (BusStop) q.getSingleResult();
+				firstRoutePreviousStop = new BusStop(
+						(BusStop) q.getSingleResult());
 			}
 			if (firstRouteEndStop.getOrdinal()
 					- firstRouteStartStop.getOrdinal() >= 2) {
@@ -96,7 +123,8 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 				q.setParameter("variantCode",
 						firstRouteStartStop.getVariantCode());
 				q.setParameter("ordinal", firstRouteEndStop.getOrdinal() - 2);
-				firstRouteSecondPreviousStop = (BusStop) q.getSingleResult();
+				firstRouteSecondPreviousStop = new BusStop(
+						(BusStop) q.getSingleResult());
 			}
 			if (secondRouteEndStop.getOrdinal()
 					- secondRouteStartStop.getOrdinal() >= 1) {
@@ -105,7 +133,8 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 				q.setParameter("variantCode",
 						secondRouteStartStop.getVariantCode());
 				q.setParameter("ordinal", secondRouteEndStop.getOrdinal() - 1);
-				secondRoutePreviousStop = (BusStop) q.getSingleResult();
+				secondRoutePreviousStop = new BusStop(
+						(BusStop) q.getSingleResult());
 			}
 			if (secondRouteEndStop.getOrdinal()
 					- secondRouteStartStop.getOrdinal() >= 2) {
@@ -114,18 +143,65 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 				q.setParameter("variantCode",
 						secondRouteStartStop.getVariantCode());
 				q.setParameter("ordinal", secondRouteEndStop.getOrdinal() - 2);
-				secondRouteSecondPreviousStop = (BusStop) q.getSingleResult();
+				secondRouteSecondPreviousStop = new BusStop(
+						(BusStop) q.getSingleResult());
+			}
+			try {
+
+				firstRouteStartStop.setPoint(coordinateConverter
+						.convertToWGS84(firstRouteStartStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+
+				firstRouteEndStop.setPoint(coordinateConverter.convertToWGS84(
+						firstRouteEndStop.getPoint(), ShapefileWKT.BUS_STOP));
+
+				firstRoutePreviousStop.setPoint(coordinateConverter
+						.convertToWGS84(firstRoutePreviousStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+
+				firstRouteSecondPreviousStop.setPoint(coordinateConverter
+						.convertToWGS84(
+								firstRouteSecondPreviousStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+
+				secondRouteStartStop.setPoint(coordinateConverter
+						.convertToWGS84(secondRouteStartStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+
+				secondRouteEndStop.setPoint(coordinateConverter.convertToWGS84(
+						secondRouteEndStop.getPoint(), ShapefileWKT.BUS_STOP));
+
+				secondRoutePreviousStop.setPoint(coordinateConverter
+						.convertToWGS84(secondRoutePreviousStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+
+				secondRouteSecondPreviousStop.setPoint(coordinateConverter
+						.convertToWGS84(
+								secondRouteSecondPreviousStop.getPoint(),
+								ShapefileWKT.BUS_STOP));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			result.add(new Transshipment(new BusRide(firstRouteStartStop,
-					firstRouteEndStop, firstRoute.getTrajectory(), firstRoute
-							.getLineName(), firstRoute.getSubLineDescription(),
-					firstRoute.getSubLineCode(), firstRoutePreviousStop,
+					firstRouteEndStop, firstRoute.getLineName(), firstRoute
+							.getSubLineDescription(), firstRoute
+							.getSubLineCode(), firstRoutePreviousStop,
 					firstRouteSecondPreviousStop), new BusRide(
 					secondRouteStartStop, secondRouteEndStop, secondRoute
-							.getTrajectory(), secondRoute.getLineName(),
+							.getLineName(),
 					secondRoute.getSubLineDescription(), secondRoute
 							.getSubLineCode(), secondRoutePreviousStop,
 					secondRouteSecondPreviousStop)));
+			// result.add(new Transshipment(new BusRide(firstRouteStartStop,
+			// firstRouteEndStop, firstRoute.getTrajectory(), firstRoute
+			// .getLineName(), firstRoute.getSubLineDescription(),
+			// firstRoute.getSubLineCode(), firstRoutePreviousStop,
+			// firstRouteSecondPreviousStop), new BusRide(
+			// secondRouteStartStop, secondRouteEndStop, secondRoute
+			// .getTrajectory(), secondRoute.getLineName(),
+			// secondRoute.getSubLineDescription(), secondRoute
+			// .getSubLineCode(), secondRoutePreviousStop,
+			// secondRouteSecondPreviousStop)));
 		}
 		return result;
 	}

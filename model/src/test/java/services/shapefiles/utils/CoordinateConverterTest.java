@@ -47,7 +47,8 @@ public class CoordinateConverterTest {
 	@Test
 	public void test() throws MismatchedDimensionException, FactoryException, TransformException {
 		GeometryFactory f = new GeometryFactory();
-		Coordinate c = new Coordinate(577776.31416, 6141077.73612);
+		//Coordinate c = new Coordinate(577776.31416, 6141077.73612);
+		Coordinate c = new Coordinate(586114, 6140216);
 		Point p = f.createPoint(c);
 		Point converted = coordinateConverter.convertToWGS84(p, ShapefileWKT.BUS_STOP);
 		

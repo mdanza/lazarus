@@ -54,7 +54,7 @@ public class BusStopLoaderImpl implements BusStopLoader {
 						busStop.setPoint((Point) value.getValue());
 						break;
 					case 1:
-						busStop.setBusStopCode(Integer.parseInt(value
+						busStop.setBusStopLocationCode(Integer.parseInt(value
 								.getValue().toString()));
 						break;
 					case 3:

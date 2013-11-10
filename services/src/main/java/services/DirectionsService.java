@@ -5,9 +5,11 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import model.Bus;
 import model.Obstacle;
 import model.ShapefileWKT;
 
@@ -18,8 +20,9 @@ import org.opengis.referencing.operation.TransformException;
 
 import services.authentication.AuthenticationService;
 import services.directions.bus.BusDirectionsService;
-import services.directions.bus.BusDirectionsService.BusRide;
-import services.directions.bus.BusDirectionsService.Transshipment;
+import services.directions.bus.BusRide;
+import services.directions.bus.Transshipment;
+import services.directions.bus.schedules.BusSchedulesService;
 import services.directions.walking.WalkingDirectionsService;
 import services.directions.walking.WalkingPosition;
 import services.directions.walking.WalkingPositionExclusionStrategy;
@@ -47,6 +50,9 @@ public class DirectionsService {
 	@EJB(name = "BusDirectionsService")
 	private BusDirectionsService busDirectionsService;
 
+	@EJB(name = "BusSchedulesService")
+	private BusSchedulesService busSchedulesService;
+
 	@EJB(name = "CoordinateConverter")
 	private CoordinateConverter coordinateConverter;
 
@@ -62,7 +68,8 @@ public class DirectionsService {
 
 	@GET
 	@Path("/walkingDirections")
-	public String getWalkingDirections(@QueryParam("token") String token,
+	public String getWalkingDirections(
+			@HeaderParam("Authorization") String token,
 			@QueryParam("origin") String origin, @QueryParam("end") String end) {
 		if (token == null || origin == null || end == null || token.equals("")
 				|| origin.equals("") || end.equals(""))
@@ -88,7 +95,7 @@ public class DirectionsService {
 			@QueryParam("yOrigin") Double yOrigin,
 			@QueryParam("xEnd") Double xEnd, @QueryParam("yEnd") Double yEnd,
 			@QueryParam("maxWalkingDistance") int distance,
-			@QueryParam("token") String token)
+			@HeaderParam("Authorization") String token)
 			throws MismatchedDimensionException, FactoryException,
 			TransformException {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
@@ -117,7 +124,7 @@ public class DirectionsService {
 			@QueryParam("yOrigin") Double yOrigin,
 			@QueryParam("xEnd") Double xEnd, @QueryParam("yEnd") Double yEnd,
 			@QueryParam("maxWalkingDistance") int distance,
-			@QueryParam("token") String token)
+			@HeaderParam("Authorization") String token)
 			throws MismatchedDimensionException, FactoryException,
 			TransformException {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
@@ -138,5 +145,39 @@ public class DirectionsService {
 				.getRoutesWithTransshipment(originConverted, endConverted,
 						distance);
 		return gson.toJson(results);
+	}
+
+	@GET
+	@Path("/schedule")
+	public String getBusSchedule(@HeaderParam("Authorization") String token,
+			@QueryParam("variantCode") Integer variantCode,
+			@QueryParam("subLineCode") Integer subLineCode,
+			@QueryParam("busStopLocationCode") Integer busStopLocationCode) {
+		if (token == null || token == "" || variantCode == null
+				|| subLineCode == null || busStopLocationCode == null)
+			throw new IllegalArgumentException(
+					"Empty or null arguments are not allowed");
+		authenticationService.authenticate(token);
+		int[] results = busSchedulesService.getBusLineSchedule(variantCode, subLineCode, busStopLocationCode);
+		return gson.toJson(results);
+	}
+
+	@GET
+	@Path("/bus")
+	public String getClosestBus(@HeaderParam("Authorization") String token,
+			@QueryParam("variantCode") Integer variantCode,
+			@QueryParam("subLineCode") Integer subLineCode,
+			@QueryParam("busStopOrdinal") Integer busStopOrdinal) {
+		if (token == null || token == "" || variantCode == null
+				|| subLineCode == null || busStopOrdinal == null)
+			throw new IllegalArgumentException(
+					"Empty or null arguments are not allowed");
+		authenticationService.authenticate(token);
+		Bus result = busSchedulesService.getClosestBus(variantCode,
+				subLineCode, busStopOrdinal);
+		if (result != null)
+			return gson.toJson(result);
+		else
+			return null;
 	}
 }

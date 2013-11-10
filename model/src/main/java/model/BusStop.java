@@ -32,7 +32,7 @@ public class BusStop {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private int busStopCode;
+	private int busStopLocationCode;
 
 	private int variantCode;
 
@@ -49,6 +49,21 @@ public class BusStop {
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 
+	public BusStop(){
+		
+	}
+	
+	public BusStop(BusStop anotherBusStop){
+		this.busStopLocationCode = anotherBusStop.busStopLocationCode;
+		this.variantCode = anotherBusStop.variantCode;
+		this.ordinal = anotherBusStop.ordinal;
+		this.streetName = anotherBusStop.streetName;
+		this.streetCode = anotherBusStop.streetCode;
+		this.cornerStreetName = anotherBusStop.cornerStreetName;
+		this.cornerStreetCode = anotherBusStop.cornerStreetCode;
+		this.point = anotherBusStop.point;
+	}
+	
 	public int getOrdinal() {
 		return ordinal;
 	}
@@ -57,12 +72,12 @@ public class BusStop {
 		this.ordinal = ordinal;
 	}
 
-	public int getBusStopCode() {
-		return busStopCode;
+	public int getBusStopLocationCode() {
+		return busStopLocationCode;
 	}
 
-	public void setBusStopCode(int busStopCode) {
-		this.busStopCode = busStopCode;
+	public void setBusStopLocationCode(int busStopLocationCode) {
+		this.busStopLocationCode = busStopLocationCode;
 	}
 
 	public int getVariantCode() {

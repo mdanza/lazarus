@@ -9,8 +9,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import model.Corner;
-import model.Street;
-import model.dao.CornerDAO;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -60,11 +58,11 @@ public class CornerDAOImpl implements CornerDAO {
 		return corners;
 	}
 
-	@Override
 	public List<Corner> findByStreetNames(String mainStreet, String cornerStreet) {
 		List<Corner> corner;
 		try {
-			Query q = entityManager.createNamedQuery("Corner.findByStreetNames");
+			Query q = entityManager
+					.createNamedQuery("Corner.findByStreetNames");
 			q.setParameter("firstStreetName", mainStreet);
 			q.setParameter("secondStreetName", cornerStreet);
 			corner = (List<Corner>) q.getResultList();

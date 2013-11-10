@@ -13,7 +13,7 @@ public class AddressDAOImpl implements AddressDAO {
 
 	@PersistenceContext(unitName = "lazarus-persistence-unit")
 	private EntityManager entityManager;
-	
+
 	public void add(Address address) {
 		// TODO Auto-generated method stub
 		entityManager.persist(address);
@@ -35,12 +35,12 @@ public class AddressDAOImpl implements AddressDAO {
 		return null;
 	}
 
-	@Override
 	public Address findByStreetNameAndNumber(String streetName, int number,
 			String letter) {
 		Address address;
 		try {
-			Query q = entityManager.createNamedQuery("Address.findByStreetNameAndNumber");
+			Query q = entityManager
+					.createNamedQuery("Address.findByStreetNameAndNumber");
 			q.setParameter("streetName", streetName);
 			q.setParameter("number", number);
 			q.setParameter("letter", letter);
@@ -48,7 +48,7 @@ public class AddressDAOImpl implements AddressDAO {
 		} catch (NoResultException e) {
 			address = null;
 		}
-		return address;	
+		return address;
 	}
 
 }

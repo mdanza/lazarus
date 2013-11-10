@@ -3,6 +3,7 @@ package services;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
@@ -39,7 +40,7 @@ public class AddressesService {
 
 	@GET
 	@Path("/addressNumberToCoordinates")
-	public String addressNumberToCoordinates(@QueryParam("token") String token,
+	public String addressNumberToCoordinates(@HeaderParam("Authorization") String token,
 			@QueryParam("streetName") String streetName,
 			@QueryParam("number") String number,
 			@QueryParam("letter") String letter) {
@@ -58,7 +59,7 @@ public class AddressesService {
 
 	@GET
 	@Path("/cornerToCoordinates")
-	public String cornerToCoordinates(@QueryParam("token") String token,
+	public String cornerToCoordinates(@HeaderParam("Authorization") String token,
 			@QueryParam("mainStreet") String mainStreet,
 			@QueryParam("cornerStreet") String cornerStreet) {
 		if (token == null || mainStreet == null || cornerStreet == null
@@ -73,7 +74,7 @@ public class AddressesService {
 
 	@GET
 	@Path("/possibleStreets")
-	public String possibleStreets(@QueryParam("token") String token,
+	public String possibleStreets(@HeaderParam("Authorization") String token,
 			@QueryParam("name") String name) {
 		if (token == null || name == null || token.equals("")
 				|| name.equals(""))
@@ -85,7 +86,7 @@ public class AddressesService {
 
 	@GET
 	@Path("/closeData")
-	public String getCloseData(@QueryParam("token") String token,
+	public String getCloseData(@HeaderParam("Authorization") String token,
 			@QueryParam("position") String position) {
 		if (token == null || position == null || token.equals("")
 				|| position.equals(""))

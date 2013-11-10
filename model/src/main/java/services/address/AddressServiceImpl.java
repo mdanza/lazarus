@@ -39,7 +39,6 @@ public class AddressServiceImpl implements AddressService {
 	@EJB(beanName = "CoordinateConverter")
 	protected CoordinateConverter coordinateConverter;
 
-	@Override
 	public Coordinate parseAddressToCoordinates(String streetName,
 			int addressNumber, String letter) {
 		try {
@@ -61,7 +60,6 @@ public class AddressServiceImpl implements AddressService {
 		}
 	}
 
-	@Override
 	public Coordinate parseAddressToCoordinates(String mainStreet,
 			String cornerStreet) {
 		try {
@@ -83,7 +81,6 @@ public class AddressServiceImpl implements AddressService {
 		}
 	}
 
-	@Override
 	public List<String> getPossibleStreets(String approximate) {
 		approximate = approximate.toUpperCase();
 		List<String> parts = Arrays.asList(approximate.split(" "));
@@ -154,18 +151,18 @@ public class AddressServiceImpl implements AddressService {
 		return vals;
 	}
 
-	@Override
 	public CloseLocationData getCloseLocationData(Coordinate coordinate) {
 		try {
 			double x = coordinate.x;
 			double y = coordinate.y;
-			coordinate.x=y;
-			coordinate.y=x;
+			coordinate.x = y;
+			coordinate.y = x;
 			GeometryFactory factory = new GeometryFactory();
 			Point cornerPoint = coordinateConverter.convertFromWGS84(
 					factory.createPoint(coordinate), "corner");
 			Corner corner = cornerDAO.findClosestToPoint(cornerPoint);
-			Point streetPoint = coordinateConverter.convertFromWGS84(factory.createPoint(coordinate), "street");
+			Point streetPoint = coordinateConverter.convertFromWGS84(
+					factory.createPoint(coordinate), "street");
 			Street street = streetDAO.findClosestToPoint(streetPoint);
 			CloseLocationData closeData = new CloseLocationData();
 			closeData.setClosestCorner(corner);

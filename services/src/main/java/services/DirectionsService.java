@@ -10,7 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import model.Bus;
-import model.Obstacle;
 import model.ShapefileWKT;
 
 import org.apache.log4j.Logger;

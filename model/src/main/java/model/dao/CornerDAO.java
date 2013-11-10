@@ -12,4 +12,8 @@ import com.vividsolutions.jts.geom.Point;
 public interface CornerDAO extends ModelDAO<Corner, Integer> {
 
 	public List<Corner> findCornersWithinRadius(Point point,Double radius);
+
+	public List<Corner> findByStreetNames(String mainStreet, String cornerStreet);
+	
+	public Corner findClosestToPoint(Point point);
 }

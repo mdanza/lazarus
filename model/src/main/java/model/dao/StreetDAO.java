@@ -17,4 +17,6 @@ public interface StreetDAO extends ModelDAO<Street, String> {
 	
 	public Street findClosestToPoint(Point point);
 
+	public List<String> findPossibleStreets(String approximate);
+
 }

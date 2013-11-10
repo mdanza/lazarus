@@ -1,5 +1,4 @@
-package services.directions.walking;
-
+package services.address;
 
 import java.util.List;
 import java.util.Properties;
@@ -14,9 +13,10 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
-public class WalkingDirectionsTest {
-	
-	private WalkingDirectionsService walkingDirectionsService;
+
+public class AddressServiceTest {
+
+	private AddressService addressService;
 
 	@Before
 	public void configure() throws NamingException {
@@ -28,30 +28,40 @@ public class WalkingDirectionsTest {
 
 		p.put("lazarus-persistence-unit", "new://Resource?type=DataSource");
 		p.put("lazarus-persistence-unit.JdbcDriver", "org.postgresql.Driver");
-		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
-		p.put("lazarus-persistence-unit.JdbcUrl", "jdbc:postgresql://localhost/lazarus");
+		p.put("lazarus-persistence-unit.JdbcUrl",
+				"jdbc:postgresql://localhost/lazarus");
+		p.put("lazarus-persistence-unit.JdbcUrl",
+				"jdbc:postgresql://localhost/lazarus");
 		p.put("lazarus-persistence-unit.Username", "postgres");
 		p.put("lazarus-persistence-unit.Password", "postgres");
 
 		Context context = new InitialContext(p);
 
-		walkingDirectionsService = (WalkingDirectionsService) context.lookup("WalkingDirectionsServiceLocal");
-	}
+		addressService = (AddressService) context
+				.lookup("AddressServiceLocal");
+
 	
+	}
 
 	@Test
-	public void test(){
-		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
-		//Coordinate end = new Coordinate(-34.895118,-56.251466);
-		Coordinate origin = new Coordinate(-34.911062,-56.154312);
-		Coordinate end = new Coordinate(-34.905713,-56.202303);
-		List<WalkingPosition> walkingDirections  = walkingDirectionsService.getWalkingDirections(origin, end);
+	public void testParseAddress() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+		builder.setExclusionStrategies(new CloseLocationDataExclusionStrategy());
 		Gson gson = builder.create();
-		System.out.println(gson.toJson(walkingDirections));
+		CloseLocationData closeLocationData = addressService.getCloseLocationData(new Coordinate(-34.901806,-56.140385));
+		//System.out.println(gson.toJson(closeLocationData));
 		
+		
+		
+		//List<String> possible = addressService.getPossibleStreets("ruta nal 8 j gral");
+		//for(String one:possible){
+		//	System.out.println(one);
+		//}
+		
+		System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", 1417, ""));
+		//System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", "AV GRAL RIVERA"));
 	}
+
 
 }

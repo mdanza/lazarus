@@ -2,8 +2,8 @@ package services.directions.walking;
 
 import model.Obstacle;
 
+import com.google.gson.annotations.Expose;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
 
 public class WalkingPosition {
 
@@ -66,8 +66,6 @@ public class WalkingPosition {
 		boolean equals = false;
 		if (o instanceof WalkingPosition) {
 			WalkingPosition other = (WalkingPosition) o;
-			if(this.getObstacle()!=null && other.getObstacle()!=null)
-				System.out.println();
 			boolean equalCoordinates = compareCoordinates(other);
 			boolean equalInstructions = compareInstructions(other);
 			boolean equalObstacles = compareObstacles(other);

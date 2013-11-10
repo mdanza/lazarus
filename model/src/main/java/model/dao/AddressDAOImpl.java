@@ -2,7 +2,9 @@ package model.dao;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import model.Address;
 
@@ -31,6 +33,22 @@ public class AddressDAOImpl implements AddressDAO {
 	public Address find(Integer uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Address findByStreetNameAndNumber(String streetName, int number,
+			String letter) {
+		Address address;
+		try {
+			Query q = entityManager.createNamedQuery("Address.findByStreetNameAndNumber");
+			q.setParameter("streetName", streetName);
+			q.setParameter("number", number);
+			q.setParameter("letter", letter);
+			address = (Address) q.getSingleResult();
+		} catch (NoResultException e) {
+			address = null;
+		}
+		return address;	
 	}
 
 }

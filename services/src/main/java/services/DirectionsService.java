@@ -163,15 +163,20 @@ public class DirectionsService {
 	@GET
 	@Path("/schedule")
 	public String getBusSchedule(@HeaderParam("Authorization") String token,
-			@QueryParam("variantCode") Integer variantCode,
-			@QueryParam("subLineCode") Integer subLineCode,
-			@QueryParam("busStopLocationCode") Integer busStopLocationCode) {
-		if (token == null || token == "" || variantCode == null
-				|| subLineCode == null || busStopLocationCode == null)
+			@QueryParam("lineName") String lineName,
+			@QueryParam("subLineDescription") String subLineDescription,
+			@QueryParam("busStopLocationCode") Integer busStopLocationCode,
+			@QueryParam("minutesSinceStartOfDay") Integer minutesSinceStartOfDay) {
+		if (token == null || token == "" || lineName == null || lineName == ""
+				|| subLineDescription == null || subLineDescription == ""
+				|| busStopLocationCode == null
+				|| minutesSinceStartOfDay == null)
 			throw new IllegalArgumentException(
 					"Empty or null arguments are not allowed");
 		authenticationService.authenticate(token);
-		int[] results = busSchedulesService.getBusLineSchedule(variantCode, subLineCode, busStopLocationCode);
+		List<String> results = busSchedulesService
+				.getBusLineSchedule(lineName, subLineDescription,
+						busStopLocationCode, minutesSinceStartOfDay);
 		return gson.toJson(results);
 	}
 

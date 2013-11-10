@@ -130,31 +130,31 @@ public class BusDirectionsImplTest {
 		// LineString l1 = geometryFactory.createLineString(coords);
 	}
 
-	// @Test
-	// public void test() throws MismatchedDimensionException, FactoryException,
-	// TransformException {
-	// int distance = 350;
-	// GeometryFactory geo = new GeometryFactory();
-	// Coordinate c1 = new Coordinate();
-	// Coordinate c2 = new Coordinate();
-	// c1.y = -34.877341;
-	// c1.x = -56.057961;
-	// c2.y = -34.908352;
-	// c2.x = -56.186535;
-	// Point origin = coordinateConverter.convertFromWGS84(
-	// geo.createPoint(c1), ShapefileWKT.BUS_STOP);
-	// Point end = coordinateConverter.convertFromWGS84(geo.createPoint(c2),
-	// ShapefileWKT.BUS_STOP);
-	// List<BusRide> alternatives = busDirectionsService.getRoutes(origin,
-	// end, distance);
-	// for(BusRide alt: alternatives)
-	// System.out.println("line name: " + alt.getLineName() + " ; subLineCode: "
-	// + alt.getSubLineCode() + "; subLineDesc" + alt.getSubLineDescription() +
-	// "; variant code: " + alt.getStartStop().getVariantCode() +
-	// "; start stop pos code: " + alt.getStartStop().getBusStopCode() +
-	// "; end stop pos code: " + alt.getEndStop().getBusStopCode());
-	// assertTrue(true);
-	// }
+//	 @Test
+//	 public void test() throws MismatchedDimensionException, FactoryException,
+//	 TransformException {
+//	 int distance = 350;
+//	 GeometryFactory geo = new GeometryFactory();
+//	 Coordinate c1 = new Coordinate();
+//	 Coordinate c2 = new Coordinate();
+//	 c1.y = -34.877341;
+//	 c1.x = -56.057961;
+//	 c2.y = -34.908352;
+//	 c2.x = -56.186535;
+//	 Point origin = coordinateConverter.convertFromWGS84(
+//	 geo.createPoint(c1), ShapefileWKT.BUS_STOP);
+//	 Point end = coordinateConverter.convertFromWGS84(geo.createPoint(c2),
+//	 ShapefileWKT.BUS_STOP);
+//	 List<BusRide> alternatives = busDirectionsService.getRoutes(origin,
+//	 end, distance);
+//	 for(BusRide alt: alternatives)
+//	 System.out.println("line name: " + alt.getLineName() + " ; subLineCode: "
+//	 + alt.getSubLineCode() + "; subLineDesc" + alt.getSubLineDescription() +
+//	 "; variant code: " + alt.getStartStop().getVariantCode() +
+//	 "; start stop pos code: " + alt.getStartStop().getBusStopLocationCode() +
+//	 "; end stop pos code: " + alt.getEndStop().getBusStopLocationCode());
+//	 assertTrue(true);
+//	 }
 
 //	@Test
 //	public void test() throws MismatchedDimensionException, FactoryException,

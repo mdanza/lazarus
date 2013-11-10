@@ -3,6 +3,7 @@ package services;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -74,7 +75,7 @@ public class UserService {
 
 	@DELETE
 	@Path("/delete")
-	public String delete(@QueryParam("token") String token,
+	public String delete(@HeaderParam("Authorization") String token,
 			@QueryParam("username") String username) {
 		User actionUser = authenticationService.authenticate(token);
 		User deleting = userDAO.find(username);
@@ -89,7 +90,7 @@ public class UserService {
 	@POST
 	@Path("/deactivate")
 	public String deactivate(@QueryParam("username") String username,
-			@QueryParam("token") String token) {
+			@HeaderParam("Authorization") String token) {
 		User actionUser = authenticationService.authenticate(token);
 		User deactivating = userDAO.find(username);
 		if (actionUser.getUsername().equals(username)
@@ -103,7 +104,7 @@ public class UserService {
 
 	@POST
 	@Path("/reportObstacle")
-	public String reportObstacle(@QueryParam("token") String token,
+	public String reportObstacle(@HeaderParam("Authorization") String token,
 			@QueryParam("coordinates") String coordinates,
 			@QueryParam("radius") String radius,
 			@QueryParam("description") String description) {
@@ -125,7 +126,7 @@ public class UserService {
 
 	@POST
 	@Path("/deactivateObstacle")
-	public String deactivateObstacle(@QueryParam("token") String token,
+	public String deactivateObstacle(@HeaderParam("Authorization") String token,
 			@QueryParam("coordinates") String coordinates) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals(""))

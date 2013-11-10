@@ -32,7 +32,7 @@ public class BusStop {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private int busStopCode;
+	private int busStopLocationCode;
 
 	private int variantCode;
 
@@ -54,7 +54,7 @@ public class BusStop {
 	}
 	
 	public BusStop(BusStop anotherBusStop){
-		this.busStopCode = anotherBusStop.busStopCode;
+		this.busStopLocationCode = anotherBusStop.busStopLocationCode;
 		this.variantCode = anotherBusStop.variantCode;
 		this.ordinal = anotherBusStop.ordinal;
 		this.streetName = anotherBusStop.streetName;
@@ -72,12 +72,12 @@ public class BusStop {
 		this.ordinal = ordinal;
 	}
 
-	public int getBusStopCode() {
-		return busStopCode;
+	public int getBusStopLocationCode() {
+		return busStopLocationCode;
 	}
 
-	public void setBusStopCode(int busStopCode) {
-		this.busStopCode = busStopCode;
+	public void setBusStopLocationCode(int busStopLocationCode) {
+		this.busStopLocationCode = busStopLocationCode;
 	}
 
 	public int getVariantCode() {

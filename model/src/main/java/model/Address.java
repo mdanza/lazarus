@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -13,6 +15,7 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "addresses")
+@NamedQueries({ @NamedQuery(name = "Address.findByStreetNameAndNumber", query = "SELECT a FROM Address a WHERE a.streetName = :streetName AND a.number = :number AND a.letter = :letter") })
 public class Address {
 
 	@Id
@@ -35,13 +38,13 @@ public class Address {
 	private String letter;
 
 	private String paridad;
-	
+
 	public Address() {
 		super();
 	}
 
-	public Address(Point point, long padron, long nameCode,
-			String streetName, int number, String letter, String paridad) {
+	public Address(Point point, long padron, long nameCode, String streetName,
+			int number, String letter, String paridad) {
 		super();
 		this.point = point;
 		this.padron = padron;

@@ -22,6 +22,7 @@ import services.directions.bus.BusDirectionsService.BusRide;
 import services.directions.bus.BusDirectionsService.Transshipment;
 import services.directions.walking.WalkingDirectionsService;
 import services.directions.walking.WalkingPosition;
+import services.directions.walking.WalkingPositionExclusionStrategy;
 import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
@@ -52,6 +53,7 @@ public class DirectionsService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
+		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
 		return builder.create();
 	}
 
@@ -77,22 +79,7 @@ public class DirectionsService {
 				Double.valueOf(yEnd));
 		List<WalkingPosition> walkingDirections = walkingDirectionsService
 				.getWalkingDirections(originCoordinates, endCoordinates);
-		StringBuilder buildReturn = new StringBuilder();
-		for (WalkingPosition walkingPosition : walkingDirections) {
-			Coordinate coordinate = walkingPosition.getCoordinate();
-			String instruction = walkingPosition.getInstruction();
-			Obstacle obstacle = walkingPosition.getObstacle();
-			buildReturn.append(coordinate.x + "," + coordinate.y);
-			if (instruction != null) {
-				buildReturn.append("," + instruction);
-			} else if (obstacle != null) {
-				buildReturn.append("," + "obstacle,radius:"
-						+ obstacle.getRadius() + ",description:"
-						+ obstacle.getDescription());
-			}
-			buildReturn.append(System.getProperty("line.separator"));
-		}
-		return buildReturn.toString();
+		return gson.toJson(walkingDirections);
 	}
 
 	@GET

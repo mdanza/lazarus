@@ -88,7 +88,6 @@ public class AddressLoaderImpl implements AddressLoader {
 				count++;
 				System.out.println(count);
 			}
-
 			reader = store.getFeatureReader();
 			Feature feature = reader.next();
 			ShapefileWKT shapefileWKT = new ShapefileWKT();

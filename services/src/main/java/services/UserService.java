@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
 import services.incidents.obstacles.ObstacleService;
+import services.users.FavouriteService;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -38,6 +39,9 @@ public class UserService {
 
 	@EJB(name = "ObstacleService")
 	private ObstacleService obstacleService;
+	
+	@EJB(name = "FavouriteService")
+	private FavouriteService favouriteService;
 
 	@POST
 	@Path("/create")
@@ -139,6 +143,37 @@ public class UserService {
 		GeometryFactory factory = new GeometryFactory();
 		Point point = factory.createPoint(position);
 		obstacleService.deactivateObstacle(point);
+		return "Done";
+	}
+	
+
+	@POST
+	@Path("/addToFavourite")
+	public String addToFavourite(@HeaderParam("Authorization") String token,
+			@QueryParam("coordinates") String coordinates,@QueryParam("name") String name) {
+		if (token == null || token.equals("") || coordinates == null
+				|| coordinates.equals("") || name==null || name.equals(""))
+			throw new IllegalArgumentException(
+					"Token, coordinates or name empty or null");
+		User user = authenticationService.authenticate(token);
+		Double x = Double.valueOf(coordinates.split(",")[0]);
+		Double y = Double.valueOf(coordinates.split(",")[1]);
+		Coordinate position = new Coordinate(x, y);
+		GeometryFactory factory = new GeometryFactory();
+		Point point = factory.createPoint(position);
+		favouriteService.addToFavourite(user, point, name);
+		return "Done";
+	}
+	
+	@POST
+	@Path("/removeFavourite")
+	public String removeFavourite(@HeaderParam("Authorization") String token,
+			@QueryParam("name") String name) {
+		if (token == null || token.equals("") || name==null || name.equals(""))
+			throw new IllegalArgumentException(
+					"Token, coordinates or name empty or null");
+		User user = authenticationService.authenticate(token);
+		favouriteService.removeFromFavourite(user, name);
 		return "Done";
 	}
 }

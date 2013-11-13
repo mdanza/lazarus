@@ -1,5 +1,6 @@
 package model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,33 +25,40 @@ import com.vividsolutions.jts.geom.Point;
 @Entity
 @Table(name = "bus_stops")
 @NamedQueries({
-		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"),
-		@NamedQuery(name = "BusStop.findNearPoint", query = "SELECT b FROM BusStop b WHERE dwithin(b.point, :point, :distance) = true"), 
-		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.variantCode = :variantCode AND stop.ordinal = :ordinal")})
+		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"), 
+		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode AND stop.ordinal = :ordinal")})
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
+	@Column(name = "bus_stop_location_code")
 	private int busStopLocationCode;
 
+	@Column(name = "variant_code")
 	private int variantCode;
 
 	private int ordinal;
 
+	@Column(name = "street_name")
 	private String streetName;
 
+	@Column(name = "street_code")
 	private long streetCode;
 
+	@Column(name = "corner_street_name")
 	private String cornerStreetName;
 
+	@Column(name = "corner_street_code")
 	private long cornerStreetCode;
+	
+	private boolean active;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 
 	public BusStop(){
-		
+		this.active = true;
 	}
 	
 	public BusStop(BusStop anotherBusStop){
@@ -62,6 +70,7 @@ public class BusStop {
 		this.cornerStreetName = anotherBusStop.cornerStreetName;
 		this.cornerStreetCode = anotherBusStop.cornerStreetCode;
 		this.point = anotherBusStop.point;
+		this.active = anotherBusStop.active;
 	}
 	
 	public int getOrdinal() {
@@ -130,5 +139,13 @@ public class BusStop {
 
 	public int getId() {
 		return id;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

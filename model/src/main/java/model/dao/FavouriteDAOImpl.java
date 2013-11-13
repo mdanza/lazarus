@@ -20,7 +20,6 @@ public class FavouriteDAOImpl implements FavouriteDAO {
 		@EJB(name = "UserDAO")
 		private UserDAO userDAO;
 
-		@Override
 		public void add(Favourite favourite) {
 			if(favourite==null)
 				throw new IllegalArgumentException("favourite is null");
@@ -29,7 +28,6 @@ public class FavouriteDAOImpl implements FavouriteDAO {
 			entityManager.persist(favourite);
 		}
 
-		@Override
 		public void delete(Favourite favourite) {
 			if(favourite==null)
 				throw new IllegalArgumentException("favourite is null");
@@ -39,20 +37,16 @@ public class FavouriteDAOImpl implements FavouriteDAO {
 			entityManager.remove(old);
 		}
 
-		@Override
 		public void modify(Favourite modelObjectOld, Favourite modelObjectNew) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
 		public Favourite find(String uniqueKey) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
-		
-		@Override
 		public Favourite findByUserAndName(User user, String name) {
 			if(user==null || name == null)
 				throw new IllegalArgumentException("Null user or name");

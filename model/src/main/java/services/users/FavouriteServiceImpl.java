@@ -15,7 +15,6 @@ public class FavouriteServiceImpl implements FavouriteService {
 	@EJB(beanName = "FavouriteDAO")
 	protected FavouriteDAO favouriteDAO;
 
-	@Override
 	public void addToFavourite(User user, Point point, String name) {
 		if(user==null || point==null || name==null)
 			throw new IllegalArgumentException("User, point or name cannot be null");
@@ -23,7 +22,6 @@ public class FavouriteServiceImpl implements FavouriteService {
 		favouriteDAO.add(favourite);
 	}
 
-	@Override
 	public void removeFromFavourite(User user, String name) {
 		if(user==null || name==null)
 			throw new IllegalArgumentException("User or name cannot be null");

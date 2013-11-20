@@ -1,5 +1,7 @@
 package services.users;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -15,7 +17,6 @@ public class FavouriteServiceImpl implements FavouriteService {
 	@EJB(beanName = "FavouriteDAO")
 	protected FavouriteDAO favouriteDAO;
 
-	@Override
 	public void addToFavourite(User user, Point point, String name) {
 		if(user==null || point==null || name==null)
 			throw new IllegalArgumentException("User, point or name cannot be null");
@@ -23,7 +24,6 @@ public class FavouriteServiceImpl implements FavouriteService {
 		favouriteDAO.add(favourite);
 	}
 
-	@Override
 	public void removeFromFavourite(User user, String name) {
 		if(user==null || name==null)
 			throw new IllegalArgumentException("User or name cannot be null");
@@ -31,6 +31,12 @@ public class FavouriteServiceImpl implements FavouriteService {
 		if(favourite==null)
 			throw new IllegalArgumentException("Favourite does not exist");
 		favouriteDAO.delete(favourite);
+	}
+
+	public List<Favourite> getFavourites(User user) {
+		if(user==null)
+			throw new IllegalArgumentException("User cannot be null");
+		return favouriteDAO.findByUser(user);
 	}
 
 }

@@ -3,6 +3,7 @@ package services;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,6 +19,8 @@ import services.authentication.AuthenticationService;
 import services.incidents.obstacles.ObstacleService;
 import services.users.FavouriteService;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -26,6 +29,15 @@ import com.vividsolutions.jts.geom.Point;
 @Path("/api/users")
 public class UserService {
 
+	private Gson gson = createGson();
+	
+	private Gson createGson() {
+		GsonBuilder builder = new GsonBuilder();
+		builder.serializeSpecialFloatingPointValues();
+		//builder.setExclusionStrategies(new CloseLocationDataExclusionStrategy());
+		return builder.create();
+	}
+	
 	static Logger logger = Logger.getLogger(UserService.class);
 
 	private static final String USER_ROLE_NAME = "user";
@@ -175,5 +187,16 @@ public class UserService {
 		User user = authenticationService.authenticate(token);
 		favouriteService.removeFromFavourite(user, name);
 		return "Done";
+	}
+	
+	@GET
+	@Path("/getFavourites")
+	public String getFavourites(@HeaderParam("Authorization") String token) {
+		if (token == null || token.equals(""))
+			throw new IllegalArgumentException(
+					"Token, coordinates or name empty or null");
+		User user = authenticationService.authenticate(token);
+		return gson.toJson(favouriteService.getFavourites(user));
+		
 	}
 }

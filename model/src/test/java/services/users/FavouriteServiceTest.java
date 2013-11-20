@@ -1,15 +1,16 @@
 package services.users;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import model.Favourite;
 import model.Role;
 import model.User;
 import model.dao.FavouriteDAO;
-import model.dao.ObstacleDAO;
 import model.dao.RoleDAO;
 import model.dao.UserDAO;
 
@@ -85,7 +86,13 @@ public class FavouriteServiceTest {
 		Point point = factory.createPoint(position);
 		User user = userDAO.find("mateo");
 		String name = "casa";
+		/*
 		if (favouriteDAO.findByUserAndName(user, name) != null) {
+			favouriteService.removeFromFavourite(user, name);
+		}
+		*/
+		List<Favourite> f =favouriteDAO.findByUser(user);
+		if (f!= null) {
 			favouriteService.removeFromFavourite(user, name);
 		}
 		//favouriteService.addToFavourite(user, point, name);

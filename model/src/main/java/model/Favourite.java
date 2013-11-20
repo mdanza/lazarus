@@ -16,7 +16,8 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "favourites")
-@NamedQueries({ @NamedQuery(name = "Favourite.findByUserAndName", query = "SELECT f FROM Favourite f WHERE f.user.username = :username AND f.name = :name") })
+@NamedQueries({ @NamedQuery(name = "Favourite.findByUserAndName", query = "SELECT f FROM Favourite f WHERE f.user.username = :username AND f.name = :name"),
+		 @NamedQuery(name = "Favourite.findByUser", query = "SELECT f FROM Favourite f WHERE f.user.username = :username") })
 public class Favourite {
 	
 		@Id

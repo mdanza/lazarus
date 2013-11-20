@@ -6,16 +6,18 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import model.Favourite;
 import model.Role;
 import model.User;
 import model.dao.FavouriteDAO;
-import model.dao.ObstacleDAO;
 import model.dao.RoleDAO;
 import model.dao.UserDAO;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -78,37 +80,43 @@ public class FavouriteServiceTest {
 
 	}
 
-//	@Test
-//	public void testAddToFavourite() {
-//		Coordinate position = new Coordinate(-34.902651, -56.162756);
-//		GeometryFactory factory = new GeometryFactory();
-//		Point point = factory.createPoint(position);
-//		User user = userDAO.find("mateo");
-//		String name = "casa";
-//		if (favouriteDAO.findByUserAndName(user, name) != null) {
-//			favouriteService.removeFromFavourite(user, name);
-//		}
-//		//favouriteService.addToFavourite(user, point, name);
-//		// boolean added = false;
-//		// Obstacle obstacle = obstacleDAO.find(point);
-//		// if (obstacle != null && point.equals(obstacle.getCentre())
-//		// && obstacle.getRadius() == 2) {
-//		// User possibleUser = obstacle.getUser();
-//		// if (possibleUser != null && possibleUser.equals(user)) {
-//		// added = true;
-//		// }
-//		// }
-//		// /*
-//		// boolean deleted = false;
-//		// obstacleService.deactivateObstacle(point);
-//		// if (obstacleDAO.find(point) == null) {
-//		// deleted = true;
-//		// }
-//		// assert (added && deleted);
-//		// */
-//		//
-//		// }
-//
-//	}
+	@Test
+	public void testAddToFavourite() {
+		Coordinate position = new Coordinate(-34.902651, -56.162756);
+		GeometryFactory factory = new GeometryFactory();
+		Point point = factory.createPoint(position);
+		User user = userDAO.find("mateo");
+		String name = "casa";
+		GsonBuilder builder = new GsonBuilder();
+		builder.serializeSpecialFloatingPointValues();
+		builder.setExclusionStrategies(new FavouriteExclusionStrategy());
+		Gson json = builder.create();
+		if (favouriteDAO.findByUserAndName(user, name) != null) {
+			Favourite favourite = favouriteDAO.findByUserAndName(user, name);
+			System.out.println(json.toJson(favouriteDAO.findByUserAndName(user, name)));
+			//favouriteService.removeFromFavourite(user, name);
+		}
+		//favouriteService.addToFavourite(user, point, name);
+		// boolean added = false;
+		// Obstacle obstacle = obstacleDAO.find(point);
+		// if (obstacle != null && point.equals(obstacle.getCentre())
+		// && obstacle.getRadius() == 2) {
+		// User possibleUser = obstacle.getUser();
+		// if (possibleUser != null && possibleUser.equals(user)) {
+		// added = true;
+		// }
+		// }
+		// /*
+		// boolean deleted = false;
+		// obstacleService.deactivateObstacle(point);
+		// if (obstacleDAO.find(point) == null) {
+		// deleted = true;
+		// }
+		// assert (added && deleted);
+		// */
+		//
+		// }
+
+	}
 
 }

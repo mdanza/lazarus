@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
 import services.incidents.obstacles.ObstacleService;
+import services.users.FavouriteExclusionStrategy;
 import services.users.FavouriteService;
 
 import com.google.gson.Gson;
@@ -34,7 +35,7 @@ public class UserService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		//builder.setExclusionStrategies(new CloseLocationDataExclusionStrategy());
+		builder.setExclusionStrategies(new FavouriteExclusionStrategy());
 		return builder.create();
 	}
 	

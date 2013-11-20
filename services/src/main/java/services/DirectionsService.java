@@ -9,7 +9,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import model.Bus;
 import model.ShapefileWKT;
 
 import org.apache.log4j.Logger;
@@ -21,7 +20,6 @@ import services.authentication.AuthenticationService;
 import services.directions.bus.BusDirectionsService;
 import services.directions.bus.BusRide;
 import services.directions.bus.Transshipment;
-import services.directions.bus.schedules.BusSchedulesService;
 import services.directions.walking.WalkingDirectionsService;
 import services.directions.walking.WalkingPosition;
 import services.directions.walking.WalkingPositionExclusionStrategy;
@@ -48,9 +46,6 @@ public class DirectionsService {
 
 	@EJB(name = "BusDirectionsService")
 	private BusDirectionsService busDirectionsService;
-
-	@EJB(name = "BusSchedulesService")
-	private BusSchedulesService busSchedulesService;
 
 	@EJB(name = "CoordinateConverter")
 	private CoordinateConverter coordinateConverter;
@@ -144,44 +139,5 @@ public class DirectionsService {
 				.getRoutesWithTransshipment(originConverted, endConverted,
 						distance);
 		return gson.toJson(results);
-	}
-
-	@GET
-	@Path("/schedule")
-	public String getBusSchedule(@HeaderParam("Authorization") String token,
-			@QueryParam("lineName") String lineName,
-			@QueryParam("subLineDescription") String subLineDescription,
-			@QueryParam("busStopLocationCode") Integer busStopLocationCode,
-			@QueryParam("minutesSinceStartOfDay") Integer minutesSinceStartOfDay) {
-		if (token == null || token == "" || lineName == null || lineName == ""
-				|| subLineDescription == null || subLineDescription == ""
-				|| busStopLocationCode == null
-				|| minutesSinceStartOfDay == null)
-			throw new IllegalArgumentException(
-					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		List<String> results = busSchedulesService
-				.getBusLineSchedule(lineName, subLineDescription,
-						busStopLocationCode, minutesSinceStartOfDay);
-		return gson.toJson(results);
-	}
-
-	@GET
-	@Path("/bus")
-	public String getClosestBus(@HeaderParam("Authorization") String token,
-			@QueryParam("variantCode") Integer variantCode,
-			@QueryParam("subLineCode") Integer subLineCode,
-			@QueryParam("busStopOrdinal") Integer busStopOrdinal) {
-		if (token == null || token == "" || variantCode == null
-				|| subLineCode == null || busStopOrdinal == null)
-			throw new IllegalArgumentException(
-					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Bus result = busSchedulesService.getClosestBus(variantCode,
-				subLineCode, busStopOrdinal);
-		if (result != null)
-			return gson.toJson(result);
-		else
-			return null;
 	}
 }

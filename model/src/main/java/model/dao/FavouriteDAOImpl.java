@@ -30,7 +30,7 @@ public class FavouriteDAOImpl implements FavouriteDAO {
 			entityManager.persist(favourite);
 		}
 
-
+	
 		public void delete(Favourite favourite) {
 			if(favourite==null)
 				throw new IllegalArgumentException("favourite is null");
@@ -46,14 +46,12 @@ public class FavouriteDAOImpl implements FavouriteDAO {
 			
 		}
 
-
 		public Favourite find(String uniqueKey) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
-
-
+		
 		public Favourite findByUserAndName(User user, String name) {
 			if(user==null || name == null)
 				throw new IllegalArgumentException("Null user or name");

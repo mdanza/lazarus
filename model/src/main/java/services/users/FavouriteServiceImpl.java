@@ -18,17 +18,18 @@ public class FavouriteServiceImpl implements FavouriteService {
 	protected FavouriteDAO favouriteDAO;
 
 	public void addToFavourite(User user, Point point, String name) {
-		if(user==null || point==null || name==null)
-			throw new IllegalArgumentException("User, point or name cannot be null");
-		Favourite favourite = new Favourite(point,name,user);
+		if (user == null || point == null || name == null)
+			throw new IllegalArgumentException(
+					"User, point or name cannot be null");
+		Favourite favourite = new Favourite(point, name, user);
 		favouriteDAO.add(favourite);
 	}
 
 	public void removeFromFavourite(User user, String name) {
-		if(user==null || name==null)
+		if (user == null || name == null)
 			throw new IllegalArgumentException("User or name cannot be null");
 		Favourite favourite = favouriteDAO.findByUserAndName(user, name);
-		if(favourite==null)
+		if (favourite == null)
 			throw new IllegalArgumentException("Favourite does not exist");
 		favouriteDAO.delete(favourite);
 	}

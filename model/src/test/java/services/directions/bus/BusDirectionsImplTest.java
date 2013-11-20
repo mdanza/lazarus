@@ -133,7 +133,7 @@ public class BusDirectionsImplTest {
 //	 @Test
 //	 public void test() throws MismatchedDimensionException, FactoryException,
 //	 TransformException {
-//	 int distance = 350;
+//	 int distance = 500;
 //	 GeometryFactory geo = new GeometryFactory();
 //	 Coordinate c1 = new Coordinate();
 //	 Coordinate c2 = new Coordinate();

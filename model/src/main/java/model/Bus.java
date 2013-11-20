@@ -7,10 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "buses")
+@NamedQuery(name = "Bus.findById", query = "SELECT b FROM Bus b WHERE b.id = :id")
 public class Bus {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

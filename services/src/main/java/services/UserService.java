@@ -51,7 +51,7 @@ public class UserService {
 
 	@EJB(name = "ObstacleService")
 	private ObstacleService obstacleService;
-	
+
 	@EJB(name = "FavouriteService")
 	private FavouriteService favouriteService;
 
@@ -142,7 +142,8 @@ public class UserService {
 
 	@POST
 	@Path("/deactivateObstacle")
-	public String deactivateObstacle(@HeaderParam("Authorization") String token,
+	public String deactivateObstacle(
+			@HeaderParam("Authorization") String token,
 			@QueryParam("coordinates") String coordinates) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals(""))
@@ -157,14 +158,14 @@ public class UserService {
 		obstacleService.deactivateObstacle(point);
 		return "Done";
 	}
-	
 
 	@POST
 	@Path("/addToFavourite")
 	public String addToFavourite(@HeaderParam("Authorization") String token,
-			@QueryParam("coordinates") String coordinates,@QueryParam("name") String name) {
+			@QueryParam("coordinates") String coordinates,
+			@QueryParam("name") String name) {
 		if (token == null || token.equals("") || coordinates == null
-				|| coordinates.equals("") || name==null || name.equals(""))
+				|| coordinates.equals("") || name == null || name.equals(""))
 			throw new IllegalArgumentException(
 					"Token, coordinates or name empty or null");
 		User user = authenticationService.authenticate(token);
@@ -176,12 +177,13 @@ public class UserService {
 		favouriteService.addToFavourite(user, point, name);
 		return "Done";
 	}
-	
+
 	@POST
 	@Path("/removeFavourite")
 	public String removeFavourite(@HeaderParam("Authorization") String token,
 			@QueryParam("name") String name) {
-		if (token == null || token.equals("") || name==null || name.equals(""))
+		if (token == null || token.equals("") || name == null
+				|| name.equals(""))
 			throw new IllegalArgumentException(
 					"Token, coordinates or name empty or null");
 		User user = authenticationService.authenticate(token);

@@ -39,19 +39,19 @@ public class WalkingDirectionsTest {
 	}
 	
 
-	@Test
-	public void test(){
-		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
-		//Coordinate end = new Coordinate(-34.895118,-56.251466);
-		Coordinate origin = new Coordinate(-34.911062,-56.154312);
-		Coordinate end = new Coordinate(-34.905713,-56.202303);
-		List<WalkingPosition> walkingDirections  = walkingDirectionsService.getWalkingDirections(origin, end);
-		GsonBuilder builder = new GsonBuilder();
-		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
-		Gson gson = builder.create();
-		System.out.println(gson.toJson(walkingDirections));
-		
-	}
+//	@Test
+//	public void test(){
+//		//Coordinate origin = new Coordinate(-34.84903,-56.047493);
+//		//Coordinate end = new Coordinate(-34.895118,-56.251466);
+//		Coordinate origin = new Coordinate(-34.911062,-56.154312);
+//		Coordinate end = new Coordinate(-34.905713,-56.202303);
+//		List<WalkingPosition> walkingDirections  = walkingDirectionsService.getWalkingDirections(origin, end);
+//		GsonBuilder builder = new GsonBuilder();
+//		builder.serializeSpecialFloatingPointValues();
+//		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+//		Gson gson = builder.create();
+//		System.out.println(gson.toJson(walkingDirections));
+//		
+//	}
 
 }

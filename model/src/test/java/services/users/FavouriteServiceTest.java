@@ -1,16 +1,15 @@
 package services.users;
 
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import model.Favourite;
 import model.Role;
 import model.User;
 import model.dao.FavouriteDAO;
+import model.dao.ObstacleDAO;
 import model.dao.RoleDAO;
 import model.dao.UserDAO;
 
@@ -79,43 +78,37 @@ public class FavouriteServiceTest {
 
 	}
 
-	@Test
-	public void testAddToFavourite() {
-		Coordinate position = new Coordinate(-34.902651, -56.162756);
-		GeometryFactory factory = new GeometryFactory();
-		Point point = factory.createPoint(position);
-		User user = userDAO.find("mateo");
-		String name = "casa";
-		/*
-		if (favouriteDAO.findByUserAndName(user, name) != null) {
-			favouriteService.removeFromFavourite(user, name);
-		}
-		*/
-		List<Favourite> f =favouriteDAO.findByUser(user);
-		if (f!= null) {
-			favouriteService.removeFromFavourite(user, name);
-		}
-		//favouriteService.addToFavourite(user, point, name);
-		// boolean added = false;
-		// Obstacle obstacle = obstacleDAO.find(point);
-		// if (obstacle != null && point.equals(obstacle.getCentre())
-		// && obstacle.getRadius() == 2) {
-		// User possibleUser = obstacle.getUser();
-		// if (possibleUser != null && possibleUser.equals(user)) {
-		// added = true;
-		// }
-		// }
-		// /*
-		// boolean deleted = false;
-		// obstacleService.deactivateObstacle(point);
-		// if (obstacleDAO.find(point) == null) {
-		// deleted = true;
-		// }
-		// assert (added && deleted);
-		// */
-		//
-		// }
-
-	}
+//	@Test
+//	public void testAddToFavourite() {
+//		Coordinate position = new Coordinate(-34.902651, -56.162756);
+//		GeometryFactory factory = new GeometryFactory();
+//		Point point = factory.createPoint(position);
+//		User user = userDAO.find("mateo");
+//		String name = "casa";
+//		if (favouriteDAO.findByUserAndName(user, name) != null) {
+//			favouriteService.removeFromFavourite(user, name);
+//		}
+//		//favouriteService.addToFavourite(user, point, name);
+//		// boolean added = false;
+//		// Obstacle obstacle = obstacleDAO.find(point);
+//		// if (obstacle != null && point.equals(obstacle.getCentre())
+//		// && obstacle.getRadius() == 2) {
+//		// User possibleUser = obstacle.getUser();
+//		// if (possibleUser != null && possibleUser.equals(user)) {
+//		// added = true;
+//		// }
+//		// }
+//		// /*
+//		// boolean deleted = false;
+//		// obstacleService.deactivateObstacle(point);
+//		// if (obstacleDAO.find(point) == null) {
+//		// deleted = true;
+//		// }
+//		// assert (added && deleted);
+//		// */
+//		//
+//		// }
+//
+//	}
 
 }

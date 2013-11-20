@@ -26,7 +26,8 @@ import com.vividsolutions.jts.geom.Point;
 @Table(name = "bus_stops")
 @NamedQueries({
 		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"), 
-		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode AND stop.ordinal = :ordinal")})
+		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode AND stop.ordinal = :ordinal"),
+		@NamedQuery(name = "BusStop.findByVariantCode", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode")})
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

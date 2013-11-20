@@ -33,7 +33,7 @@ public class BusSchedulesServiceImpl implements BusSchedulesService {
 	public Bus getClosestBus(int variantCode, int subLineCode,
 			int maximumBusStopOrdinal) {
 		Query q = entityManager
-				.createQuery("SELECT Bus b FROM Bus b WHERE b.variantCode = :variantCode AND b.subLineCode = :subLineCode AND b.lastPassedStopOrdinal < :maximumOrdinal ORDER BY b.lastPassedStopOrdinal DESC");
+				.createQuery("SELECT b FROM Bus b WHERE b.variantCode = :variantCode AND b.subLineCode = :subLineCode AND b.lastPassedStopOrdinal < :maximumOrdinal ORDER BY b.lastPassedStopOrdinal DESC");
 		q.setParameter("variantCode", variantCode);
 		q.setParameter("subLineCode", subLineCode);
 		q.setParameter("maximumOrdinal", maximumBusStopOrdinal);

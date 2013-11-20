@@ -2,7 +2,9 @@ package model.dao;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import model.Bus;
 
@@ -21,13 +23,19 @@ public class BusDAOImpl implements BusDAO {
 	}
 
 	public void modify(Bus modelObjectOld, Bus modelObjectNew) {
-		// TODO Auto-generated method stub
-
+		entityManager.merge(modelObjectNew);
 	}
 
-	public Bus find(Integer uniqueKey) {
-		// TODO Auto-generated method stub
-		return null;
+	public Bus find(Integer id) {
+		Bus bus;
+		try {
+			Query q = entityManager.createNamedQuery("Bus.findById");
+			q.setParameter("id", id);
+			bus = (Bus) q.getSingleResult();
+		} catch (NoResultException e) {
+			bus = null;
+		}
+		return bus;
 	}
 
 }

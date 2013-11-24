@@ -3,6 +3,7 @@ package services;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -58,12 +59,12 @@ public class UserService {
 
 	@POST
 	@Path("/create")
-	public String register(@QueryParam("username") String username,
-			@QueryParam("password") String password,
-			@QueryParam("email") String email,
-			@QueryParam("cellphone") String cellphone,
-			@QueryParam("secretQuestion") String secretQuestion,
-			@QueryParam("secretAnswer") String secretAnswer) {
+	public String register(@FormParam("username") String username,
+			@FormParam("password") String password,
+			@FormParam("email") String email,
+			@FormParam("cellphone") String cellphone,
+			@FormParam("secretQuestion") String secretQuestion,
+			@FormParam("secretAnswer") String secretAnswer) {
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
@@ -81,8 +82,8 @@ public class UserService {
 
 	@POST
 	@Path("/login")
-	public String login(@QueryParam("username") String username,
-			@QueryParam("password") String password) {
+	public String login(@FormParam("username") String username,
+			@FormParam("password") String password) {
 		if (username == null || username.equals("") || password == null
 				|| password.equals(""))
 			throw new IllegalArgumentException(
@@ -93,7 +94,7 @@ public class UserService {
 	@DELETE
 	@Path("/delete")
 	public String delete(@HeaderParam("Authorization") String token,
-			@QueryParam("username") String username) {
+			@FormParam("username") String username) {
 		User actionUser = authenticationService.authenticate(token);
 		User deleting = userDAO.find(username);
 		if (actionUser.getUsername().equals(username)
@@ -106,7 +107,7 @@ public class UserService {
 
 	@POST
 	@Path("/deactivate")
-	public String deactivate(@QueryParam("username") String username,
+	public String deactivate(@FormParam("username") String username,
 			@HeaderParam("Authorization") String token) {
 		User actionUser = authenticationService.authenticate(token);
 		User deactivating = userDAO.find(username);
@@ -122,9 +123,9 @@ public class UserService {
 	@POST
 	@Path("/reportObstacle")
 	public String reportObstacle(@HeaderParam("Authorization") String token,
-			@QueryParam("coordinates") String coordinates,
-			@QueryParam("radius") String radius,
-			@QueryParam("description") String description) {
+			@FormParam("coordinates") String coordinates,
+			@FormParam("radius") String radius,
+			@FormParam("description") String description) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals("") || radius == null
 				|| radius.equals(""))
@@ -145,7 +146,7 @@ public class UserService {
 	@Path("/deactivateObstacle")
 	public String deactivateObstacle(
 			@HeaderParam("Authorization") String token,
-			@QueryParam("coordinates") String coordinates) {
+			@FormParam("coordinates") String coordinates) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals(""))
 			throw new IllegalArgumentException(
@@ -163,8 +164,8 @@ public class UserService {
 	@POST
 	@Path("/addToFavourite")
 	public String addToFavourite(@HeaderParam("Authorization") String token,
-			@QueryParam("coordinates") String coordinates,
-			@QueryParam("name") String name) {
+			@FormParam("coordinates") String coordinates,
+			@FormParam("name") String name) {
 		if (token == null || token.equals("") || coordinates == null
 				|| coordinates.equals("") || name == null || name.equals(""))
 			throw new IllegalArgumentException(
@@ -182,7 +183,7 @@ public class UserService {
 	@POST
 	@Path("/removeFavourite")
 	public String removeFavourite(@HeaderParam("Authorization") String token,
-			@QueryParam("name") String name) {
+			@FormParam("name") String name) {
 		if (token == null || token.equals("") || name == null
 				|| name.equals(""))
 			throw new IllegalArgumentException(

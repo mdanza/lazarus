@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    >
+
+    <EditText
+        android:id="@+id/variantCodeField"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="código variante" />
+    <EditText
+        android:id="@+id/subLineCodeField"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="código sub línea" />
+    
+    <Button
+        android:id="@+id/pushToStartStopBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="enviar datos de ubicación" />
+
+</LinearLayout>

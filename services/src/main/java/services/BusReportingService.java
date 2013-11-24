@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -47,10 +48,10 @@ public class BusReportingService {
 
 	@POST
 	public String registerBus(@HeaderParam("Authorization") String token,
-			@QueryParam("variantCode") Integer variantCode,
-			@QueryParam("subLineCode") Integer subLineCode,
-			@QueryParam("longitude") Double latitude,
-			@QueryParam("latitude") Double longitude) {
+			@FormParam("variantCode") Integer variantCode,
+			@FormParam("subLineCode") Integer subLineCode,
+			@FormParam("longitude") Double latitude,
+			@FormParam("latitude") Double longitude) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || latitude == null || longitude == null)
 			throw new IllegalArgumentException(
@@ -70,12 +71,12 @@ public class BusReportingService {
 	@PUT
 	@Path("/{busId}")
 	public String updateBus(@HeaderParam("Authorization") String token,
-			@QueryParam("variantCode") Integer variantCode,
-			@QueryParam("subLineCode") Integer subLineCode,
-			@QueryParam("longitude") Double latitude,
-			@QueryParam("latitude") Double longitude,
+			@FormParam("variantCode") Integer variantCode,
+			@FormParam("subLineCode") Integer subLineCode,
+			@FormParam("longitude") Double latitude,
+			@FormParam("latitude") Double longitude,
 			@PathParam("busId") String busId,
-			@QueryParam("lastPassedStopOrdinal") Integer lastPassedStopOrdinal) {
+			@FormParam("lastPassedStopOrdinal") Integer lastPassedStopOrdinal) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || latitude == null || longitude == null
 				|| busId == null || busId == ""

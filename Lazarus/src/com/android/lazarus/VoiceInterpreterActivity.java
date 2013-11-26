@@ -1,11 +1,9 @@
 package com.android.lazarus;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -15,6 +13,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.lazarus.listener.LocationListenerImpl;
+import com.android.lazarus.listener.RecognitionListenerImpl;
+import com.android.lazarus.state.LogInState;
+import com.android.lazarus.state.State;
+
 public class VoiceInterpreterActivity extends Activity implements
 		TextToSpeech.OnInitListener {
 
@@ -23,80 +26,25 @@ public class VoiceInterpreterActivity extends Activity implements
 	Intent recognizerIntent;
 	private TextToSpeech tts;
 	private int MY_DATA_CHECK_CODE = 0;
+	private State state;
+	private LocationListener locationListener = new LocationListenerImpl();
+	private RecognitionListener recognitionListener = new RecognitionListenerImpl(this);
+	
+	public TextToSpeech getTts() {
+		return tts;
+	}
 
-	RecognitionListener recognitionListener = new RecognitionListener() {
+	public void setTts(TextToSpeech tts) {
+		this.tts = tts;
+	}
 
-		@Override
-		public void onRmsChanged(float rmsdB) {
-			// TODO Auto-generated method stub
+	public State getState() {
+		return state;
+	}
 
-		}
-
-		@Override
-		public void onResults(Bundle results) {
-
-			ArrayList data = results
-					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-			for (int i = 0; i < data.size(); i++) {
-				stringResults += data.get(i);
-			}
-
-			Context context = getApplicationContext();
-			CharSequence text = stringResults;
-			int duration = Toast.LENGTH_LONG;
-
-			Toast toast = Toast.makeText(context, text, duration);
-			toast.show();
-
-		}
-
-		@Override
-		public void onReadyForSpeech(Bundle params) {
-			Context context = getApplicationContext();
-			CharSequence text = stringResults;
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(context, "Pronto", duration);
-			toast.show();
-
-		}
-
-		@Override
-		public void onPartialResults(Bundle partialResults) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onEvent(int eventType, Bundle params) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onError(int error) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onEndOfSpeech() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onBufferReceived(byte[] buffer) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onBeginningOfSpeech() {
-			// TODO Auto-generated method stub
-
-		}
-	};
+	public void setState(State state) {
+		this.state = state;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +58,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
 				"voice.recognition.test");
 
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 		findViewById(R.id.pushToTalkButton).setOnTouchListener(
 				pushToTalkListener);
@@ -118,6 +66,14 @@ public class VoiceInterpreterActivity extends Activity implements
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+		
+		
+		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3600000,
+		            10, locationListener);
+
+		state = new LogInState(this);
 
 	}
 
@@ -125,13 +81,12 @@ public class VoiceInterpreterActivity extends Activity implements
 		public boolean onTouch(View view, MotionEvent motionEvent) {
 			switch (motionEvent.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-
 				speechRecognizer.startListening(recognizerIntent);
-
 				break;
 			case MotionEvent.ACTION_UP:
 				speechRecognizer.stopListening();
-				stringResults = "";
+				tts.speak("Espere mientras procesamos el resultado",
+						TextToSpeech.QUEUE_FLUSH, null);
 				break;
 			}
 
@@ -158,9 +113,10 @@ public class VoiceInterpreterActivity extends Activity implements
 	public void onInit(int initStatus) {
 		// check for successful instantiation
 		if (initStatus == TextToSpeech.SUCCESS) {
-			//if (tts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
-				//tts.setLanguage(Locale.US);
-			tts.speak("Hola, ¿Qué tal?", TextToSpeech.QUEUE_FLUSH, null);
+			// if (tts.isLanguageAvailable(Locale.US) ==
+			// TextToSpeech.LANG_AVAILABLE)
+			// tts.setLanguage(Locale.US);
+			tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
 		} else if (initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();

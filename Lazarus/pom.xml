@@ -4,6 +4,7 @@
 	<groupId>VoiceInterpreterActivity</groupId>
 	<artifactId>VoiceInterpreterActivity</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>apk</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>

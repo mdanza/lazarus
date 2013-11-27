@@ -1,10 +1,10 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface State {
 
-	void setResults(ArrayList<String> stringArrayList);
+	void setResults(List<String> results);
 
 	String getMessage();
 	

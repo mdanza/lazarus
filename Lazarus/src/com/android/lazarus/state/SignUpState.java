@@ -1,6 +1,6 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -16,7 +16,7 @@ public class SignUpState extends AbstractState{
 		this.message = "Por faver diga el nombre de usuario que desea tener";
 	}
 
-	public void handleResults(ArrayList<String> stringArrayList) {
+	public void handleResults(List<String> stringArrayList) {
 		// TODO Auto-generated method stub
 		
 	}

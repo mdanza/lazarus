@@ -1,6 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -30,11 +29,7 @@ public class MainMenuState extends AbstractState {
 			this.message = initialText+defaultMessage;
 	}
 
-	public void handleResults(ArrayList<String> results) {
-		if(stringPresent(results,"donde estoy")){
-			this.message = getWhereAmIMessage();
-			return;
-		}
+	public void handleResults(List<String> results) {
 		if(stringPresent(results,"mas")){
 			MoreMainMenuState moreMainMenuState = new MoreMainMenuState(this.context);
 			context.setState(moreMainMenuState);	
@@ -44,21 +39,23 @@ public class MainMenuState extends AbstractState {
 		if(position<results.size()){
 			List<String> streets = addressServiceAdapter.getPossibleStreets(results.get(position));
 			Favourite favourite = userServiceAdapter.getFavourite(results.get(position));
-			if(stringPresent(results,"otro") || (streets==null || streets.isEmpty()) && favourite==null){
+			if(stringPresent(results,"no") || stringPresent(results,"otro") || ((streets==null || streets.isEmpty()) && favourite==null)){
 				position++;
 				setResults(results);
 			}else{
 				if(favourite!=null){
-					this.message = "Si desea dirigirse a "+favourite.getName()+" diga continuar, ";
+					this.message = "¿Desea dirigirse a "+favourite.getName()+"?";
+					return;
 				}
 				if(streets!=null && !streets.isEmpty()){
 					this.message = "";
 					for(int i=0;i<streets.size();i++){
 						this.message = message+"Si desea dirigirse a "+streets.get(i)+" diga "+i+","; 
 					}
+					String finalMessage = " para obtener otros resultados posibles diga otro";
+					this.message = message + finalMessage;
 				}
-				String finalMessage = " para obtener otros resultados posibles diga otro, para más opciones diga más";
-				this.message = message + finalMessage;
+				
 			}
 		}
 		if(position==results.size()){

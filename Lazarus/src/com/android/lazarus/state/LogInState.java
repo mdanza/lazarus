@@ -1,26 +1,27 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
-import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 
 public class LogInState extends AbstractState {
 
 	private boolean usernamePresent = false;
+	private List<String> usernames = null;
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
 
 	public LogInState(VoiceInterpreterActivity context) {
 		super(context);
 		this.context = context;
-		this.defaultMessage = "Por favor diga su nombre de usuario, diga nuevo para registrarse, o diga dónde estóy para conocer su ubicación actual en cualquier momento";
-		this.message = "Bienvenido a lázarus, "+this.defaultMessage;
+		this.defaultMessage = "Por favor diga su nombre de usuario, o diga nuevo para registrarse";
+		this.message = defaultMessage;
+	}
+
+	public LogInState(VoiceInterpreterActivity context, String initialMessage) {
+		this(context);
+		this.message = initialMessage+this.defaultMessage;
 	}
 
 	private void initializeMainMenu(String initialText) {
@@ -28,9 +29,9 @@ public class LogInState extends AbstractState {
 		context.setState(mainMenuState);		
 	}
 
-	public void handleResults(ArrayList<String> results) {
+	public void handleResults(List<String> results) {
 		if (usernamePresent == false) {
-			this.results = results;
+			this.usernames = results;
 			for(String result:results){
 				if("nuevo".equals(result)){
 					SignUpState signUpState = new SignUpState(context);
@@ -43,7 +44,6 @@ public class LogInState extends AbstractState {
 			String username = null;
 			String password = null;
 			boolean correctCredentials = false;
-			List<String> usernames = this.results;
 			List<String> passwords = results;
 			for(int i=0;i<usernames.size();i++){
 				for(int j=0;j<passwords.size();j++){

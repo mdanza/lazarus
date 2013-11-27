@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
+import com.android.lazarus.serviceadapter.UserServiceAdapter;
+import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
 import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
@@ -32,9 +34,11 @@ public class VoiceInterpreterActivity extends Activity implements
 	private int MY_DATA_CHECK_CODE = 0;
 	private State state;
 	private LocationListener locationListener = new LocationListenerImpl();
-	private RecognitionListener recognitionListener = new RecognitionListenerImpl(this);
+	private RecognitionListener recognitionListener = new RecognitionListenerImpl(
+			this);
 	private SharedPreferences preferences = null;
-	
+	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
+
 	public TextToSpeech getTts() {
 		return tts;
 	}
@@ -62,6 +66,10 @@ public class VoiceInterpreterActivity extends Activity implements
 				"es-ES");
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
 				"voice.recognition.test");
+		recognizerIntent
+				.putExtra(
+						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
+						100000);
 
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
@@ -71,20 +79,29 @@ public class VoiceInterpreterActivity extends Activity implements
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-		
-		
+
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3600000,
-		            10, locationListener);
-		 preferences = new ObscuredSharedPreferences( 
-				    this, this.getSharedPreferences("usrpref", Context.MODE_PRIVATE) );
-		if(preferences.getString("username", null)!=null && preferences.getString("password", null)!=null){
-			String initialText = "Bienvenido a lázarus, ";
-			MainMenuState mainMenuState = new MainMenuState(this,initialText);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				3600000, 10, locationListener);
+		preferences = new ObscuredSharedPreferences(this,
+				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
+		boolean validDataStored = false;
+		String initialMessage = "Bienvenido a lázarus, ";
+		if (preferences.getString("username", null) != null
+				&& preferences.getString("password", null) != null) {
+			if (userServiceAdapter.login(
+					preferences.getString("username", null),
+					preferences.getString("password", null)) == true) {
+				validDataStored = true;
+			}
+		}
+		if (validDataStored) {
+			MainMenuState mainMenuState = new MainMenuState(this,
+					initialMessage);
 			this.setState(mainMenuState);
-		}else{		
-			state = new LogInState(this);
+		} else {
+			state = new LogInState(this, initialMessage);
 		}
 
 	}
@@ -94,6 +111,7 @@ public class VoiceInterpreterActivity extends Activity implements
 			switch (motionEvent.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				speechRecognizer.startListening(recognizerIntent);
+				tts.stop();
 				break;
 			case MotionEvent.ACTION_UP:
 				speechRecognizer.stopListening();

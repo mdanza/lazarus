@@ -1,15 +1,19 @@
 package com.android.lazarus.listener;
 
-import com.android.lazarus.VoiceInterpreterActivity;
-
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 
+import com.android.lazarus.VoiceInterpreterActivity;
+
 public class RecognitionListenerImpl implements RecognitionListener {
 
 	private VoiceInterpreterActivity voiceInterpreterActivity;
+
+	private final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
 	public RecognitionListenerImpl(VoiceInterpreterActivity context) {
 		this.voiceInterpreterActivity = context;
@@ -30,7 +34,7 @@ public class RecognitionListenerImpl implements RecognitionListener {
 
 	@Override
 	public void onReadyForSpeech(Bundle params) {
-		voiceInterpreterActivity.getTts().speak("Hable", TextToSpeech.QUEUE_FLUSH, null);
+         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 	}
 
 	@Override

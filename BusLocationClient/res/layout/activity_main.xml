@@ -4,22 +4,27 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    >
+    android:paddingRight="16dp" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Para enviar datos, el GPS debe estar activado. En caso contrario se lo redirigirá a la configuración para hacerlo" />
 
     <EditText
         android:id="@+id/variantCodeField"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="código variante" />
+        android:hint="código variante"
+        android:inputType="number" />
+
     <EditText
         android:id="@+id/subLineCodeField"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="código sub línea" />
-    
+        android:hint="código sub línea"
+        android:inputType="number" />
+
     <Button
         android:id="@+id/pushToStartStopBtn"
         android:layout_width="match_parent"

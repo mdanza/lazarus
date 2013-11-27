@@ -1,16 +1,19 @@
 package com.android.lazarus.state;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 
 public abstract class AbstractState implements State {
 	
-	VoiceInterpreterActivity context;
+	protected VoiceInterpreterActivity context;
 	
-	String message;
+	protected String message;
 	
-	List<String> results;
+	protected String defaultMessage;
+	
+	protected List<String> results;
 
 	public String getMessage(){
 		return message;
@@ -18,20 +21,31 @@ public abstract class AbstractState implements State {
 	
 	AbstractState(VoiceInterpreterActivity context) {
 		this.context = context;
+		this.message = defaultMessage;
 	}
 	
-	boolean whereAmIPresent(List<String> results){
-		boolean whereAmIPresent = false;
+	protected boolean stringPresent(List<String> results,String search){
+		boolean stringPresent = false;
 		for(String result:results){
-			if("donde estoy".equals(result)){
-				whereAmIPresent = true;
+			if(search.equals(result)){
+				stringPresent = true;
 			}
 		}
-		return whereAmIPresent;
+		return stringPresent;
 	}
 	
-	String getWhereAmIMessage(){
-		return "En el otro del mundo";
+	protected String getWhereAmIMessage(){
+		return "Usted se encuentra en la concha de su hermana. ";
 	}
+	
+	public void setResults(ArrayList<String> results){
+		if(stringPresent(results,"donde estoy")){
+			this.message = getWhereAmIMessage()+this.defaultMessage;
+			return;
+		}
+		handleResults(results);
+	}
+
+	abstract protected void handleResults(ArrayList<String> results);
 
 }

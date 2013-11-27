@@ -1,7 +1,9 @@
 package com.android.lazarus;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -15,7 +17,9 @@ import android.widget.Toast;
 
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
+import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 import com.android.lazarus.state.LogInState;
+import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
 
 public class VoiceInterpreterActivity extends Activity implements
@@ -29,6 +33,7 @@ public class VoiceInterpreterActivity extends Activity implements
 	private State state;
 	private LocationListener locationListener = new LocationListenerImpl();
 	private RecognitionListener recognitionListener = new RecognitionListenerImpl(this);
+	private SharedPreferences preferences = null;
 	
 	public TextToSpeech getTts() {
 		return tts;
@@ -72,8 +77,15 @@ public class VoiceInterpreterActivity extends Activity implements
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3600000,
 		            10, locationListener);
-
-		state = new LogInState(this);
+		 preferences = new ObscuredSharedPreferences( 
+				    this, this.getSharedPreferences("usrpref", Context.MODE_PRIVATE) );
+		if(preferences.getString("username", null)!=null && preferences.getString("password", null)!=null){
+			String initialText = "Bienvenido a lázarus, ";
+			MainMenuState mainMenuState = new MainMenuState(this,initialText);
+			this.setState(mainMenuState);
+		}else{		
+			state = new LogInState(this);
+		}
 
 	}
 

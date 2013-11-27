@@ -16,7 +16,7 @@ public class SignUpState extends AbstractState{
 		this.message = "Por faver diga el nombre de usuario que desea tener";
 	}
 
-	public void setResults(ArrayList<String> stringArrayList) {
+	public void handleResults(ArrayList<String> stringArrayList) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ public class VoiceInterpreterActivity extends Activity implements
 	private TextToSpeech tts;
 	private int MY_DATA_CHECK_CODE = 0;
 	private State state;
-	private LocationListener locationListener = new LocationListenerImpl();
+	private LocationListenerImpl locationListener;
 	private RecognitionListener recognitionListener = new RecognitionListenerImpl(
 			this);
 	private SharedPreferences preferences = null;
@@ -54,10 +56,21 @@ public class VoiceInterpreterActivity extends Activity implements
 	public void setState(State state) {
 		this.state = state;
 	}
+	
+	
+
+	public LocationListenerImpl getLocationListener() {
+		return locationListener;
+	}
+
+	public void setLocationListener(LocationListenerImpl locationListener) {
+		this.locationListener = locationListener;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
+		
 		setContentView(R.layout.activity_voice_interpreter);
 		speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 		speechRecognizer.setRecognitionListener(recognitionListener);
@@ -80,19 +93,15 @@ public class VoiceInterpreterActivity extends Activity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				3600000, 10, locationListener);
 		preferences = new ObscuredSharedPreferences(this,
 				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
 		boolean validDataStored = false;
 		String initialMessage = "Bienvenido a lázarus, ";
-		if (preferences.getString("username", null) != null
-				&& preferences.getString("password", null) != null) {
+		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
+				&& this.getSharedPreferences("usrpref", 0).getString("password", null) != null) {
 			if (userServiceAdapter.login(
-					preferences.getString("username", null),
-					preferences.getString("password", null)) == true) {
+					this.getSharedPreferences("usrpref", 0).getString("username", null),
+					this.getSharedPreferences("usrpref", 0).getString("password", null)) == true) {
 				validDataStored = true;
 			}
 		}
@@ -103,6 +112,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		} else {
 			state = new LogInState(this, initialMessage);
 		}
+		 locationListener = new LocationListenerImpl(this);
 
 	}
 
@@ -115,7 +125,7 @@ public class VoiceInterpreterActivity extends Activity implements
 				break;
 			case MotionEvent.ACTION_UP:
 				speechRecognizer.stopListening();
-				tts.speak("Espere mientras procesamos el resultado",
+				tts.speak(". Espere mientras procesamos el resultado por favor",
 						TextToSpeech.QUEUE_FLUSH, null);
 				break;
 			}
@@ -162,4 +172,6 @@ public class VoiceInterpreterActivity extends Activity implements
 		speechRecognizer.destroy();
 		super.onDestroy();
 	}
+	
+	
 }

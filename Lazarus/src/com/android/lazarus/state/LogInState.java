@@ -55,8 +55,8 @@ public class LogInState extends AbstractState {
 				}
 			}
 			if(correctCredentials==true){
-				context.getPreferences(0).edit().putString("username",username).commit();
-				context.getPreferences(0).edit().putString("password",password).commit();
+				context.getSharedPreferences("usrpref", 0).edit().putString("username",username).commit();
+				context.getSharedPreferences("usrpref", 0).edit().putString("password",password).commit();
 				initializeMainMenu("Gracias por loguearse, ");
 			}else{
 				this.message = "El nombre de usuario o la contraseña no es correcto, por favor repita su nombre de usuario";

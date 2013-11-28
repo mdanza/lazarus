@@ -1,7 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -11,38 +9,43 @@ import com.android.lazarus.serviceadapter.AddressServiceAdapterStub;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
 
-public class MainMenuState extends AbstractState {
+public class StreetSetState extends AbstractState {
 
+	StreetSetState(VoiceInterpreterActivity context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+	}
+
+	public StreetSetState(VoiceInterpreterActivity context, String string) {
+		super(context);
+	}
+
+	@Override
+	protected void handleResults(List<String> results) {
+		// TODO Auto-generated method stub
+		
+	}
+	/*
+	String firstStreet;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
-	UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
-	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
+	String defaultMessage = "Diga el nombre de otra calle o el número de puerta, ";
 	int position = 0;
 	List<String> streets = null;
-	Favourite favourite = null;
 	boolean toChooseStreet = false;
-	boolean toConfirmFavourite = false;
 	List<String> firstResults;
 
-	public MainMenuState(VoiceInterpreterActivity context) {
+	StreetSetState(VoiceInterpreterActivity context) {
 		super(context);
-		this.context = context;
+	}
+
+	public StreetSetState(VoiceInterpreterActivity context, String street) {
+		super(context);
+		firstStreet = street;
 		this.message = defaultMessage;
 	}
 
-	public MainMenuState(VoiceInterpreterActivity context, String initialText) {
-		super(context);
-		this.context = context;
-		this.message = initialText + defaultMessage;
-	}
-
-	public void handleResults(List<String> results) {
-		if (wantsMoreMainMenu(results)) {
-			initializeMoreMainMenu();
-			return;
-		}
-		// for each position checks if there is an available street or favourite
-		// place
-		// if there is none or user asks for more results, go to next position
+	@Override
+	protected void handleResults(List<String> results) {
 		if (wantsMoreResults(results) && firstResults != null
 				&& position < firstResults.size()) {
 			goToNextPosition();
@@ -110,8 +113,10 @@ public class MainMenuState extends AbstractState {
 			}
 			return;
 		}
-	}
+		
 
+	}
+	
 	private void initializeMoreMainMenu() {
 		MoreMainMenuState moreMainMenuState = new MoreMainMenuState(
 				this.context);
@@ -137,5 +142,6 @@ public class MainMenuState extends AbstractState {
 		return stringPresent(results, "mas") && !toChooseStreet
 				&& !toConfirmFavourite;
 	}
+	*/
 
 }

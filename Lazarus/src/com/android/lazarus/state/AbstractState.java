@@ -71,6 +71,11 @@ public abstract class AbstractState implements State {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			return;
+		}
+		if (stringPresent(results, "menu")) {
+			initializeMainMenu();
+			return;
 		}
 		handleResults(results);
 	}
@@ -92,52 +97,101 @@ public abstract class AbstractState implements State {
 
 	abstract protected void handleResults(List<String> results);
 
-	/**
-	 * Only works for one digit number
-	 * 
-	 * @param results
-	 *            list to check if number (or written form of number) is present
-	 *            ("2" or "dos") will be searched for in case number is 2
-	 * @param number
-	 * @return
-	 */
-	protected boolean numberPresent(List<String> results, int number) {
+	/*
+	private boolean containsDigit(List<String> results, int number) {
 		boolean numberPresent = false;
 		for (String result : results) {
-			switch (number) {
-			case 0:
-				if ("0".equals(result) || "cero".equals(result))
-					numberPresent = true;
-			case 1:
-				if ("1".equals(result) || "uno".equals(result))
-					numberPresent = true;
-			case 2:
-				if ("2".equals(result) || "dos".equals(result))
-					numberPresent = true;
-			case 3:
-				if ("3".equals(result) || "tres".equals(result))
-					numberPresent = true;
-			case 4:
-				if ("4".equals(result) || "cuatro".equals(result))
-					numberPresent = true;
-			case 5:
-				if ("5".equals(result) || "cinco".equals(result))
-					numberPresent = true;
-			case 6:
-				if ("6".equals(result) || "seis".equals(result))
-					numberPresent = true;
-			case 7:
-				if ("7".equals(result) || "siete".equals(result))
-					numberPresent = true;
-			case 8:
-				if ("8".equals(result) || "ocho".equals(result))
-					numberPresent = true;
-			case 9:
-				if ("9".equals(result) || "nueve".equals(result))
-					numberPresent = true;
+			if(isTheSameDigit(result, number)){
+				numberPresent = true;
 			}
 		}
 		return numberPresent;
+	}
+	*/
+	
+	protected List<Integer> getNumbersByDigits(int number) {
+		ArrayList<Integer> numbersByPosition = new ArrayList<Integer>();
+		while (number > 0) {
+			numbersByPosition.add(number % 10);
+			number = number / 10;
+		}
+		return numbersByPosition;
+	}
+	
+	protected String getStringDigits(int number){
+		List<Integer> numbers = getNumbersByDigits(number);
+		String digits = "";
+		for(Integer digit:numbers){
+			digits = digit + " ";
+		}
+		return digits;
+	}
+
+	protected boolean containsNumber(List<String> results, int number){
+		boolean containsNumber = false;
+		List<Integer> digits = getNumbersByDigits(number);
+		for(String result:results){
+			String[] words = result.split(" ");
+			if(words.length==digits.size()){
+				boolean isTheSameNumber = true;
+				for(int i = 0;i<words.length;i++){
+					if(!isTheSameDigit(words[i],digits.get(i))){
+						isTheSameNumber = false;
+					}
+				}
+				if(isTheSameNumber){
+					containsNumber = true;
+				}
+			}
+		}
+		return containsNumber;
+		
+	}
+
+	/**
+	 * Only works for one digit number
+	 */
+	private boolean isTheSameDigit(String result, int number) {
+		boolean numberPresent = false;
+		switch (number) {
+		case 0:
+			if ("0".equals(result) || "cero".equals(result))
+				numberPresent = true;
+		case 1:
+			if ("1".equals(result) || "uno".equals(result))
+				numberPresent = true;
+		case 2:
+			if ("2".equals(result) || "dos".equals(result))
+				numberPresent = true;
+		case 3:
+			if ("3".equals(result) || "tres".equals(result))
+				numberPresent = true;
+		case 4:
+			if ("4".equals(result) || "cuatro".equals(result))
+				numberPresent = true;
+		case 5:
+			if ("5".equals(result) || "cinco".equals(result))
+				numberPresent = true;
+		case 6:
+			if ("6".equals(result) || "seis".equals(result))
+				numberPresent = true;
+		case 7:
+			if ("7".equals(result) || "siete".equals(result))
+				numberPresent = true;
+		case 8:
+			if ("8".equals(result) || "ocho".equals(result))
+				numberPresent = true;
+		case 9:
+			if ("9".equals(result) || "nueve".equals(result))
+				numberPresent = true;
+		}
+		return numberPresent;
+	}
+	
+	protected void initializeMainMenu() {
+		MainMenuState mainMenuState = new MainMenuState(
+				this.context);
+		context.setState(mainMenuState);
 	}
 
 }

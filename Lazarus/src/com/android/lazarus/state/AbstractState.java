@@ -49,8 +49,9 @@ public abstract class AbstractState implements State {
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(className);
-				Constructor<?> constructor = clazz.getConstructor(VoiceInterpreterActivity.class);
-				State newState =(State) constructor.newInstance(this.context);
+				Constructor<?> constructor = clazz
+						.getConstructor(VoiceInterpreterActivity.class);
+				State newState = (State) constructor.newInstance(this.context);
 				this.context.setState(newState);
 			} catch (NoSuchMethodException e) {
 				// TODO Auto-generated catch block
@@ -97,18 +98,16 @@ public abstract class AbstractState implements State {
 
 	abstract protected void handleResults(List<String> results);
 
-	/*
-	private boolean containsDigit(List<String> results, int number) {
+	private boolean containsAnyDigit(String result) {
 		boolean numberPresent = false;
-		for (String result : results) {
-			if(isTheSameDigit(result, number)){
+		for (int i = 0; i < 10; i++) {
+			if (isTheSameDigit(result, i)) {
 				numberPresent = true;
 			}
 		}
 		return numberPresent;
 	}
-	*/
-	
+
 	protected List<Integer> getNumbersByDigits(int number) {
 		ArrayList<Integer> numbersByPosition = new ArrayList<Integer>();
 		while (number > 0) {
@@ -117,35 +116,35 @@ public abstract class AbstractState implements State {
 		}
 		return numbersByPosition;
 	}
-	
-	protected String getStringDigits(int number){
+
+	protected String getStringDigits(int number) {
 		List<Integer> numbers = getNumbersByDigits(number);
 		String digits = "";
-		for(Integer digit:numbers){
+		for (Integer digit : numbers) {
 			digits = digit + " ";
 		}
 		return digits;
 	}
 
-	protected boolean containsNumber(List<String> results, int number){
+	protected boolean containsNumber(List<String> results, int number) {
 		boolean containsNumber = false;
 		List<Integer> digits = getNumbersByDigits(number);
-		for(String result:results){
+		for (String result : results) {
 			String[] words = result.split(" ");
-			if(words.length==digits.size()){
+			if (words.length == digits.size()) {
 				boolean isTheSameNumber = true;
-				for(int i = 0;i<words.length;i++){
-					if(!isTheSameDigit(words[i],digits.get(i))){
+				for (int i = 0; i < words.length; i++) {
+					if (!isTheSameDigit(words[i], digits.get(i))) {
 						isTheSameNumber = false;
 					}
 				}
-				if(isTheSameNumber){
+				if (isTheSameNumber) {
 					containsNumber = true;
 				}
 			}
 		}
 		return containsNumber;
-		
+
 	}
 
 	/**
@@ -157,41 +156,91 @@ public abstract class AbstractState implements State {
 		case 0:
 			if ("0".equals(result) || "cero".equals(result))
 				numberPresent = true;
+			break;
 		case 1:
 			if ("1".equals(result) || "uno".equals(result))
 				numberPresent = true;
+			break;
 		case 2:
 			if ("2".equals(result) || "dos".equals(result))
 				numberPresent = true;
+			break;
 		case 3:
 			if ("3".equals(result) || "tres".equals(result))
 				numberPresent = true;
+			break;
 		case 4:
 			if ("4".equals(result) || "cuatro".equals(result))
 				numberPresent = true;
+			break;
 		case 5:
 			if ("5".equals(result) || "cinco".equals(result))
 				numberPresent = true;
+			break;
 		case 6:
 			if ("6".equals(result) || "seis".equals(result))
 				numberPresent = true;
+			break;
 		case 7:
 			if ("7".equals(result) || "siete".equals(result))
 				numberPresent = true;
+			break;
 		case 8:
 			if ("8".equals(result) || "ocho".equals(result))
 				numberPresent = true;
+			break;
 		case 9:
 			if ("9".equals(result) || "nueve".equals(result))
 				numberPresent = true;
+			break;
 		}
 		return numberPresent;
 	}
-	
+
 	protected void initializeMainMenu() {
-		MainMenuState mainMenuState = new MainMenuState(
-				this.context);
+		MainMenuState mainMenuState = new MainMenuState(this.context);
 		context.setState(mainMenuState);
 	}
 
+	protected List<String> getAddressNumberString(String string) {
+		String[] separated = string.split(" ");
+		int i = 0;
+		StringBuilder numberBuilder = new StringBuilder();
+		while (i < separated.length && containsAnyDigit(separated[i])) {
+			numberBuilder.append(toDigit(separated[i]));
+			i++;
+		}
+		String letter = "";
+		if (i < separated.length) {
+			letter = separated[i];
+		}
+		ArrayList<String> address = new ArrayList<String>();
+		address.add(numberBuilder.toString());
+		address.add(letter);
+		return address;
+	}
+
+	private int toDigit(String string) {
+		for(int i = 0;i<10;i++){
+			if(isTheSameDigit(string, i)){
+				return i;
+			}
+		}
+		throw new IllegalArgumentException("not a digit");
+	}
+
+
+	protected boolean isAddressNumber(String string) {
+		String[] separated = string.split(" ");
+		int i = 0;
+		while (i < separated.length && containsAnyDigit(separated[i])) {
+			i++;
+		}
+		if(i==separated.length || (i==separated.length-1 && i!=0)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

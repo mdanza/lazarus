@@ -12,9 +12,9 @@ public class DestinationSetState extends AbstractState {
 	LocationListenerImpl locationListener;
 	
 	
-	public DestinationSetState(VoiceInterpreterActivity context, Point point) {
+	public DestinationSetState(VoiceInterpreterActivity context, Point destination) {
 		super(context);
-		this.destination = point;
+		this.destination = destination;
 		this.locationListener = context.getLocationListener();
 		if(locationListener.getLocation()==null){
 			this.message = "No se puede obtener su posición actual, por favor encienda el g p s";

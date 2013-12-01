@@ -12,14 +12,20 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 
 import model.Bus;
 import model.BusStop;
+import model.ShapefileWKT;
 import model.dao.BusDAO;
 import model.dao.BusStopDAO;
+
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+
 import services.authentication.AuthenticationService;
 import services.directions.walking.WalkingPositionExclusionStrategy;
+import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,6 +44,9 @@ public class BusReportingService {
 
 	@EJB(name = "AuthenticationService")
 	private AuthenticationService authenticationService;
+
+	@EJB(name = "CoordinateConverter")
+	private CoordinateConverter coordinateConverter;
 
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
@@ -130,9 +139,24 @@ public class BusReportingService {
 		if (bus == null)
 			return null;
 		List<BusStop> result = busStopDAO.getLineStops(bus.getVariantCode());
-		if (result != null)
+		if (result != null) {
+			for (BusStop stop : result) {
+				try {
+					stop.setPoint(coordinateConverter.convertToWGS84(
+							stop.getPoint(), ShapefileWKT.BUS_STOP));
+				} catch (MismatchedDimensionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (FactoryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TransformException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			return gson.toJson(result);
-		else
+		} else
 			return null;
 	}
 }

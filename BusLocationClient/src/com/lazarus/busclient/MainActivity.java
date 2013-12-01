@@ -218,14 +218,15 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	private void checkIfPassedStop() {
-		for (BusStop stop : stops) {
-			if (GPScoordinateHelper.getDistanceBetweenPoints(
-					lastReportedlatitude, stop.getLatitude(),
-					lastReportedlongitude, stop.getLongitude()) <= 2 * MINIMUM_ACCEPTABLE_PRECISION) {
-				lastPassedStopOrdinal = stop.getOrdinal();
-				break;
+		if (stops != null)
+			for (BusStop stop : stops) {
+				if (GPScoordinateHelper.getDistanceBetweenPoints(
+						lastReportedlatitude, stop.getLatitude(),
+						lastReportedlongitude, stop.getLongitude()) <= 2 * MINIMUM_ACCEPTABLE_PRECISION) {
+					lastPassedStopOrdinal = stop.getOrdinal();
+					break;
+				}
 			}
-		}
 	}
 
 	private void sendLocationData(long busId) {

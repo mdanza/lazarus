@@ -199,14 +199,19 @@ public class MainActivity extends Activity implements LocationListener {
 		@Override
 		public void run() {
 			if (!isLastReportSent && token != null) {
-				checkIfPassedStop();
 				SharedPreferences settings = PreferenceManager
 						.getDefaultSharedPreferences(getApplicationContext());
 				long busId = settings.getLong("busId", -1);
 				if (busId == -1)
 					registerBus();
-				else
+				else {
+					if (stops == null) {
+						busId = settings.getLong("busId", -1);
+						loadBusStops(busId);
+					}
+					checkIfPassedStop();
 					sendLocationData(busId);
+				}
 				isLastReportSent = true;
 			}
 		}
@@ -231,7 +236,7 @@ public class MainActivity extends Activity implements LocationListener {
 				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus/"
 						+ String.valueOf(busId));
 		try {
-			request.setHeader("Authorization", "Basic " + token);
+			request.setHeader("Authorization", token);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("variantCode",
 					variantCode));
@@ -257,7 +262,7 @@ public class MainActivity extends Activity implements LocationListener {
 		HttpPost request = new HttpPost(
 				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus");
 		try {
-			request.setHeader("Authorization", "Basic " + token);
+			request.setHeader("Authorization", token);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("variantCode",
 					variantCode));
@@ -280,7 +285,6 @@ public class MainActivity extends Activity implements LocationListener {
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putLong("busId", id);
 			editor.commit();
-			loadBusStops(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -292,7 +296,7 @@ public class MainActivity extends Activity implements LocationListener {
 				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus/"
 						+ String.valueOf(busId) + "/stops");
 		try {
-			request.setHeader("Authorization", "Basic " + token);
+			request.setHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));

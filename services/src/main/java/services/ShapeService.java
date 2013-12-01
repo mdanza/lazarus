@@ -2,9 +2,9 @@ package services;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 import model.dao.BusStopDAO;
 
@@ -49,7 +49,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadStreets")
-	public String uploadStreets(@QueryParam("url") String url) {
+	public String uploadStreets(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		streetLoader.readShp(url);
@@ -58,7 +58,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadAddresses")
-	public String uploadAddress(@QueryParam("url") String url) {
+	public String uploadAddress(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		addressLoader.readShp(url);
@@ -67,7 +67,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadBusStops")
-	public String busStops(@QueryParam("url") String url) {
+	public String busStops(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		busStopLoader.readShp(url);
@@ -76,7 +76,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadBusRoutesNonMaximal")
-	public String busRoutesNonMaximal(@QueryParam("url") String url) {
+	public String busRoutesNonMaximal(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		busRoutesNonMaximalLoader.readShp(url);
@@ -85,7 +85,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadBusRoutesMaximal")
-	public String busRoutesMaximal(@QueryParam("url") String url) {
+	public String busRoutesMaximal(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		busRoutesMaximalLoader.readShp(url);
@@ -94,7 +94,7 @@ public class ShapeService {
 
 	@POST
 	@Path("/uploadCorners")
-	public String uploadCorners(@QueryParam("url") String url) {
+	public String uploadCorners(@FormParam("url") String url) {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		cornerLoader.readShp(url);

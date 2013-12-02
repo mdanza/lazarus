@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
 import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
@@ -96,7 +96,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		preferences = new ObscuredSharedPreferences(this,
 				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
 		boolean validDataStored = false;
-		String initialMessage = "Bienvenido a lázarus, ";
+		String initialMessage = "Bienvenido a lï¿½zarus, ";
 		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
 				&& this.getSharedPreferences("usrpref", 0).getString("password", null) != null) {
 			if (userServiceAdapter.login(

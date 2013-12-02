@@ -5,13 +5,13 @@ import java.util.List;
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
-import com.android.lazarus.serviceadapter.AddressServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
 
 public class StreetSetState extends AbstractState {
 
 	String firstStreet;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
-	String defaultMessage = "Diga el nombre de otra calle o el número de puerta, ";
+	String defaultMessage = "Diga el nombre de otra calle o el nï¿½mero de puerta, ";
 	int position = 0;
 	List<String> streets = null;
 	List<String> firstResults;
@@ -64,7 +64,7 @@ public class StreetSetState extends AbstractState {
 					secondStreet =  streets.get(i - 1);
 					toConfirmSecondStreet = true;
 					toChooseStreet = false;
-					this.message = "¿Desea ir a "+firstStreet+" esquina "+secondStreet+"?";
+					this.message = "ï¿½Desea ir a "+firstStreet+" esquina "+secondStreet+"?";
 					return;
 				}
 			}
@@ -114,7 +114,7 @@ public class StreetSetState extends AbstractState {
 		}
 		if(isAddressNumber(firstResults.get(position))){
 			toConfirmDoorNumber = true;
-			this.message = "¿Desea ir a "+firstStreet+" "+getAddressNumberString(firstResults.get(position)).get(0)+" "+getAddressNumberString(firstResults.get(position)).get(1)+"?";
+			this.message = "ï¿½Desea ir a "+firstStreet+" "+getAddressNumberString(firstResults.get(position)).get(0)+" "+getAddressNumberString(firstResults.get(position)).get(1)+"?";
 			addressNumber = firstResults.get(position);
 			return;
 		}
@@ -128,7 +128,7 @@ public class StreetSetState extends AbstractState {
 						+ streets.get(i - 1) + " esquina "+firstStreet+" diga "
 						+ getStringDigits(i) + ",";
 			}
-			String finalMessage = " para obtener otros resultados posibles diga más";
+			String finalMessage = " para obtener otros resultados posibles diga mï¿½s";
 			this.message = message + finalMessage;
 			return;
 		}

@@ -7,7 +7,7 @@ import android.location.Location;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
 
-public interface DirectionsAdapter {
+public interface DirectionsServiceAdapter {
 
 	List<WalkingPosition> getWalkingDirections(Location origin,
 			Point destination);

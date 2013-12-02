@@ -1,9 +1,10 @@
-package com.android.lazarus.serviceadapter;
+package com.android.lazarus.serviceadapter.stubs;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.android.lazarus.model.Point;
+import com.android.lazarus.serviceadapter.AddressServiceAdapter;
 
 
 public class AddressServiceAdapterStub implements AddressServiceAdapter {

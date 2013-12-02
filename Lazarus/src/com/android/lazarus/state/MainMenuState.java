@@ -7,15 +7,15 @@ import java.util.List;
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.Favourite;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
-import com.android.lazarus.serviceadapter.AddressServiceAdapterStub;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
 
 public class MainMenuState extends AbstractState {
 
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
 	UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
-	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
+	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para mï¿½s opciones diga mï¿½s";
 	int position = 0;
 	List<String> streets = null;
 	Favourite favourite = null;
@@ -63,7 +63,7 @@ public class MainMenuState extends AbstractState {
 			}
 			if (favourite != null && !toChooseStreet && !toConfirmFavourite) {
 				toConfirmFavourite = true;
-				this.message = "¿Desea dirigirse a " + favourite.getName()
+				this.message = "ï¿½Desea dirigirse a " + favourite.getName()
 						+ "?";
 				return;
 			}
@@ -76,7 +76,7 @@ public class MainMenuState extends AbstractState {
 							+ streets.get(i - 1) + " diga "
 							+ getStringDigits(i) + ",";
 				}
-				String finalMessage = " para obtener otros resultados posibles diga más";
+				String finalMessage = " para obtener otros resultados posibles diga mï¿½s";
 				this.message = message + finalMessage;
 				return;
 			}

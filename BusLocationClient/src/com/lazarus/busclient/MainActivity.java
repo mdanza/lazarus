@@ -46,6 +46,7 @@ import com.lazarus.busclient.model.BusStop;
 public class MainActivity extends Activity implements LocationListener {
 	// in meters
 	private static final double MINIMUM_ACCEPTABLE_PRECISION = 100;
+	public static final String REST_API_URL = "http://10.0.2.2:8080/services-1.0-SNAPSHOT/api";
 
 	private static final String USER = "bus";
 	private static final String PWD = "superBusesSiQueSi";
@@ -178,8 +179,7 @@ public class MainActivity extends Activity implements LocationListener {
 		@Override
 		public void run() {
 			HttpClient client = new DefaultHttpClient();
-			HttpPost request = new HttpPost(
-					"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/users/login");
+			HttpPost request = new HttpPost(REST_API_URL + "/users/login");
 			try {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				nameValuePairs.add(new BasicNameValuePair("username", USER));
@@ -188,9 +188,19 @@ public class MainActivity extends Activity implements LocationListener {
 				HttpResponse response = client.execute(request);
 				BufferedReader rd = new BufferedReader(new InputStreamReader(
 						response.getEntity().getContent()));
-				token = rd.readLine();
+				JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+						.getAsJsonObject();
+				if (jsonResponse.get("result").getAsString().equals("OK"))
+					token = jsonResponse.get("data").getAsString();
+				else
+					Toast.makeText(getApplicationContext(),
+							"Error while attempting login", Toast.LENGTH_LONG)
+							.show();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Toast.makeText(
+						getApplicationContext(),
+						"Error connecting to server. Check your internet connectivity",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -233,9 +243,8 @@ public class MainActivity extends Activity implements LocationListener {
 		String variantCode = variantCodeField.getText().toString();
 		String subLineCode = subLineCodeField.getText().toString();
 		HttpClient client = new DefaultHttpClient();
-		HttpPut request = new HttpPut(
-				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus/"
-						+ String.valueOf(busId));
+		HttpPut request = new HttpPut(REST_API_URL + "/bus/"
+				+ String.valueOf(busId));
 		try {
 			request.setHeader("Authorization", token);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -252,7 +261,10 @@ public class MainActivity extends Activity implements LocationListener {
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			client.execute(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Toast.makeText(
+					getApplicationContext(),
+					"Error connecting to server. Check your internet connectivity",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -260,8 +272,7 @@ public class MainActivity extends Activity implements LocationListener {
 		String variantCode = variantCodeField.getText().toString();
 		String subLineCode = subLineCodeField.getText().toString();
 		HttpClient client = new DefaultHttpClient();
-		HttpPost request = new HttpPost(
-				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus");
+		HttpPost request = new HttpPost(REST_API_URL + "/bus");
 		try {
 			request.setHeader("Authorization", token);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -287,15 +298,17 @@ public class MainActivity extends Activity implements LocationListener {
 			editor.putLong("busId", id);
 			editor.commit();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Toast.makeText(
+					getApplicationContext(),
+					"Error connecting to server. Check your internet connectivity",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	private void loadBusStops(long busId) {
 		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(
-				"http://10.0.2.2:8080/services-1.0-SNAPSHOT/api/bus/"
-						+ String.valueOf(busId) + "/stops");
+		HttpGet request = new HttpGet(REST_API_URL + "/bus/"
+				+ String.valueOf(busId) + "/stops");
 		try {
 			request.setHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -305,7 +318,10 @@ public class MainActivity extends Activity implements LocationListener {
 			stops = gson.fromJson(jsonResponse, new TypeToken<List<BusStop>>() {
 			}.getType());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Toast.makeText(
+					getApplicationContext(),
+					"Error connecting to server. Check your internet connectivity",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 

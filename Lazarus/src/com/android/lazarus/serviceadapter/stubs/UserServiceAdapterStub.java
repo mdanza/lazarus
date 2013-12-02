@@ -1,10 +1,11 @@
-package com.android.lazarus.serviceadapter;
+package com.android.lazarus.serviceadapter.stubs;
 
 import java.util.List;
 
 import com.android.lazarus.model.Favourite;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.User;
+import com.android.lazarus.serviceadapter.UserServiceAdapter;
 
 public class UserServiceAdapterStub implements UserServiceAdapter {
 

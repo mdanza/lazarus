@@ -52,6 +52,9 @@ public class BusRouteMaximal {
 
 	@Column(name = "sub_line_description")
 	private String subLineDescription;
+	
+	@Column(name = "destination")
+	private String destination;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private MultiLineString trajectory;
@@ -106,6 +109,14 @@ public class BusRouteMaximal {
 
 	public void setSubLineCode(int subLineCode) {
 		this.subLineCode = subLineCode;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
 	}
 
 }

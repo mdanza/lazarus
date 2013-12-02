@@ -3,18 +3,7 @@ package services.directions.bus;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-
 import model.BusStop;
-import model.ShapefileWKT;
-
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
-
-import services.shapefiles.utils.CoordinateConverter;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -31,18 +20,28 @@ public class BusRide {
 	private BusStop endStop;
 	private LineString trajectory;
 	private List<BusStop> previousStops;
+	private String destination;
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
 
 	// constructor. Creates trajectory by sub-setting complete bus line
 	// trajectory and limits it to the path between stops
 	public BusRide(BusStop startStop, BusStop endStop,
 			MultiLineString completeTrajectory, String lineName,
 			String subLineDescription, int subLineCode, BusStop previousStop,
-			BusStop secondPreviousStop) {
+			BusStop secondPreviousStop, String destination) {
 		this.startStop = startStop;
 		this.endStop = endStop;
 		this.lineName = lineName;
 		this.subLineDescription = subLineDescription;
 		this.subLineCode = subLineCode;
+		this.destination = destination;
 		this.previousStops = new ArrayList<BusStop>();
 		previousStops.add(previousStop);
 		previousStops.add(secondPreviousStop);
@@ -72,12 +71,13 @@ public class BusRide {
 	// constructor
 	public BusRide(BusStop startStop, BusStop endStop, String lineName,
 			String subLineDescription, int subLineCode, BusStop previousStop,
-			BusStop secondPreviousStop) {
+			BusStop secondPreviousStop, String destination) {
 		this.startStop = startStop;
 		this.endStop = endStop;
 		this.lineName = lineName;
 		this.subLineDescription = subLineDescription;
 		this.subLineCode = subLineCode;
+		this.destination = destination;
 		this.previousStops = new ArrayList<BusStop>();
 		if (previousStop != null)
 			previousStops.add(previousStop);

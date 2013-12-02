@@ -77,6 +77,10 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 						else
 							busRouteMaximal.setMaximalVariantCode(-1);
 						break;
+					case 13:
+						busRouteMaximal.setDestination(value.getValue()
+								.toString());
+						break;
 					}
 					propertyNumber++;
 				}

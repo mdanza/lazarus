@@ -28,7 +28,7 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 	public List<BusRide> getRoutes(Point startPoint, Point endPoint,
 			int distanceMeters) {
 		Query q = entityManager
-				.createQuery("SELECT DISTINCT startStop, endStop, route.trajectory, route.lineName, route.subLineDescription, route.subLineCode, (distance(:startPoint, startStop.point) + distance(:endPoint, endStop.point))/2 AS averageDistance FROM BusRouteMaximal route, BusStop startStop, BusStop endStop WHERE startStop.active = 'TRUE' AND endStop.active = 'TRUE' AND startStop.variantCode = route.variantCode AND startStop.variantCode = endStop.variantCode AND startStop.ordinal < endStop.ordinal AND dwithin(startStop.point, :startPoint, :distance) = true AND dwithin(endStop.point, :endPoint, :distance) = true ORDER BY averageDistance ASC");
+				.createQuery("SELECT DISTINCT startStop, endStop, route.trajectory, route.lineName, route.subLineDescription, route.subLineCode, route.destination, (distance(:startPoint, startStop.point) + distance(:endPoint, endStop.point))/2 AS averageDistance FROM BusRouteMaximal route, BusStop startStop, BusStop endStop WHERE startStop.active = 'TRUE' AND endStop.active = 'TRUE' AND startStop.variantCode = route.variantCode AND startStop.variantCode = endStop.variantCode AND startStop.ordinal < endStop.ordinal AND dwithin(startStop.point, :startPoint, :distance) = true AND dwithin(endStop.point, :endPoint, :distance) = true ORDER BY averageDistance ASC");
 		q.setParameter("startPoint", startPoint);
 		q.setParameter("endPoint", endPoint);
 		q.setParameter("distance", distanceMeters);
@@ -73,7 +73,7 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 
 			result.add(new BusRide(startStop, endStop, (String) o[3],
 					(String) o[4], (Integer) o[5], previousStop,
-					secondPreviousStop));
+					secondPreviousStop, (String) o[6]));
 			// result.add(new BusRide(startStop, endStop, (MultiLineString)
 			// o[2],
 			// (String) o[3], (String) o[4], (Integer) o[5], previousStop,
@@ -186,12 +186,13 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 					firstRouteEndStop, firstRoute.getLineName(), firstRoute
 							.getSubLineDescription(), firstRoute
 							.getSubLineCode(), firstRoutePreviousStop,
-					firstRouteSecondPreviousStop), new BusRide(
-					secondRouteStartStop, secondRouteEndStop, secondRoute
-							.getLineName(),
-					secondRoute.getSubLineDescription(), secondRoute
-							.getSubLineCode(), secondRoutePreviousStop,
-					secondRouteSecondPreviousStop)));
+					firstRouteSecondPreviousStop, firstRoute.getDestination()),
+					new BusRide(secondRouteStartStop, secondRouteEndStop,
+							secondRoute.getLineName(), secondRoute
+									.getSubLineDescription(), secondRoute
+									.getSubLineCode(), secondRoutePreviousStop,
+							secondRouteSecondPreviousStop, secondRoute
+									.getDestination())));
 			// result.add(new Transshipment(new BusRide(firstRouteStartStop,
 			// firstRouteEndStop, firstRoute.getTrajectory(), firstRoute
 			// .getLineName(), firstRoute.getSubLineDescription(),

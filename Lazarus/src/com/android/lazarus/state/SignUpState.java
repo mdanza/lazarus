@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
 
 public class SignUpState extends AbstractState{
 	

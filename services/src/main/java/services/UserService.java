@@ -1,14 +1,15 @@
 package services;
 
+import helpers.RestResultsHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 import model.Role;
 import model.User;
@@ -17,29 +18,11 @@ import model.dao.UserDAO;
 import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
-import services.incidents.obstacles.ObstacleService;
-import services.users.FavouriteExclusionStrategy;
-import services.users.FavouriteService;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "UserService")
 @Path("/api/users")
 public class UserService {
 
-	private Gson gson = createGson();
-	
-	private Gson createGson() {
-		GsonBuilder builder = new GsonBuilder();
-		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new FavouriteExclusionStrategy());
-		return builder.create();
-	}
-	
 	static Logger logger = Logger.getLogger(UserService.class);
 
 	private static final String USER_ROLE_NAME = "user";
@@ -51,14 +34,10 @@ public class UserService {
 	@EJB(name = "AuthenticationService")
 	private AuthenticationService authenticationService;
 
-	@EJB(name = "ObstacleService")
-	private ObstacleService obstacleService;
-
-	@EJB(name = "FavouriteService")
-	private FavouriteService favouriteService;
+	@EJB(name = "RestResultsHelper")
+	private RestResultsHelper restResultsHelper;
 
 	@POST
-	@Path("/create")
 	public String register(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email,
@@ -76,8 +55,13 @@ public class UserService {
 		Role role = new Role();
 		role.setName(USER_ROLE_NAME);
 		user.setRole(role);
-		userDAO.add(user);
-		return "User added successfuly";
+		try {
+			userDAO.add(user);
+			return restResultsHelper.resultWrapper(true,
+					"User added successfuly");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "could not add user");
+		}
 	}
 
 	@POST
@@ -87,12 +71,16 @@ public class UserService {
 		if (username == null || username.equals("") || password == null
 				|| password.equals(""))
 			throw new IllegalArgumentException(
-					"No nulls nor empty strings allowd");
-		return authenticationService.authenticate(username, password);
+					"No nulls nor empty strings allowed");
+		try {
+			return restResultsHelper.resultWrapper(true,
+					authenticationService.authenticate(username, password));
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "login error");
+		}
 	}
 
 	@DELETE
-	@Path("/delete")
 	public String delete(@HeaderParam("Authorization") String token,
 			@FormParam("username") String username) {
 		User actionUser = authenticationService.authenticate(token);
@@ -105,8 +93,7 @@ public class UserService {
 		throw new IllegalArgumentException("Invalid credentials");
 	}
 
-	@POST
-	@Path("/deactivate")
+	@PUT
 	public String deactivate(@FormParam("username") String username,
 			@HeaderParam("Authorization") String token) {
 		User actionUser = authenticationService.authenticate(token);
@@ -118,89 +105,5 @@ public class UserService {
 			return "deactivated";
 		}
 		throw new IllegalArgumentException("Invalid credentials");
-	}
-
-	@POST
-	@Path("/reportObstacle")
-	public String reportObstacle(@HeaderParam("Authorization") String token,
-			@FormParam("coordinates") String coordinates,
-			@FormParam("radius") String radius,
-			@FormParam("description") String description) {
-		if (token == null || token.equals("") || coordinates == null
-				|| coordinates.equals("") || radius == null
-				|| radius.equals(""))
-			throw new IllegalArgumentException(
-					"Token, coordinates or radius empty or null");
-		User user = authenticationService.authenticate(token);
-		Double x = Double.valueOf(coordinates.split(",")[0]);
-		Double y = Double.valueOf(coordinates.split(",")[1]);
-		Coordinate position = new Coordinate(x, y);
-		int intRadius = Integer.valueOf(radius);
-		GeometryFactory factory = new GeometryFactory();
-		Point point = factory.createPoint(position);
-		obstacleService.reportObstacle(point, intRadius, user, description);
-		return "Done";
-	}
-
-	@POST
-	@Path("/deactivateObstacle")
-	public String deactivateObstacle(
-			@HeaderParam("Authorization") String token,
-			@FormParam("coordinates") String coordinates) {
-		if (token == null || token.equals("") || coordinates == null
-				|| coordinates.equals(""))
-			throw new IllegalArgumentException(
-					"Token or coordinates empty or null");
-		User user = authenticationService.authenticate(token);
-		Double x = Double.valueOf(coordinates.split(",")[0]);
-		Double y = Double.valueOf(coordinates.split(",")[1]);
-		Coordinate position = new Coordinate(x, y);
-		GeometryFactory factory = new GeometryFactory();
-		Point point = factory.createPoint(position);
-		obstacleService.deactivateObstacle(point);
-		return "Done";
-	}
-
-	@POST
-	@Path("/addToFavourite")
-	public String addToFavourite(@HeaderParam("Authorization") String token,
-			@FormParam("coordinates") String coordinates,
-			@FormParam("name") String name) {
-		if (token == null || token.equals("") || coordinates == null
-				|| coordinates.equals("") || name == null || name.equals(""))
-			throw new IllegalArgumentException(
-					"Token, coordinates or name empty or null");
-		User user = authenticationService.authenticate(token);
-		Double x = Double.valueOf(coordinates.split(",")[0]);
-		Double y = Double.valueOf(coordinates.split(",")[1]);
-		Coordinate position = new Coordinate(x, y);
-		GeometryFactory factory = new GeometryFactory();
-		Point point = factory.createPoint(position);
-		favouriteService.addToFavourite(user, point, name);
-		return "Done";
-	}
-
-	@POST
-	@Path("/removeFavourite")
-	public String removeFavourite(@HeaderParam("Authorization") String token,
-			@FormParam("name") String name) {
-		if (token == null || token.equals("") || name == null
-				|| name.equals(""))
-			throw new IllegalArgumentException(
-					"Token, coordinates or name empty or null");
-		User user = authenticationService.authenticate(token);
-		favouriteService.removeFromFavourite(user, name);
-		return "Done";
-	}
-	
-	@GET
-	@Path("/getFavourites")
-	public String getFavourites(@HeaderParam("Authorization") String token) {
-		if (token == null || token.equals(""))
-			throw new IllegalArgumentException(
-					"Token, coordinates or name empty or null");
-		User user = authenticationService.authenticate(token);
-		return gson.toJson(favouriteService.getFavourites(user));
-		
 	}
 }

@@ -4,3 +4,6 @@
 *.settings
 *.orig
 *.log
+*/gen
+*/bin
+*/libs

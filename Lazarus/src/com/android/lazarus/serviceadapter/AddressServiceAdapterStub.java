@@ -3,6 +3,7 @@ package com.android.lazarus.serviceadapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.model.Point;
 
 
@@ -29,6 +30,11 @@ public class AddressServiceAdapterStub implements AddressServiceAdapter {
 	@Override
 	public Point getCorner(String firstStreet, String secondStreet) {
 		return new Point();
+	}
+
+	@Override
+	public CloseLocationData getCloseLocation(double latitude, double longitude) {
+		return new CloseLocationData();
 	}
 
 }

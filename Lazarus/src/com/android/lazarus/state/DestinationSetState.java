@@ -2,24 +2,22 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
+import android.speech.tts.TextToSpeech;
+
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.model.Point;
 
-public class DestinationSetState extends AbstractState {
+public class DestinationSetState extends LocationDependentState {
 
 	Point destination;
-	LocationListenerImpl locationListener;
 	
 	
 	public DestinationSetState(VoiceInterpreterActivity context, Point destination) {
-		super(context);
+		super(context,20);
 		this.destination = destination;
-		this.locationListener = context.getLocationListener();
-		if(locationListener.getLocation()==null){
-			this.message = "No se puede obtener su posición actual, por favor encienda el g p s";
-		}else{
-			this.message = "Usted se encuentra aproximadamente a x metros, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
+		if(this.gpsEnabled==true && this.enoughAccuraccy==true){
+			giveInstructions();
 		}
 	}
 
@@ -29,7 +27,12 @@ public class DestinationSetState extends AbstractState {
 			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(this.context,destination);
 			this.context.setState(walkingDirectionsState);
 		}
+	}
 
+	@Override
+	protected void giveInstructions() {
+		this.message = "Usted se encuentra aproximadamente a x metros, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
+		tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
 	}
 
 }

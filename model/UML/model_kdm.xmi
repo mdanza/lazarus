@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="ASCII"?>
+<kdm:Segment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kdm="http://www.eclipse.org/MoDisco/kdm/kdm" xmlns:source="http://www.eclipse.org/MoDisco/kdm/source">
+  <model xsi:type="source:InventoryModel" name="model">
+    <inventoryElement xsi:type="source:Project" name="model">
+      <inventoryElement xsi:type="source:Configuration" name=".classpath" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.classpath"/>
+      <inventoryElement xsi:type="source:SourceFile" name=".gitignore" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.gitignore"/>
+      <inventoryElement xsi:type="source:Configuration" name=".project" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.project"/>
+      <inventoryElement xsi:type="source:Directory" name=".settings" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings">
+        <inventoryElement xsi:type="source:Configuration" name="org.eclipse.jdt.core.prefs" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings\org.eclipse.jdt.core.prefs"/>
+        <inventoryElement xsi:type="source:Configuration" name="org.eclipse.m2e.core.prefs" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings\org.eclipse.m2e.core.prefs"/>
+        <inventoryElement xsi:type="source:SourceFile" name="org.eclipse.wst.common.component" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings\org.eclipse.wst.common.component"/>
+        <inventoryElement xsi:type="source:Configuration" name="org.eclipse.wst.common.project.facet.core.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings\org.eclipse.wst.common.project.facet.core.xml"/>
+        <inventoryElement xsi:type="source:Configuration" name="org.eclipse.wst.validation.prefs" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\.settings\org.eclipse.wst.validation.prefs"/>
+      </inventoryElement>
+      <inventoryElement xsi:type="source:Directory" name="build" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\build">
+        <inventoryElement xsi:type="source:Directory" name="classes" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\build\classes"/>
+      </inventoryElement>
+      <inventoryElement xsi:type="source:SourceFile" name="loggin.log" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\loggin.log"/>
+      <inventoryElement xsi:type="source:SourceFile" name="loggin.log.1" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\loggin.log.1"/>
+      <inventoryElement xsi:type="source:SourceFile" name="model_java.xmi" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\model_java.xmi"/>
+      <inventoryElement xsi:type="source:Configuration" name="pom.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\pom.xml"/>
+      <inventoryElement xsi:type="source:SourceFile" name="pom.xml.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\pom.xml.orig"/>
+      <inventoryElement xsi:type="source:Directory" name="src" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src">
+        <inventoryElement xsi:type="source:Directory" name="main" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main">
+          <inventoryElement xsi:type="source:Directory" name="java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java">
+            <inventoryElement xsi:type="source:Directory" name="model" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model">
+              <inventoryElement xsi:type="source:SourceFile" name="Address.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Address.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="Bus.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Bus.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="BusRouteMaximal.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\BusRouteMaximal.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="BusRouteNonMaximal.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\BusRouteNonMaximal.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="BusStop.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\BusStop.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="Corner.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Corner.java"/>
+              <inventoryElement xsi:type="source:Directory" name="dao" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao">
+                <inventoryElement xsi:type="source:SourceFile" name="AddressDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\AddressDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="AddressDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\AddressDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusRouteMaximalDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusRouteMaximalDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusRouteMaximalDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusRouteMaximalDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusRouteNonMaximalDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusRouteNonMaximalDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusRouteNonMaximalDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusRouteNonMaximalDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusStopDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusStopDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusStopDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\BusStopDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CornerDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\CornerDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CornerDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\CornerDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CornerDAOImpl.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\CornerDAOImpl.java.orig"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\FavouriteDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\FavouriteDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteDAOImpl.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\FavouriteDAOImpl.java.orig"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ModelDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\ModelDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ObstacleDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\ObstacleDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ObstacleDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\ObstacleDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="RoleDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\RoleDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="RoleDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\RoleDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ShapefileWKTDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\ShapefileWKTDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ShapefileWKTDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\ShapefileWKTDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="StreetDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\StreetDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="StreetDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\StreetDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="UserDAO.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\UserDAO.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="UserDAOImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\UserDAOImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="UserDAOImpl.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\dao\UserDAOImpl.java.orig"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:SourceFile" name="Favourite.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Favourite.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="Obstacle.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Obstacle.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="Role.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Role.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="ShapefileWKT.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\ShapefileWKT.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="Street.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\Street.java"/>
+              <inventoryElement xsi:type="source:SourceFile" name="User.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\model\User.java"/>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="services" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services">
+              <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\address">
+                <inventoryElement xsi:type="source:SourceFile" name="AddressService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\address\AddressService.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="AddressServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\address\AddressServiceImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CloseLocationData.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\address\CloseLocationData.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CloseLocationDataExclusionStrategy.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\address\CloseLocationDataExclusionStrategy.java"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="authentication" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication">
+                <inventoryElement xsi:type="source:SourceFile" name="AuthenticationService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\AuthenticationService.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="AuthenticationServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\AuthenticationServiceImpl.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="AuthenticationServiceImpl.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\AuthenticationServiceImpl.java.orig"/>
+                <inventoryElement xsi:type="source:Directory" name="encryption" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\encryption">
+                  <inventoryElement xsi:type="source:SourceFile" name="Encrypter.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\encryption\Encrypter.java"/>
+                  <inventoryElement xsi:type="source:Directory" name="exception" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\encryption\exception">
+                    <inventoryElement xsi:type="source:SourceFile" name="ErrorInDecryptionException.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\encryption\exception\ErrorInDecryptionException.java"/>
+                    <inventoryElement xsi:type="source:SourceFile" name="InvalidTokenException.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\encryption\exception\InvalidTokenException.java"/>
+                  </inventoryElement>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="security" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\security">
+                  <inventoryElement xsi:type="source:SourceFile" name="PasswordHash.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\security\PasswordHash.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="token" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\token">
+                  <inventoryElement xsi:type="source:SourceFile" name="Token.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\token\Token.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="Token.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\authentication\token\Token.java.orig"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="directions" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions">
+                <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus">
+                  <inventoryElement xsi:type="source:SourceFile" name="BusDirectionsService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\BusDirectionsService.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusDirectionsServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\BusDirectionsServiceImpl.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusRide.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\BusRide.java"/>
+                  <inventoryElement xsi:type="source:Directory" name="schedules" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\schedules">
+                    <inventoryElement xsi:type="source:SourceFile" name="BusSchedulesService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\schedules\BusSchedulesService.java"/>
+                    <inventoryElement xsi:type="source:SourceFile" name="BusSchedulesServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\schedules\BusSchedulesServiceImpl.java"/>
+                  </inventoryElement>
+                  <inventoryElement xsi:type="source:SourceFile" name="Transshipment.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\bus\Transshipment.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="walking" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking">
+                  <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\utils">
+                    <inventoryElement xsi:type="source:SourceFile" name="GoogleServicesAdapter.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\utils\GoogleServicesAdapter.java"/>
+                  </inventoryElement>
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingDirectionsService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\WalkingDirectionsService.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingDirectionsServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\WalkingDirectionsServiceImpl.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingPosition.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\WalkingPosition.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingPositionExclusionStrategy.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\directions\walking\WalkingPositionExclusionStrategy.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="incidents" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\incidents">
+                <inventoryElement xsi:type="source:Directory" name="obstacles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\incidents\obstacles">
+                  <inventoryElement xsi:type="source:SourceFile" name="ObstacleService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\incidents\obstacles\ObstacleService.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="ObstacleServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\incidents\obstacles\ObstacleServiceImpl.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="shapefiles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles">
+                <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\address">
+                  <inventoryElement xsi:type="source:SourceFile" name="AddressLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\address\AddressLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="AddressLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\address\AddressLoaderImpl.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus">
+                  <inventoryElement xsi:type="source:SourceFile" name="BusRoutesMaximalLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusRoutesMaximalLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusRoutesMaximalLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusRoutesMaximalLoaderImpl.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusRoutesNonMaximalLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusRoutesNonMaximalLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusRoutesNonMaximalLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusRoutesNonMaximalLoaderImpl.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusStopLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusStopLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="BusStopLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\bus\BusStopLoaderImpl.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="corner" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\corner">
+                  <inventoryElement xsi:type="source:SourceFile" name="CornerLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\corner\CornerLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="CornerLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\corner\CornerLoaderImpl.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:SourceFile" name="ShapefileLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\ShapefileLoader.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ShapefileLoader.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\ShapefileLoader.java.orig"/>
+                <inventoryElement xsi:type="source:Directory" name="streets" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\streets">
+                  <inventoryElement xsi:type="source:SourceFile" name="StreetLoader.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\streets\StreetLoader.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="StreetLoaderImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\streets\StreetLoaderImpl.java"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\utils">
+                  <inventoryElement xsi:type="source:SourceFile" name="CoordinateConverter.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\utils\CoordinateConverter.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="CoordinateConverterImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\shapefiles\utils\CoordinateConverterImpl.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="users" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\users">
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteExclusionStrategy.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\users\FavouriteExclusionStrategy.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteService.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\users\FavouriteService.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteService.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\users\FavouriteService.java.orig"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteServiceImpl.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\java\services\users\FavouriteServiceImpl.java"/>
+              </inventoryElement>
+            </inventoryElement>
+          </inventoryElement>
+          <inventoryElement xsi:type="source:Directory" name="resources" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources">
+            <inventoryElement xsi:type="source:Configuration" name="log4j.properties" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources\log4j.properties"/>
+            <inventoryElement xsi:type="source:Directory" name="META-INF" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources\META-INF">
+              <inventoryElement xsi:type="source:Configuration" name="ejb-jar.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources\META-INF\ejb-jar.xml"/>
+              <inventoryElement xsi:type="source:Configuration" name="persistence.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources\META-INF\persistence.xml"/>
+              <inventoryElement xsi:type="source:SourceFile" name="persistence.xml.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\main\resources\META-INF\persistence.xml.orig"/>
+            </inventoryElement>
+          </inventoryElement>
+        </inventoryElement>
+        <inventoryElement xsi:type="source:Directory" name="test" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test">
+          <inventoryElement xsi:type="source:Directory" name="java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java">
+            <inventoryElement xsi:type="source:Directory" name="services" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services">
+              <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\address">
+                <inventoryElement xsi:type="source:SourceFile" name="AddressServiceTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\address\AddressServiceTest.java"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="authentication" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\authentication">
+                <inventoryElement xsi:type="source:Directory" name="security" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\authentication\security">
+                  <inventoryElement xsi:type="source:SourceFile" name="PasswordHashTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\authentication\security\PasswordHashTest.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="directions" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions">
+                <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\bus">
+                  <inventoryElement xsi:type="source:SourceFile" name="BusDirectionsImplTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\bus\BusDirectionsImplTest.java"/>
+                  <inventoryElement xsi:type="source:Directory" name="schedules" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\bus\schedules">
+                    <inventoryElement xsi:type="source:SourceFile" name="BusSchedulesServiceImplTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\bus\schedules\BusSchedulesServiceImplTest.java"/>
+                  </inventoryElement>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:Directory" name="walking" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\walking">
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingDirectionsTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\walking\WalkingDirectionsTest.java"/>
+                  <inventoryElement xsi:type="source:SourceFile" name="WalkingDirectionsTest.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\directions\walking\WalkingDirectionsTest.java.orig"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="incidents" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\incidents">
+                <inventoryElement xsi:type="source:Directory" name="obstacles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\incidents\obstacles">
+                  <inventoryElement xsi:type="source:SourceFile" name="ObstacleServiceTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\incidents\obstacles\ObstacleServiceTest.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="shapefiles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles">
+                <inventoryElement xsi:type="source:SourceFile" name="AddressLoaderTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\AddressLoaderTest.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="BusStopLoaderTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\BusStopLoaderTest.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="CornerLoaderTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\CornerLoaderTest.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="ShapefileLoaderTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\ShapefileLoaderTest.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="StreetLoaderTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\StreetLoaderTest.java"/>
+                <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\utils">
+                  <inventoryElement xsi:type="source:SourceFile" name="CoordinateConverterTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\shapefiles\utils\CoordinateConverterTest.java"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="users" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\users">
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteServiceTest.java" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\users\FavouriteServiceTest.java"/>
+                <inventoryElement xsi:type="source:SourceFile" name="FavouriteServiceTest.java.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\src\test\java\services\users\FavouriteServiceTest.java.orig"/>
+              </inventoryElement>
+            </inventoryElement>
+          </inventoryElement>
+        </inventoryElement>
+      </inventoryElement>
+      <inventoryElement xsi:type="source:Directory" name="target" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target">
+        <inventoryElement xsi:type="source:Directory" name="classes" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes">
+          <inventoryElement xsi:type="source:Configuration" name="log4j.properties" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\log4j.properties"/>
+          <inventoryElement xsi:type="source:Directory" name="META-INF" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF">
+            <inventoryElement xsi:type="source:Configuration" name="ejb-jar.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\ejb-jar.xml"/>
+            <inventoryElement xsi:type="source:Configuration" name="MANIFEST.MF" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\MANIFEST.MF"/>
+            <inventoryElement xsi:type="source:Directory" name="maven" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\maven">
+              <inventoryElement xsi:type="source:Directory" name="lazarus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\maven\lazarus">
+                <inventoryElement xsi:type="source:Directory" name="model" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\maven\lazarus\model">
+                  <inventoryElement xsi:type="source:Configuration" name="pom.properties" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\maven\lazarus\model\pom.properties"/>
+                  <inventoryElement xsi:type="source:Configuration" name="pom.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\maven\lazarus\model\pom.xml"/>
+                </inventoryElement>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Configuration" name="persistence.xml" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\persistence.xml"/>
+            <inventoryElement xsi:type="source:SourceFile" name="persistence.xml.orig" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\META-INF\persistence.xml.orig"/>
+          </inventoryElement>
+          <inventoryElement xsi:type="source:Directory" name="model" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model">
+            <inventoryElement xsi:type="source:BinaryFile" name="Address.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Address.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="Bus.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Bus.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="BusRouteMaximal.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\BusRouteMaximal.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="BusRouteNonMaximal.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\BusRouteNonMaximal.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="BusStop.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\BusStop.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="Corner.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Corner.class"/>
+            <inventoryElement xsi:type="source:Directory" name="dao" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao">
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\AddressDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\AddressDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusRouteMaximalDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusRouteMaximalDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusRouteMaximalDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusRouteMaximalDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusRouteNonMaximalDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusRouteNonMaximalDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusRouteNonMaximalDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusRouteNonMaximalDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusStopDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusStopDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusStopDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\BusStopDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="CornerDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\CornerDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="CornerDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\CornerDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\FavouriteDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\FavouriteDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ModelDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\ModelDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ObstacleDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\ObstacleDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ObstacleDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\ObstacleDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="RoleDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\RoleDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="RoleDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\RoleDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ShapefileWKTDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\ShapefileWKTDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ShapefileWKTDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\ShapefileWKTDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="StreetDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\StreetDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="StreetDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\StreetDAOImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="UserDAO.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\UserDAO.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="UserDAOImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\dao\UserDAOImpl.class"/>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:BinaryFile" name="Favourite.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Favourite.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="Obstacle.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Obstacle.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="Role.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Role.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="ShapefileWKT.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\ShapefileWKT.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="Street.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\Street.class"/>
+            <inventoryElement xsi:type="source:BinaryFile" name="User.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\model\User.class"/>
+          </inventoryElement>
+          <inventoryElement xsi:type="source:Directory" name="services" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services">
+            <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\address">
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\address\AddressService.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\address\AddressServiceImpl.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="CloseLocationData.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\address\CloseLocationData.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="CloseLocationDataExclusionStrategy.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\address\CloseLocationDataExclusionStrategy.class"/>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="authentication" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication">
+              <inventoryElement xsi:type="source:BinaryFile" name="AuthenticationService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\AuthenticationService.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="AuthenticationServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\AuthenticationServiceImpl.class"/>
+              <inventoryElement xsi:type="source:Directory" name="encryption" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\encryption">
+                <inventoryElement xsi:type="source:BinaryFile" name="Encrypter.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\encryption\Encrypter.class"/>
+                <inventoryElement xsi:type="source:Directory" name="exception" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\encryption\exception">
+                  <inventoryElement xsi:type="source:BinaryFile" name="ErrorInDecryptionException.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\encryption\exception\ErrorInDecryptionException.class"/>
+                  <inventoryElement xsi:type="source:BinaryFile" name="InvalidTokenException.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\encryption\exception\InvalidTokenException.class"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="security" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\security">
+                <inventoryElement xsi:type="source:BinaryFile" name="PasswordHash.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\security\PasswordHash.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="token" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\token">
+                <inventoryElement xsi:type="source:BinaryFile" name="Token.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\authentication\token\Token.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="directions" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions">
+              <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus">
+                <inventoryElement xsi:type="source:BinaryFile" name="BusDirectionsService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\BusDirectionsService.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusDirectionsServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\BusDirectionsServiceImpl.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusRide.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\BusRide.class"/>
+                <inventoryElement xsi:type="source:Directory" name="schedules" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\schedules">
+                  <inventoryElement xsi:type="source:BinaryFile" name="BusSchedulesService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\schedules\BusSchedulesService.class"/>
+                  <inventoryElement xsi:type="source:BinaryFile" name="BusSchedulesServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\schedules\BusSchedulesServiceImpl.class"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:BinaryFile" name="Transshipment.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\bus\Transshipment.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="walking" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking">
+                <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\utils">
+                  <inventoryElement xsi:type="source:BinaryFile" name="GoogleServicesAdapter.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\utils\GoogleServicesAdapter.class"/>
+                </inventoryElement>
+                <inventoryElement xsi:type="source:BinaryFile" name="WalkingDirectionsService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\WalkingDirectionsService.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="WalkingDirectionsServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\WalkingDirectionsServiceImpl.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="WalkingPosition.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\WalkingPosition.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="WalkingPositionExclusionStrategy.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\directions\walking\WalkingPositionExclusionStrategy.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="incidents" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\incidents">
+              <inventoryElement xsi:type="source:Directory" name="obstacles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\incidents\obstacles">
+                <inventoryElement xsi:type="source:BinaryFile" name="ObstacleService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\incidents\obstacles\ObstacleService.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="ObstacleServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\incidents\obstacles\ObstacleServiceImpl.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="shapefiles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles">
+              <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\address">
+                <inventoryElement xsi:type="source:BinaryFile" name="AddressLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\address\AddressLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="AddressLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\address\AddressLoaderImpl.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus">
+                <inventoryElement xsi:type="source:BinaryFile" name="BusRoutesMaximalLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusRoutesMaximalLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusRoutesMaximalLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusRoutesMaximalLoaderImpl.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusRoutesNonMaximalLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusRoutesNonMaximalLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusRoutesNonMaximalLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusRoutesNonMaximalLoaderImpl.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusStopLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusStopLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="BusStopLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\bus\BusStopLoaderImpl.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="corner" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\corner">
+                <inventoryElement xsi:type="source:BinaryFile" name="CornerLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\corner\CornerLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="CornerLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\corner\CornerLoaderImpl.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:BinaryFile" name="ShapefileLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\ShapefileLoader.class"/>
+              <inventoryElement xsi:type="source:Directory" name="streets" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\streets">
+                <inventoryElement xsi:type="source:BinaryFile" name="StreetLoader.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\streets\StreetLoader.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="StreetLoaderImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\streets\StreetLoaderImpl.class"/>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\utils">
+                <inventoryElement xsi:type="source:BinaryFile" name="CoordinateConverter.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\utils\CoordinateConverter.class"/>
+                <inventoryElement xsi:type="source:BinaryFile" name="CoordinateConverterImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\shapefiles\utils\CoordinateConverterImpl.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="users" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\users">
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteExclusionStrategy.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\users\FavouriteExclusionStrategy.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteService.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\users\FavouriteService.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteServiceImpl.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\classes\services\users\FavouriteServiceImpl.class"/>
+            </inventoryElement>
+          </inventoryElement>
+        </inventoryElement>
+        <inventoryElement xsi:type="source:Directory" name="maven-archiver" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\maven-archiver">
+          <inventoryElement xsi:type="source:Configuration" name="pom.properties" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\maven-archiver\pom.properties"/>
+        </inventoryElement>
+        <inventoryElement xsi:type="source:BinaryFile" name="model-ejb.jar" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\model-ejb.jar"/>
+        <inventoryElement xsi:type="source:Directory" name="test-classes" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes">
+          <inventoryElement xsi:type="source:Directory" name="services" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services">
+            <inventoryElement xsi:type="source:Directory" name="address" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\address">
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressServiceTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\address\AddressServiceTest.class"/>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="authentication" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\authentication">
+              <inventoryElement xsi:type="source:Directory" name="security" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\authentication\security">
+                <inventoryElement xsi:type="source:BinaryFile" name="PasswordHashTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\authentication\security\PasswordHashTest.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="directions" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions">
+              <inventoryElement xsi:type="source:Directory" name="bus" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\bus">
+                <inventoryElement xsi:type="source:BinaryFile" name="BusDirectionsImplTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\bus\BusDirectionsImplTest.class"/>
+                <inventoryElement xsi:type="source:Directory" name="schedules" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\bus\schedules">
+                  <inventoryElement xsi:type="source:BinaryFile" name="BusSchedulesServiceImplTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\bus\schedules\BusSchedulesServiceImplTest.class"/>
+                </inventoryElement>
+              </inventoryElement>
+              <inventoryElement xsi:type="source:Directory" name="walking" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\walking">
+                <inventoryElement xsi:type="source:BinaryFile" name="WalkingDirectionsTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\directions\walking\WalkingDirectionsTest.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="incidents" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\incidents">
+              <inventoryElement xsi:type="source:Directory" name="obstacles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\incidents\obstacles">
+                <inventoryElement xsi:type="source:BinaryFile" name="ObstacleServiceTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\incidents\obstacles\ObstacleServiceTest.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="shapefiles" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles">
+              <inventoryElement xsi:type="source:BinaryFile" name="AddressLoaderTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\AddressLoaderTest.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="BusStopLoaderTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\BusStopLoaderTest.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="CornerLoaderTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\CornerLoaderTest.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="ShapefileLoaderTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\ShapefileLoaderTest.class"/>
+              <inventoryElement xsi:type="source:BinaryFile" name="StreetLoaderTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\StreetLoaderTest.class"/>
+              <inventoryElement xsi:type="source:Directory" name="utils" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\utils">
+                <inventoryElement xsi:type="source:BinaryFile" name="CoordinateConverterTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\shapefiles\utils\CoordinateConverterTest.class"/>
+              </inventoryElement>
+            </inventoryElement>
+            <inventoryElement xsi:type="source:Directory" name="users" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\users">
+              <inventoryElement xsi:type="source:BinaryFile" name="FavouriteServiceTest.class" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\target\test-classes\services\users\FavouriteServiceTest.class"/>
+            </inventoryElement>
+          </inventoryElement>
+        </inventoryElement>
+      </inventoryElement>
+      <inventoryElement xsi:type="source:Directory" name="UML" path="C:\Users\Mateo\Documents\Escribido\UM\ProyectoFinDeCarrera\workspace\lazarus\lazarus\model\UML"/>
+    </inventoryElement>
+  </model>
+</kdm:Segment>

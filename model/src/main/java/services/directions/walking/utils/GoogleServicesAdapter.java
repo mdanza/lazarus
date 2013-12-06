@@ -37,7 +37,7 @@ public class GoogleServicesAdapter {
 
 		String start = startPoint.x + "," + startPoint.y;
 		String finish = endPoint.x + "," + endPoint.y;
-		String url = "http://maps.googleapis.com/maps/api/directions/json?language=es&mode=walking&sensor=false&units=mertics&alternatives=true&origin="
+		String url = "https://maps.googleapis.com/maps/api/directions/json?language=es&mode=walking&sensor=false&units=mertics&alternatives=true&origin="
 				+ start + "&destination=" + finish;
 		JSONObject json = (JSONObject) JSONSerializer
 				.toJSON(getGoogleRoutes(url));

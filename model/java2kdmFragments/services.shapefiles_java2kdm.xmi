@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:javaapplication="http://www.eclipse.org/MoDisco/Java/Composition/0.1.incubation/javaApplication">
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.1/@inventoryElement.0/@inventoryElement.0/@inventoryElement.4/@inventoryElement.0"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="32" endLine="3" endPosition="54">
+      <node href="../model_java.xmi#//@compilationUnits.6/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="58" endLine="5" endPosition="111">
+      <node href="../model_java.xmi#//@compilationUnits.6/@imports.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="7" startPosition="115" endLine="15" endPosition="378">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="152" endLine="9" endPosition="157">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="152" endLine="14" endPosition="375">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="153" endLine="9" endPosition="157">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="167" endLine="10" endPosition="171">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="179" endLine="14" endPosition="375">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@body"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="184" endLine="11" endPosition="232">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@body/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="12" startPosition="237" endLine="12" endPosition="366">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.0/@bodyDeclarations.0/@body/@comments.1"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.6"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.1/@inventoryElement.0/@inventoryElement.0/@inventoryElement.4/@inventoryElement.1"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="32" endLine="3" endPosition="54">
+      <node href="../model_java.xmi#//@compilationUnits.7/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="58" endLine="5" endPosition="107">
+      <node href="../model_java.xmi#//@compilationUnits.7/@imports.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="7" startPosition="111" endLine="15" endPosition="414">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="148" endLine="9" endPosition="153">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="148" endLine="14" endPosition="411">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="149" endLine="9" endPosition="153">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="163" endLine="10" endPosition="167">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="175" endLine="14" endPosition="411">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@body"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="181" endLine="11" endPosition="228">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@body/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="12" startPosition="233" endLine="12" endPosition="402">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.1/@bodyDeclarations.0/@body/@comments.1"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.7"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.1/@inventoryElement.0/@inventoryElement.0/@inventoryElement.4/@inventoryElement.3"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="32" endLine="3" endPosition="60">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="64" endLine="5" endPosition="105">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="6" startPosition="107" endLine="6" endPosition="143">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.2"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="147" endLine="8" endPosition="175">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.3"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="177" endLine="9" endPosition="201">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.4"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="203" endLine="10" endPosition="232">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.5"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="234" endLine="11" endPosition="256">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.6"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="13" startPosition="260" endLine="13" endPosition="318">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.7"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="14" startPosition="320" endLine="14" endPosition="365">
+      <node href="../model_java.xmi#//@compilationUnits.8/@imports.8"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="16" startPosition="369" endLine="60" endPosition="1694">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="18" startPosition="409" endLine="48" endPosition="1292">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="49" startPosition="1295" endLine="49" endPosition="1300">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="49" startPosition="1295" endLine="58" endPosition="1688">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="49" startPosition="1296" endLine="49" endPosition="1300">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="50" startPosition="1310" endLine="50" endPosition="1314">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="50" startPosition="1339" endLine="50" endPosition="1348">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@thrownExceptions.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="50" startPosition="1349" endLine="58" endPosition="1688">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="51" startPosition="1352" endLine="51" endPosition="1409">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="52" startPosition="1411" endLine="52" endPosition="1485">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="54" startPosition="1491" endLine="54" endPosition="1511">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.2"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="55" startPosition="1513" endLine="55" endPosition="1591">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.3"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="56" startPosition="1593" endLine="56" endPosition="1613">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.4"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="57" startPosition="1615" endLine="57" endPosition="1684">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.2/@bodyDeclarations.0/@body/@comments.5"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.8"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.1/@inventoryElement.0/@inventoryElement.0/@inventoryElement.4/@inventoryElement.2"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="32" endLine="3" endPosition="54">
+      <node href="../model_java.xmi#//@compilationUnits.9/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="58" endLine="5" endPosition="109">
+      <node href="../model_java.xmi#//@compilationUnits.9/@imports.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="7" startPosition="113" endLine="16" endPosition="402">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="151" endLine="10" endPosition="156">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="151" endLine="15" endPosition="399">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="152" endLine="10" endPosition="156">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="166" endLine="11" endPosition="170">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="178" endLine="15" endPosition="399">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@body"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="12" startPosition="183" endLine="12" endPosition="230">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@body/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="13" startPosition="234" endLine="13" endPosition="390">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.3/@bodyDeclarations.0/@body/@comments.1"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.9"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.1/@inventoryElement.0/@inventoryElement.0/@inventoryElement.4/@inventoryElement.4"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="31" endLine="3" endPosition="53">
+      <node href="../model_java.xmi#//@compilationUnits.10/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="55" endLine="5" endPosition="107">
+      <node href="../model_java.xmi#//@compilationUnits.10/@imports.1"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="7" startPosition="110" endLine="17" endPosition="362">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="146" endLine="14" endPosition="354">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="146" endLine="9" endPosition="151">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="9" startPosition="147" endLine="9" endPosition="151">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="161" endLine="10" endPosition="165">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="10" startPosition="173" endLine="14" endPosition="354">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@body"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="11" startPosition="178" endLine="11" endPosition="224">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@body/@comments.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="12" startPosition="228" endLine="12" endPosition="346">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.4/@bodyDeclarations.0/@body/@comments.1"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.10"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+  <javaapplication:Java2File>
+    <file href="../model_kdm.xmi#//@model.0/@inventoryElement.0/@inventoryElement.10/@inventoryElement.0/@inventoryElement.0/@inventoryElement.1/@inventoryElement.4/@inventoryElement.3"/>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="3" startPosition="32" endLine="3" endPosition="55">
+      <node href="../model_java.xmi#//@compilationUnits.74/@imports.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="59" endLine="10" endPosition="144">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="59" endLine="5" endPosition="65">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@annotations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="5" startPosition="60" endLine="5" endPosition="65">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@annotations.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="106" endLine="8" endPosition="138">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@bodyDeclarations.0"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="113" endLine="8" endPosition="117">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@bodyDeclarations.0/@returnType"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="126" endLine="8" endPosition="132">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@bodyDeclarations.0/@parameters.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="126" endLine="8" endPosition="132">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@bodyDeclarations.0/@parameters.0/@type"/>
+    </children>
+    <children xsi:type="javaapplication:JavaNodeSourceRegion" startLine="8" startPosition="126" endLine="8" endPosition="136">
+      <node href="../model_java.xmi#//@ownedElements.0/@ownedPackages.4/@ownedElements.5/@bodyDeclarations.0/@parameters.0"/>
+    </children>
+    <unit href="../model_java.xmi#//@compilationUnits.74"/>
+    <parent href="Package2Directory_java2kdm.xmi#/6"/>
+  </javaapplication:Java2File>
+</xmi:XMI>

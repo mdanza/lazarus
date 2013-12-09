@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -19,8 +20,10 @@ import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
 
+import com.google.gson.Gson;
+
 @Stateless(name = "UserService")
-@Path("/api/users")
+@Path("v1/api/users")
 public class UserService {
 
 	static Logger logger = Logger.getLogger(UserService.class);
@@ -36,6 +39,8 @@ public class UserService {
 
 	@EJB(name = "RestResultsHelper")
 	private RestResultsHelper restResultsHelper;
+
+	private Gson gson = new Gson();
 
 	@POST
 	public String register(@FormParam("username") String username,
@@ -94,7 +99,7 @@ public class UserService {
 	}
 
 	@PUT
-	public String deactivate(@FormParam("username") String username,
+	public String modify(@FormParam("username") String username,
 			@HeaderParam("Authorization") String token) {
 		User actionUser = authenticationService.authenticate(token);
 		User deactivating = userDAO.find(username);
@@ -105,5 +110,15 @@ public class UserService {
 			return "deactivated";
 		}
 		throw new IllegalArgumentException("Invalid credentials");
+	}
+
+	@GET
+	public String getUser(@HeaderParam("Authorization") String token) {
+		try {
+			User user = authenticationService.authenticate(token);
+			return restResultsHelper.resultWrapper(true, gson.toJson(user));
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "could not get user");
+		}
 	}
 }

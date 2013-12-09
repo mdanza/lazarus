@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Stateless(name = "ScheduleService")
-@Path("/api/schedule")
+@Path("v1/api/schedule")
 public class ScheduleService {
 
 	private Gson gson = createGson();

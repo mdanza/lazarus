@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 
 @Stateless(name = "AddressesService")
-@Path("/api/addresses")
+@Path("v1/api/addresses")
 public class AddressesService {
 
 	private Gson gson = createGson();

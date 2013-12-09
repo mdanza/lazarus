@@ -2,10 +2,10 @@ package services;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
 import model.User;
@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "ObstacleReportingService")
-@Path("/api/obstacles")
+@Path("v1/api/obstacles")
 public class ObstacleReportingService {
 
 	@EJB(name = "AuthenticationService")
@@ -47,7 +47,7 @@ public class ObstacleReportingService {
 		return "Done";
 	}
 
-	@PUT
+	@DELETE
 	public String deactivateObstacle(
 			@HeaderParam("Authorization") String token,
 			@FormParam("coordinates") String coordinates) {

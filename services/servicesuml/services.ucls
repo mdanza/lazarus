@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.4" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
+  associations="true" dependencies="true" nesting-relationships="true">  
+  <class id="1" language="java" name="services.UserService" project="services" 
+    file="/services/src/main/java/services/UserService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="261" width="285" x="41" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="services.ShapeService" project="services" 
+    file="/services/src/main/java/services/ShapeService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="351" width="319" x="366" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="services.DirectionsService" project="services" 
+    file="/services/src/main/java/services/DirectionsService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="936" y="440"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="services.ObstacleReportingService" project="services" 
+    file="/services/src/main/java/services/ObstacleReportingService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="258" x="1097" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="services.FavouritesReportingService" project="services" 
+    file="/services/src/main/java/services/FavouritesReportingService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="207" width="241" x="1395" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="services.ScheduleService" project="services" 
+    file="/services/src/main/java/services/ScheduleService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="189" width="305" x="1676" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="services.BusReportingService" project="services" 
+    file="/services/src/main/java/services/BusReportingService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="261" width="354" x="2021" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="services.AddressesService" project="services" 
+    file="/services/src/main/java/services/AddressesService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="243" width="332" x="725" y="37"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="9">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

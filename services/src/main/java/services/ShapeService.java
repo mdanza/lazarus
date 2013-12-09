@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import services.authentication.AuthenticationService;
 import services.shapefiles.address.AddressLoader;
 import services.shapefiles.bus.BusRoutesMaximalLoader;
-import services.shapefiles.bus.BusRoutesNonMaximalLoader;
 import services.shapefiles.bus.BusStopLoader;
 import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
@@ -32,9 +31,6 @@ public class ShapeService {
 
 	@EJB(name = "BusStopLoader")
 	private BusStopLoader busStopLoader;
-
-	@EJB(name = "BusRoutesNonMaximalLoader")
-	private BusRoutesNonMaximalLoader busRoutesNonMaximalLoader;
 
 	@EJB(name = "BusRoutesMaximalLoader")
 	private BusRoutesMaximalLoader busRoutesMaximalLoader;
@@ -71,15 +67,6 @@ public class ShapeService {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		busStopLoader.readShp(url);
-		return "Done";
-	}
-
-	@POST
-	@Path("/uploadBusRoutesNonMaximal")
-	public String busRoutesNonMaximal(@FormParam("url") String url) {
-		if (url == null || url.equals(""))
-			throw new IllegalArgumentException("Url cannot be empty or null");
-		busRoutesNonMaximalLoader.readShp(url);
 		return "Done";
 	}
 

@@ -12,7 +12,6 @@ import javax.persistence.Table;
 @Table(name = "shapefiles_wkt")
 @NamedQuery(name = "ShapefileWKT.findByType", query = "SELECT s FROM ShapefileWKT s WHERE s.shapefileType = :shapefileType")
 public class ShapefileWKT {
-	public static final String BUS_NON_MAXIMAL = "bus_non_maximal";
 	public static final String BUS_MAXIMAL = "bus_maximal";
 	public static final String BUS_STOP = "bus_stop";
 	public static final String ADDRESS = "address";
@@ -43,7 +42,7 @@ public class ShapefileWKT {
 	}
 
 	public void setShapefileType(String shapefile) {
-		if (shapefile == CORNER || shapefile == BUS_NON_MAXIMAL
+		if (shapefile == CORNER
 				|| shapefile == CORNER || shapefile == BUS_MAXIMAL
 				|| shapefile == BUS_STOP || shapefile == ADDRESS
 				|| shapefile == STREET || shapefile == CORNER || shapefile == OBSTACLE)

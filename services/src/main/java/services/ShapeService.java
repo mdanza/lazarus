@@ -19,7 +19,7 @@ import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
 
 @Stateless(name = "ShapeService")
-@Path("/api/shapes")
+@Path("v1/api/shapes")
 public class ShapeService {
 
 	static Logger logger = Logger.getLogger(ShapeService.class);

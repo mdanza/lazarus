@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "DirectionsService")
-@Path("/api/directions")
+@Path("v1/api/directions")
 public class DirectionsService {
 
 	private GeometryFactory geometryFactory = new GeometryFactory();

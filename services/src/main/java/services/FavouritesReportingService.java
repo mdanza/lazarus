@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "FavouritesReportingService")
-@Path("/api/favourites")
+@Path("v1/api/favourites")
 public class FavouritesReportingService {
 	
 	private Gson gson = createGson();

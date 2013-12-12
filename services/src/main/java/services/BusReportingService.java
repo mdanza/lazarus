@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Stateless(name = "BusReportingService")
-@Path("/api/bus")
+@Path("v1/api/bus")
 public class BusReportingService {
 
 	private Gson gson = createGson();

@@ -39,7 +39,7 @@ public class LogInState extends AbstractState {
 				}
 			}
 			usernamePresent = true;
-			this.message = "Por favor diga su contraseï¿½a";
+			this.message = "Por favor diga su contraseña";
 		} else {
 			String username = null;
 			String password = null;
@@ -59,7 +59,7 @@ public class LogInState extends AbstractState {
 				context.getSharedPreferences("usrpref", 0).edit().putString("password",password).commit();
 				initializeMainMenu("Gracias por loguearse, ");
 			}else{
-				this.message = "El nombre de usuario o la contraseï¿½a no es correcto, por favor repita su nombre de usuario";
+				this.message = "El nombre de usuario o la contraseña no es correcto, por favor repita su nombre de usuario";
 				this.usernamePresent=false;
 			}
 		}

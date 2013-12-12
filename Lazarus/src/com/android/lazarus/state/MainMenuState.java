@@ -15,7 +15,7 @@ public class MainMenuState extends AbstractState {
 
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
 	UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
-	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para mï¿½s opciones diga mï¿½s";
+	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 	int position = 0;
 	List<String> streets = null;
 	Favourite favourite = null;

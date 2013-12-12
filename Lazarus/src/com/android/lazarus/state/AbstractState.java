@@ -10,7 +10,7 @@ import android.location.Location;
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
-import com.android.lazarus.serviceadapter.AddressServiceAdapterStub;
+import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
 
 public abstract class AbstractState implements State {
 

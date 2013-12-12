@@ -6,8 +6,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import model.dao.BusStopDAO;
-
 import org.apache.log4j.Logger;
 
 import services.authentication.AuthenticationService;
@@ -15,6 +13,7 @@ import services.shapefiles.address.AddressLoader;
 import services.shapefiles.bus.BusRoutesMaximalLoader;
 
 import services.shapefiles.bus.BusStopLoader;
+import services.shapefiles.bus.ControlPointLoader;
 import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
 
@@ -36,8 +35,9 @@ public class ShapeService {
 	@EJB(name = "BusRoutesMaximalLoader")
 	private BusRoutesMaximalLoader busRoutesMaximalLoader;
 
-	@EJB(name = "BusStopDAO")
-	private BusStopDAO busStopDAO;
+	@EJB(name = "ControlPointLoader")
+	private ControlPointLoader controlPointLoader;
+
 	@EJB(name = "AddressLoader")
 	private AddressLoader addressLoader;
 
@@ -68,6 +68,15 @@ public class ShapeService {
 		if (url == null || url.equals(""))
 			throw new IllegalArgumentException("Url cannot be empty or null");
 		busStopLoader.readShp(url);
+		return "Done";
+	}
+
+	@POST
+	@Path("/uploadControlPoints")
+	public String controlPoints(@FormParam("url") String url) {
+		if (url == null || url.equals(""))
+			throw new IllegalArgumentException("Url cannot be empty or null");
+		controlPointLoader.readShp(url);
 		return "Done";
 	}
 

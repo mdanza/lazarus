@@ -25,13 +25,13 @@ import com.google.gson.JsonParser;
 
 public class UserServiceAdapterImpl implements UserServiceAdapter {
 	Context context;
-	
-	public UserServiceAdapterImpl(Context context){
+
+	public UserServiceAdapterImpl(Context context) {
 		this.context = context;
 	}
 
 	@Override
-	public boolean login(String username, String password) {
+	public String login(String username, String password) {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL
 				+ "/users/login");
@@ -47,23 +47,17 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String token = jsonResponse.get("data").getAsString();
-				SharedPreferences settings = PreferenceManager
-						.getDefaultSharedPreferences(context);
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putString("token", token);
-				editor.putLong("tokenDate", new Date().getTime());
-				editor.commit();
-				return true;
+				return token;
 			} else
-				return false;
+				return null;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		return false;
 	}
 
 	@Override
-	public Favourite getFavourite(String string) {
+	public Favourite getFavourite(String token, String string) {
 		// TODO Auto-generated method stub
 		return null;
 	}

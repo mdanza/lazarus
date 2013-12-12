@@ -9,7 +9,7 @@ import com.android.lazarus.model.WalkingPosition;
 
 public interface DirectionsServiceAdapter {
 
-	List<WalkingPosition> getWalkingDirections(Location origin,
+	List<WalkingPosition> getWalkingDirections(String token, Location origin,
 			Point destination);
 
 }

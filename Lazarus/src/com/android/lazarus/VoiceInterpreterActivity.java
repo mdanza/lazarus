@@ -96,7 +96,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		preferences = new ObscuredSharedPreferences(this,
 				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
 		boolean validDataStored = false;
-		String initialMessage = "Bienvenido a lázarus, ";
+		String initialMessage = "Bienvenido a Lázarus, ";
 		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
 				&& this.getSharedPreferences("usrpref", 0).getString("password", null) != null) {
 			if (userServiceAdapter.login(

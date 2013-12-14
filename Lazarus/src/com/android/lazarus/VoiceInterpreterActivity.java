@@ -4,14 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +17,8 @@ import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
 import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
+import com.android.lazarus.speechrecognizer.AndroidSpeechRecognizer;
+import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
@@ -29,7 +26,7 @@ import com.android.lazarus.state.State;
 public class VoiceInterpreterActivity extends Activity implements
 		TextToSpeech.OnInitListener {
 
-	SpeechRecognizer speechRecognizer;
+	SpeechRecognizerInterface speechRecognizer;
 	String stringResults = new String();
 	Intent recognizerIntent;
 	private TextToSpeech tts;
@@ -39,6 +36,7 @@ public class VoiceInterpreterActivity extends Activity implements
 	private RecognitionListener recognitionListener = new RecognitionListenerImpl(
 			this);
 	private SharedPreferences preferences = null;
+	private String token = null;
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
 
 	public TextToSpeech getTts() {
@@ -72,8 +70,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		super.onCreate(savedInstanceState);		
 		
 		setContentView(R.layout.activity_voice_interpreter);
-		speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-		speechRecognizer.setRecognitionListener(recognitionListener);
+		speechRecognizer = new AndroidSpeechRecognizer(this,recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
 				"es-ES");
@@ -96,13 +93,15 @@ public class VoiceInterpreterActivity extends Activity implements
 		preferences = new ObscuredSharedPreferences(this,
 				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
 		boolean validDataStored = false;
-		String initialMessage = "Bienvenido a L·zarus, ";
+		String initialMessage = "Bienvenido a l√°zarus, ";
 		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
 				&& this.getSharedPreferences("usrpref", 0).getString("password", null) != null) {
-			if (userServiceAdapter.login(
+			String token = userServiceAdapter.login(
 					this.getSharedPreferences("usrpref", 0).getString("username", null),
-					this.getSharedPreferences("usrpref", 0).getString("password", null)) == true) {
+					this.getSharedPreferences("usrpref", 0).getString("password", null));
+			if (token != null) {
 				validDataStored = true;
+				this.token = token; 
 			}
 		}
 		if (validDataStored) {
@@ -171,6 +170,14 @@ public class VoiceInterpreterActivity extends Activity implements
 		}
 		speechRecognizer.destroy();
 		super.onDestroy();
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 	

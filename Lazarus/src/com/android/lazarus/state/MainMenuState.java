@@ -15,7 +15,7 @@ public class MainMenuState extends AbstractState {
 
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
 	UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
-	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
+	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para mÃ¡s opciones diga mÃ¡s";
 	int position = 0;
 	List<String> streets = null;
 	Favourite favourite = null;
@@ -53,9 +53,9 @@ public class MainMenuState extends AbstractState {
 			if (firstResults == null) {
 				firstResults = results;
 			}
-			streets = addressServiceAdapter.getPossibleStreets(firstResults
+			streets = addressServiceAdapter.getPossibleStreets(context.getToken(),firstResults
 					.get(position));
-			favourite = userServiceAdapter.getFavourite(firstResults
+			favourite = userServiceAdapter.getFavourite(context.getToken(),firstResults
 					.get(position));
 			if (favourite == null && (streets == null || streets.isEmpty())) {
 				goToNextPosition();
@@ -63,7 +63,7 @@ public class MainMenuState extends AbstractState {
 			}
 			if (favourite != null && !toChooseStreet && !toConfirmFavourite) {
 				toConfirmFavourite = true;
-				this.message = "ï¿½Desea dirigirse a " + favourite.getName()
+				this.message = "Desea dirigirse a " + favourite.getName()
 						+ "?";
 				return;
 			}
@@ -76,7 +76,7 @@ public class MainMenuState extends AbstractState {
 							+ streets.get(i - 1) + " diga "
 							+ getStringDigits(i) + ",";
 				}
-				String finalMessage = " para obtener otros resultados posibles diga mï¿½s";
+				String finalMessage = " para obtener otros resultados posibles diga mÃ¡s";
 				this.message = message + finalMessage;
 				return;
 			}

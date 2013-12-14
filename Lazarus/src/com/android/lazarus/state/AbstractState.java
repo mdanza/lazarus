@@ -42,10 +42,12 @@ public abstract class AbstractState implements State {
 
 	protected String getWhereAmIMessage() {
 		Location location = this.context.getLocationListener().getLocation();
-		if(location==null){
-		    return "No se puede obtener información de su posición, por favor encienda el g p s";
-		}else{
-			CloseLocationData closeLocationData = addressServiceAdapter.getCloseLocation(location.getLatitude(),location.getLongitude());
+		if (location == null) {
+			return "No se puede obtener informaciï¿½n de su posiciï¿½n, por favor encienda el g p s";
+		} else {
+			CloseLocationData closeLocationData = addressServiceAdapter
+					.getCloseLocation(context.getToken(),
+							location.getLatitude(), location.getLongitude());
 			return "Usted se encuentra en la concha de su hermana. ";
 		}
 	}
@@ -61,10 +63,20 @@ public abstract class AbstractState implements State {
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(className);
-				Constructor<?> constructor = clazz
-						.getConstructor(VoiceInterpreterActivity.class);
-				State newState = (State) constructor.newInstance(this.context);
-				this.context.setState(newState);
+				if (context.getState() instanceof LocationDependentState) {
+					float accuraccy = ((LocationDependentState) context.getState()).getMinimumAccuraccy();
+					Constructor<?> constructor = clazz
+							.getConstructor(VoiceInterpreterActivity.class,float.class);
+					State newState = (State) constructor
+							.newInstance(this.context,accuraccy);
+					this.context.setState(newState);
+				} else {
+					Constructor<?> constructor = clazz
+							.getConstructor(VoiceInterpreterActivity.class);
+					State newState = (State) constructor
+							.newInstance(this.context);
+					this.context.setState(newState);
+				}
 			} catch (NoSuchMethodException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -97,12 +109,12 @@ public abstract class AbstractState implements State {
 		ArrayList<String> stripedStrings = new ArrayList<String>();
 		for (String result : results) {
 			result = result.toLowerCase();
-			result = result.replace("á", "a");
-			result = result.replace("é", "e");
-			result = result.replace("í", "i");
-			result = result.replace("ó", "o");
-			result = result.replace("ú", "u");
-			result = result.replace("ü", "u");
+			result = result.replace("Ã¡", "a");
+			result = result.replace("Ã©", "e");
+			result = result.replace("Ã­", "i");
+			result = result.replace("Ã³", "o");
+			result = result.replace("Ãº", "u");
+			result = result.replace("Ã¼", "u");
 			stripedStrings.add(result);
 		}
 		return stripedStrings;
@@ -233,14 +245,13 @@ public abstract class AbstractState implements State {
 	}
 
 	private int toDigit(String string) {
-		for(int i = 0;i<10;i++){
-			if(isTheSameDigit(string, i)){
+		for (int i = 0; i < 10; i++) {
+			if (isTheSameDigit(string, i)) {
 				return i;
 			}
 		}
 		throw new IllegalArgumentException("not a digit");
 	}
-
 
 	protected boolean isAddressNumber(String string) {
 		String[] separated = string.split(" ");
@@ -248,11 +259,11 @@ public abstract class AbstractState implements State {
 		while (i < separated.length && containsAnyDigit(separated[i])) {
 			i++;
 		}
-		if(i==separated.length || (i==separated.length-1 && i!=0)){
+		if (i == separated.length || (i == separated.length - 1 && i != 0)) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-	
+
 }

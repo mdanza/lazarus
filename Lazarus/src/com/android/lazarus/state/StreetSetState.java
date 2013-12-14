@@ -92,10 +92,10 @@ public class StreetSetState extends AbstractState {
 	private void goToDestinationSetState() {
 		Point destination = null;
 		if(secondStreet!=null){
-			destination = addressServiceAdapter.getCorner(firstStreet,secondStreet);
+			destination = addressServiceAdapter.getCorner(context.getToken(),firstStreet,secondStreet);
 		}
 		if(addressNumber!=null){
-			destination = addressServiceAdapter.getByDoorNumber(firstStreet,Integer.getInteger(getAddressNumberString(firstResults.get(position)).get(0)),getAddressNumberString(firstResults.get(position)).get(1));
+			destination = addressServiceAdapter.getByDoorNumber(context.getToken(),firstStreet,Integer.getInteger(getAddressNumberString(firstResults.get(position)).get(0)),getAddressNumberString(firstResults.get(position)).get(1));
 		}
 		DestinationSetState destinationSetState = new DestinationSetState(context, destination);
 		this.context.setState(destinationSetState);
@@ -114,11 +114,11 @@ public class StreetSetState extends AbstractState {
 		}
 		if(isAddressNumber(firstResults.get(position))){
 			toConfirmDoorNumber = true;
-			this.message = "�Desea ir a "+firstStreet+" "+getAddressNumberString(firstResults.get(position)).get(0)+" "+getAddressNumberString(firstResults.get(position)).get(1)+"?";
+			this.message = "Desea ir a "+firstStreet+" "+getAddressNumberString(firstResults.get(position)).get(0)+" "+getAddressNumberString(firstResults.get(position)).get(1)+"?";
 			addressNumber = firstResults.get(position);
 			return;
 		}
-		streets = addressServiceAdapter.getPossibleStreets(firstResults
+		streets = addressServiceAdapter.getPossibleStreets(context.getToken(),firstResults
 				.get(position));
 		if(streets!=null && !streets.isEmpty()){
 			toChooseStreet = true;

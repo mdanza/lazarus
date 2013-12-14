@@ -10,8 +10,9 @@ import com.android.lazarus.serviceadapter.DirectionsServiceAdapter;
 
 public class DirectionsAdapterStub implements DirectionsServiceAdapter {
 
-	public List<WalkingPosition> getWalkingDirections(Location origin,
-			Point destination) {
+	@Override
+	public List<WalkingPosition> getWalkingDirections(String token,
+			Location origin, Point destination) {
 		// TODO Auto-generated method stub
 		return null;
 	}

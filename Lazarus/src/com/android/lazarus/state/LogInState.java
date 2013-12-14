@@ -39,7 +39,7 @@ public class LogInState extends AbstractState {
 				}
 			}
 			usernamePresent = true;
-			this.message = "Por favor diga su contraseña";
+			this.message = "Por favor diga su contraseï¿½a";
 		} else {
 			String username = null;
 			String password = null;
@@ -47,9 +47,11 @@ public class LogInState extends AbstractState {
 			List<String> passwords = results;
 			for(int i=0;i<usernames.size();i++){
 				for(int j=0;j<passwords.size();j++){
-					if(userServiceAdapter.login(usernames.get(i), passwords.get(j))==true){
+					String token = userServiceAdapter.login(usernames.get(i), passwords.get(j));
+					if(token!=null){
 						username = usernames.get(i);
 						password = passwords.get(j);
+						context.setToken(token);
 						correctCredentials=true;
 					}
 				}
@@ -59,7 +61,7 @@ public class LogInState extends AbstractState {
 				context.getSharedPreferences("usrpref", 0).edit().putString("password",password).commit();
 				initializeMainMenu("Gracias por loguearse, ");
 			}else{
-				this.message = "El nombre de usuario o la contraseña no es correcto, por favor repita su nombre de usuario";
+				this.message = "El nombre de usuario o la contraseï¿½a no es correcto, por favor repita su nombre de usuario";
 				this.usernamePresent=false;
 			}
 		}

@@ -10,16 +10,16 @@ import com.android.lazarus.serviceadapter.UserServiceAdapter;
 public class UserServiceAdapterStub implements UserServiceAdapter {
 
 	@Override
-	public boolean login(String username, String password) {
+	public String login(String username, String password) {
 		if("hugo".equals(username) && "huguito".equals(password)){
-			return true;
+			return "token";
 		}else{
-			return false;
+			return null;
 		}
 	}
 
 	@Override
-	public Favourite getFavourite(String string) {
+	public Favourite getFavourite(String token, String string) {
 		if("casa".equals(string)){
 			return new Favourite(new Point(), "casa", new User());
 		}else{

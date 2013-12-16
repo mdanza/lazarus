@@ -23,8 +23,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
-import android.content.Context;
-
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.android.lazarus.serviceadapter.utils.MySSLSocketFactory;
@@ -32,11 +30,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class UserServiceAdapterImpl implements UserServiceAdapter {
-	Context context;
-
-	public UserServiceAdapterImpl(Context context) {
-		this.context = context;
-	}
 
 	@Override
 	public String login(String username, String password) {

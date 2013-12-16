@@ -16,7 +16,7 @@ public class ShapefileWKTDAOImpl implements ShapefileWKTDAO {
 	public void add(ShapefileWKT modelObject) {
 		String type = modelObject.getShapefileType();
 		if (type == ShapefileWKT.CORNER
-				|| type == ShapefileWKT.CORNER
+				|| type == ShapefileWKT.CONTROL_POINT
 				|| type == ShapefileWKT.BUS_MAXIMAL
 				|| type == ShapefileWKT.BUS_STOP
 				|| type == ShapefileWKT.ADDRESS || type == ShapefileWKT.STREET

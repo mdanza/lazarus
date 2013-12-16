@@ -13,18 +13,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.Context;
-
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class UserServiceAdapterImpl implements UserServiceAdapter {
-	Context context;
-
-	public UserServiceAdapterImpl(Context context) {
-		this.context = context;
-	}
 
 	@Override
 	public String login(String username, String password) {

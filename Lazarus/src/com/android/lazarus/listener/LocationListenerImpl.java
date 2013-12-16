@@ -23,39 +23,56 @@ public class LocationListenerImpl implements LocationListener {
 		locationManager = (LocationManager) voiceInterpreterActivity
 				.getSystemService(Activity.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
-		String bestProvider = locationManager.getBestProvider(criteria, false);
+		String bestProvider = locationManager.getBestProvider(criteria, true);
 		if (bestProvider != null) {
 			provider = bestProvider;
-			locationManager
-					.requestLocationUpdates(bestProvider, 1000, 10, this);
+			locationManager.requestLocationUpdates(bestProvider, 1000, 1, this);
 			Location location = locationManager
 					.getLastKnownLocation(bestProvider);
 			if (location != null)
 				this.onLocationChanged(location);
+			if (!bestProvider.equals(LocationManager.GPS_PROVIDER)) {
+				requestUpdates(LocationManager.GPS_PROVIDER);
+			}
+		}
+
+	}
+
+	private void requestUpdates(String updatesForProvider) {
+		if (locationManager.isProviderEnabled(updatesForProvider)) {
+			locationManager.requestLocationUpdates(updatesForProvider, 1000, 1,
+					this);
 		}
 
 	}
 
 	@Override
 	public void onLocationChanged(final Location location) {
-		Criteria criteria = new Criteria();
-		String bestProvider = locationManager.getBestProvider(criteria, false);
-		if (bestProvider != null && !bestProvider.equals(provider)) {
-			changeProvider(bestProvider);
+		// Check if the provider has better accuracy
+		if(location!=null && (this.location==null || location.getAccuracy()<this.location.getAccuracy())){
+			if(!location.getProvider().equals(provider)){
+				provider = location.getProvider();
+			}
 		}
-		if (voiceInterpreterActivity.getState() instanceof LocationDependentState) {
-			((LocationDependentState) voiceInterpreterActivity.getState())
-					.setPosition(location);
+		if (location != null && location.getProvider() != null
+				&& location.getProvider().equals(provider)) {
+			if (voiceInterpreterActivity.getState() instanceof LocationDependentState) {
+				((LocationDependentState) voiceInterpreterActivity.getState())
+						.setPosition(location);
+			}
+			this.location = location;
 		}
-		this.location = location;
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		if (voiceInterpreterActivity.getState() instanceof LocationDependentState) {
-			if (LocationManager.GPS_PROVIDER.equals(provider)) {
-				((LocationDependentState) voiceInterpreterActivity.getState())
-						.setPosition(null);
+		if (provider.equals(this.provider)) {
+			Criteria criteria = new Criteria();
+			String bestProvider = locationManager.getBestProvider(criteria,
+					true);
+			if (bestProvider != null) {
+				provider = bestProvider;
+				requestUpdates(bestProvider);
 			}
 		}
 	}
@@ -63,21 +80,12 @@ public class LocationListenerImpl implements LocationListener {
 	@Override
 	public void onProviderEnabled(String newProvider) {
 		Criteria criteria = new Criteria();
-		String bestProvider = locationManager.getBestProvider(criteria, false);
-		changeProvider(bestProvider);
-	}
-
-	private void changeProvider(String bestProvider) {
-		locationManager.removeUpdates(this);
-		if (bestProvider != null) {
-			locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
-			Location location = locationManager
-					.getLastKnownLocation(bestProvider);
-			provider = bestProvider;
-			if (location != null)
-				this.onLocationChanged(location);
+		String bestProvider = locationManager.getBestProvider(criteria, true);
+		provider = bestProvider;
+		requestUpdates(bestProvider);
+		if (LocationManager.GPS_PROVIDER.equals(newProvider)) {
+			requestUpdates(newProvider);
 		}
-
 	}
 
 	@Override

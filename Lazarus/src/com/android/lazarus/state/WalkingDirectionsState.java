@@ -22,7 +22,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
-		super(context,20);
+		super(context,30);
 		this.destination = destination;
 		giveInstructions();
 

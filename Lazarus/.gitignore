@@ -1,0 +1,10 @@
+*.project
+*.classpath
+*/target
+*.settings
+*.orig
+*.log
+*/gen
+*/bin
+!libs
+*/servicesuml

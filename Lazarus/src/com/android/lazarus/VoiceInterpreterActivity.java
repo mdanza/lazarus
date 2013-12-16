@@ -54,8 +54,6 @@ public class VoiceInterpreterActivity extends Activity implements
 	public void setState(State state) {
 		this.state = state;
 	}
-	
-	
 
 	public LocationListenerImpl getLocationListener() {
 		return locationListener;
@@ -67,10 +65,11 @@ public class VoiceInterpreterActivity extends Activity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
-		
+		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_voice_interpreter);
-		speechRecognizer = new AndroidSpeechRecognizer(this,recognitionListener);
+		speechRecognizer = new AndroidSpeechRecognizer(this,
+				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
 				"es-ES");
@@ -95,13 +94,16 @@ public class VoiceInterpreterActivity extends Activity implements
 		boolean validDataStored = false;
 		String initialMessage = "Bienvenido a lázarus, ";
 		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
-				&& this.getSharedPreferences("usrpref", 0).getString("password", null) != null) {
+				&& this.getSharedPreferences("usrpref", 0).getString(
+						"password", null) != null) {
 			String token = userServiceAdapter.login(
-					this.getSharedPreferences("usrpref", 0).getString("username", null),
-					this.getSharedPreferences("usrpref", 0).getString("password", null));
+					this.getSharedPreferences("usrpref", 0).getString(
+							"username", null),
+					this.getSharedPreferences("usrpref", 0).getString(
+							"password", null));
 			if (token != null) {
 				validDataStored = true;
-				this.token = token; 
+				this.token = token;
 			}
 		}
 		if (validDataStored) {
@@ -111,7 +113,7 @@ public class VoiceInterpreterActivity extends Activity implements
 		} else {
 			state = new LogInState(this, initialMessage);
 		}
-		 locationListener = new LocationListenerImpl(this);
+		locationListener = new LocationListenerImpl(this);
 
 	}
 
@@ -124,7 +126,8 @@ public class VoiceInterpreterActivity extends Activity implements
 				break;
 			case MotionEvent.ACTION_UP:
 				speechRecognizer.stopListening();
-				tts.speak(". Espere mientras procesamos el resultado por favor",
+				tts.speak(
+						". Espere mientras procesamos el resultado por favor",
 						TextToSpeech.QUEUE_FLUSH, null);
 				break;
 			}
@@ -179,6 +182,5 @@ public class VoiceInterpreterActivity extends Activity implements
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
-	
+
 }

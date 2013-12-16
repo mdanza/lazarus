@@ -75,13 +75,12 @@ public class UserService {
 			@FormParam("password") String password) {
 		if (username == null || username.equals("") || password == null
 				|| password.equals(""))
-			throw new IllegalArgumentException(
-					"No nulls nor empty strings allowed");
+			return restResultsHelper.resultWrapper(false, "No nulls nor empty strings allowed");
 		try {
 			return restResultsHelper.resultWrapper(true,
 					authenticationService.authenticate(username, password));
 		} catch (Exception e) {
-			return restResultsHelper.resultWrapper(false, "login error");
+			return restResultsHelper.resultWrapper(false, "login failed");
 		}
 	}
 

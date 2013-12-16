@@ -2,14 +2,31 @@ package com.android.lazarus.serviceadapter;
 
 import java.util.List;
 
-import android.location.Location;
-
-import com.android.lazarus.model.Point;
+import com.android.lazarus.model.BusRide;
+import com.android.lazarus.model.Transshipment;
 import com.android.lazarus.model.WalkingPosition;
 
 public interface DirectionsServiceAdapter {
 
-	List<WalkingPosition> getWalkingDirections(String token, Location origin,
-			Point destination);
+	/**
+	 * @return walking directions in case of success, null if no directions or
+	 *         invalid token
+	 */
+	public List<WalkingPosition> getWalkingDirections(String token,
+			String origin, String destination);
 
+	/**
+	 * @return bus ride directions in case of success, null if no directions or
+	 *         invalid token
+	 */
+	public List<BusRide> getBusDirections(Double xOrigin, Double yOrigin,
+			Double xEnd, Double yEnd, int distance, String token);
+
+	/**
+	 * @return bus transshipment directions in case of success, null if no
+	 *         directions or invalid token
+	 */
+	public List<Transshipment> getBusDirectionsWithTransshipment(
+			Double xOrigin, Double yOrigin, Double xEnd, Double yEnd,
+			int distance, String token);
 }

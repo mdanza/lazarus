@@ -3,6 +3,8 @@ package com.android.lazarus.model;
 import java.util.Date;
 
 public class Bus {
+	private long id;
+
 	private long variantCode;
 
 	private long subLineCode;
@@ -33,6 +35,14 @@ public class Bus {
 
 	public Date getLastUpdated() {
 		return lastUpdated;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public void setLastUpdated(Date lastUpdated) {

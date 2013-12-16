@@ -9,77 +9,67 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-
-import android.content.Context;
 
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class UserServiceAdapterImpl implements UserServiceAdapter {
-	Context context;
-
-	public UserServiceAdapterImpl(Context context) {
-		this.context = context;
-	}
+public class ObstacleReportingServiceAdapterImpl implements ObstacleReportingServiceAdapter {
 
 	@Override
-	public String login(String username, String password) {
+	public boolean reportObstacle(String token, String coordinates,
+			String radius, String description) {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL
-				+ "/users/login");
+				+ "/obstacles");
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("username", username));
-			nameValuePairs.add(new BasicNameValuePair("password", password));
+			nameValuePairs.add(new BasicNameValuePair("coordinates",
+					coordinates));
+			nameValuePairs.add(new BasicNameValuePair("radius", radius));
+			nameValuePairs.add(new BasicNameValuePair("description",
+					description));
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			HttpResponse response = client.execute(request);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent()));
-			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
-					.getAsJsonObject();
-			if (jsonResponse.get("result").getAsString().equals("OK")) {
-				String token = jsonResponse.get("data").getAsString();
-				return token;
-			} else
-				return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
-	public boolean register(String username, String password, String email,
-			String cellphone, String secretQuestion, String secretAnswer) {
-		boolean result = false;
-		HttpClient client = new DefaultHttpClient();
-		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL + "/users");
-		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("username", username));
-			nameValuePairs.add(new BasicNameValuePair("password", password));
-			nameValuePairs.add(new BasicNameValuePair("email", email));
-			nameValuePairs.add(new BasicNameValuePair("cellphone", cellphone));
-			nameValuePairs.add(new BasicNameValuePair("secretQuestion",
-					secretQuestion));
-			nameValuePairs.add(new BasicNameValuePair("secretAnswer",
-					secretAnswer));
-			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
 			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK"))
-				result = true;
+				return true;
+			else
+				return false;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-		return result;
+	}
+
+	@Override
+	public boolean deactivateObstacle(String token, String coordinates) {
+		HttpClient client = new DefaultHttpClient();
+		HttpDelete request = new HttpDelete(ConstantsHelper.REST_API_URL
+				+ "/obstacles/" + coordinates);
+		try {
+			request.addHeader("Authorization", token);
+			HttpResponse response = client.execute(request);
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
+			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+					.getAsJsonObject();
+			if (jsonResponse.get("result").getAsString().equals("OK"))
+				return true;
+			else
+				return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

@@ -1,5 +1,8 @@
 package services;
 
+import helpers.RestResultsHelper;
+
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -16,12 +19,16 @@ import services.directions.walking.WalkingPositionExclusionStrategy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Stateless(name = "ScheduleService")
 @Path("v1/api/schedule")
 public class ScheduleService {
 
 	private Gson gson = createGson();
+
+	@EJB(name = "RestResultsHelper")
+	private RestResultsHelper restResultsHelper;
 
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
@@ -46,13 +53,24 @@ public class ScheduleService {
 				|| subLineDescription == null || subLineDescription == ""
 				|| busStopLocationCode == null
 				|| minutesSinceStartOfDay == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
+		try {
+			authenticationService.authenticate(token);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 		List<String> results = busSchedulesService
 				.getBusLineSchedule(lineName, subLineDescription,
 						busStopLocationCode, minutesSinceStartOfDay);
-		return gson.toJson(results);
+		if (results != null) {
+			Type type = new TypeToken<List<String>>() {
+			}.getType();
+			return restResultsHelper.resultWrapper(true,
+					gson.toJson(results, type));
+		} else
+			return restResultsHelper.resultWrapper(false, "No data available");
 	}
 
 	@GET
@@ -63,15 +81,20 @@ public class ScheduleService {
 			@QueryParam("busStopOrdinal") Integer busStopOrdinal) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || busStopOrdinal == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
+		try {
+			authenticationService.authenticate(token);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 		Bus result = busSchedulesService.getClosestBus(variantCode,
 				subLineCode, busStopOrdinal);
 		if (result != null)
-			return gson.toJson(result);
+			return restResultsHelper.resultWrapper(true, gson.toJson(result));
 		else
-			return null;
+			return restResultsHelper.resultWrapper(false, "No data available");
 
 	}
 }

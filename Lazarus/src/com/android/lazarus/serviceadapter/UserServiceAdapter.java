@@ -1,11 +1,16 @@
 package com.android.lazarus.serviceadapter;
 
-import com.android.lazarus.model.Favourite;
-
 public interface UserServiceAdapter {
 
+	/**
+	 * @return token in case of success, null otherwise
+	 */
 	public String login(String username, String password);
 
-	public Favourite getFavourite(String token, String string);
+	/**
+	 * @return true in case of success, false otherwise
+	 */
+	public boolean register(String username, String password, String email,
+			String cellphone, String secretQuestion, String secretAnswer);
 
 }

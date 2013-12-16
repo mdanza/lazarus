@@ -7,14 +7,26 @@ import com.android.lazarus.model.Point;
 
 public interface AddressServiceAdapter {
 
-	List<String> getPossibleStreets(String token, String approximateStreetName);
+	/**
+	 * @return list of matches, null if none found or if invalid token
+	 */
+	public List<String> getPossibleStreets(String token,
+			String approximateStreetName);
 
-	Point getByDoorNumber(String token, String firstStreet, Integer doorNumber,
-			String letter);
+	/**
+	 * @return address position, null if none found or if invalid token
+	 */
+	public Point getByDoorNumber(String token, String streetName,
+			int doorNumber, String letter);
 
-	Point getCorner(String token, String firstStreet, String secondStreet);
+	/**
+	 * @return corner position, null if none found or if invalid token
+	 */
+	public Point getCorner(String token, String firstStreet, String secondStreet);
 
-	CloseLocationData getCloseLocation(String token, double latitude,
-			double longitude);
+	/**
+	 * @return close location data, null if none found or if invalid token
+	 */
+	public CloseLocationData getCloseLocation(String token, String position);
 
 }

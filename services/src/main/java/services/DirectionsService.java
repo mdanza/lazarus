@@ -1,5 +1,8 @@
 package services;
 
+import helpers.RestResultsHelper;
+
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -27,6 +30,7 @@ import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -50,6 +54,9 @@ public class DirectionsService {
 	@EJB(name = "CoordinateConverter")
 	private CoordinateConverter coordinateConverter;
 
+	@EJB(name = "RestResultsHelper")
+	private RestResultsHelper restResultsHelper;
+
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
@@ -67,20 +74,39 @@ public class DirectionsService {
 			@QueryParam("origin") String origin, @QueryParam("end") String end) {
 		if (token == null || origin == null || end == null || token.equals("")
 				|| origin.equals("") || end.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Double xOrigin = Double.valueOf(origin.split(",")[0]);
-		Double yOrigin = Double.valueOf(origin.split(",")[1]);
-		Double xEnd = Double.valueOf(end.split(",")[0]);
-		Double yEnd = Double.valueOf(end.split(",")[1]);
-		Coordinate originCoordinates = new Coordinate(Double.valueOf(xOrigin),
-				Double.valueOf(yOrigin));
-		Coordinate endCoordinates = new Coordinate(Double.valueOf(xEnd),
-				Double.valueOf(yEnd));
-		List<WalkingPosition> walkingDirections = walkingDirectionsService
-				.getWalkingDirections(originCoordinates, endCoordinates);
-		return gson.toJson(walkingDirections);
+		try {
+			authenticationService.authenticate(token);
+			Double xOrigin = Double.valueOf(origin.split(",")[0]);
+			Double yOrigin = Double.valueOf(origin.split(",")[1]);
+			Double xEnd = Double.valueOf(end.split(",")[0]);
+			Double yEnd = Double.valueOf(end.split(",")[1]);
+			Coordinate originCoordinates = new Coordinate(
+					Double.valueOf(xOrigin), Double.valueOf(yOrigin));
+			Coordinate endCoordinates = new Coordinate(Double.valueOf(xEnd),
+					Double.valueOf(yEnd));
+			try {
+				List<WalkingPosition> walkingDirections = walkingDirectionsService
+						.getWalkingDirections(originCoordinates, endCoordinates);
+				if (walkingDirections != null) {
+					Type type = new TypeToken<List<WalkingPosition>>() {
+					}.getType();
+					String serializedDirections = gson.toJson(
+							walkingDirections, type);
+					return restResultsHelper.resultWrapper(true,
+							serializedDirections);
+				} else
+					return restResultsHelper.resultWrapper(false,
+							"No directions available");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						"Could not get directions");
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
@@ -95,20 +121,38 @@ public class DirectionsService {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
 				|| token == null || xOrigin.equals("") || yOrigin.equals("")
 				|| xEnd.equals("") || xOrigin.equals("") || token.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Coordinate origin = new Coordinate(xOrigin, yOrigin);
-		Coordinate end = new Coordinate(xEnd, yEnd);
-		Point originPoint = geometryFactory.createPoint(origin);
-		Point endPoint = geometryFactory.createPoint(end);
-		Point originConverted = coordinateConverter.convertFromWGS84(
-				originPoint, ShapefileWKT.BUS_STOP);
-		Point endConverted = coordinateConverter.convertFromWGS84(endPoint,
-				ShapefileWKT.BUS_STOP);
-		List<BusRide> results = busDirectionsService.getRoutes(originConverted,
-				endConverted, distance);
-		return gson.toJson(results);
+		try {
+			authenticationService.authenticate(token);
+			Coordinate origin = new Coordinate(xOrigin, yOrigin);
+			Coordinate end = new Coordinate(xEnd, yEnd);
+			Point originPoint = geometryFactory.createPoint(origin);
+			Point endPoint = geometryFactory.createPoint(end);
+			Point originConverted = coordinateConverter.convertFromWGS84(
+					originPoint, ShapefileWKT.BUS_STOP);
+			Point endConverted = coordinateConverter.convertFromWGS84(endPoint,
+					ShapefileWKT.BUS_STOP);
+			try {
+				List<BusRide> results = busDirectionsService.getRoutes(
+						originConverted, endConverted, distance);
+				if (results != null) {
+					Type type = new TypeToken<List<BusRide>>() {
+					}.getType();
+					String serializedDirections = gson.toJson(results, type);
+					return restResultsHelper.resultWrapper(true,
+							serializedDirections);
+				} else
+					return restResultsHelper.resultWrapper(false,
+							"No directions available");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						"Could not get directions");
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
@@ -124,20 +168,38 @@ public class DirectionsService {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
 				|| token == null || xOrigin.equals("") || yOrigin.equals("")
 				|| xEnd.equals("") || xOrigin.equals("") || token.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Coordinate origin = new Coordinate(xOrigin, yOrigin);
-		Coordinate end = new Coordinate(xEnd, yEnd);
-		Point originPoint = geometryFactory.createPoint(origin);
-		Point endPoint = geometryFactory.createPoint(end);
-		Point originConverted = coordinateConverter.convertFromWGS84(
-				originPoint, ShapefileWKT.BUS_STOP);
-		Point endConverted = coordinateConverter.convertFromWGS84(endPoint,
-				ShapefileWKT.BUS_STOP);
-		List<Transshipment> results = busDirectionsService
-				.getRoutesWithTransshipment(originConverted, endConverted,
-						distance);
-		return gson.toJson(results);
+		try {
+			authenticationService.authenticate(token);
+			Coordinate origin = new Coordinate(xOrigin, yOrigin);
+			Coordinate end = new Coordinate(xEnd, yEnd);
+			Point originPoint = geometryFactory.createPoint(origin);
+			Point endPoint = geometryFactory.createPoint(end);
+			Point originConverted = coordinateConverter.convertFromWGS84(
+					originPoint, ShapefileWKT.BUS_STOP);
+			Point endConverted = coordinateConverter.convertFromWGS84(endPoint,
+					ShapefileWKT.BUS_STOP);
+			try {
+				List<Transshipment> results = busDirectionsService
+						.getRoutesWithTransshipment(originConverted,
+								endConverted, distance);
+				if (results != null) {
+					Type type = new TypeToken<List<Transshipment>>() {
+					}.getType();
+					String serializedDirections = gson.toJson(results, type);
+					return restResultsHelper.resultWrapper(true,
+							serializedDirections);
+				} else
+					return restResultsHelper.resultWrapper(false,
+							"No directions available");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						"Could not get directions");
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 }

@@ -1,5 +1,10 @@
 package services;
 
+import helpers.RestResultsHelper;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
@@ -10,11 +15,13 @@ import javax.ws.rs.QueryParam;
 import org.apache.log4j.Logger;
 
 import services.address.AddressService;
+import services.address.CloseLocationData;
 import services.address.CloseLocationDataExclusionStrategy;
 import services.authentication.AuthenticationService;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.vividsolutions.jts.geom.Coordinate;
 
 @Stateless(name = "AddressesService")
@@ -28,6 +35,9 @@ public class AddressesService {
 	@EJB(name = "AddressService")
 	private AddressService addressService;
 
+	@EJB(name = "RestResultsHelper")
+	private RestResultsHelper restResultsHelper;
+
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
@@ -40,36 +50,59 @@ public class AddressesService {
 
 	@GET
 	@Path("/addressNumberToCoordinates")
-	public String addressNumberToCoordinates(@HeaderParam("Authorization") String token,
+	public String addressNumberToCoordinates(
+			@HeaderParam("Authorization") String token,
 			@QueryParam("streetName") String streetName,
 			@QueryParam("number") String number,
 			@QueryParam("letter") String letter) {
 		if (token == null || streetName == null || number == null
 				|| token.equals("") || streetName.equals("")
 				|| number.equals(""))
-			throw new IllegalArgumentException(
-					"Empty or null token, streetName or number are not allowed");
-		if(letter==null)
+			return restResultsHelper
+					.resultWrapper(false,
+							"Empty or null token, streetName or number are not allowed");
+		if (letter == null)
 			letter = "";
-		authenticationService.authenticate(token);
-		int intNumber = Integer.valueOf(number);
-		return gson.toJson(addressService.parseAddressToCoordinates(streetName,
-				intNumber, letter));
+		try {
+			authenticationService.authenticate(token);
+			int intNumber = Integer.valueOf(number);
+			Coordinate coord = addressService.parseAddressToCoordinates(
+					streetName, intNumber, letter);
+			if (coord != null)
+				return restResultsHelper
+						.resultWrapper(true, gson.toJson(coord));
+			else
+				return restResultsHelper.resultWrapper(false,
+						"No address match");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
 	@Path("/cornerToCoordinates")
-	public String cornerToCoordinates(@HeaderParam("Authorization") String token,
+	public String cornerToCoordinates(
+			@HeaderParam("Authorization") String token,
 			@QueryParam("mainStreet") String mainStreet,
 			@QueryParam("cornerStreet") String cornerStreet) {
 		if (token == null || mainStreet == null || cornerStreet == null
 				|| token.equals("") || mainStreet.equals("")
 				|| cornerStreet.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		return gson.toJson(addressService.parseAddressToCoordinates(mainStreet,
-				cornerStreet));
+		try {
+			authenticationService.authenticate(token);
+			Coordinate coord = addressService.parseAddressToCoordinates(
+					mainStreet, cornerStreet);
+			if (coord != null)
+				return restResultsHelper
+						.resultWrapper(true, gson.toJson(coord));
+			else
+				return restResultsHelper.resultWrapper(false,
+						"No address match");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
@@ -78,10 +111,23 @@ public class AddressesService {
 			@QueryParam("name") String name) {
 		if (token == null || name == null || token.equals("")
 				|| name.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		return gson.toJson(addressService.getPossibleStreets(name));
+		try {
+			authenticationService.authenticate(token);
+			List<String> possibleStreets = addressService
+					.getPossibleStreets(name);
+			if (possibleStreets != null) {
+				Type type = new TypeToken<List<String>>() {
+				}.getType();
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(possibleStreets, type));
+			} else
+				return restResultsHelper.resultWrapper(false,
+						"No matches found");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
@@ -90,14 +136,25 @@ public class AddressesService {
 			@QueryParam("position") String position) {
 		if (token == null || position == null || token.equals("")
 				|| position.equals(""))
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Double x = Double.valueOf(position.split(",")[0]);
-		Double y = Double.valueOf(position.split(",")[1]);
-		Coordinate coordinate = new Coordinate(Double.valueOf(x),
-				Double.valueOf(y));
-		return gson.toJson(addressService.getCloseLocationData(coordinate));
+		try {
+			authenticationService.authenticate(token);
+			Double x = Double.valueOf(position.split(",")[0]);
+			Double y = Double.valueOf(position.split(",")[1]);
+			Coordinate coordinate = new Coordinate(Double.valueOf(x),
+					Double.valueOf(y));
+			CloseLocationData closeLocationData = addressService
+					.getCloseLocationData(coordinate);
+			if (closeLocationData != null)
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(closeLocationData));
+			else
+				return restResultsHelper.resultWrapper(false,
+						"No close location data found");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 }

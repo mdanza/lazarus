@@ -1,5 +1,7 @@
 package services;
 
+import helpers.RestResultsHelper;
+
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +43,9 @@ public class BusReportingService {
 
 	@EJB(name = "BusStopDAO")
 	private BusStopDAO busStopDAO;
+
+	@EJB(name = "RestResultsHelper")
+	private RestResultsHelper restResultsHelper;
 
 	@EJB(name = "AuthenticationService")
 	private AuthenticationService authenticationService;
@@ -117,14 +122,19 @@ public class BusReportingService {
 	public String getBus(@HeaderParam("Authorization") String token,
 			@PathParam("busId") Integer busId) {
 		if (token == null || token == "" || busId == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Bus result = busDAO.find(busId);
-		if (result != null)
-			return gson.toJson(result);
-		else
-			return null;
+		try {
+			authenticationService.authenticate(token);
+			Bus result = busDAO.find(busId);
+			if (result != null) {
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(result));
+			} else
+				return restResultsHelper.resultWrapper(false, "No bus found");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET

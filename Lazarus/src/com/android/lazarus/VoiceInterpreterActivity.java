@@ -1,9 +1,18 @@
 package com.android.lazarus;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -15,7 +24,7 @@ import android.widget.Toast;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 import com.android.lazarus.speechrecognizer.AndroidSpeechRecognizer;
 import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
@@ -37,7 +46,9 @@ public class VoiceInterpreterActivity extends Activity implements
 			this);
 	private SharedPreferences preferences = null;
 	private String token = null;
-	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
+	String initialMessage = "Bienvenido a lázarus, ";
+	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl(
+			this);
 
 	public TextToSpeech getTts() {
 		return tts;
@@ -91,27 +102,19 @@ public class VoiceInterpreterActivity extends Activity implements
 
 		preferences = new ObscuredSharedPreferences(this,
 				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
-		boolean validDataStored = false;
-		String initialMessage = "Bienvenido a lázarus, ";
-		if (this.getSharedPreferences("usrpref", 0).getString("username", null) != null
-				&& this.getSharedPreferences("usrpref", 0).getString(
-						"password", null) != null) {
-			String token = userServiceAdapter.login(
-					this.getSharedPreferences("usrpref", 0).getString(
-							"username", null),
-					this.getSharedPreferences("usrpref", 0).getString(
-							"password", null));
-			if (token != null) {
-				validDataStored = true;
-				this.token = token;
-			}
-		}
-		if (validDataStored) {
-			MainMenuState mainMenuState = new MainMenuState(this,
-					initialMessage);
-			this.setState(mainMenuState);
+		String username = this.getSharedPreferences("usrpref", 0).getString(
+				"username", null);
+		String password = this.getSharedPreferences("usrpref", 0).getString(
+				"password", null);
+		if (username != null && password != null) {
+			LogInTask logInTask = new LogInTask(this);
+			String[] args = new String[2];
+			args[0] = username;
+			args[1] = password;
+			logInTask.doInBackground(args);
 		} else {
-			state = new LogInState(this, initialMessage);
+			LogInState logInState = new LogInState(this, initialMessage);
+			this.setState(logInState);
 		}
 		locationListener = new LocationListenerImpl(this);
 
@@ -135,6 +138,7 @@ public class VoiceInterpreterActivity extends Activity implements
 			return true;
 		}
 	};
+	private boolean ttsInitialize;
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == MY_DATA_CHECK_CODE) {
@@ -155,11 +159,13 @@ public class VoiceInterpreterActivity extends Activity implements
 	public void onInit(int initStatus) {
 		// check for successful instantiation
 		if (initStatus == TextToSpeech.SUCCESS) {
+			ttsInitialize = true;
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
+			if(state!=null)
 			tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
-		} else if (initStatus == TextToSpeech.ERROR) {
+		} else if(initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
 		}
@@ -181,6 +187,48 @@ public class VoiceInterpreterActivity extends Activity implements
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public void speak(String message){
+		tts.speak(message,  TextToSpeech.QUEUE_FLUSH, null);
+	}
+	
+	private class LogInTask extends AsyncTask<String, Void, String> {
+
+		VoiceInterpreterActivity voiceInterpreterActivity;
+
+		public LogInTask(VoiceInterpreterActivity context) {
+			super();
+			this.voiceInterpreterActivity = context;
+		}
+
+		@Override
+		protected String doInBackground(String... args) {
+			String result = userServiceAdapter.login(args[0], args[1]);
+			if (result != null) {
+				token = result;
+				MainMenuState mainMenuState = new MainMenuState(
+						voiceInterpreterActivity, initialMessage);
+				voiceInterpreterActivity.setState(mainMenuState);
+			} else {
+				voiceInterpreterActivity.getSharedPreferences("usrpref", 0).edit().clear().commit();
+				LogInState logInState = new LogInState(
+						voiceInterpreterActivity, initialMessage);
+				voiceInterpreterActivity.setState(logInState);
+			}
+			if(ttsInitialize)
+				speak(state.getMessage());
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+		
+		}
+	}
+
+	public void sayMessage() {
+		speak(this.state.getMessage());
 	}
 
 }

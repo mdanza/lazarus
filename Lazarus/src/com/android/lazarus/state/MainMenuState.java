@@ -1,20 +1,18 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.Favourite;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
+import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
-import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 
 public class MainMenuState extends AbstractState {
 
-	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
-	UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
+	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
+	UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl(context);
 	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 	int position = 0;
 	List<String> streets = null;
@@ -55,8 +53,8 @@ public class MainMenuState extends AbstractState {
 			}
 			streets = addressServiceAdapter.getPossibleStreets(context.getToken(),firstResults
 					.get(position));
-			favourite = userServiceAdapter.getFavourite(context.getToken(),firstResults
-					.get(position));
+			//favourite = userServiceAdapter.getFavourite(context.getToken(),firstResults
+				//	.get(position));
 			if (favourite == null && (streets == null || streets.isEmpty())) {
 				goToNextPosition();
 				return;

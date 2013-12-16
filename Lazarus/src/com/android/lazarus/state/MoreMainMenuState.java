@@ -21,14 +21,14 @@ public class MoreMainMenuState extends AbstractState {
 	@Override
 	public void handleResults(List<String> results) {
 		if(containsNumber(results,2)){
-			this.message = "¿Está seguro que desea borrar los datos del celular?";	
+			this.message = "Â¿EstÃ¡ seguro que desea borrar los datos del celular?";	
 			this.action = DELETE;
 			return;
 		}
 		if(stringPresent(results,"si")){
 			if(this.action==DELETE){
 				context.getSharedPreferences("usrpref", 0).edit().clear().commit();
-				String nextMessage = "Sus datos fueron borrados del celular";
+				String nextMessage = "Sus datos fueron borrados del celular.";
 				State logInState = new LogInState(this.context,nextMessage);
 				this.context.setState(logInState);
 			}

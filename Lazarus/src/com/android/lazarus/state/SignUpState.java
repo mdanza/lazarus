@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
-import com.android.lazarus.serviceadapter.stubs.UserServiceAdapterStub;
+import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 
 public class SignUpState extends AbstractState{
 	
-	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterStub();
+	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl(context);
 
 	public SignUpState(VoiceInterpreterActivity context) {
 		super(context);

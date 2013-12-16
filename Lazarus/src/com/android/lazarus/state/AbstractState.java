@@ -8,14 +8,13 @@ import java.util.List;
 import android.location.Location;
 
 import com.android.lazarus.VoiceInterpreterActivity;
-import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
-import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
+import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
 
 public abstract class AbstractState implements State {
 
 	protected VoiceInterpreterActivity context;
-	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
+	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 
 	protected String message;
 
@@ -43,11 +42,11 @@ public abstract class AbstractState implements State {
 	protected String getWhereAmIMessage() {
 		Location location = this.context.getLocationListener().getLocation();
 		if (location == null) {
-			return "No se puede obtener informaci�n de su posici�n, por favor encienda el g p s";
+			return "No se puede obtener información de su posición, por favor encienda el g p s";
 		} else {
-			CloseLocationData closeLocationData = addressServiceAdapter
-					.getCloseLocation(context.getToken(),
-							location.getLatitude(), location.getLongitude());
+			//CloseLocationData closeLocationData = addressServiceAdapter
+				//	.getCloseLocation(context.getToken(),
+					//		location.getLatitude(), location.getLongitude());
 			return "Usted se encuentra en la concha de su hermana. ";
 		}
 	}

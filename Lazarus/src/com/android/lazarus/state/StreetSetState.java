@@ -5,12 +5,12 @@ import java.util.List;
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
-import com.android.lazarus.serviceadapter.stubs.AddressServiceAdapterStub;
+import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
 
 public class StreetSetState extends AbstractState {
 
 	String firstStreet;
-	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterStub();
+	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	String defaultMessage = "Diga el nombre de otra calle o el n�mero de puerta, ";
 	int position = 0;
 	List<String> streets = null;

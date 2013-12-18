@@ -14,6 +14,7 @@ import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.model.Point;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -22,9 +23,11 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 
 	@Override
 	public List<String> getPossibleStreets(String token, String name) {
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
-				+ "/addresses/possibleStreets?name=" + name);
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		String uri = ConstantsHelper.REST_API_URL
+				+ "/addresses/possibleStreets?name=" + name;
+		uri = uri.replace(" ", "%20");
+		HttpGet request = new HttpGet(uri);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -51,11 +54,13 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	@Override
 	public Point getByDoorNumber(String token, String firstStreet,
 			int doorNumber, String letter) {
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		String uri = ConstantsHelper.REST_API_URL
 				+ "/addresses/addressNumberToCoordinates?firstStreet="
 				+ firstStreet + "&doorNumber=" + doorNumber + "&letter="
-				+ letter);
+				+ letter;
+		uri = uri.replace(" ", "%20");
+		HttpGet request = new HttpGet(uri);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -78,10 +83,12 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 
 	@Override
 	public Point getCorner(String token, String mainStreet, String cornerStreet) {
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		String uri = ConstantsHelper.REST_API_URL
 				+ "/addresses/cornerToCoordinates?mainStreet=" + mainStreet
-				+ "&cornerStreet=" + cornerStreet);
+				+ "&cornerStreet=" + cornerStreet;
+		uri = uri.replace(" ", "%20");
+		HttpGet request = new HttpGet(uri);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -104,9 +111,11 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 
 	@Override
 	public CloseLocationData getCloseLocation(String token, String position) {
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
-				+ "/addresses/closeData?position=" + position);
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		String uri = ConstantsHelper.REST_API_URL
+				+ "/addresses/closeData?position=" + position;
+		uri = uri.replace(" ", "%20");
+		HttpGet request = new HttpGet(uri);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);

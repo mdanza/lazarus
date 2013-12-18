@@ -2,7 +2,10 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
+import android.os.AsyncTask;
+
 import com.android.lazarus.VoiceInterpreterActivity;
+import com.android.lazarus.model.Favourite;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
 import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
@@ -11,7 +14,7 @@ public class StreetSetState extends AbstractState {
 
 	String firstStreet;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
-	String defaultMessage = "Diga el nombre de otra calle o el n�mero de puerta, ";
+	String defaultMessage = "Diga el nombre de otra calle o el número de puerta, ";
 	int position = 0;
 	List<String> streets = null;
 	List<String> firstResults;
@@ -22,7 +25,7 @@ public class StreetSetState extends AbstractState {
 	private String secondStreet = null;
 	private String addressNumber = null;
 	private boolean passedFirstTime = false;
-	
+
 	StreetSetState(VoiceInterpreterActivity context) {
 		super(context);
 	}
@@ -35,107 +38,90 @@ public class StreetSetState extends AbstractState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if(firstTime){
+		if (firstTime) {
 			firstTime = false;
 			firstResults = results;
 			checkForNumberOrCorner();
 			return;
 		}
 		passedFirstTime = true;
-		if(!toChooseStreet && !firstTime && !toConfirmDoorNumber && !toConfirmSecondStreet){
-			if(stringPresent(results, "mas")){
+		if (!toChooseStreet && !firstTime && !toConfirmDoorNumber
+				&& !toConfirmSecondStreet) {
+			if (stringPresent(results, "mas")) {
 				goToNextPosition();
 				return;
 			}
 		}
-		if(toConfirmDoorNumber){
-			if(stringPresent(results, "si")){
+		if (toConfirmDoorNumber) {
+			if (stringPresent(results, "si")) {
 				goToDestinationSetState();
 				return;
 			}
-			if(stringPresent(results, "no")){
+			if (stringPresent(results, "no")) {
 				goToNextPosition();
 				return;
 			}
 		}
-		if(toChooseStreet){
+		if (toChooseStreet) {
 			for (int i = 1; i < streets.size() + 1; i++) {
 				if (containsNumber(results, i)) {
-					secondStreet =  streets.get(i - 1);
+					secondStreet = streets.get(i - 1);
 					toConfirmSecondStreet = true;
 					toChooseStreet = false;
-					this.message = "�Desea ir a "+firstStreet+" esquina "+secondStreet+"?";
+					this.message = "¿Desea ir a " + firstStreet + " esquina "
+							+ secondStreet + "?";
 					return;
 				}
 			}
-			if(stringPresent(results, "mas")){
+			if (stringPresent(results, "mas")) {
 				goToNextPosition();
 			}
 		}
-		if(toChooseStreet && stringPresent(results, "mas")){
+		if (toChooseStreet && stringPresent(results, "mas")) {
 			goToNextPosition();
 			return;
 		}
-		if(toConfirmSecondStreet){
-			if(stringPresent(results, "si")){
+		if (toConfirmSecondStreet) {
+			if (stringPresent(results, "si")) {
 				goToDestinationSetState();
 				return;
 			}
-			if(stringPresent(results, "no")){
+			if (stringPresent(results, "no")) {
 				checkForNumberOrCorner();
 			}
 		}
-		
 
 	}
-	
+
 	private void goToDestinationSetState() {
-		Point destination = null;
-		if(secondStreet!=null){
-			destination = addressServiceAdapter.getCorner(context.getToken(),firstStreet,secondStreet);
-		}
-		if(addressNumber!=null){
-			destination = addressServiceAdapter.getByDoorNumber(context.getToken(),firstStreet,Integer.getInteger(getAddressNumberString(firstResults.get(position)).get(0)),getAddressNumberString(firstResults.get(position)).get(1));
-		}
-		DestinationSetState destinationSetState = new DestinationSetState(context, destination);
-		this.context.setState(destinationSetState);
+		SetDestinationTask setDestinationTask = new SetDestinationTask();
+		setDestinationTask.doInBackground(new String());
 	}
 
 	private void checkForNumberOrCorner() {
-		if(position==firstResults.size()){
-			if(passedFirstTime){
-				this.message = "No se han encontrado otros resultados posibles, ";	
-			}else{
+		if (position == firstResults.size()) {
+			if (passedFirstTime) {
+				this.message = "No se han encontrado otros resultados posibles, ";
+			} else {
 				this.message = "No se han encontrado resultados, ";
 			}
-			this.message = message+defaultMessage;
+			this.message = message + defaultMessage;
 			resetData();
 			return;
 		}
-		if(isAddressNumber(firstResults.get(position))){
+		if (isAddressNumber(firstResults.get(position))) {
 			toConfirmDoorNumber = true;
-			this.message = "Desea ir a "+firstStreet+" "+getAddressNumberString(firstResults.get(position)).get(0)+" "+getAddressNumberString(firstResults.get(position)).get(1)+"?";
+			this.message = "Desea ir a " + firstStreet + " "
+					+ getAddressNumberString(firstResults.get(position)).get(0)
+					+ " "
+					+ getAddressNumberString(firstResults.get(position)).get(1)
+					+ "?";
 			addressNumber = firstResults.get(position);
 			return;
 		}
-		streets = addressServiceAdapter.getPossibleStreets(context.getToken(),firstResults
-				.get(position));
-		if(streets!=null && !streets.isEmpty()){
-			toChooseStreet = true;
-			this.message = "";
-			for (int i = 1; i < streets.size() + 1; i++) {
-				this.message = message + "Si desea dirigirse a "
-						+ streets.get(i - 1) + " esquina "+firstStreet+" diga "
-						+ getStringDigits(i) + ",";
-			}
-			String finalMessage = " para obtener otros resultados posibles diga m�s";
-			this.message = message + finalMessage;
-			return;
-		}
-		if(position<firstResults.size()){
-			goToNextPosition();
-		}
-		return;
+		message = "";
+		GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
+		getStreetNameTask.doInBackground(firstResults.get(position));
 	}
 
 	private void goToNextPosition() {
@@ -148,17 +134,69 @@ public class StreetSetState extends AbstractState {
 		addressNumber = null;
 		checkForNumberOrCorner();
 	}
-	
-	private void resetData(){
-		position=0;
+
+	private void resetData() {
+		position = 0;
 		streets = null;
 		secondStreet = null;
 		toConfirmDoorNumber = false;
 		toChooseStreet = false;
 		toConfirmSecondStreet = false;
 		addressNumber = null;
-		firstTime=true;
-		passedFirstTime=false;
+		firstTime = true;
+		passedFirstTime = false;
 	}
 
+	private class GetStreetNameTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			streets = addressServiceAdapter.getPossibleStreets(
+					context.getToken(), firstResults.get(position));
+			if (streets != null && !streets.isEmpty()) {
+				toChooseStreet = true;
+				message = "";
+				for (int i = 1; i < streets.size() + 1; i++) {
+					message = message + "Si desea dirigirse a "
+							+ streets.get(i - 1) + " esquina " + firstStreet
+							+ " diga " + getStringDigits(i) + ",";
+				}
+				String finalMessage = " para obtener otros resultados posibles diga más";
+				message = message + finalMessage;
+				context.speak(message);
+				return null;
+			}
+			if (position < firstResults.size()) {
+				goToNextPosition();
+			}
+			return null;
+		}
+
+	}
+
+	private class SetDestinationTask extends
+			AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			Point destination = null;
+			if (secondStreet != null) {
+				destination = addressServiceAdapter.getCorner(context.getToken(),
+						firstStreet, secondStreet);
+			}
+			if (addressNumber != null) {
+				destination = addressServiceAdapter.getByDoorNumber(
+						context.getToken(),
+						firstStreet,
+						Integer.getInteger(getAddressNumberString(
+								firstResults.get(position)).get(0)),
+						getAddressNumberString(firstResults.get(position)).get(1));
+			}
+			DestinationSetState destinationSetState = new DestinationSetState(
+					context, destination);
+			context.setState(destinationSetState);
+			return null;
+		}
+
+	}
 }

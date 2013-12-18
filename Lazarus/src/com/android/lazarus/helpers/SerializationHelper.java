@@ -10,7 +10,8 @@ public class SerializationHelper {
 
 	private static Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Point.class, new PointSerializer());
+		PointSerializer pointSerializer = new PointSerializer();
+		builder.registerTypeAdapter(Point.class, pointSerializer);
 		return builder.create();
 	}
 }

@@ -13,6 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.Bus;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +24,7 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 	public List<String> getBusSchedule(String token, String lineName,
 			String subLineDescription, int busStopLocationCode,
 			int minutesSinceStartOfDay) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/schedule?lineName=" + lineName + "&subLineDescription="
 				+ subLineDescription + "&busStopLocationCode="
@@ -54,7 +55,7 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 	@Override
 	public Bus getClosestBus(String token, int variantCode, int subLineCode,
 			int busStopOrdinal) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/schedule/bus?variantCode=" + variantCode + "&subLineCode="
 				+ subLineCode + "&busStopOrdinal=" + busStopOrdinal);

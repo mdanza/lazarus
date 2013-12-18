@@ -11,6 +11,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.Bus;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -19,7 +20,7 @@ public class BusReportingServiceAdapterImpl implements
 
 	@Override
 	public Bus getBus(String token, int busId) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL + "/bus/"
 				+ busId);
 		try {

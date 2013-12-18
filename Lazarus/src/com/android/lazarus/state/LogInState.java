@@ -18,7 +18,7 @@ public class LogInState extends AbstractState {
 	public LogInState(VoiceInterpreterActivity context) {
 		super(context);
 		this.context = context;
-		userServiceAdapter = new UserServiceAdapterImpl(context);
+		userServiceAdapter = new UserServiceAdapterImpl();
 		this.defaultMessage = "Por favor diga su nombre de usuario, o diga nuevo para registrarse";
 		this.message = defaultMessage;
 	}

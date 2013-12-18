@@ -15,6 +15,7 @@ import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.Transshipment;
 import com.android.lazarus.model.WalkingPosition;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +25,7 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 	@Override
 	public List<WalkingPosition> getWalkingDirections(String token,
 			String origin, String end) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/directions/walkingDirections?origin=" + origin + "&end="
 				+ end);
@@ -53,7 +54,7 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 	@Override
 	public List<BusRide> getBusDirections(Double xOrigin, Double yOrigin,
 			Double xEnd, Double yEnd, int distance, String token) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/directions/busDirections?xOrigin=" + xOrigin + "&yOrigin="
 				+ yOrigin + "&xEnd=" + xEnd + "&yEnd=" + yEnd + "&distance"
@@ -84,7 +85,7 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 	public List<Transshipment> getBusDirectionsWithTransshipment(
 			Double xOrigin, Double yOrigin, Double xEnd, Double yEnd,
 			int distance, String token) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/directions/busDirectionsWithTransshipment?xOrigin="
 				+ xOrigin + "&yOrigin=" + yOrigin + "&xEnd=" + xEnd + "&yEnd="

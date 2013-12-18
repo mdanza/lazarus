@@ -61,7 +61,7 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 	public boolean register(String username, String password, String email,
 			String cellphone, String secretQuestion, String secretAnswer) {
 		boolean result = false;
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL + "/users");
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

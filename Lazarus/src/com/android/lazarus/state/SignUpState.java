@@ -8,7 +8,7 @@ import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 
 public class SignUpState extends AbstractState{
 	
-	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl(context);
+	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 
 	public SignUpState(VoiceInterpreterActivity context) {
 		super(context);

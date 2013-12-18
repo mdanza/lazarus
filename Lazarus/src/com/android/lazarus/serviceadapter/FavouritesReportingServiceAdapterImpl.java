@@ -19,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.Favourite;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -77,7 +78,7 @@ public class FavouritesReportingServiceAdapterImpl implements
 
 	@Override
 	public List<Favourite> getFavourites(String token) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/favourites");
 		try {

@@ -5,6 +5,7 @@ import java.util.List;
 import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
+import com.android.lazarus.helpers.GPScoordinateHelper;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.model.Point;
 
@@ -33,7 +34,10 @@ public class DestinationSetState extends LocationDependentState {
 	protected void giveInstructions() {
 		if (enoughAccuraccy && firstIntruction) {
 			firstIntruction=false;
-			this.message = "Usted se encuentra aproximadamente a x metros, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
+			Double approximateDistance = GPScoordinateHelper.getDistanceBetweenPoints(this.position.getLatitude(), destination.getLatitude(), this.position.getLongitude(), destination.getLongitude());
+			approximateDistance = approximateDistance/1000;
+			approximateDistance = Math.floor(approximateDistance * 10) / 10;
+			this.message = "Usted se encuentra aproximadamente a "+approximateDistance+" kilometros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
 			tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}

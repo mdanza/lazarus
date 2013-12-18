@@ -47,8 +47,7 @@ public class VoiceInterpreterActivity extends Activity implements
 	private SharedPreferences preferences = null;
 	private String token = null;
 	String initialMessage = "Bienvenido a lázarus, ";
-	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl(
-			this);
+	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 
 	public TextToSpeech getTts() {
 		return tts;

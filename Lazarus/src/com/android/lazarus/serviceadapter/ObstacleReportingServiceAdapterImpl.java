@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.android.lazarus.helpers.ConstantsHelper;
+import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -23,7 +24,7 @@ public class ObstacleReportingServiceAdapterImpl implements ObstacleReportingSer
 	@Override
 	public boolean reportObstacle(String token, String coordinates,
 			String radius, String description) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL
 				+ "/obstacles");
 		try {
@@ -52,7 +53,7 @@ public class ObstacleReportingServiceAdapterImpl implements ObstacleReportingSer
 
 	@Override
 	public boolean deactivateObstacle(String token, String coordinates) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpDelete request = new HttpDelete(ConstantsHelper.REST_API_URL
 				+ "/obstacles/" + coordinates);
 		try {

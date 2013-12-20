@@ -14,7 +14,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
@@ -41,12 +40,13 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.lazarus.busclient.deserializers.BusStopDeserializer;
 import com.lazarus.busclient.helpers.GPScoordinateHelper;
+import com.lazarus.busclient.httputils.HttpClientCreator;
 import com.lazarus.busclient.model.BusStop;
 
 public class MainActivity extends Activity implements LocationListener {
 	// in meters
 	private static final double MINIMUM_ACCEPTABLE_PRECISION = 100;
-	public static final String REST_API_URL = "http://10.0.2.2:8080/services-1.0-SNAPSHOT/api";
+	public static final String REST_API_URL = "https://ec2-54-209-91-189.compute-1.amazonaws.com:8443/services-1.0-SNAPSHOT/v1/api";
 
 	private static final String USER = "bus";
 	private static final String PWD = "superBusesSiQueSi";
@@ -178,7 +178,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private class LoginTask extends TimerTask {
 		@Override
 		public void run() {
-			HttpClient client = new DefaultHttpClient();
+			HttpClient client = HttpClientCreator.getNewHttpClient();
 			HttpPost request = new HttpPost(REST_API_URL + "/users/login");
 			try {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -242,7 +242,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private void sendLocationData(long busId) {
 		String variantCode = variantCodeField.getText().toString();
 		String subLineCode = subLineCodeField.getText().toString();
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPut request = new HttpPut(REST_API_URL + "/bus/"
 				+ String.valueOf(busId));
 		try {
@@ -271,7 +271,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private void registerBus() {
 		String variantCode = variantCodeField.getText().toString();
 		String subLineCode = subLineCodeField.getText().toString();
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPost request = new HttpPost(REST_API_URL + "/bus");
 		try {
 			request.setHeader("Authorization", token);
@@ -306,7 +306,7 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	private void loadBusStops(long busId) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(REST_API_URL + "/bus/"
 				+ String.valueOf(busId) + "/stops");
 		try {

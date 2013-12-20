@@ -16,58 +16,58 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "favourites")
-@NamedQueries({ @NamedQuery(name = "Favourite.findByUserAndName", query = "SELECT f FROM Favourite f WHERE f.user.username = :username AND f.name = :name"),
-		 @NamedQuery(name = "Favourite.findByUser", query = "SELECT f FROM Favourite f WHERE f.user.username = :username") })
+@NamedQueries({
+		@NamedQuery(name = "Favourite.findByUserAndName", query = "SELECT f FROM Favourite f WHERE f.user.username = :username AND f.name = :name"),
+		@NamedQuery(name = "Favourite.findByUser", query = "SELECT f FROM Favourite f WHERE f.user.username = :username") })
 public class Favourite {
-	
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private int id;
 
-		@Type(type = "org.hibernate.spatial.GeometryType")
-		@Column(nullable = false)
-		private Point point;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-		@Column(nullable = false)
-		private String name;
+	@Type(type = "org.hibernate.spatial.GeometryType")
+	@Column(nullable = false)
+	private Point point;
 
-		@ManyToOne
-		private User user;
+	@Column(nullable = false)
+	private String name;
 
-		public Favourite() {
-			super();
-		}
+	@ManyToOne
+	private User user;
 
-		public Favourite(Point point, String name, User user) {
-			super();
-			this.point = point;
-			this.name = name;
-			this.user = user;
-		}
+	public Favourite() {
+		super();
+	}
 
-		public Point getPoint() {
-			return point;
-		}
+	public Favourite(Point point, String name, User user) {
+		super();
+		this.point = point;
+		this.name = name;
+		this.user = user;
+	}
 
-		public void setPoint(Point point) {
-			this.point = point;
-		}
+	public Point getPoint() {
+		return point;
+	}
 
-		public String getName() {
-			return name;
-		}
+	public void setPoint(Point point) {
+		this.point = point;
+	}
 
-		public void setName(String name) {
-			this.name = name;
-		}
+	public String getName() {
+		return name;
+	}
 
-		public User getUser() {
-			return user;
-		}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-		public void setUser(User user) {
-			this.user = user;
-		}
-		
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 }

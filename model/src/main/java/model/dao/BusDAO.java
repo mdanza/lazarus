@@ -5,6 +5,6 @@ import javax.ejb.Local;
 import model.Bus;
 
 @Local
-public interface BusDAO extends ModelDAO<Bus, Integer> {
+public interface BusDAO extends ModelDAO<Bus, Long> {
 
 }

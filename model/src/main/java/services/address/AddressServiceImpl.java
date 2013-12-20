@@ -40,7 +40,7 @@ public class AddressServiceImpl implements AddressService {
 	protected CoordinateConverter coordinateConverter;
 
 	public Coordinate parseAddressToCoordinates(String streetName,
-			int addressNumber, String letter) {
+			long addressNumber, String letter) {
 		try {
 			Address address = addressDAO.findByStreetNameAndNumber(streetName,
 					addressNumber, letter);

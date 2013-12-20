@@ -26,7 +26,7 @@ public class BusDAOImpl implements BusDAO {
 		entityManager.merge(modelObjectNew);
 	}
 
-	public Bus find(Integer id) {
+	public Bus find(Long id) {
 		Bus bus;
 		try {
 			Query q = entityManager.createNamedQuery("Bus.findById");

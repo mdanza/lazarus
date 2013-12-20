@@ -11,7 +11,7 @@ public interface ObstacleService {
 	
 	public void deactivateObstacle(Point position);
 
-	void reportObstacle(Point position, int radius, User user,
+	void reportObstacle(Point position, long radius, User user,
 			String description);
 
 }

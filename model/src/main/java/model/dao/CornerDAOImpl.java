@@ -34,7 +34,7 @@ public class CornerDAOImpl implements CornerDAO {
 
 	}
 
-	public Corner find(Integer uniqueKey) {
+	public Corner find(Long uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
 	}

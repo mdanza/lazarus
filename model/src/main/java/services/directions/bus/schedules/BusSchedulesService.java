@@ -17,10 +17,10 @@ public interface BusSchedulesService {
 	 * @param maximumBusStopOrdinal
 	 *            maximum ordinal of already passed bus stop
 	 */
-	public Bus getClosestBus(int variantCode, int subLineCode,
-			int maximumBusStopOrdinal);
+	public Bus getClosestBus(long variantCode, long subLineCode,
+			long maximumBusStopOrdinal);
 
 	public List<String> getBusLineSchedule(String lineName,
-			String subLineDescription, int busStopLocationCode,
+			String subLineDescription, long busStopLocationCode,
 			int fromMinutesSinceStartOfDay);
 }

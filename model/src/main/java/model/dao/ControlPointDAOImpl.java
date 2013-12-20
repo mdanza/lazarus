@@ -30,7 +30,7 @@ public class ControlPointDAOImpl implements ControlPointDAO{
 	}
 
 	@Override
-	public ControlPoint find(Integer id) {
+	public ControlPoint find(Long id) {
 		ControlPoint controlPoint;
 		try {
 			Query q = entityManager.createNamedQuery("ControlPoint.findById");

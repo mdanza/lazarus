@@ -65,7 +65,7 @@ public class AddressesService {
 			letter = "";
 		try {
 			authenticationService.authenticate(token);
-			int intNumber = Integer.valueOf(number);
+			long intNumber = Long.valueOf(number);
 			Coordinate coord = addressService.parseAddressToCoordinates(
 					streetName, intNumber, letter);
 			if (coord != null)

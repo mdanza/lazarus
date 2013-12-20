@@ -15,7 +15,7 @@ public class BusRide {
 
 	private String lineName;
 	private String subLineDescription;
-	private int subLineCode;
+	private long subLineCode;
 	private BusStop startStop;
 	private BusStop endStop;
 	private LineString trajectory;
@@ -34,7 +34,7 @@ public class BusRide {
 	// trajectory and limits it to the path between stops
 	public BusRide(BusStop startStop, BusStop endStop,
 			MultiLineString completeTrajectory, String lineName,
-			String subLineDescription, int subLineCode, BusStop previousStop,
+			String subLineDescription, long subLineCode, BusStop previousStop,
 			BusStop secondPreviousStop, String destination) {
 		this.startStop = startStop;
 		this.endStop = endStop;
@@ -70,7 +70,7 @@ public class BusRide {
 
 	// constructor
 	public BusRide(BusStop startStop, BusStop endStop, String lineName,
-			String subLineDescription, int subLineCode, BusStop previousStop,
+			String subLineDescription, long subLineCode, BusStop previousStop,
 			BusStop secondPreviousStop, String destination) {
 		this.startStop = startStop;
 		this.endStop = endStop;
@@ -125,11 +125,11 @@ public class BusRide {
 		this.subLineDescription = subLineDescription;
 	}
 
-	public int getSubLineCode() {
+	public long getSubLineCode() {
 		return subLineCode;
 	}
 
-	public void setSubLineCode(int subLineCode) {
+	public void setSubLineCode(long subLineCode) {
 		this.subLineCode = subLineCode;
 	}
 

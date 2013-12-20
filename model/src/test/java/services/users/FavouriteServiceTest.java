@@ -7,10 +7,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import model.Favourite;
-import model.Role;
 import model.User;
 import model.dao.FavouriteDAO;
-import model.dao.RoleDAO;
 import model.dao.UserDAO;
 
 import org.junit.Before;
@@ -26,7 +24,6 @@ public class FavouriteServiceTest {
 
 	private FavouriteService favouriteService;
 	private UserDAO userDAO;
-	private RoleDAO roleDAO;
 	private FavouriteDAO favouriteDAO;
 
 	@Before
@@ -51,29 +48,16 @@ public class FavouriteServiceTest {
 		favouriteService = (FavouriteService) context
 				.lookup("FavouriteServiceLocal");
 		userDAO = (UserDAO) context.lookup("UserDAOLocal");
-		roleDAO = (RoleDAO) context.lookup("RoleDAOLocal");
 		favouriteDAO = (FavouriteDAO) context.lookup("FavouriteDAOLocal");
-
-		// Create Role
-		Role role = roleDAO.find("user");
-		if (role == null) {
-			role = new Role();
-			role.setName("user");
-			roleDAO.add(role);
-			role = roleDAO.find("user");
-		}
 
 		// Create User
 		User user = userDAO.find("mateo");
 		if (user == null) {
 			user = new User();
 			user.setActive(true);
-			user.setCellphone("099584756");
 			user.setEmail("mdr@gmail.com");
 			user.setPassword("111");
-			user.setRole(role);
-			user.setSecretAnswer("mateo");
-			user.setSecretQuestion("como me llamo?");
+			user.setRole(model.User.Role.USER);
 			user.setUsername("mateo");
 			userDAO.add(user);
 		}
@@ -93,10 +77,11 @@ public class FavouriteServiceTest {
 		Gson json = builder.create();
 		if (favouriteDAO.findByUserAndName(user, name) != null) {
 			Favourite favourite = favouriteDAO.findByUserAndName(user, name);
-			System.out.println(json.toJson(favouriteDAO.findByUserAndName(user, name)));
-			//favouriteService.removeFromFavourite(user, name);
+			System.out.println(json.toJson(favouriteDAO.findByUserAndName(user,
+					name)));
+			// favouriteService.removeFromFavourite(user, name);
 		}
-		//favouriteService.addToFavourite(user, point, name);
+		// favouriteService.addToFavourite(user, point, name);
 		// boolean added = false;
 		// Obstacle obstacle = obstacleDAO.find(point);
 		// if (obstacle != null && point.equals(obstacle.getCentre())

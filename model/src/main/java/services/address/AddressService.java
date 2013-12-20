@@ -9,7 +9,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 @Local
 public interface AddressService {
 	
-	public Coordinate parseAddressToCoordinates(String streetName,int addressNumber,String letter);
+	public Coordinate parseAddressToCoordinates(String streetName,long addressNumber,String letter);
 	
 	public Coordinate parseAddressToCoordinates(String mainStreet,String cornerStreet);
 	

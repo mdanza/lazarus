@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -20,13 +18,16 @@ import services.authentication.security.PasswordHash;
 @Table(name = "users")
 @NamedQueries({
 		@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-		@NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-		@NamedQuery(name = "User.findByCellphone", query = "SELECT u FROM User u WHERE u.cellphone = :cellphone") })
+		@NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"), })
 public class User {
+
+	public enum Role {
+		ADMIN, USER
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(nullable = false, unique = true)
 	private String username;
@@ -37,28 +38,17 @@ public class User {
 	@Column(nullable = false)
 	private String salt;
 
+	private Role role;
+
 	@Column(nullable = false)
 	private int cryptographicIterations;
 
 	@Column(unique = true)
 	private String email;
 
-	@Column(unique = true)
-	private String cellphone;
-
 	private boolean active;
 
-	@Column(nullable = false)
-	private String secretQuestion;
-
-	@Column(nullable = false)
-	private String secretAnswer;
-
-	@ManyToOne
-	@JoinColumn(name = "role_id")
-	private Role role;
-
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -103,15 +93,6 @@ public class User {
 		this.role = role;
 	}
 
-	public String getCellphone() {
-		return cellphone;
-	}
-
-	public void setCellphone(String cellphone) {
-		if (cellphone != "")
-			this.cellphone = cellphone;
-	}
-
 	public boolean isActive() {
 		return active;
 	}
@@ -120,23 +101,7 @@ public class User {
 		this.active = active;
 	}
 
-	public String getSecretQuestion() {
-		return secretQuestion;
-	}
-
-	public void setSecretQuestion(String secretQuestion) {
-		this.secretQuestion = secretQuestion;
-	}
-
-	public String getSecretAnswer() {
-		return secretAnswer;
-	}
-
-	public void setSecretAnswer(String secretAnswer) {
-		this.secretAnswer = secretAnswer;
-	}
-
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

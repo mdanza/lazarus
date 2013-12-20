@@ -28,14 +28,14 @@ public class BusStopDAOImpl implements BusStopDAO {
 
 	}
 
-	public BusStop find(Integer uniqueKey) {
+	public BusStop find(Long uniqueKey) {
 		Query q = entityManager.createNamedQuery("BusStop.findById");
 		q.setParameter("id", uniqueKey);
 		BusStop result = (BusStop) q.getSingleResult();
 		return result;
 	}
 
-	public List<BusStop> getLineStops(int variantCode) {
+	public List<BusStop> getLineStops(long variantCode) {
 		Query q = entityManager.createNamedQuery("BusStop.findByVariantCode");
 		q.setParameter("variantCode", variantCode);
 		List<BusStop> result = q.getResultList();

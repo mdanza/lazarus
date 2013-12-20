@@ -15,14 +15,14 @@ import com.vividsolutions.jts.geom.Point;
 @Entity
 @Table(name = "corners")
 @NamedQueries({
-	@NamedQuery(name = "Corner.findWithinRadius", query = "select c FROM Corner c WHERE dwithin(c.point, :point, :radius) = true"),
-	@NamedQuery(name = "Corner.findClosestToPoint", query = "select c FROM Corner c ORDER BY distance(:point, c.point)"),
-	@NamedQuery(name = "Corner.findByStreetNames", query = "select c FROM Corner c WHERE c.firstStreetName = :firstStreetName AND c.secondStreetName = :secondStreetName")})
+		@NamedQuery(name = "Corner.findWithinRadius", query = "select c FROM Corner c WHERE dwithin(c.point, :point, :radius) = true"),
+		@NamedQuery(name = "Corner.findClosestToPoint", query = "select c FROM Corner c ORDER BY distance(:point, c.point)"),
+		@NamedQuery(name = "Corner.findByStreetNames", query = "select c FROM Corner c WHERE c.firstStreetName = :firstStreetName AND c.secondStreetName = :secondStreetName") })
 public class Corner {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
@@ -49,11 +49,11 @@ public class Corner {
 		this.secondStreetName = secondStreetName;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

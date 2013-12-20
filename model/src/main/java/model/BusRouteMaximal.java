@@ -36,30 +36,30 @@ import com.vividsolutions.jts.geom.MultiLineString;
 public class BusRouteMaximal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(name = "maximal_variant_code")
-	private int maximalVariantCode;
+	private long maximalVariantCode;
 
 	@Column(name = "variant_code")
-	private int variantCode;
+	private long variantCode;
 
 	@Column(name = "sub_line_code")
-	private int subLineCode;
+	private long subLineCode;
 
 	@Column(name = "line_name")
 	private String lineName;
 
 	@Column(name = "sub_line_description")
 	private String subLineDescription;
-	
+
 	@Column(name = "destination")
 	private String destination;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private MultiLineString trajectory;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -67,11 +67,11 @@ public class BusRouteMaximal {
 		return lineName;
 	}
 
-	public int getMaximalVariantCode() {
+	public long getMaximalVariantCode() {
 		return maximalVariantCode;
 	}
 
-	public void setMaximalVariantCode(int maximalVariantCode) {
+	public void setMaximalVariantCode(long maximalVariantCode) {
 		this.maximalVariantCode = maximalVariantCode;
 	}
 
@@ -87,11 +87,11 @@ public class BusRouteMaximal {
 		this.trajectory = trajectory;
 	}
 
-	public int getVariantCode() {
+	public long getVariantCode() {
 		return variantCode;
 	}
 
-	public void setVariantCode(int variantCode) {
+	public void setVariantCode(long variantCode) {
 		this.variantCode = variantCode;
 	}
 
@@ -103,7 +103,7 @@ public class BusRouteMaximal {
 		this.subLineDescription = subLineDescription;
 	}
 
-	public int getSubLineCode() {
+	public long getSubLineCode() {
 		return subLineCode;
 	}
 

@@ -62,8 +62,8 @@ public class BusReportingService {
 
 	@POST
 	public String registerBus(@HeaderParam("Authorization") String token,
-			@FormParam("variantCode") Integer variantCode,
-			@FormParam("subLineCode") Integer subLineCode,
+			@FormParam("variantCode") Long variantCode,
+			@FormParam("subLineCode") Long subLineCode,
 			@FormParam("longitude") Double latitude,
 			@FormParam("latitude") Double longitude) {
 		if (token == null || token == "" || variantCode == null
@@ -72,7 +72,7 @@ public class BusReportingService {
 					"Empty or null arguments are not allowed");
 		authenticationService.authenticate(token);
 		Bus result = new Bus();
-		result.setLastPassedStopOrdinal(Integer.MAX_VALUE);
+		result.setLastPassedStopOrdinal(Long.MAX_VALUE);
 		result.setVariantCode(variantCode);
 		result.setSubLineCode(subLineCode);
 		result.setLatitude(latitude);
@@ -85,26 +85,26 @@ public class BusReportingService {
 	@PUT
 	@Path("/{busId}")
 	public String updateBus(@HeaderParam("Authorization") String token,
-			@FormParam("variantCode") Integer variantCode,
-			@FormParam("subLineCode") Integer subLineCode,
+			@FormParam("variantCode") Long variantCode,
+			@FormParam("subLineCode") Long subLineCode,
 			@FormParam("longitude") Double latitude,
 			@FormParam("latitude") Double longitude,
 			@PathParam("busId") String busId,
-			@FormParam("lastPassedStopOrdinal") Integer lastPassedStopOrdinal) {
+			@FormParam("lastPassedStopOrdinal") Long lastPassedStopOrdinal) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || latitude == null || longitude == null
 				|| busId == null || busId == ""
 				|| lastPassedStopOrdinal == null)
 			throw new IllegalArgumentException(
 					"Empty or null arguments are not allowed");
-		Integer busIdInt = null;
+		Long busIdLong = null;
 		try {
-			busIdInt = Integer.parseInt(busId);
+			busIdLong = Long.parseLong(busId);
 		} catch (NumberFormatException e) {
 			return null;
 		}
 		authenticationService.authenticate(token);
-		Bus result = busDAO.find(busIdInt);
+		Bus result = busDAO.find(busIdLong);
 		if (result == null)
 			return null;
 		result.setLastPassedStopOrdinal(lastPassedStopOrdinal);
@@ -120,7 +120,7 @@ public class BusReportingService {
 	@GET
 	@Path("/{busId}")
 	public String getBus(@HeaderParam("Authorization") String token,
-			@PathParam("busId") Integer busId) {
+			@PathParam("busId") Long busId) {
 		if (token == null || token == "" || busId == null)
 			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
@@ -140,7 +140,7 @@ public class BusReportingService {
 	@GET
 	@Path("/{busId}/stops")
 	public String getBusStops(@HeaderParam("Authorization") String token,
-			@PathParam("busId") Integer busId) {
+			@PathParam("busId") Long busId) {
 		if (token == null || token == "" || busId == null)
 			throw new IllegalArgumentException(
 					"Empty or null arguments are not allowed");

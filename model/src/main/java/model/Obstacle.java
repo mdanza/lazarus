@@ -14,21 +14,20 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.google.gson.annotations.Expose;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 @Entity
 @Table(name = "obstacle")
-@NamedQueries({ @NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre"),
-	@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true")
-})
+@NamedQueries({
+		@NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre"),
+		@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true") })
 public class Obstacle {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Polygon circle;
@@ -37,20 +36,20 @@ public class Obstacle {
 	@Column(unique = true)
 	private Point centre;
 
-	private int radius;
+	private long radius;
 
 	@ManyToOne
 	private User user;
 
 	private Date createdAt;
-	
+
 	private String description;
 
 	public Obstacle() {
 		this.createdAt = new Date();
 	}
 
-	public Obstacle(Point centre, int radius) {
+	public Obstacle(Point centre, long radius) {
 		this.centre = centre;
 		this.radius = radius;
 		GeometricShapeFactory fac = new GeometricShapeFactory();
@@ -61,7 +60,7 @@ public class Obstacle {
 		this.createdAt = new Date();
 	}
 
-	public Obstacle(Point centre, int radius, User user, String description) {
+	public Obstacle(Point centre, long radius, User user, String description) {
 		this.centre = centre;
 		this.radius = radius;
 		this.user = user;
@@ -74,11 +73,11 @@ public class Obstacle {
 		this.description = description;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -99,11 +98,11 @@ public class Obstacle {
 		this.circle = fac.createCircle();
 	}
 
-	public int getRadius() {
+	public long getRadius() {
 		return radius;
 	}
 
-	public void setRadius(int radius) {
+	public void setRadius(long radius) {
 		this.radius = radius;
 		GeometricShapeFactory fac = new GeometricShapeFactory();
 		fac.setSize(radius * 2.0);
@@ -123,7 +122,6 @@ public class Obstacle {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
 
 	public String getDescription() {
 		return description;

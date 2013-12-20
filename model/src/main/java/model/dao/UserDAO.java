@@ -8,6 +8,4 @@ import model.User;
 public interface UserDAO extends ModelDAO<User, String> {
 	public User findByEmail(String email);
 
-	public User findByCellphone(String cellphone);
-
 }

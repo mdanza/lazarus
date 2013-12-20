@@ -25,21 +25,21 @@ import com.vividsolutions.jts.geom.Point;
 @Entity
 @Table(name = "bus_stops")
 @NamedQueries({
-		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"), 
+		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"),
 		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode AND stop.ordinal = :ordinal"),
-		@NamedQuery(name = "BusStop.findByVariantCode", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode")})
+		@NamedQuery(name = "BusStop.findByVariantCode", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode") })
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(name = "bus_stop_location_code")
-	private int busStopLocationCode;
+	private long busStopLocationCode;
 
 	@Column(name = "variant_code")
-	private int variantCode;
+	private long variantCode;
 
-	private int ordinal;
+	private long ordinal;
 
 	@Column(name = "street_name")
 	private String streetName;
@@ -52,17 +52,17 @@ public class BusStop {
 
 	@Column(name = "corner_street_code")
 	private long cornerStreetCode;
-	
+
 	private boolean active;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
 
-	public BusStop(){
+	public BusStop() {
 		this.active = true;
 	}
-	
-	public BusStop(BusStop anotherBusStop){
+
+	public BusStop(BusStop anotherBusStop) {
 		this.busStopLocationCode = anotherBusStop.busStopLocationCode;
 		this.variantCode = anotherBusStop.variantCode;
 		this.ordinal = anotherBusStop.ordinal;
@@ -73,16 +73,16 @@ public class BusStop {
 		this.point = anotherBusStop.point;
 		this.active = anotherBusStop.active;
 	}
-	
-	public int getOrdinal() {
+
+	public long getOrdinal() {
 		return ordinal;
 	}
 
-	public void setOrdinal(int ordinal) {
+	public void setOrdinal(long ordinal) {
 		this.ordinal = ordinal;
 	}
 
-	public int getBusStopLocationCode() {
+	public long getBusStopLocationCode() {
 		return busStopLocationCode;
 	}
 
@@ -90,11 +90,11 @@ public class BusStop {
 		this.busStopLocationCode = busStopLocationCode;
 	}
 
-	public int getVariantCode() {
+	public long getVariantCode() {
 		return variantCode;
 	}
 
-	public void setVariantCode(int variantCode) {
+	public void setVariantCode(long variantCode) {
 		this.variantCode = variantCode;
 	}
 
@@ -138,7 +138,7 @@ public class BusStop {
 		this.point = point;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

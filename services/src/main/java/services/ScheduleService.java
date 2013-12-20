@@ -47,7 +47,7 @@ public class ScheduleService {
 	public String getBusSchedule(@HeaderParam("Authorization") String token,
 			@QueryParam("lineName") String lineName,
 			@QueryParam("subLineDescription") String subLineDescription,
-			@QueryParam("busStopLocationCode") Integer busStopLocationCode,
+			@QueryParam("busStopLocationCode") Long busStopLocationCode,
 			@QueryParam("minutesSinceStartOfDay") Integer minutesSinceStartOfDay) {
 		if (token == null || token == "" || lineName == null || lineName == ""
 				|| subLineDescription == null || subLineDescription == ""
@@ -76,9 +76,9 @@ public class ScheduleService {
 	@GET
 	@Path("/bus")
 	public String getClosestBus(@HeaderParam("Authorization") String token,
-			@QueryParam("variantCode") Integer variantCode,
-			@QueryParam("subLineCode") Integer subLineCode,
-			@QueryParam("busStopOrdinal") Integer busStopOrdinal) {
+			@QueryParam("variantCode") Long variantCode,
+			@QueryParam("subLineCode") Long subLineCode,
+			@QueryParam("busStopOrdinal") Long busStopOrdinal) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || busStopOrdinal == null)
 			return restResultsHelper.resultWrapper(false,

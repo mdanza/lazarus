@@ -16,37 +16,37 @@ import javax.persistence.Table;
 public class Bus {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(name = "variant_code")
-	private int variantCode;
+	private long variantCode;
 
 	@Column(name = "sub_line_code")
-	private int subLineCode;
+	private long subLineCode;
 
 	@Column(name = "last_updated")
 	private Date lastUpdated;
 
 	@Column(name = "last_passed_stop_ordinal")
-	private int lastPassedStopOrdinal;
+	private long lastPassedStopOrdinal;
 
 	private double latitude;
 
 	private double longitude;
 
-	public int getVariantCode() {
+	public long getVariantCode() {
 		return variantCode;
 	}
 
-	public void setVariantCode(int variantCode) {
+	public void setVariantCode(long variantCode) {
 		this.variantCode = variantCode;
 	}
 
-	public int getSubLineCode() {
+	public long getSubLineCode() {
 		return subLineCode;
 	}
 
-	public void setSubLineCode(int subLineCode) {
+	public void setSubLineCode(long subLineCode) {
 		this.subLineCode = subLineCode;
 	}
 
@@ -58,11 +58,11 @@ public class Bus {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public int getLastPassedStopOrdinal() {
+	public long getLastPassedStopOrdinal() {
 		return lastPassedStopOrdinal;
 	}
 
-	public void setLastPassedStopOrdinal(int lastPassedStopOrdinal) {
+	public void setLastPassedStopOrdinal(long lastPassedStopOrdinal) {
 		this.lastPassedStopOrdinal = lastPassedStopOrdinal;
 	}
 
@@ -82,7 +82,7 @@ public class Bus {
 		this.longitude = longitude;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

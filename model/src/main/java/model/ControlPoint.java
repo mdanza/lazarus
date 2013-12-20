@@ -32,15 +32,15 @@ import com.vividsolutions.jts.geom.Point;
 public class ControlPoint {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(name = "control_point_location_code")
-	private int controlPointLocationCode;
+	private long controlPointLocationCode;
 
 	@Column(name = "variant_code")
-	private int variantCode;
+	private long variantCode;
 
-	private int ordinal;
+	private long ordinal;
 
 	@Column(name = "street_code")
 	private long streetCode;
@@ -54,7 +54,7 @@ public class ControlPoint {
 	@Column(name = "location_description")
 	private String locationDescription;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -70,27 +70,27 @@ public class ControlPoint {
 		this.id = id;
 	}
 
-	public int getControlPointLocationCode() {
+	public long getControlPointLocationCode() {
 		return controlPointLocationCode;
 	}
 
-	public void setControlPointLocationCode(int controlPointLocationCode) {
+	public void setControlPointLocationCode(long controlPointLocationCode) {
 		this.controlPointLocationCode = controlPointLocationCode;
 	}
 
-	public int getVariantCode() {
+	public long getVariantCode() {
 		return variantCode;
 	}
 
-	public void setVariantCode(int variantCode) {
+	public void setVariantCode(long variantCode) {
 		this.variantCode = variantCode;
 	}
 
-	public int getOrdinal() {
+	public long getOrdinal() {
 		return ordinal;
 	}
 
-	public void setOrdinal(int ordinal) {
+	public void setOrdinal(long ordinal) {
 		this.ordinal = ordinal;
 	}
 

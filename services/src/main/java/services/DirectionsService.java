@@ -115,12 +115,14 @@ public class DirectionsService {
 			@QueryParam("yOrigin") Double yOrigin,
 			@QueryParam("xEnd") Double xEnd, @QueryParam("yEnd") Double yEnd,
 			@QueryParam("maxWalkingDistance") int distance,
+			@QueryParam("pageNumber") Integer pageNumber,
 			@HeaderParam("Authorization") String token)
 			throws MismatchedDimensionException, FactoryException,
 			TransformException {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
 				|| token == null || xOrigin.equals("") || yOrigin.equals("")
-				|| xEnd.equals("") || xOrigin.equals("") || token.equals(""))
+				|| xEnd.equals("") || xOrigin.equals("") || token.equals("")
+				|| pageNumber == null || pageNumber.equals(""))
 			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
 		try {
@@ -135,7 +137,7 @@ public class DirectionsService {
 					ShapefileWKT.BUS_STOP);
 			try {
 				List<BusRide> results = busDirectionsService.getRoutes(
-						originConverted, endConverted, distance);
+						originConverted, endConverted, distance, pageNumber);
 				if (results != null) {
 					Type type = new TypeToken<List<BusRide>>() {
 					}.getType();
@@ -162,12 +164,14 @@ public class DirectionsService {
 			@QueryParam("yOrigin") Double yOrigin,
 			@QueryParam("xEnd") Double xEnd, @QueryParam("yEnd") Double yEnd,
 			@QueryParam("maxWalkingDistance") int distance,
+			@QueryParam("pageNumber") Integer pageNumber,
 			@HeaderParam("Authorization") String token)
 			throws MismatchedDimensionException, FactoryException,
 			TransformException {
 		if (xOrigin == null || yOrigin == null || xEnd == null || yEnd == null
 				|| token == null || xOrigin.equals("") || yOrigin.equals("")
-				|| xEnd.equals("") || xOrigin.equals("") || token.equals(""))
+				|| xEnd.equals("") || xOrigin.equals("") || token.equals("")
+				|| pageNumber == null)
 			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
 		try {
@@ -183,7 +187,7 @@ public class DirectionsService {
 			try {
 				List<Transshipment> results = busDirectionsService
 						.getRoutesWithTransshipment(originConverted,
-								endConverted, distance);
+								endConverted, distance, pageNumber);
 				if (results != null) {
 					Type type = new TypeToken<List<Transshipment>>() {
 					}.getType();

@@ -30,12 +30,12 @@ public class AddressDAOImpl implements AddressDAO {
 
 	}
 
-	public Address find(Integer uniqueKey) {
+	public Address find(Long uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Address findByStreetNameAndNumber(String streetName, int number,
+	public Address findByStreetNameAndNumber(String streetName, long number,
 			String letter) {
 		Address address;
 		try {

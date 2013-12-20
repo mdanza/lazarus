@@ -15,4 +15,6 @@ public interface TaxiServiceService {
 
 	public List<TaxiService> getAllTaxiService();
 
+	public TaxiService getTaxiServiceByName(String name);
+
 }

@@ -29,4 +29,9 @@ public class TaxiServiceServiceImpl implements TaxiServiceService {
 		return taxiServiceDAO.findAll();
 	}
 
+	@Override
+	public TaxiService getTaxiServiceByName(String name) {
+		return taxiServiceDAO.find(name);
+	}
+
 }

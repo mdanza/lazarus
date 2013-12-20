@@ -42,9 +42,6 @@ public class UserService {
 
 	static Logger logger = Logger.getLogger(UserService.class);
 
-	private static final String USER_ROLE_NAME = "user";
-	private static final String ADMIN_ROLE_NAME = "admin";
-
 	@EJB(name = "UserDAO")
 	private UserDAO userDAO;
 

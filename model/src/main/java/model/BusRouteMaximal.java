@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -33,6 +34,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 
 @Entity
 @Table(name = "bus_routes_maximal")
+@NamedQuery(name = "BusRouteMaximal.removeAll", query = "DELETE FROM BusRouteMaximal")
 public class BusRouteMaximal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

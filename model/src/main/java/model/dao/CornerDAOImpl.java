@@ -85,4 +85,8 @@ public class CornerDAOImpl implements CornerDAO {
 		}
 		return corner;
 	}
+
+	public void removeAll() {
+		entityManager.createNamedQuery("Corner.removeAll").executeUpdate();
+	}
 }

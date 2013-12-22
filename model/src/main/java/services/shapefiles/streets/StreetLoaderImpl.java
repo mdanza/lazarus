@@ -16,14 +16,13 @@ import model.dao.ShapefileWKTDAO;
 import model.dao.StreetDAO;
 
 import org.geotools.data.FeatureReader;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.Geometry;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
 @Stateless(name = "StreetLoader")
@@ -31,18 +30,22 @@ public class StreetLoaderImpl implements StreetLoader {
 
 	@EJB(beanName = "StreetDAO")
 	protected StreetDAO streetDAO;
-	
+
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	GeometryFactory factory = new GeometryFactory();
 
-	public void readShp(String url) {
+	public void updateShp(String url) {
 		try {
+			streetDAO.removeAll();
+			ShapefileWKT shapefileWKT = shapefileWKTDAO
+					.find(ShapefileWKT.STREET);
 			URL shapeURL = new File(url).toURI().toURL();
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
+			long total = store.getCount(Query.ALL);
 			int position = 0;
 			MultiLineString multiLine = null;
 			String streetName = null;
@@ -71,15 +74,19 @@ public class StreetLoaderImpl implements StreetLoader {
 				}
 				saveStreet(multiLine, streetName, nameCode);
 				count++;
+				if (shapefileWKT == null) {
+					shapefileWKT = new ShapefileWKT();
+					shapefileWKT.setShapefileType(ShapefileWKT.STREET);
+					shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+							.getDescriptor().getCoordinateReferenceSystem()
+							.toWKT());
+					shapefileWKTDAO.add(shapefileWKT);
+				} else {
+					shapefileWKT.setProgress((double) count / (double) total);
+					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
+				}
 				System.out.println(count);
 			}
-			reader = store.getFeatureReader();
-			Feature feature = reader.next();
-			ShapefileWKT shapefileWKT = new ShapefileWKT();
-			shapefileWKT.setShapefileType(ShapefileWKT.STREET);
-			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
-					.getDescriptor().getCoordinateReferenceSystem().toWKT());
-			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 
 		} catch (MalformedURLException e) {
@@ -94,12 +101,9 @@ public class StreetLoaderImpl implements StreetLoader {
 		Street street = null;
 		Street old = streetDAO.find(streetName);
 		if (old == null) {
-			street = new Street(streetName, nameCode.toString(),multiLine);
+			street = new Street(streetName, nameCode.toString(), multiLine);
 			streetDAO.add(street);
 		}
 	}
-
-
-	
 
 }

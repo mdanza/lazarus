@@ -9,10 +9,10 @@ import javax.persistence.Query;
 import model.ControlPoint;
 
 @Stateless(name = "ControlPointDAO")
-public class ControlPointDAOImpl implements ControlPointDAO{
+public class ControlPointDAOImpl implements ControlPointDAO {
 	@PersistenceContext(unitName = "lazarus-persistence-unit")
 	private EntityManager entityManager;
-		
+
 	@Override
 	public void add(ControlPoint modelObject) {
 		entityManager.persist(modelObject);
@@ -21,7 +21,7 @@ public class ControlPointDAOImpl implements ControlPointDAO{
 	@Override
 	public void delete(ControlPoint modelObject) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -40,6 +40,12 @@ public class ControlPointDAOImpl implements ControlPointDAO{
 			controlPoint = null;
 		}
 		return controlPoint;
+	}
+
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("ControlPoint.removeAll")
+				.executeUpdate();
 	}
 
 }

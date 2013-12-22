@@ -10,14 +10,13 @@ import java.util.Iterator;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import model.Address;
 import model.Corner;
 import model.ShapefileWKT;
-import model.dao.AddressDAO;
 import model.dao.CornerDAO;
 import model.dao.ShapefileWKTDAO;
 
 import org.geotools.data.FeatureReader;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -31,18 +30,22 @@ public class CornerLoaderImpl implements CornerLoader {
 
 	@EJB(beanName = "CornerDAO")
 	protected CornerDAO cornerDAO;
-	
+
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	GeometryFactory factory = new GeometryFactory();
 
-	public void readShp(String url) {
+	public void updateShp(String url) {
 		try {
+			cornerDAO.removeAll();
+			ShapefileWKT shapefileWKT = shapefileWKTDAO
+					.find(ShapefileWKT.CORNER);
 			URL shapeURL = new File(url).toURI().toURL();
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
+			long total = store.getCount(Query.ALL);
 			int position = 0;
 			Point point = null;
 			long firstStreetNameCode = 0;
@@ -72,22 +75,27 @@ public class CornerLoaderImpl implements CornerLoader {
 							break;
 						case 4:
 							secondStreetName = (String) value.getValue();
-							break;						
+							break;
 						}
 					}
 					position++;
 				}
-				saveCorner(point, firstStreetNameCode, secondStreetNameCode, firstStreetName, secondStreetName);
+				saveCorner(point, firstStreetNameCode, secondStreetNameCode,
+						firstStreetName, secondStreetName);
 				count++;
+				if (shapefileWKT == null) {
+					shapefileWKT = new ShapefileWKT();
+					shapefileWKT.setShapefileType(ShapefileWKT.CORNER);
+					shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+							.getDescriptor().getCoordinateReferenceSystem()
+							.toWKT());
+					shapefileWKTDAO.add(shapefileWKT);
+				} else {
+					shapefileWKT.setProgress((double) count / (double) total);
+					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
+				}
 				System.out.println(count);
 			}
-			reader = store.getFeatureReader();
-			Feature feature = reader.next();
-			ShapefileWKT shapefileWKT = new ShapefileWKT();
-			shapefileWKT.setShapefileType(ShapefileWKT.CORNER);
-			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
-					.getDescriptor().getCoordinateReferenceSystem().toWKT());
-			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 
 		} catch (MalformedURLException e) {
@@ -100,9 +108,10 @@ public class CornerLoaderImpl implements CornerLoader {
 	private void saveCorner(Point point, long firstStreetNameCode,
 			long secondStreetNameCode, String firstStreetName,
 			String secondStreetName) {
-		Corner corner = new Corner(point,firstStreetNameCode,secondStreetNameCode,firstStreetName,secondStreetName);
+		Corner corner = new Corner(point, firstStreetNameCode,
+				secondStreetNameCode, firstStreetName, secondStreetName);
 		cornerDAO.add(corner);
-		
+
 	}
 
 }

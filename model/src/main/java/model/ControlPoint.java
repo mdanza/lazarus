@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -28,7 +29,9 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "control_points")
-@NamedQuery(name = "ControlPoint.findById", query = "SELECT c FROM ControlPoint c WHERE c.id = :id")
+@NamedQueries({
+		@NamedQuery(name = "ControlPoint.findById", query = "SELECT c FROM ControlPoint c WHERE c.id = :id"),
+		@NamedQuery(name = "ControlPoint.removeAll", query = "DELETE FROM ControlPoint") })
 public class ControlPoint {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

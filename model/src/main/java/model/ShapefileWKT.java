@@ -30,6 +30,16 @@ public class ShapefileWKT {
 	@Column(unique = true)
 	private String shapefileType;
 
+	private double progress;
+
+	public double getProgress() {
+		return progress;
+	}
+
+	public void setProgress(double progress) {
+		this.progress = progress;
+	}
+
 	public String getWkt() {
 		return wkt;
 	}

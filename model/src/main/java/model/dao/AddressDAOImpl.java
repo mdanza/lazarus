@@ -51,4 +51,9 @@ public class AddressDAOImpl implements AddressDAO {
 		return address;
 	}
 
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("Address.removeAll").executeUpdate();
+	}
+
 }

@@ -2,8 +2,6 @@ package services.shapefiles;
 
 import org.junit.Test;
 
-import services.shapefiles.address.AddressLoaderImpl;
-
 public class AddressLoaderTest {
 
 	@Test

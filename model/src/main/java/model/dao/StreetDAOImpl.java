@@ -124,4 +124,8 @@ public class StreetDAOImpl implements StreetDAO {
 		return streets;
 	}
 
+	public void removeAll() {
+		entityManager.createNamedQuery("Street.removeAll").executeUpdate();
+	}
+
 }

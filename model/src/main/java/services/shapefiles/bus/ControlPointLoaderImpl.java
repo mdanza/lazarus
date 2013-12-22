@@ -15,6 +15,7 @@ import model.dao.ShapefileWKTDAO;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -32,12 +33,17 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
 
-	public void readShp(String url) {
+	public void updateShp(String url) {
 		try {
+			controlPointDAO.removeAll();
+			ShapefileWKT shapefileWKT = shapefileWKTDAO
+					.find(ShapefileWKT.CONTROL_POINT);
 			URL shapeURL = new File(url).toURI().toURL();
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
+			int count = 0;
+			long total = store.getCount(Query.ALL);
 			int propertyNumber;
 			ControlPoint controlPoint;
 			while (reader.hasNext()) {
@@ -80,15 +86,20 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 					propertyNumber++;
 				}
 				controlPointDAO.add(controlPoint);
+				count++;
+				if (shapefileWKT == null) {
+					shapefileWKT = new ShapefileWKT();
+					shapefileWKT.setShapefileType(ShapefileWKT.CONTROL_POINT);
+					shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
+							.getDescriptor().getCoordinateReferenceSystem()
+							.toWKT());
+					shapefileWKTDAO.add(shapefileWKT);
+				} else {
+					shapefileWKT.setProgress((double) count / (double) total);
+					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
+				}
 				logger.info("added control point");
 			}
-			reader = store.getFeatureReader();
-			Feature feature = reader.next();
-			ShapefileWKT shapefileWKT = new ShapefileWKT();
-			shapefileWKT.setShapefileType(ShapefileWKT.CONTROL_POINT);
-			shapefileWKT.setWkt(feature.getDefaultGeometryProperty()
-					.getDescriptor().getCoordinateReferenceSystem().toWKT());
-			shapefileWKTDAO.add(shapefileWKT);
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -7,7 +7,9 @@ import javax.ejb.Local;
 import model.BusStop;
 
 @Local
-public interface BusStopDAO extends ModelDAO<BusStop, Long>{
+public interface BusStopDAO extends ModelDAO<BusStop, Long> {
 
-	List<BusStop> getLineStops(long variantCode);
+	public List<BusStop> getLineStops(long variantCode);
+
+	public void removeAll();
 }

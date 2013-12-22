@@ -17,7 +17,8 @@ import com.vividsolutions.jts.geom.Point;
 @NamedQueries({
 		@NamedQuery(name = "Corner.findWithinRadius", query = "select c FROM Corner c WHERE dwithin(c.point, :point, :radius) = true"),
 		@NamedQuery(name = "Corner.findClosestToPoint", query = "select c FROM Corner c ORDER BY distance(:point, c.point)"),
-		@NamedQuery(name = "Corner.findByStreetNames", query = "select c FROM Corner c WHERE c.firstStreetName = :firstStreetName AND c.secondStreetName = :secondStreetName") })
+		@NamedQuery(name = "Corner.findByStreetNames", query = "select c FROM Corner c WHERE c.firstStreetName = :firstStreetName AND c.secondStreetName = :secondStreetName"),
+		@NamedQuery(name = "Corner.removeAll", query = "DELETE FROM Corner") })
 public class Corner {
 
 	@Id

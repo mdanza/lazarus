@@ -7,9 +7,8 @@ import model.Address;
 @Local
 public interface AddressDAO extends ModelDAO<Address, Long> {
 
-
-
-	Address findByStreetNameAndNumber(String streetName, long number,
+	public Address findByStreetNameAndNumber(String streetName, long number,
 			String letter);
-	
+
+	public void removeAll();
 }

@@ -15,7 +15,8 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "addresses")
-@NamedQueries({ @NamedQuery(name = "Address.findByStreetNameAndNumber", query = "SELECT a FROM Address a WHERE a.streetName = :streetName AND a.number = :number AND a.letter = :letter") })
+@NamedQueries({ @NamedQuery(name = "Address.findByStreetNameAndNumber", query = "SELECT a FROM Address a WHERE a.streetName = :streetName AND a.number = :number AND a.letter = :letter"),
+		@NamedQuery(name = "Address.removeAll", query = "DELETE FROM Address") })
 public class Address {
 
 	@Id

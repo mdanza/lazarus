@@ -41,4 +41,9 @@ public class BusStopDAOImpl implements BusStopDAO {
 		List<BusStop> result = q.getResultList();
 		return result;
 	}
+
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("BusStop.removeAll").executeUpdate();
+	}
 }

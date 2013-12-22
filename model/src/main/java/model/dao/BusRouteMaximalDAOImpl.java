@@ -32,4 +32,10 @@ public class BusRouteMaximalDAOImpl implements BusRouteMaximalDAO {
 		return null;
 	}
 
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("BusRouteMaximal.removeAll")
+				.executeUpdate();
+	}
+
 }

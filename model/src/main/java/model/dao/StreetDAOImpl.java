@@ -1,6 +1,5 @@
 package model.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -123,6 +122,10 @@ public class StreetDAOImpl implements StreetDAO {
 			streets = null;
 		}
 		return streets;
+	}
+
+	public void removeAll() {
+		entityManager.createNamedQuery("Street.removeAll").executeUpdate();
 	}
 
 }

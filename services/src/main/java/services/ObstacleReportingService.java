@@ -47,7 +47,7 @@ public class ObstacleReportingService {
 			Double x = Double.valueOf(coordinates.split(",")[0]);
 			Double y = Double.valueOf(coordinates.split(",")[1]);
 			Coordinate position = new Coordinate(x, y);
-			int intRadius = Integer.valueOf(radius);
+			long intRadius = Long.valueOf(radius);
 			GeometryFactory factory = new GeometryFactory();
 			Point point = factory.createPoint(position);
 			try {

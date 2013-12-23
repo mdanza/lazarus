@@ -10,9 +10,9 @@ import com.vividsolutions.jts.geom.Point;
 public interface BusDirectionsService {
 
 	public List<BusRide> getRoutes(Point startPoint, Point endPoint,
-			int maxWalkingDistanceMeters);
+			int maxWalkingDistanceMeters, int pageNumber);
 
 	public List<Transshipment> getRoutesWithTransshipment(Point startPoint,
-			Point endPoint, int maxWalkingDistanceMeters);
+			Point endPoint, int maxWalkingDistanceMeters, int pageNumber);
 
 }

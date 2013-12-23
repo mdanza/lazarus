@@ -5,11 +5,10 @@ import javax.ejb.Local;
 import model.Address;
 
 @Local
-public interface AddressDAO extends ModelDAO<Address, Integer> {
+public interface AddressDAO extends ModelDAO<Address, Long> {
 
-
-
-	Address findByStreetNameAndNumber(String streetName, int number,
+	public Address findByStreetNameAndNumber(String streetName, long number,
 			String letter);
-	
+
+	public void removeAll();
 }

@@ -22,13 +22,23 @@ public class ShapefileWKT {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
-	@Column(length=10000)
+	@Column(length = 10000)
 	private String wkt;
 
 	@Column(unique = true)
 	private String shapefileType;
+
+	private double progress;
+
+	public double getProgress() {
+		return progress;
+	}
+
+	public void setProgress(double progress) {
+		this.progress = progress;
+	}
 
 	public String getWkt() {
 		return wkt;
@@ -43,16 +53,15 @@ public class ShapefileWKT {
 	}
 
 	public void setShapefileType(String shapefile) {
-		if (shapefile == CORNER
-				|| shapefile == CORNER || shapefile == BUS_MAXIMAL
-				|| shapefile == BUS_STOP || shapefile == ADDRESS
-				|| shapefile == STREET || shapefile == CORNER 
-				|| shapefile == OBSTACLE
+		if (shapefile == CORNER || shapefile == CORNER
+				|| shapefile == BUS_MAXIMAL || shapefile == BUS_STOP
+				|| shapefile == ADDRESS || shapefile == STREET
+				|| shapefile == CORNER || shapefile == OBSTACLE
 				|| shapefile == CONTROL_POINT)
 			this.shapefileType = shapefile;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 }

@@ -27,9 +27,15 @@ public class BusRouteMaximalDAOImpl implements BusRouteMaximalDAO {
 
 	}
 
-	public BusRouteMaximal find(Integer uniqueKey) {
+	public BusRouteMaximal find(Long uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("BusRouteMaximal.removeAll")
+				.executeUpdate();
 	}
 
 }

@@ -32,7 +32,7 @@ public class ObstacleServiceImpl implements ObstacleService {
 	@EJB(beanName = "CoordinateConverter")
 	private CoordinateConverter coordinateConverter;
 
-	public void reportObstacle(Point position, int radius, User user,
+	public void reportObstacle(Point position, long radius, User user,
 			String description) {
 		if (position == null || user == null)
 			throw new IllegalArgumentException(

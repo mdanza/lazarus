@@ -15,8 +15,7 @@ public class ShapefileWKTDAOImpl implements ShapefileWKTDAO {
 
 	public void add(ShapefileWKT modelObject) {
 		String type = modelObject.getShapefileType();
-		if (type == ShapefileWKT.CORNER
-				|| type == ShapefileWKT.CONTROL_POINT
+		if (type == ShapefileWKT.CORNER || type == ShapefileWKT.CONTROL_POINT
 				|| type == ShapefileWKT.BUS_MAXIMAL
 				|| type == ShapefileWKT.BUS_STOP
 				|| type == ShapefileWKT.ADDRESS || type == ShapefileWKT.STREET
@@ -25,13 +24,16 @@ public class ShapefileWKTDAOImpl implements ShapefileWKTDAO {
 	}
 
 	public void delete(ShapefileWKT modelObject) {
-		// TODO Auto-generated method stub
+		entityManager.remove(modelObject);
 
 	}
 
 	public void modify(ShapefileWKT modelObjectOld, ShapefileWKT modelObjectNew) {
-		// TODO Auto-generated method stub
-
+		if (modelObjectOld == null || modelObjectNew == null)
+			throw new IllegalArgumentException("No nulls allowed");
+		if (modelObjectOld.getId() != modelObjectNew.getId())
+			throw new IllegalArgumentException("Different ids");
+		entityManager.merge(modelObjectNew);
 	}
 
 	public ShapefileWKT find(String shapefileType) {

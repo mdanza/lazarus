@@ -30,12 +30,12 @@ public class AddressDAOImpl implements AddressDAO {
 
 	}
 
-	public Address find(Integer uniqueKey) {
+	public Address find(Long uniqueKey) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Address findByStreetNameAndNumber(String streetName, int number,
+	public Address findByStreetNameAndNumber(String streetName, long number,
 			String letter) {
 		Address address;
 		try {
@@ -49,6 +49,11 @@ public class AddressDAOImpl implements AddressDAO {
 			address = null;
 		}
 		return address;
+	}
+
+	@Override
+	public void removeAll() {
+		entityManager.createNamedQuery("Address.removeAll").executeUpdate();
 	}
 
 }

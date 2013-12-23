@@ -19,12 +19,13 @@ import com.vividsolutions.jts.geom.MultiLineString;
 		@NamedQuery(name = "Street.findByName", query = "SELECT s FROM Street s WHERE s.name = :name"),
 		@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode"),
 		@NamedQuery(name = "Street.findPossibleStreets", query = "SELECT s.name FROM Street s WHERE s.name LIKE :name"),
-		@NamedQuery(name = "Street.findClosestToPoint", query = "select s FROM Street s ORDER BY distance(:point, s.segments)")})
+		@NamedQuery(name = "Street.findClosestToPoint", query = "select s FROM Street s ORDER BY distance(:point, s.segments)"),
+		@NamedQuery(name = "Street.removeAll", query = "DELETE FROM Street") })
 public class Street {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Column(nullable = false)
 	private String name;
@@ -46,11 +47,11 @@ public class Street {
 		this.segments = segments;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

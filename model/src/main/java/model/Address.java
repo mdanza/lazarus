@@ -15,12 +15,13 @@ import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "addresses")
-@NamedQueries({ @NamedQuery(name = "Address.findByStreetNameAndNumber", query = "SELECT a FROM Address a WHERE a.streetName = :streetName AND a.number = :number AND a.letter = :letter") })
+@NamedQueries({ @NamedQuery(name = "Address.findByStreetNameAndNumber", query = "SELECT a FROM Address a WHERE a.streetName = :streetName AND a.number = :number AND a.letter = :letter"),
+		@NamedQuery(name = "Address.removeAll", query = "DELETE FROM Address") })
 public class Address {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point point;
@@ -33,7 +34,7 @@ public class Address {
 	private String streetName;
 
 	@Column(nullable = false)
-	private int number;
+	private long number;
 
 	private String letter;
 
@@ -44,7 +45,7 @@ public class Address {
 	}
 
 	public Address(Point point, long padron, long nameCode, String streetName,
-			int number, String letter, String paridad) {
+			long number, String letter, String paridad) {
 		super();
 		this.point = point;
 		this.padron = padron;
@@ -55,11 +56,11 @@ public class Address {
 		this.paridad = paridad;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -95,7 +96,7 @@ public class Address {
 		this.streetName = streetName;
 	}
 
-	public int getNumber() {
+	public long getNumber() {
 		return number;
 	}
 

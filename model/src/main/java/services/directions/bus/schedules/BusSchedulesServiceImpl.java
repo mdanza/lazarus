@@ -30,8 +30,8 @@ public class BusSchedulesServiceImpl implements BusSchedulesService {
 
 	JsonParser jsonParser = new JsonParser();
 
-	public Bus getClosestBus(int variantCode, int subLineCode,
-			int maximumBusStopOrdinal) {
+	public Bus getClosestBus(long variantCode, long subLineCode,
+			long maximumBusStopOrdinal) {
 		Query q = entityManager
 				.createQuery("SELECT b FROM Bus b WHERE b.variantCode = :variantCode AND b.subLineCode = :subLineCode AND b.lastPassedStopOrdinal < :maximumOrdinal ORDER BY b.lastPassedStopOrdinal DESC");
 		q.setParameter("variantCode", variantCode);
@@ -46,7 +46,7 @@ public class BusSchedulesServiceImpl implements BusSchedulesService {
 	}
 
 	public List<String> getBusLineSchedule(String lineName,
-			String subLineDescription, int busStopLocationCode,
+			String subLineDescription, long busStopLocationCode,
 			int fromMinutesSinceStartOfDay) {
 		try {
 			String typeOfDay = getTypeOfDay();
@@ -150,7 +150,7 @@ public class BusSchedulesServiceImpl implements BusSchedulesService {
 		return null;
 	}
 
-	private String getLineCode(String lineName, int busStopLocationCode)
+	private String getLineCode(String lineName, long busStopLocationCode)
 			throws IOException {
 		String url = "http://www.montevideo.gub.uy/transporteRestProd/lineas/"
 				+ busStopLocationCode;

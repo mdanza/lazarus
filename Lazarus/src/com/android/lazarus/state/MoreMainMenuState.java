@@ -11,7 +11,7 @@ public class MoreMainMenuState extends AbstractState {
 	int action;
 	private final int DELETE = 2;
 
-	MoreMainMenuState(VoiceInterpreterActivity context) {
+	public MoreMainMenuState(VoiceInterpreterActivity context) {
 		super(context);
 		this.context = context;
 		this.message = "Para llamar a un taxi diga uno, para borrar sus datos del celular diga dos";

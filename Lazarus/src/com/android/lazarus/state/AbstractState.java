@@ -24,7 +24,7 @@ public abstract class AbstractState implements State {
 		return message;
 	}
 
-	AbstractState(VoiceInterpreterActivity context) {
+	public AbstractState(VoiceInterpreterActivity context) {
 		this.context = context;
 		this.message = defaultMessage;
 	}

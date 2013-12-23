@@ -2,6 +2,7 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
+import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -13,8 +14,9 @@ import com.android.lazarus.serviceadapter.DirectionsServiceAdapterImpl;
 public class WalkingDirectionsState extends LocationDependentState {
 
 	Point destination;
+	List<WalkingPosition> positions;
 
-	WalkingDirectionsState(VoiceInterpreterActivity context) {
+	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
 	}
 
@@ -22,8 +24,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 			Point destination) {
 		super(context,30);
 		this.destination = destination;
-		giveInstructions();
-
 	}
 
 	@Override
@@ -33,17 +33,26 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	@Override
-	protected void giveInstructions() {
-		if(enoughAccuraccy){
+	protected void giveAccurateInstructions() {
+		GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
+		getInstructionsTask.doInBackground(new String[2]);
+	}
+	
+	private class GetInstructionsTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
 			DirectionsServiceAdapter directionsAdapter = new DirectionsServiceAdapterImpl();
-			//List<WalkingPosition> positions = directionsAdapter
-				//	.getWalkingDirections(context.getToken(), this.position.toString(),
-					//		destination.latitude);
-			this.message = "Ahora te debería decir que dobles a la derecha";
-			tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
+			positions = directionsAdapter
+					.getWalkingDirections(context.getToken(), position.toString(),
+							Double.toString(destination.getLatitude())+","+Double.toString(destination.getLongitude()));
+
+			message = "Ahora te debería decir que dobles a la derecha";
+			tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+			return message;
 			
 		}
-		
+
 	}
 
 }

@@ -12,13 +12,16 @@ import com.android.lazarus.model.Point;
 public class DestinationSetState extends LocationDependentState {
 
 	Point destination;
-	boolean firstIntruction = true;
+	boolean firstIntructionPassed;
 
 	public DestinationSetState(VoiceInterpreterActivity context,
 			Point destination) {
 		super(context, 200);
 		this.destination = destination;
-		giveInstructions();
+	}
+	
+	public DestinationSetState(VoiceInterpreterActivity context){
+		super(context);
 	}
 
 	@Override
@@ -31,13 +34,13 @@ public class DestinationSetState extends LocationDependentState {
 	}
 
 	@Override
-	protected void giveInstructions() {
-		if (enoughAccuraccy && firstIntruction) {
-			firstIntruction=false;
+	protected void giveAccurateInstructions() {
+		if (!firstIntructionPassed) {
+			firstIntructionPassed=true;
 			Double approximateDistance = GPScoordinateHelper.getDistanceBetweenPoints(this.position.getLatitude(), destination.getLatitude(), this.position.getLongitude(), destination.getLongitude());
 			approximateDistance = approximateDistance/1000;
 			approximateDistance = Math.floor(approximateDistance * 10) / 10;
-			this.message = "Usted se encuentra aproximadamente a "+approximateDistance+" kilometros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
+			this.message = "Usted se encuentra aproximadamente a "+approximateDistance+" kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos";
 			tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}

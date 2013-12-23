@@ -24,10 +24,10 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	@Override
 	public List<String> getPossibleStreets(String token, String name) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
-		String url = ConstantsHelper.REST_API_URL
-				+ "/addresses/possibleStreets?name=" + name;
 		try {
-			HttpGet request = new HttpGet(URLEncoder.encode(url, "UTF-8"));
+			String url = ConstantsHelper.REST_API_URL
+					+ "/addresses/possibleStreets?name=" + URLEncoder.encode(name, ConstantsHelper.ENCODING);
+			HttpGet request = new HttpGet(url);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -54,13 +54,12 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	public Point getByDoorNumber(String token, String firstStreet,
 			int doorNumber, String letter) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
-		String uri = ConstantsHelper.REST_API_URL
-				+ "/addresses/addressNumberToCoordinates?firstStreet="
-				+ firstStreet + "&doorNumber=" + doorNumber + "&letter="
-				+ letter;
-		uri = uri.replace(" ", "%20");
-		HttpGet request = new HttpGet(uri);
 		try {
+			String uri = ConstantsHelper.REST_API_URL
+					+ "/addresses/addressNumberToCoordinates?streetName="
+					+ URLEncoder.encode(firstStreet, ConstantsHelper.ENCODING) + "&number=" + URLEncoder.encode(Integer.toString(doorNumber), ConstantsHelper.ENCODING) + "&letter="
+					+ URLEncoder.encode(letter, ConstantsHelper.ENCODING);
+			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -83,12 +82,11 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	@Override
 	public Point getCorner(String token, String mainStreet, String cornerStreet) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
-		String uri = ConstantsHelper.REST_API_URL
-				+ "/addresses/cornerToCoordinates?mainStreet=" + mainStreet
-				+ "&cornerStreet=" + cornerStreet;
-		uri = uri.replace(" ", "%20");
-		HttpGet request = new HttpGet(uri);
 		try {
+			String uri = ConstantsHelper.REST_API_URL
+					+ "/addresses/cornerToCoordinates?mainStreet=" + URLEncoder.encode(mainStreet, ConstantsHelper.ENCODING)
+					+ "&cornerStreet=" + URLEncoder.encode(cornerStreet, ConstantsHelper.ENCODING);
+			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -111,11 +109,10 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	@Override
 	public CloseLocationData getCloseLocation(String token, String position) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
-		String uri = ConstantsHelper.REST_API_URL
-				+ "/addresses/closeData?position=" + position;
-		uri = uri.replace(" ", "%20");
-		HttpGet request = new HttpGet(uri);
 		try {
+			String uri = ConstantsHelper.REST_API_URL
+					+ "/addresses/closeData?position=" + URLEncoder.encode(position, ConstantsHelper.ENCODING);
+			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(

@@ -57,9 +57,7 @@ public class UserService {
 	public String register(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email,
-			@FormParam("cellphone") String cellphone,
-			@FormParam("secretQuestion") String secretQuestion,
-			@FormParam("secretAnswer") String secretAnswer) {
+			@FormParam("cellphone") String cellphone) {
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
@@ -69,7 +67,7 @@ public class UserService {
 		try {
 			userDAO.add(user);
 			return restResultsHelper.resultWrapper(true,
-					"User added successfuly");
+					"User added successfully");
 		} catch (Exception e) {
 			return restResultsHelper.resultWrapper(false, "could not add user");
 		}
@@ -109,9 +107,7 @@ public class UserService {
 	public String modify(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email,
-			@FormParam("cellphone") String cellphone,
-			@FormParam("secretQuestion") String secretQuestion,
-			@FormParam("secretAnswer") String secretAnswer) {
+			@FormParam("cellphone") String cellphone) {
 		User user = userDAO.find(username);
 		User modifiedUser = new User();
 		modifiedUser.setId(user.getId());

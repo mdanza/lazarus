@@ -36,12 +36,12 @@ public class CornerLoaderImpl implements CornerLoader {
 
 	GeometryFactory factory = new GeometryFactory();
 
-	public void updateShp(String url) {
+	public void updateShp(File shapefile) {
 		try {
 			cornerDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.CORNER);
-			URL shapeURL = new File(url).toURI().toURL();
+			URL shapeURL = shapefile.toURI().toURL();
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;

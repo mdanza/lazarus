@@ -33,12 +33,12 @@ public class BusStopLoaderImpl implements BusStopLoader {
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
 
-	public void updateShp(String url) {
+	public void updateShp(File shapefile) {
 		try {
 			busStopDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.BUS_STOP);
-			URL shapeURL = new File(url).toURI().toURL();
+			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
 			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();

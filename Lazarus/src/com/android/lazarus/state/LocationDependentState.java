@@ -27,7 +27,6 @@ public abstract class LocationDependentState extends AbstractState {
 		this.locationListener = context.getLocationListener();
 		tts = this.context.getTts();
 		loadPosition();
-		giveInstructions();
 	}
 
 	public float getMinimumAccuraccy() {
@@ -43,6 +42,10 @@ public abstract class LocationDependentState extends AbstractState {
 	}
 
 	public void loadPosition() {
+		setPosition(locationListener.getLocation());
+	}
+
+	public void setPosition(Location position) {
 		if (locationListener.getLocation() == null) {
 			this.message = "No se puede obtener su posición actual, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto";
 			context.speak(this.message);
@@ -54,13 +57,9 @@ public abstract class LocationDependentState extends AbstractState {
 			} else {
 				enoughAccuraccy = true;
 				this.position = locationListener.getLocation();
+				giveInstructions();
 			}
 		}
-	}
-
-	public void setPosition(Location position) {
-		loadPosition();
-		giveInstructions();
 	}
 
 	public boolean isEnoughAccuraccy() {
@@ -77,14 +76,5 @@ public abstract class LocationDependentState extends AbstractState {
 
 	}
 
-	protected void giveInstructions(){
-		if(!enoughAccuraccy){
-			this.message = "No se puede obtener su posición con exactitud, por favor encienda el g p s, en caso de tenerlo encendido ya por favor dirigase a un lugar abierto";
-			context.speak(this.message);
-		}else{
-			giveAccurateInstructions();
-		}
-	}
-
-	protected abstract void giveAccurateInstructions();
+	protected abstract void giveInstructions();
 }

@@ -1,12 +1,15 @@
 package com.android.lazarus;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -21,8 +24,10 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
-public class VoiceInterpreterActivity extends Activity implements
+public class VoiceInterpreterActivity extends FragmentActivity implements
 		TextToSpeech.OnInitListener {
 
 	private SpeechRecognizerInterface speechRecognizer;
@@ -87,9 +92,22 @@ public class VoiceInterpreterActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
 		setContentView(R.layout.activity_voice_interpreter);
+		sensorEventListenerImpl = new SensorEventListenerImpl(this);
+
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
+		SupportMapFragment supportMapFragment = (SupportMapFragment) fragment;
+		GoogleMap supportMap = supportMapFragment.getMap();
+		
+
+	    FragmentTransaction transaction = fragmentManager.beginTransaction();
+	    transaction.hide(supportMapFragment);
+	    transaction.commit();
+		
+		
+
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

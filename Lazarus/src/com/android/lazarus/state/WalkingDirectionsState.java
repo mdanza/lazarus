@@ -22,8 +22,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
-		super(context,30);
+		super(context, 30);
 		this.destination = destination;
+		giveInstructions();
 	}
 
 	@Override
@@ -33,24 +34,32 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	@Override
-	protected void giveAccurateInstructions() {
-		GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
-		getInstructionsTask.doInBackground(new String[2]);
+	protected void giveInstructions() {
+		if (positions == null) {
+			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
+			getInstructionsTask.doInBackground(new String[2]);
+		} else {
+
+		}
 	}
-	
+
 	private class GetInstructionsTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... args) {
-			DirectionsServiceAdapter directionsAdapter = new DirectionsServiceAdapterImpl();
-			positions = directionsAdapter
-					.getWalkingDirections(context.getToken(), position.toString(),
-							Double.toString(destination.getLatitude())+","+Double.toString(destination.getLongitude()));
-
-			message = "Ahora te debería decir que dobles a la derecha";
-			tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+			if (position != null && destination != null) {
+				DirectionsServiceAdapter directionsAdapter = new DirectionsServiceAdapterImpl();
+				String origin = Double.toString(position.getLatitude()) + ","
+						+ Double.toHexString(position.getLongitude());
+				String end = Double.toString(destination.getLatitude()) + ","
+						+ Double.toString(destination.getLongitude());
+				positions = directionsAdapter.getWalkingDirections(
+						context.getToken(), origin, end);
+				message = "Ahora te debería decir que dobles a la derecha";
+				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+			}
 			return message;
-			
+
 		}
 
 	}

@@ -18,6 +18,7 @@ public class DestinationSetState extends LocationDependentState {
 			Point destination) {
 		super(context, 200);
 		this.destination = destination;
+		giveInstructions();
 	}
 	
 	public DestinationSetState(VoiceInterpreterActivity context){
@@ -34,8 +35,8 @@ public class DestinationSetState extends LocationDependentState {
 	}
 
 	@Override
-	protected void giveAccurateInstructions() {
-		if (!firstIntructionPassed) {
+	protected void giveInstructions() {
+		if (!firstIntructionPassed && destination!=null && position!=null) {
 			firstIntructionPassed=true;
 			Double approximateDistance = GPScoordinateHelper.getDistanceBetweenPoints(this.position.getLatitude(), destination.getLatitude(), this.position.getLongitude(), destination.getLongitude());
 			approximateDistance = approximateDistance/1000;

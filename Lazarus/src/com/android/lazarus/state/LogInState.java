@@ -46,16 +46,13 @@ public class LogInState extends AbstractState {
 			}
 		} else {
 			if (waitingForPassword) {
-				String username = usernames.get(0);
-				String password = null;
-				boolean correctCredentials = false;
 				List<String> passwords = results;
 				String[] args = new String[3];
 				for (int i = 0; i < passwords.size(); i++) {
 					args[i] = passwords.get(i);
 				}
 				message = "";
-				LogInTask logInTask = new LogInTask(this.context);
+				LogInTask logInTask = new LogInTask();
 				logInTask.doInBackground(args);
 			}
 			if (stringPresent(results, "no")) {
@@ -79,13 +76,6 @@ public class LogInState extends AbstractState {
 	}
 
 	private class LogInTask extends AsyncTask<String, Void, String> {
-
-		VoiceInterpreterActivity voiceInterpreterActivity;
-
-		public LogInTask(VoiceInterpreterActivity context) {
-			super();
-			this.voiceInterpreterActivity = context;
-		}
 
 		@Override
 		protected String doInBackground(String... args) {
@@ -112,8 +102,8 @@ public class LogInState extends AbstractState {
 				cleanValues();
 				message = "Nombre de usuario o contraeña incorrecto, diga su nombre de usuario";
 			}
-			voiceInterpreterActivity.sayMessage();
-			voiceInterpreterActivity.setToken(token);
+			context.sayMessage();
+			context.setToken(token);
 			return token;
 		}
 

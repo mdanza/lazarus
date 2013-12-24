@@ -1,53 +1,52 @@
 package com.android.lazarus;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
+import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
-import com.android.lazarus.sharedpreference.ObscuredSharedPreferences;
 import com.android.lazarus.speechrecognizer.AndroidSpeechRecognizer;
 import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
-public class VoiceInterpreterActivity extends Activity implements
+public class VoiceInterpreterActivity extends FragmentActivity implements
 		TextToSpeech.OnInitListener {
 
-	SpeechRecognizerInterface speechRecognizer;
-	String stringResults = new String();
-	Intent recognizerIntent;
+	private SpeechRecognizerInterface speechRecognizer;
+	private Intent recognizerIntent;
+	private SensorEventListenerImpl sensorEventListenerImpl;
 	private TextToSpeech tts;
 	private int MY_DATA_CHECK_CODE = 0;
 	private State state;
 	private LocationListenerImpl locationListener;
 	private RecognitionListener recognitionListener = new RecognitionListenerImpl(
 			this);
-	private SharedPreferences preferences = null;
 	private String token = null;
-	String initialMessage = "Bienvenido a lázarus, ";
+	private String initialMessage = "Bienvenido a lázarus, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
+	private boolean ttsInitialize;
+
+	public SensorEventListenerImpl getSensorEventListenerImpl() {
+		return sensorEventListenerImpl;
+	}
 
 	public TextToSpeech getTts() {
 		return tts;
@@ -73,11 +72,42 @@ public class VoiceInterpreterActivity extends Activity implements
 		this.locationListener = locationListener;
 	}
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public void speak(String message) {
+		tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+	}
+
+	public void sayMessage() {
+		speak(this.state.getMessage());
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+
 		setContentView(R.layout.activity_voice_interpreter);
+		sensorEventListenerImpl = new SensorEventListenerImpl(this);
+
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
+		SupportMapFragment supportMapFragment = (SupportMapFragment) fragment;
+		GoogleMap supportMap = supportMapFragment.getMap();
+		
+
+	    FragmentTransaction transaction = fragmentManager.beginTransaction();
+	    transaction.hide(supportMapFragment);
+	    transaction.commit();
+		
+		
+
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -89,7 +119,6 @@ public class VoiceInterpreterActivity extends Activity implements
 				.putExtra(
 						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
 						100000);
-
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 		findViewById(R.id.pushToTalkButton).setOnTouchListener(
@@ -99,8 +128,11 @@ public class VoiceInterpreterActivity extends Activity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		preferences = new ObscuredSharedPreferences(this,
-				this.getSharedPreferences("usrpref", Context.MODE_PRIVATE));
+		initializeFirstState();
+
+	}
+
+	private void initializeFirstState() {
 		String username = this.getSharedPreferences("usrpref", 0).getString(
 				"username", null);
 		String password = this.getSharedPreferences("usrpref", 0).getString(
@@ -116,7 +148,6 @@ public class VoiceInterpreterActivity extends Activity implements
 			this.setState(logInState);
 		}
 		locationListener = new LocationListenerImpl(this);
-
 	}
 
 	View.OnTouchListener pushToTalkListener = new View.OnTouchListener() {
@@ -137,7 +168,6 @@ public class VoiceInterpreterActivity extends Activity implements
 			return true;
 		}
 	};
-	private boolean ttsInitialize;
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == MY_DATA_CHECK_CODE) {
@@ -162,12 +192,24 @@ public class VoiceInterpreterActivity extends Activity implements
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
-			if(state!=null)
-			tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
-		} else if(initStatus == TextToSpeech.ERROR) {
+			if (state != null)
+				tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
+		} else if (initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		sensorEventListenerImpl.pause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		sensorEventListenerImpl.resume();
 	}
 
 	@Override
@@ -176,22 +218,11 @@ public class VoiceInterpreterActivity extends Activity implements
 			tts.stop();
 			tts.shutdown();
 		}
+		sensorEventListenerImpl.pause();
 		speechRecognizer.destroy();
 		super.onDestroy();
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public void speak(String message){
-		tts.speak(message,  TextToSpeech.QUEUE_FLUSH, null);
-	}
-	
 	private class LogInTask extends AsyncTask<String, Void, String> {
 
 		VoiceInterpreterActivity voiceInterpreterActivity;
@@ -210,24 +241,16 @@ public class VoiceInterpreterActivity extends Activity implements
 						voiceInterpreterActivity, initialMessage);
 				voiceInterpreterActivity.setState(mainMenuState);
 			} else {
-				voiceInterpreterActivity.getSharedPreferences("usrpref", 0).edit().clear().commit();
+				voiceInterpreterActivity.getSharedPreferences("usrpref", 0)
+						.edit().clear().commit();
 				LogInState logInState = new LogInState(
 						voiceInterpreterActivity, initialMessage);
 				voiceInterpreterActivity.setState(logInState);
 			}
-			if(ttsInitialize)
+			if (ttsInitialize)
 				speak(state.getMessage());
 			return result;
 		}
-
-		@Override
-		protected void onPostExecute(String result) {
-		
-		}
-	}
-
-	public void sayMessage() {
-		speak(this.state.getMessage());
 	}
 
 }

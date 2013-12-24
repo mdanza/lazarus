@@ -1,11 +1,11 @@
 package com.android.lazarus.state;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
-import com.android.lazarus.model.Favourite;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
 import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
@@ -26,7 +26,7 @@ public class StreetSetState extends AbstractState {
 	private String addressNumber = null;
 	private boolean passedFirstTime = false;
 
-	StreetSetState(VoiceInterpreterActivity context) {
+	public StreetSetState(VoiceInterpreterActivity context) {
 		super(context);
 	}
 
@@ -174,29 +174,36 @@ public class StreetSetState extends AbstractState {
 
 	}
 
-	private class SetDestinationTask extends
-			AsyncTask<String, Void, String> {
+	private class SetDestinationTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... args) {
 			Point destination = null;
 			if (secondStreet != null) {
-				destination = addressServiceAdapter.getCorner(context.getToken(),
-						firstStreet, secondStreet);
+				destination = addressServiceAdapter.getCorner(
+						context.getToken(), firstStreet, secondStreet);
 			}
 			if (addressNumber != null) {
+				List<String> address = getAddressNumberString(firstResults
+						.get(position));
+				int number = Integer.parseInt(address.get(0));
 				destination = addressServiceAdapter.getByDoorNumber(
 						context.getToken(),
 						firstStreet,
-						Integer.getInteger(getAddressNumberString(
-								firstResults.get(position)).get(0)),
-						getAddressNumberString(firstResults.get(position)).get(1));
+						number,
+						getAddressNumberString(firstResults.get(position)).get(
+								1));
 			}
-			DestinationSetState destinationSetState = new DestinationSetState(
-					context, destination);
-			context.setState(destinationSetState);
+			if (destination == null) {
+				resetData();
+				message = "No se han encontrado resultados, " + defaultMessage;
+				context.speak(message);
+			} else {
+				DestinationSetState destinationSetState = new DestinationSetState(
+						context, destination);
+				context.setState(destinationSetState);
+			}
 			return null;
 		}
-
 	}
 }

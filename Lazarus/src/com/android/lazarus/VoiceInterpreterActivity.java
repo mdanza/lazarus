@@ -43,6 +43,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private String initialMessage = "Bienvenido a lázarus, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
+	private SupportMapFragment supportMapFragment;
 
 	public SensorEventListenerImpl getSensorEventListenerImpl() {
 		return sensorEventListenerImpl;
@@ -96,15 +97,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_voice_interpreter);
 		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
-		SupportMapFragment supportMapFragment = (SupportMapFragment) fragment;
-		GoogleMap supportMap = supportMapFragment.getMap();
-		
-
-	    FragmentTransaction transaction = fragmentManager.beginTransaction();
-	    transaction.hide(supportMapFragment);
-	    transaction.commit();
+		hideMap();
 		
 		
 
@@ -130,6 +123,32 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 		initializeFirstState();
 
+	}
+
+	public void hideMap() {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
+		supportMapFragment = (SupportMapFragment) fragment;
+		GoogleMap supportMap = supportMapFragment.getMap();
+		FragmentTransaction transaction = fragmentManager.beginTransaction();
+	    transaction.hide(supportMapFragment);
+	    transaction.commit();		
+	}
+	
+	public void showMap() {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
+		supportMapFragment = (SupportMapFragment) fragment;
+		FragmentTransaction transaction = fragmentManager.beginTransaction();
+	    transaction.show(supportMapFragment);
+	    transaction.commit();		
+	}
+	
+	public GoogleMap getMap(){
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
+		supportMapFragment = (SupportMapFragment) fragment;
+		return supportMapFragment.getMap();
 	}
 
 	private void initializeFirstState() {

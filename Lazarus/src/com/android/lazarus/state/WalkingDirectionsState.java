@@ -10,6 +10,9 @@ import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.DirectionsServiceAdapter;
 import com.android.lazarus.serviceadapter.DirectionsServiceAdapterImpl;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class WalkingDirectionsState extends LocationDependentState {
 
@@ -22,7 +25,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
-		super(context, 30);
+		super(context, 300);
 		this.destination = destination;
 		giveInstructions();
 	}
@@ -50,13 +53,30 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (position != null && destination != null) {
 				DirectionsServiceAdapter directionsAdapter = new DirectionsServiceAdapterImpl();
 				String origin = Double.toString(position.getLatitude()) + ","
-						+ Double.toHexString(position.getLongitude());
+						+ Double.toString(position.getLongitude());
 				String end = Double.toString(destination.getLatitude()) + ","
 						+ Double.toString(destination.getLongitude());
 				positions = directionsAdapter.getWalkingDirections(
 						context.getToken(), origin, end);
-				message = "Ahora te debería decir que dobles a la derecha";
-				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+				if (positions != null) {
+					context.showMap();
+					GoogleMap map = context.getMap();
+					MarkerOptions markerOptions = new MarkerOptions();
+					for (WalkingPosition position : positions) {
+						LatLng latLng = new LatLng(position.getPoint()
+								.getLatitude(), position.getPoint()
+								.getLongitude());
+						markerOptions.position(latLng);
+						map.addMarker(markerOptions);
+					}
+					message = "Ahora te debería decir que dobles a la derecha";
+					tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+				} else {
+					message = "No se han podido obtener resultados para dirigirse a destino";
+					context.speak(message);
+					MainMenuState mainMenuState = new MainMenuState(context);
+					context.setState(mainMenuState);
+				}
 			}
 			return message;
 

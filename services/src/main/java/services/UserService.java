@@ -29,9 +29,11 @@ import model.dao.UserDAO;
 
 import org.apache.log4j.Logger;
 
+import serialization.UserSerializer;
 import services.authentication.AuthenticationService;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Stateless(name = "UserService")
 @Path("v1/api/users")
@@ -51,13 +53,18 @@ public class UserService {
 	@EJB(name = "RestResultsHelper")
 	private RestResultsHelper restResultsHelper;
 
-	private Gson gson = new Gson();
+	private Gson gson = createGson();
+
+	private Gson createGson() {
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(User.class, new UserSerializer());
+		return builder.create();
+	}
 
 	@POST
 	public String register(@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("email") String email,
-			@FormParam("cellphone") String cellphone) {
+			@FormParam("email") String email) {
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
@@ -106,8 +113,7 @@ public class UserService {
 	@PUT
 	public String modify(@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("email") String email,
-			@FormParam("cellphone") String cellphone) {
+			@FormParam("email") String email) {
 		User user = userDAO.find(username);
 		User modifiedUser = new User();
 		modifiedUser.setId(user.getId());
@@ -178,14 +184,16 @@ public class UserService {
 			modifiedUser.setActive(true);
 			modifiedUser.setRole(user.getRole());
 			String newPassword = generatePassword();
-			user.setPassword(newPassword);
+			modifiedUser.setPassword(newPassword);
 			userDAO.modify(user, modifiedUser);
 			sendEmail(user.getEmail(), "<h1>Estimado" + username
-					+ "</h1>Su nueva contraseña es: " + "",
+					+ "</h1>Su nueva contraseña es: " + newPassword,
 					"Lazarus: Olvido de contraseña");
-			return restResultsHelper.resultWrapper(true, "true");
+			return restResultsHelper.resultWrapper(true,
+					"Sent email with new password");
 		} else
-			return restResultsHelper.resultWrapper(true, "false");
+			return restResultsHelper
+					.resultWrapper(false, "User does not exist");
 	}
 
 	private String generatePassword() {
@@ -201,19 +209,19 @@ public class UserService {
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "465");
 
-		Session session = Session.getDefaultInstance(props,
+		Session session = Session.getInstance(props,
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
 						return new PasswordAuthentication(username, password);
 					}
 				});
 		try {
-			Message message = new MimeMessage(session);
+			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(username));
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(to));
 			message.setSubject(subject);
-			message.setContent(htmlContent, "text/html");
+			message.setContent(htmlContent, "text/html; charset=utf-8");
 			Transport.send(message);
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

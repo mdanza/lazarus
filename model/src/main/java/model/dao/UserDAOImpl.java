@@ -57,16 +57,16 @@ public class UserDAOImpl implements UserDAO {
 		if (possibleOldUser == null)
 			throw new IllegalArgumentException("Old user does not exist");
 		if (userOld.getId() != userNew.getId()
-				|| userOld.getUsername() != userNew.getUsername())
+				|| !userOld.getUsername().equals(userNew.getUsername()))
 			throw new IllegalArgumentException(
 					"Ids or usernames of old and new user do not match");
 		Role role = userNew.getRole();
 		if (role == null)
 			throw new IllegalArgumentException(
 					"role of new user cannot be null");
-		if(userOld.getEmail() != userNew.getEmail() && findByEmail(userNew.getEmail()) != null)
-			throw new IllegalArgumentException(
-					"email already in use");
+		if (!userOld.getEmail().equals(userNew.getEmail())
+				&& findByEmail(userNew.getEmail()) != null)
+			throw new IllegalArgumentException("email already in use");
 		entityManager.merge(userNew);
 	}
 

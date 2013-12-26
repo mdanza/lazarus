@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+body {
+	text-align: center;
+}
+
+#map_canvas {
+	height: 700px;
+	width: 90%;
+}
+
+#addressSearchBarDiv {
+	height: 60px;
+	width: 100%;
+}
+
+.linksDiv {
+	height: 50px;
+	width: 100%;
+	text-align: center;
+}
+
+.linksDiv > a {
+	padding-left: 7px;
+	padding-top: 7px;
+}
+
+#adminMenu{
+	text-align: center;
+	height: auto;
+	width: 100%;
+}

@@ -2,30 +2,20 @@ package com.android.lazarus.serviceadapter;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
-import com.android.lazarus.serviceadapter.utils.MySSLSocketFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -81,6 +71,26 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK"))
 				result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean usernameInUse(String username) {
+		boolean result = false;
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		try {
+		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL + "/users/username/"+ URLEncoder.encode(username, ConstantsHelper.ENCODING));
+			HttpResponse response = client.execute(request);
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
+			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+					.getAsJsonObject();
+			if (jsonResponse.get("result").getAsString().equals("OK")){
+				result = Boolean.getBoolean(jsonResponse.get("data").getAsString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

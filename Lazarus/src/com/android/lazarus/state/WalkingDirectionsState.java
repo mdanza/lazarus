@@ -56,6 +56,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						+ Double.toString(position.getLongitude());
 				String end = Double.toString(destination.getLatitude()) + ","
 						+ Double.toString(destination.getLongitude());
+				end = "-34.768216,-55.761541";
 				positions = directionsAdapter.getWalkingDirections(
 						context.getToken(), origin, end);
 				if (positions != null) {

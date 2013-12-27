@@ -24,6 +24,7 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.android.lazarus.state.WalkingDirectionsState;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -40,7 +41,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private RecognitionListener recognitionListener = new RecognitionListenerImpl(
 			this);
 	private String token = null;
-	private String initialMessage = "Bienvenido a lázarus, ";
+	private String initialMessage = "Bienvenido, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
 	private SupportMapFragment supportMapFragment;
@@ -93,13 +94,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
 		setContentView(R.layout.activity_voice_interpreter);
 		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
 		hideMap();
-		
-		
 
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
@@ -131,20 +129,20 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		supportMapFragment = (SupportMapFragment) fragment;
 		GoogleMap supportMap = supportMapFragment.getMap();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-	    transaction.hide(supportMapFragment);
-	    transaction.commit();		
+		transaction.hide(supportMapFragment);
+		transaction.commit();
 	}
-	
+
 	public void showMap() {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
 		supportMapFragment = (SupportMapFragment) fragment;
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-	    transaction.show(supportMapFragment);
-	    transaction.commit();		
+		transaction.show(supportMapFragment);
+		transaction.commit();
 	}
-	
-	public GoogleMap getMap(){
+
+	public GoogleMap getMap() {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
 		supportMapFragment = (SupportMapFragment) fragment;
@@ -211,8 +209,11 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
-			if (state != null)
+			float rate = Float.parseFloat("0.9");
+			tts.setSpeechRate(rate);
+			if (state != null) {
 				tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
+			}
 		} else if (initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
@@ -256,6 +257,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			String result = userServiceAdapter.login(args[0], args[1]);
 			if (result != null) {
 				token = result;
+
 				MainMenuState mainMenuState = new MainMenuState(
 						voiceInterpreterActivity, initialMessage);
 				voiceInterpreterActivity.setState(mainMenuState);

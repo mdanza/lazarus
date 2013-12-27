@@ -13,4 +13,6 @@ public interface UserServiceAdapter {
 	public boolean register(String username, String password, String email,
 			String cellphone, String secretQuestion, String secretAnswer);
 
+	public boolean usernameInUse(String username);
+
 }

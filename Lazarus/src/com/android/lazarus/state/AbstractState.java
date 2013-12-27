@@ -15,6 +15,7 @@ public abstract class AbstractState implements State {
 
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
+	protected boolean stripAccents = true;
 
 	protected String message;
 
@@ -26,7 +27,6 @@ public abstract class AbstractState implements State {
 
 	public AbstractState(VoiceInterpreterActivity context) {
 		this.context = context;
-		this.message = defaultMessage;
 	}
 
 	protected boolean stringPresent(List<String> results, String search) {
@@ -44,15 +44,17 @@ public abstract class AbstractState implements State {
 		if (location == null) {
 			return "No se puede obtener información de su posición, por favor encienda el g p s";
 		} else {
-			//CloseLocationData closeLocationData = addressServiceAdapter
-				//	.getCloseLocation(context.getToken(),
-					//		location.getLatitude(), location.getLongitude());
+			// CloseLocationData closeLocationData = addressServiceAdapter
+			// .getCloseLocation(context.getToken(),
+			// location.getLatitude(), location.getLongitude());
 			return "Usted se encuentra en la concha de su hermana. ";
 		}
 	}
 
 	public void setResults(List<String> results) {
-		results = stripAccents(results);
+		if (stripAccents) {
+			results = stripAccents(results);
+		}
 		if (stringPresent(results, "donde estoy")) {
 			this.message = getWhereAmIMessage() + this.defaultMessage;
 			return;
@@ -63,11 +65,12 @@ public abstract class AbstractState implements State {
 			try {
 				clazz = Class.forName(className);
 				if (context.getState() instanceof LocationDependentState) {
-					float accuraccy = ((LocationDependentState) context.getState()).getMinimumAccuraccy();
-					Constructor<?> constructor = clazz
-							.getConstructor(VoiceInterpreterActivity.class,float.class);
-					State newState = (State) constructor
-							.newInstance(this.context,accuraccy);
+					float accuraccy = ((LocationDependentState) context
+							.getState()).getMinimumAccuraccy();
+					Constructor<?> constructor = clazz.getConstructor(
+							VoiceInterpreterActivity.class, float.class);
+					State newState = (State) constructor.newInstance(
+							this.context, accuraccy);
 					this.context.setState(newState);
 				} else {
 					Constructor<?> constructor = clazz

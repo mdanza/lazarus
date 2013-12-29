@@ -10,9 +10,10 @@ public interface UserServiceAdapter {
 	/**
 	 * @return true in case of success, false otherwise
 	 */
-	public boolean register(String username, String password, String email,
-			String cellphone, String secretQuestion, String secretAnswer);
+	public boolean register(String username, String password, String email);
 
 	public boolean usernameInUse(String username);
+
+	public boolean emailInUse(String email);
 
 }

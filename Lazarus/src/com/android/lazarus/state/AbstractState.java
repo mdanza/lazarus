@@ -16,6 +16,7 @@ public abstract class AbstractState implements State {
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	protected boolean stripAccents = true;
+	protected String instructions = "Puede decir en cualquier momento ayuda, para obtener ayuda, dónde estoy, para saber dónde se encuentra, cancelar, para cancelar una acción, o menú, para ir al menú,";
 
 	protected String message;
 
@@ -101,7 +102,13 @@ public abstract class AbstractState implements State {
 			return;
 		}
 		if (stringPresent(results, "menu")) {
-			initializeMainMenu();
+			if (context.getToken() != null) {
+				initializeMainMenu();
+			}
+			return;
+		}
+		if (stringPresent(results, "ayuda")) {
+			message = instructions + message;
 			return;
 		}
 		handleResults(results);
@@ -244,6 +251,33 @@ public abstract class AbstractState implements State {
 		address.add(numberBuilder.toString());
 		address.add(letter);
 		return address;
+	}
+
+	/**
+	 * List of strings each including possible numbers, for example [3 4 5 7 1,3
+	 * 6 9 0]
+	 * 
+	 * @param string
+	 * @return null if there is no number inside numbers, the first number
+	 *         encountered otherwise
+	 */
+	protected String getNumber(List<String> numbers) {
+		String toReturn = null;
+		for (String number : numbers) {
+			String[] separated = number.split(" ");
+			int i = 0;
+			StringBuilder numberBuilder = new StringBuilder();
+			while (i < separated.length && containsAnyDigit(separated[i])) {
+				numberBuilder.append(toDigit(separated[i]));
+				i++;
+			}
+			if (i < separated.length) {
+				toReturn = null;
+			} else {
+				return numberBuilder.toString();
+			}
+		}
+		return toReturn;
 	}
 
 	private int toDigit(String string) {

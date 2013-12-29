@@ -48,8 +48,7 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 	}
 
 	@Override
-	public boolean register(String username, String password, String email,
-			String cellphone, String secretQuestion, String secretAnswer) {
+	public boolean register(String username, String password, String email) {
 		boolean result = false;
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL + "/users");
@@ -57,12 +56,9 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("username", username));
 			nameValuePairs.add(new BasicNameValuePair("password", password));
-			nameValuePairs.add(new BasicNameValuePair("email", email));
-			nameValuePairs.add(new BasicNameValuePair("cellphone", cellphone));
-			nameValuePairs.add(new BasicNameValuePair("secretQuestion",
-					secretQuestion));
-			nameValuePairs.add(new BasicNameValuePair("secretAnswer",
-					secretAnswer));
+			if (email != null && !"".equals(email)) {
+				nameValuePairs.add(new BasicNameValuePair("email", email));
+			}
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -82,14 +78,40 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 		boolean result = false;
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL + "/users/username/"+ URLEncoder.encode(username, ConstantsHelper.ENCODING));
+			HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
+					+ "/users/username/"
+					+ URLEncoder.encode(username, ConstantsHelper.ENCODING));
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
 			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
 					.getAsJsonObject();
-			if (jsonResponse.get("result").getAsString().equals("OK")){
-				result = Boolean.getBoolean(jsonResponse.get("data").getAsString());
+			if (jsonResponse.get("result").getAsString().equals("OK")) {
+				String data = jsonResponse.get("data").getAsString();
+				result = Boolean.valueOf(data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean emailInUse(String email) {
+		boolean result = false;
+		HttpClient client = HttpClientCreator.getNewHttpClient();
+		try {
+			HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
+					+ "/users/email/"
+					+ URLEncoder.encode(email, ConstantsHelper.ENCODING));
+			HttpResponse response = client.execute(request);
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
+			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+					.getAsJsonObject();
+			if (jsonResponse.get("result").getAsString().equals("OK")) {
+				result = Boolean.getBoolean(jsonResponse.get("data")
+						.getAsString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

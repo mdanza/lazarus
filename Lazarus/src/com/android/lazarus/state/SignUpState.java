@@ -2,25 +2,22 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
-import com.google.android.gms.internal.cj;
 
 public class SignUpState extends AbstractState {
 
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private String username = null;
 	private String password = null;
-	private String mail = null;
-	private String phone = null;
 	private boolean toConfirmUsername = false;
 	private boolean toChoosePassword = false;
 	private boolean toConfirmPassword = false;
-	private boolean toChooseMail = false;
-	private boolean choosingToChooseMail = false;
 
 	public SignUpState(VoiceInterpreterActivity context) {
 		super(context);
@@ -30,13 +27,22 @@ public class SignUpState extends AbstractState {
 		stripAccents = false;
 	}
 
+	public SignUpState(VoiceInterpreterActivity context, String initialMessage) {
+		super(context);
+		this.defaultMessage = "Diga el nombre de usuario que desea tener";
+		this.message = initialMessage + defaultMessage;
+		this.context = context;
+		stripAccents = false;
+	}
+
 	public void handleResults(List<String> results) {
 		if (username == null) {
 			username = results.get(0);
-			this.message = "Responda sí, o no. ¿Desea que su nombre de usuario sea "
-					+ username + "?";
+			this.message = "¿Desea que su nombre de usuario sea " + username
+					+ "?";
 			toConfirmUsername = true;
 			stripAccents = true;
+			return;
 		}
 		if (toConfirmUsername) {
 			toConfirmUsername = false;
@@ -51,42 +57,31 @@ public class SignUpState extends AbstractState {
 				args[0] = username;
 				checkUsernameAvailableTask.doInBackground(args);
 			}
+			return;
 		}
-		if(toChoosePassword){
-			toChoosePassword=false;
+		if (toChoosePassword) {
+			toChoosePassword = false;
 			password = results.get(0);
-			this.message = "¿Desea que su nombre de contraseña sea "
-					+ password + "?";
+			this.message = "¿Desea que su contraseña sea " + password
+					+ "?";
 			stripAccents = true;
 			toConfirmPassword = true;
+			return;
 		}
-		if(toConfirmPassword){
+		if (toConfirmPassword) {
 			toConfirmPassword = false;
 			if (stringPresent(results, "no")) {
 				toChoosePassword();
 			}
 			if (stringPresent(results, "si")) {
-				this.message = "¿Desea agregar una dirección de mail?";
-				choosingToChooseMail  = true;
+				SaveDataTask saveDataTask = new SaveDataTask();
+				String[] args = new String[3];
+				args[0] = username;
+				args[1] = password;
+				saveDataTask.doInBackground(args);
 			}
+			return;
 		}
-		if(choosingToChooseMail){
-			choosingToChooseMail = false;
-			if (stringPresent(results, "no")) {
-				this.message = "Gracias por registrarse";
-			}
-			if (stringPresent(results, "si")) {
-				this.message = "Diga su dirección de mail";
-				toChooseMail  = true;
-			}
-		}
-		if(toChooseMail){
-			toChooseMail = false;
-			mail = results.get(0);
-			this.message = "¿Es su dirección de mail "
-					+ mail + "?";
-		}
-
 	}
 
 	private void toChoosePassword() {
@@ -97,13 +92,9 @@ public class SignUpState extends AbstractState {
 	private void resetData() {
 		username = null;
 		password = null;
-		mail = null;
-		phone = null;
 		toConfirmUsername = false;
 		toChoosePassword = false;
 		toConfirmPassword = false;
-		toChooseMail = false;
-		choosingToChooseMail = false;
 		this.message = defaultMessage;
 	}
 
@@ -112,16 +103,54 @@ public class SignUpState extends AbstractState {
 		@Override
 		protected String doInBackground(String... args) {
 			String username = args[0];
-			boolean validUsername = userServiceAdapter.usernameInUse(username);
+			boolean validUsername = !userServiceAdapter.usernameInUse(username);
 			if (validUsername) {
 				toChoosePassword();
-			}else{
+			} else {
 				resetData();
 				message = "El nombre de usuario ya está en uso, diga otro";
 			}
 			context.sayMessage();
 			return message;
 		}
+	}
 
+	private String getPhoneNumber() {
+		TelephonyManager tMgr = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		return tMgr.getLine1Number();
+	}
+
+	private class SaveDataTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			String username = args[0];
+			String password = args[1];
+			boolean success = userServiceAdapter.register(username, password,
+					"");
+			String result = null;
+			if (success) {
+				result = userServiceAdapter.login(args[0], args[1]);
+				if (result != null) {
+					context.setToken(result);
+					context.getSharedPreferences("usrpref", 0).edit()
+							.putString("username", username).commit();
+					context.getSharedPreferences("usrpref", 0).edit()
+							.putString("password", password).commit();
+					MainMenuState mainMenuState = new MainMenuState(context,
+							"Gracias por registrarse, "+instructions);
+					context.setState(mainMenuState);
+					context.sayMessage();
+				}
+			}
+			if (!success || result == null) {
+				SignUpState signUpState = new SignUpState(context,
+						"Ha ocurrido un error al registrar sus datos, ");
+				context.setState(signUpState);
+				context.sayMessage();
+			}
+			return message;
+		}
 	}
 }

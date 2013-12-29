@@ -14,14 +14,14 @@ public class LogInState extends AbstractState {
 	private List<String> usernames = null;
 	private UserServiceAdapter userServiceAdapter;
 	private boolean waitingForPassword = false;
+	private boolean waitingForUsername = false;
 
 	public LogInState(VoiceInterpreterActivity context) {
 		super(context);
-		stripAccents = false;
 		this.context = context;
 		userServiceAdapter = new UserServiceAdapterImpl();
-		this.defaultMessage = "Para hablar, mantenga presionada la pantalla y espere a escuchar la señal... "
-				+ "Por favor diga su nombre de usuario, o diga nuevo para registrarse";
+		this.defaultMessage = "Para hablar, mantenga presionada la pantalla y espere a escuchar la señal, "
+				+ "¿Es esta la primera vez que usa la aplicacion?";
 		this.message = defaultMessage;
 	}
 
@@ -37,10 +37,20 @@ public class LogInState extends AbstractState {
 
 	public void handleResults(List<String> results) {
 		if (usernamePresent == false) {
-			if (stringPresent(results, "nuevo")) {
+			message = defaultMessage;
+			if (stringPresent(results, "si")) {
 				SignUpState signUpState = new SignUpState(context);
 				context.setState(signUpState);
-			} else {
+				return;
+			}
+			if (stringPresent(results, "no")) {
+				waitingForUsername = true;
+				stripAccents = false;
+				this.message = "Diga su nombre de usuario";
+				return;
+			}
+			if (waitingForUsername) {
+				waitingForUsername = false;
 				this.usernames = results;
 				usernamePresent = true;
 				this.message = "¿Es su nombre de usuario " + usernames.get(0)
@@ -74,6 +84,7 @@ public class LogInState extends AbstractState {
 		usernamePresent = false;
 		usernames = null;
 		waitingForPassword = false;
+		waitingForUsername = false;
 		message = "";
 	}
 
@@ -102,7 +113,7 @@ public class LogInState extends AbstractState {
 			}
 			if (!validCredentialsFound) {
 				cleanValues();
-				message = "Nombre de usuario o contraeña incorrecto, diga su nombre de usuario";
+				message = "Nombre de usuario o contraseña incorrecto, diga su nombre de usuario";
 			}
 			context.sayMessage();
 			context.setToken(token);

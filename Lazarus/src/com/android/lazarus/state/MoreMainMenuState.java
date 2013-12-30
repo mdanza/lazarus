@@ -36,4 +36,10 @@ public class MoreMainMenuState extends AbstractState {
 
 	}
 
+	@Override
+	protected void restartState() {
+		MoreMainMenuState moreMainMenuState = new MoreMainMenuState(context);
+		this.context.setState(moreMainMenuState);		
+	}
+
 }

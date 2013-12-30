@@ -85,4 +85,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	}
 
+	@Override
+	protected void restartState() {
+		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(context, destination);
+		context.setState(walkingDirectionsState);		
+	}
+
 }

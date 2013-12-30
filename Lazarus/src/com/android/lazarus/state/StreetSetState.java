@@ -206,4 +206,10 @@ public class StreetSetState extends AbstractState {
 			return null;
 		}
 	}
+
+	@Override
+	protected void restartState() {
+		StreetSetState streetSetState = new StreetSetState(context, firstStreet);
+		context.setState(streetSetState);		
+	}
 }

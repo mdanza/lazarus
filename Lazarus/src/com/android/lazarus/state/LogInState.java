@@ -122,4 +122,11 @@ public class LogInState extends AbstractState {
 
 	}
 
+	@Override
+	protected void restartState() {
+		LogInState logInState = new LogInState(context);
+		this.context.setState(logInState);
+		
+	}
+
 }

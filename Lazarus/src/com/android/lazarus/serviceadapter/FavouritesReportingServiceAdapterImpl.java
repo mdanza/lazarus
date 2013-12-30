@@ -29,7 +29,7 @@ public class FavouritesReportingServiceAdapterImpl implements
 
 	@Override
 	public boolean addToFavourite(String token, String coordinates, String name) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL
 				+ "/favourites");
 		try {

@@ -153,4 +153,11 @@ public class SignUpState extends AbstractState {
 			return message;
 		}
 	}
+
+	@Override
+	protected void restartState() {
+		SignUpState signUpState = new SignUpState(context);
+		context.setState(signUpState);
+		
+	}
 }

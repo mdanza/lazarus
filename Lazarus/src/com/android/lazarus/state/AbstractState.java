@@ -16,7 +16,7 @@ public abstract class AbstractState implements State {
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	protected boolean stripAccents = true;
-	protected String instructions = "Puede decir en cualquier momento ayuda, para obtener ayuda, dónde estoy, para saber dónde se encuentra, cancelar, para cancelar una acción, o menú, para ir al menú,";
+	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estói,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estói,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,,";
 
 	protected String message;
 
@@ -61,45 +61,7 @@ public abstract class AbstractState implements State {
 			return;
 		}
 		if (stringPresent(results, "cancelar")) {
-			String className = this.getClass().getName();
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(className);
-				if (context.getState() instanceof LocationDependentState) {
-					float accuraccy = ((LocationDependentState) context
-							.getState()).getMinimumAccuraccy();
-					Constructor<?> constructor = clazz.getConstructor(
-							VoiceInterpreterActivity.class, float.class);
-					State newState = (State) constructor.newInstance(
-							this.context, accuraccy);
-					this.context.setState(newState);
-				} else {
-					Constructor<?> constructor = clazz
-							.getConstructor(VoiceInterpreterActivity.class);
-					State newState = (State) constructor
-							.newInstance(this.context);
-					this.context.setState(newState);
-				}
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return;
+			this.restartState();
 		}
 		if (stringPresent(results, "menu")) {
 			if (context.getToken() != null) {
@@ -113,6 +75,8 @@ public abstract class AbstractState implements State {
 		}
 		handleResults(results);
 	}
+
+	protected abstract void restartState();
 
 	private ArrayList<String> stripAccents(List<String> results) {
 		ArrayList<String> stripedStrings = new ArrayList<String>();

@@ -170,4 +170,11 @@ public class MainMenuState extends AbstractState {
 
 	}
 
+	@Override
+	protected void restartState() {
+		MainMenuState mainMenuState = new MainMenuState(context);
+		this.context.setState(mainMenuState);
+
+	}
+
 }

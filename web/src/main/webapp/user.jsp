@@ -16,7 +16,7 @@
 		else{
 			loadUserData();
 			$("#userForm").submit(function(event) {
-				var form = $(this);
+				form = $(this);
 				url = form.attr('action');
 				$.ajax({
 					url : url,
@@ -43,7 +43,48 @@
 				return false;
 			});
 		}
-	});	
+	});
+	
+	function uploadShapefile(){
+		form = $("#shapefileUpdateForm");
+		url = form.attr('action') + $("#inputShapefileType").val();
+		formData = new FormData(form[0]);
+		$.ajax({
+			url : url,
+			type : "POST",
+			enctype: "multipart/form-data",
+			xhr: function() {
+	            var myXhr = $.ajaxSettings.xhr();
+	            if(myXhr.upload){ // Check if upload property exists
+	                myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+	            }
+	            return myXhr;
+	        },
+			headers: { Authorization: $("#hiddenToken").val()},
+			data : formData,
+			success : function(data, textStatus, jqXHR) {
+				jsonResponse = JSON.parse(data);
+				if (jsonResponse.result == "OK"){
+					alert("Subido correctamente");
+				}
+				else
+					alert(jsonResponse.data);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				alert("No se pudo completar su solicitud");
+			},
+			cache: false,
+	        contentType: false,
+	        processData: false
+		});
+	}
+	
+	function progressHandlingFunction(e){
+	    if(e.lengthComputable){
+	        $('progress').attr({value:e.loaded,max:e.total});
+	    }
+	}
+	
 	function loadUserData(){
 		$.ajax({
 			url : "<%=SettingsHelper.REST_API_URL + "/users"%>",
@@ -88,34 +129,46 @@
 
 	function loadAdminMenu() {
 		$.ajax({
-			url : "<%=SettingsHelper.REST_API_URL + "/shapes/status"%>",
-			type : "GET",
-			headers : {
-				Authorization : $("#hiddenToken").val()
-			},
-			success : function(data, textStatus, jqXHR) {
-				jsonResponse = JSON.parse(data);
-				if (jsonResponse.result == "OK") {
-					jsonData = JSON.parse(jsonResponse.data);
-					$('#addressesProgress').html(
-							jsonData.addressesUploadPercentage);
-					$('#busRoutesProgress').html(
-							jsonData.busRoutesMaximalUploadPercentage);
-					$('#busStopsProgress').html(
-							jsonData.busStopsUploadPercentage);
-					$('#controlPointsProgress').html(
-							jsonData.controlPointsUploadPercentage);
-					$('#cornersProgress')
-							.html(jsonData.cornersUploadPercentage);
-					$('#streetsProgress')
-							.html(jsonData.streetsUploadPercentage);
-				} else
-					alert(jsonResponse.data);
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				alert("No se pudo completar su solicitud");
-			}
-		});
+			        url : "<%=SettingsHelper.REST_API_URL + "/shapes/status"%>",
+					type : "GET",
+					headers : {
+						Authorization : $("#hiddenToken").val()
+					},
+					success : function(data, textStatus, jqXHR) {
+						jsonResponse = JSON.parse(data);
+						if (jsonResponse.result == "OK") {
+							jsonData = JSON.parse(jsonResponse.data);
+							$('#addressesProgress')
+									.html(
+											Math
+													.round(100 * jsonData.addressesUploadPercentage) / 100);
+							$('#busRoutesProgress')
+									.html(
+											Math
+													.round(100 * jsonData.busRoutesMaximalUploadPercentage) / 100);
+							$('#busStopsProgress')
+									.html(
+											Math
+													.round(100 * jsonData.busStopsUploadPercentage) / 100);
+							$('#controlPointsProgress')
+									.html(
+											Math
+													.round(100 * jsonData.controlPointsUploadPercentage) / 100);
+							$('#cornersProgress')
+									.html(
+											Math
+													.round(100 * jsonData.cornersUploadPercentage) / 100);
+							$('#streetsProgress')
+									.html(
+											Math
+													.round(100 * jsonData.streetsUploadPercentage) / 100);
+						} else
+							alert(jsonResponse.data);
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						alert("No se pudo completar su solicitud");
+					}
+				});
 		$("#adminMenu").css("display", "inline");
 	}
 </script>
@@ -136,20 +189,24 @@
 
 	<div id="adminMenu" style="display: none">
 		<h2>Menú de administración</h2>
-		<form id="shapefileUpdateForm"
+		<form id="shapefileUpdateForm" enctype="multipart/form-data"
 			action="<%=SettingsHelper.REST_API_URL + "/shapes"%>">
 			Datos a actualizar: <select id="inputShapefileType">
-				<option value="busRoutes">Destinos ómnibus</option>
-				<option value="busStops">Paradas ómnibus</option>
-				<option value="controlPoints">Puntos de control</option>
-				<option value="addresses">Direcciones</option>
-				<option value="streets">Calles</option>
-				<option value="corners">Esquinas</option>
-			</select> <input id="inputFile" type="file" accept="application/zip">
+				<option value="/uploadBusRoutesMaximal">Destinos ómnibus</option>
+				<option value="/uploadBusStops">Paradas ómnibus</option>
+				<option value="/uploadControlPoints">Puntos de control</option>
+				<option value="/uploadAddresses">Direcciones</option>
+				<option value="/uploadStreets">Calles</option>
+				<option value="/uploadCorners">Esquinas</option>
+			</select> <input id="inputFile" name="file" type="file"
+				accept="application/zip">
 		</form>
+		<button onclick="uploadShapefile(); return false;">Actualizar</button>
+		<progress></progress>
 		<h3>Estado de subida de datos</h3>
 		<button onclick="loadAdminMenu(); return false;">Refrescar</button>
-		<table>
+		<br> <br>
+		<table class="shapefileProgressTable">
 			<thead>
 				<tr>
 					<td>Tipo de datos</td>
@@ -184,6 +241,10 @@
 			</tbody>
 		</table>
 	</div>
-	<input id="hiddenToken" type="hidden" value="<%= request.getSession().getAttribute("token") != null ? request.getSession().getAttribute("token") : "" %>">
+	<br>
+	<a href="city-reports.jsp">Volver al mapa</a>
+	<input id="hiddenToken" type="hidden"
+		value="<%=request.getSession().getAttribute("token") != null ? request
+					.getSession().getAttribute("token") : ""%>">
 </body>
 </html>

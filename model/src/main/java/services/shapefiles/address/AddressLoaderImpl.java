@@ -22,6 +22,8 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.Geometry;
 
+import services.shapefiles.ShapefileStatusService;
+
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
@@ -33,6 +35,9 @@ public class AddressLoaderImpl implements AddressLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
+	
+	@EJB(name = "ShapefileStatusService")
+	private ShapefileStatusService shapefileStatusService;
 
 	GeometryFactory factory = new GeometryFactory();
 
@@ -99,7 +104,9 @@ public class AddressLoaderImpl implements AddressLoader {
 							.toWKT());
 					shapefileWKTDAO.add(shapefileWKT);
 				} else {
-					shapefileWKT.setProgress((double) count / (double) total);
+					double progress = (double) 100 * count / total;
+					shapefileWKT.setProgress(progress);
+					shapefileStatusService.setAddressUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
 				System.out.println(count);

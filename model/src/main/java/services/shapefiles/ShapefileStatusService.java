@@ -6,6 +6,18 @@ import javax.ejb.Local;
 public interface ShapefileStatusService {
 	public ShapefileStatus getUploadStatus();
 
+	public void setAddressUploadProgress(double progress);
+
+	public void setBusRouteMaximalUploadProgress(double progress);
+
+	public void setStreetsUploadProgress(double progress);
+
+	public void setCornersUploadProgress(double progress);
+
+	public void setControlPointsUploadProgress(double progress);
+
+	public void setBusStopsUploadProgress(double progress);
+
 	public class ShapefileStatus {
 		private double addressesUploadPercentage;
 		private double busRoutesMaximalUploadPercentage;

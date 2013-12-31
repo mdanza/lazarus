@@ -14,6 +14,8 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import services.shapefiles.ShapefileLoader;
 
 @Asynchronous
@@ -32,11 +34,13 @@ public class ShapefileUploaderHelperImpl implements ShapefileUploaderHelper {
 					zippedFile));
 			// get the zipped file list entry
 			ZipEntry ze = zis.getNextEntry();
+			String randomPreffix = RandomStringUtils.randomAlphanumeric(8);
 			while (ze != null) {
 				String filename = ze.getName();
 				String extension = filename.substring(
 						filename.lastIndexOf(".") + 1, filename.length());
-				File newFile = File.createTempFile(filename, "");
+				String tempDir = System.getProperty("java.io.tmpdir");
+				File newFile = new File(tempDir + "/" + randomPreffix + filename);
 				// find .shp file inside zipped input
 				if (extension != null && extension.equalsIgnoreCase("shp"))
 					shpFile = newFile;

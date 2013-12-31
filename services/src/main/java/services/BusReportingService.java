@@ -2,6 +2,7 @@ package services;
 
 import helpers.RestResultsHelper;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -150,10 +151,13 @@ public class BusReportingService {
 			return null;
 		List<BusStop> result = busStopDAO.getLineStops(bus.getVariantCode());
 		if (result != null) {
+			List<BusStop> stops = new ArrayList<BusStop>();
 			for (BusStop stop : result) {
 				try {
-					stop.setPoint(coordinateConverter.convertToWGS84(
-							stop.getPoint(), ShapefileWKT.BUS_STOP));
+					BusStop copy = new BusStop(stop);
+					copy.setPoint(coordinateConverter.convertToWGS84(
+							copy.getPoint(), ShapefileWKT.BUS_STOP));
+					stops.add(copy);
 				} catch (MismatchedDimensionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -165,7 +169,7 @@ public class BusReportingService {
 					e.printStackTrace();
 				}
 			}
-			return gson.toJson(result);
+			return gson.toJson(stops);
 		} else
 			return null;
 	}

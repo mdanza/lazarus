@@ -49,37 +49,37 @@ public class RecognitionListenerImpl implements RecognitionListener {
 
 	@Override
 	public void onError(int error) {
-		String message = "Ha ocurrido un error, por favor repita el mensaje";
+		String message = "Ha ocurrido un error, ";
 		switch (error) {
 		case SpeechRecognizer.ERROR_AUDIO:
-			message = "Ha ocurrido un error al grabar el audio, repita el mensaje";
+			message = "Ha ocurrido un error al grabar el audio, ";
 			break;
 		case SpeechRecognizer.ERROR_CLIENT:
-			message = "Ha ocurrido un error, repita el mensaje";
+			message = "Ha ocurrido un error, ";
 			break;
 		case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-			message = "Ha ocurrido un error de permisos, repita el mensaje";
+			message = "Ha ocurrido un error de permisos, ";
 			break;
 		case SpeechRecognizer.ERROR_NETWORK:
-			message = "Ha ocurrido un error en la red, repita su mensaje";
+			message = "Ha ocurrido un error en la red, ";
 			break;
 		case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-			message = "Ha ocurrido un error en la red, repita el mensaje";
+			message = "Ha ocurrido un error en la red, ";
 			break;
 		case SpeechRecognizer.ERROR_NO_MATCH:
-			message = "No se han podido reconocer palabras en su discurso, repita el mensaje";
+			message = "No se han podido reconocer palabras en su discurso, ";
 			break;
 		case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-			message = "El servidor de reconocimiento est· ocupado, por favor repita el mensaje";
+			message = "El servidor de reconocimiento est√° ocupado, ";
 			break;
 		case SpeechRecognizer.ERROR_SERVER:
-			message = "Ha ocurrido un error en el servidor de reconocimiento de voz, por favor repita el mensaje";
+			message = "Ha ocurrido un error en el servidor de reconocimiento de voz, ";
 			break;
 		case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-			message = "No se ha escuchado nada, por favor repita su mensaje";
+			message = "No se ha escuchado nada, ";
 			break;
 		}
-		voiceInterpreterActivity.getTts().speak(message, TextToSpeech.QUEUE_FLUSH, null);
+		voiceInterpreterActivity.getTts().speak(message+voiceInterpreterActivity.getState().getMessage(), TextToSpeech.QUEUE_FLUSH, null);
 	}
 
 	@Override

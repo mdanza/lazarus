@@ -16,6 +16,7 @@ public abstract class AbstractState implements State {
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	protected boolean stripAccents = true;
+	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estói,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estói,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,,";
 
 	protected String message;
 
@@ -60,52 +61,22 @@ public abstract class AbstractState implements State {
 			return;
 		}
 		if (stringPresent(results, "cancelar")) {
-			String className = this.getClass().getName();
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(className);
-				if (context.getState() instanceof LocationDependentState) {
-					float accuraccy = ((LocationDependentState) context
-							.getState()).getMinimumAccuraccy();
-					Constructor<?> constructor = clazz.getConstructor(
-							VoiceInterpreterActivity.class, float.class);
-					State newState = (State) constructor.newInstance(
-							this.context, accuraccy);
-					this.context.setState(newState);
-				} else {
-					Constructor<?> constructor = clazz
-							.getConstructor(VoiceInterpreterActivity.class);
-					State newState = (State) constructor
-							.newInstance(this.context);
-					this.context.setState(newState);
-				}
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			this.restartState();
+		}
+		if (stringPresent(results, "menu")) {
+			if (context.getToken() != null) {
+				initializeMainMenu();
 			}
 			return;
 		}
-		if (stringPresent(results, "menu")) {
-			initializeMainMenu();
+		if (stringPresent(results, "ayuda")) {
+			message = instructions + message;
 			return;
 		}
 		handleResults(results);
 	}
+
+	protected abstract void restartState();
 
 	private ArrayList<String> stripAccents(List<String> results) {
 		ArrayList<String> stripedStrings = new ArrayList<String>();
@@ -244,6 +215,33 @@ public abstract class AbstractState implements State {
 		address.add(numberBuilder.toString());
 		address.add(letter);
 		return address;
+	}
+
+	/**
+	 * List of strings each including possible numbers, for example [3 4 5 7 1,3
+	 * 6 9 0]
+	 * 
+	 * @param string
+	 * @return null if there is no number inside numbers, the first number
+	 *         encountered otherwise
+	 */
+	protected String getNumber(List<String> numbers) {
+		String toReturn = null;
+		for (String number : numbers) {
+			String[] separated = number.split(" ");
+			int i = 0;
+			StringBuilder numberBuilder = new StringBuilder();
+			while (i < separated.length && containsAnyDigit(separated[i])) {
+				numberBuilder.append(toDigit(separated[i]));
+				i++;
+			}
+			if (i < separated.length) {
+				toReturn = null;
+			} else {
+				return numberBuilder.toString();
+			}
+		}
+		return toReturn;
 	}
 
 	private int toDigit(String string) {

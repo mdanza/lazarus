@@ -200,10 +200,16 @@ public class StreetSetState extends AbstractState {
 				context.speak(message);
 			} else {
 				DestinationSetState destinationSetState = new DestinationSetState(
-						context, destination);
+						context, destination, false);
 				context.setState(destinationSetState);
 			}
 			return null;
 		}
+	}
+
+	@Override
+	protected void restartState() {
+		StreetSetState streetSetState = new StreetSetState(context, firstStreet);
+		context.setState(streetSetState);		
 	}
 }

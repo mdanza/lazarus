@@ -209,7 +209,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
-			float rate = Float.parseFloat("0.9");
+			float rate = Float.parseFloat("1");
 			tts.setSpeechRate(rate);
 			if (state != null) {
 				tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);

@@ -76,7 +76,7 @@ public class MainMenuState extends AbstractState {
 		}
 		if (stringPresent(results, "si") && toConfirmFavourite) {
 			DestinationSetState destinationSetState = new DestinationSetState(
-					this.context, favourite.getPoint());
+					this.context, favourite.getPoint(), true);
 			this.context.setState(destinationSetState);
 			return;
 		}
@@ -167,6 +167,13 @@ public class MainMenuState extends AbstractState {
 
 			return null;
 		}
+
+	}
+
+	@Override
+	protected void restartState() {
+		MainMenuState mainMenuState = new MainMenuState(context);
+		this.context.setState(mainMenuState);
 
 	}
 

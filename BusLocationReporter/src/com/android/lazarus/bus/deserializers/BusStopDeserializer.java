@@ -1,13 +1,13 @@
-package com.lazarus.busclient.deserializers;
+package com.android.lazarus.bus.deserializers;
 
 import java.lang.reflect.Type;
 
+import com.android.lazarus.bus.model.BusStop;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.lazarus.busclient.model.BusStop;
 
 public class BusStopDeserializer implements JsonDeserializer<BusStop> {
 

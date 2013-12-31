@@ -1,4 +1,4 @@
-package com.lazarus.busclient.httputils;
+package com.android.lazarus.bus.httputils;
 
 import java.security.KeyStore;
 

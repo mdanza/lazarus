@@ -1,4 +1,4 @@
-package com.lazarus.busclient.helpers;
+package com.android.lazarus.bus.helpers;
 
 public class GPScoordinateHelper {
 

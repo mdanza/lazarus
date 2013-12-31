@@ -13,11 +13,13 @@ public class DestinationSetState extends LocationDependentState {
 
 	Point destination;
 	boolean firstIntructionPassed;
+	boolean fromFavourite = false;
 
 	public DestinationSetState(VoiceInterpreterActivity context,
-			Point destination) {
+			Point destination, boolean fromFavourite) {
 		super(context, 200);
 		this.destination = destination;
+		this.fromFavourite = fromFavourite;
 		giveInstructions();
 	}
 
@@ -54,7 +56,10 @@ public class DestinationSetState extends LocationDependentState {
 			approximateDistance = Math.floor(approximateDistance * 10) / 10;
 			this.message = "Usted se encuentra aproximadamente a "
 					+ approximateDistance
-					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, para agregarlo a favoritos diga tres";
+					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, ";
+			if(!fromFavourite){
+				message = message+"para agregarlo a favoritos diga tres";
+			}
 			tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
@@ -62,7 +67,7 @@ public class DestinationSetState extends LocationDependentState {
 	@Override
 	protected void restartState() {
 		DestinationSetState destinationSetState = new DestinationSetState(
-				context, destination);
+				context, destination, fromFavourite);
 		context.setState(destinationSetState);
 
 	}

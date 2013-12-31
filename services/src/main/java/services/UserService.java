@@ -23,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import model.User;
 import model.dao.UserDAO;
@@ -98,7 +99,7 @@ public class UserService {
 
 	@DELETE
 	public String delete(@HeaderParam("Authorization") String token,
-			@FormParam("username") String username) {
+			@QueryParam("username") String username) {
 		User actionUser = authenticationService.authenticate(token);
 		User deleting = userDAO.find(username);
 		if (actionUser.getUsername().equals(username)

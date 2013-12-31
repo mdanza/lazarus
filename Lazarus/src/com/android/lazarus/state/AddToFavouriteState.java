@@ -19,6 +19,7 @@ public class AddToFavouriteState extends AbstractState {
 	private List<Favourite> favourites;
 	private FavouritesReportingServiceAdapter favouritesReportingServiceAdapter = new FavouritesReportingServiceAdapterImpl();
 	private List<String> possibleNames = null;
+	private boolean choosingToGoToFavourite = false;
 
 	public AddToFavouriteState(VoiceInterpreterActivity context) {
 		super(context);
@@ -41,23 +42,6 @@ public class AddToFavouriteState extends AbstractState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (toConfirmName) {
-			if (stringPresent(results, "si")) {
-				if (favouriteWithName(favourites, name)) {
-					this.message = "Ya existe un favorito con este nombre, por favor elija otro";
-					resetData();
-					return;
-				} else {
-					String[] args = new String[3];
-					args[0] = context.getToken();
-					args[1] = point.getLatitude() + "," + point.getLongitude();
-					args[2] = name;
-					AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
-					addToFavouriteTask.doInBackground(args);
-				}
-
-			}
-		}
 		if (!toConfirmName && position < results.size()) {
 			if (possibleNames == null) {
 				possibleNames = results;
@@ -67,6 +51,42 @@ public class AddToFavouriteState extends AbstractState {
 					+ "?";
 			toConfirmName = true;
 			return;
+		}
+		if (toConfirmName) {
+			if (stringPresent(results, "si")) {
+				if (favouriteWithName(favourites, name)) {
+					this.message = "Ya existe un favorito con este nombre, por favor elija otro";
+					resetData();
+				} else {
+					String[] args = new String[3];
+					args[0] = context.getToken();
+					args[1] = point.getLatitude() + "," + point.getLongitude();
+					args[2] = name;
+					AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
+					addToFavouriteTask.doInBackground(args);
+				}
+			}
+			if(stringPresent(results, "no")){
+				position++;
+				this.handleResults(possibleNames);
+			}
+			return;
+		}
+		if(!toConfirmName && position==results.size()){
+			this.message = "Por favor repita el nombre del favorito que desea agregar";
+			resetData();
+		}
+		if(choosingToGoToFavourite){
+			choosingToGoToFavourite = false;
+			if(stringPresent(results, "si")){
+				DestinationSetState destinationSetState = new DestinationSetState(
+						this.context, point, true);
+				this.context.setState(destinationSetState);
+			}
+			if(stringPresent(results, "no")){
+				MainMenuState mainMenuState = new MainMenuState(context);
+				context.setState(mainMenuState);
+			}
 		}
 
 	}
@@ -112,12 +132,13 @@ public class AddToFavouriteState extends AbstractState {
 			if (added) {
 				message = "Se ha agregado " + args[2]
 						+ " a favoritos, ¿desea ir a " + args[2] + "?";
+				choosingToGoToFavourite = true;
 			} else {
-				message = "Ha ocurrido un error, al agregar el favorito";
+				message = "Ha ocurrido un error, al agregar el favorito, por favor diga el nombre nuevamente";
+				resetData();
 			}
 			return null;
 		}
-
 	}
 
 	private class GetFavouritesTask extends AsyncTask<String, Void, String> {

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;

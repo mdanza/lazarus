@@ -1,6 +1,5 @@
 package com.android.lazarus.speechrecognizer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.speech.RecognitionListener;
 

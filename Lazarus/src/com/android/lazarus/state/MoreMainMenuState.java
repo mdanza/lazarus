@@ -2,8 +2,6 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
-import android.content.SharedPreferences;
-
 import com.android.lazarus.VoiceInterpreterActivity;
 
 public class MoreMainMenuState extends AbstractState {

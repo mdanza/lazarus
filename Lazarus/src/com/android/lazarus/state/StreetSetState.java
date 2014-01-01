@@ -1,6 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;

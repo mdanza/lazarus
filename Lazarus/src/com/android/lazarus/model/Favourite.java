@@ -1,6 +1,5 @@
 package com.android.lazarus.model;
 
-import com.android.lazarus.model.User;
 
 public class Favourite {
 

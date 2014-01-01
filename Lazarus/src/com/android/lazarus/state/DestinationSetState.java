@@ -6,7 +6,6 @@ import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.GPScoordinateHelper;
-import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.model.Point;
 
 public class DestinationSetState extends LocationDependentState {

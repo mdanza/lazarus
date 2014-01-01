@@ -1,5 +1,12 @@
 package com.android.lazarus;
 
+import java.util.ArrayList;
+
+import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.util.GeoPoint;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
@@ -24,7 +32,6 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
-import com.android.lazarus.state.WalkingDirectionsState;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -44,7 +51,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private String initialMessage = "Bienvenido, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
-	private SupportMapFragment supportMapFragment;
 
 	public SensorEventListenerImpl getSensorEventListenerImpl() {
 		return sensorEventListenerImpl;
@@ -97,7 +103,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_voice_interpreter);
 		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
-		hideMap();
 
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
@@ -123,31 +128,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	}
 
-	public void hideMap() {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
-		supportMapFragment = (SupportMapFragment) fragment;
-		GoogleMap supportMap = supportMapFragment.getMap();
-		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.hide(supportMapFragment);
-		transaction.commit();
-	}
-
-	public void showMap() {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
-		supportMapFragment = (SupportMapFragment) fragment;
-		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.show(supportMapFragment);
-		transaction.commit();
-	}
-
-	public GoogleMap getMap() {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = fragmentManager.findFragmentById(R.id.map);
-		supportMapFragment = (SupportMapFragment) fragment;
-		return supportMapFragment.getMap();
-	}
 
 	private void initializeFirstState() {
 		String username = this.getSharedPreferences("usrpref", 0).getString(

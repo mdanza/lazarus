@@ -111,6 +111,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
+
+		locationListener = new LocationListenerImpl(this);
 		initializeFirstState();
 
 	}
@@ -131,7 +133,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			LogInState logInState = new LogInState(this, initialMessage);
 			this.setState(logInState);
 		}
-		locationListener = new LocationListenerImpl(this);
 	}
 
 	View.OnTouchListener pushToTalkListener = new View.OnTouchListener() {

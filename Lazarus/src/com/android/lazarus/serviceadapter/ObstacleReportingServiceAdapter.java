@@ -4,5 +4,5 @@ public interface ObstacleReportingServiceAdapter {
 	public boolean reportObstacle(String token, String coordinates,
 			String radius, String description);
 
-	public boolean deactivateObstacle(String token, String coordinates);
+	public boolean deactivateObstacle(String token, long id);
 }

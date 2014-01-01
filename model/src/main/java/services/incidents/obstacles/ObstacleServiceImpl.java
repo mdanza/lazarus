@@ -1,9 +1,12 @@
 package services.incidents.obstacles;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.Obstacle;
+import model.ShapefileWKT;
 import model.User;
 import model.dao.ObstacleDAO;
 import model.dao.UserDAO;
@@ -32,7 +35,7 @@ public class ObstacleServiceImpl implements ObstacleService {
 	@EJB(beanName = "CoordinateConverter")
 	private CoordinateConverter coordinateConverter;
 
-	public void reportObstacle(Point position, long radius, User user,
+	public long reportObstacle(Point position, long radius, User user,
 			String description) {
 		if (position == null || user == null)
 			throw new IllegalArgumentException(
@@ -48,7 +51,7 @@ public class ObstacleServiceImpl implements ObstacleService {
 					"obstacle");
 			Obstacle obstacle = new Obstacle(newPosition, radius, possibleUser,
 					description);
-			obstacleDAO.add(obstacle);
+			return obstacleDAO.addObstacle(obstacle);
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} catch (FactoryException e) {
@@ -63,7 +66,7 @@ public class ObstacleServiceImpl implements ObstacleService {
 			throw new IllegalArgumentException("position is null");
 		try {
 			Point newPosition = coordinateConverter.convertFromWGS84(position,
-					"obstacle");
+					ShapefileWKT.OBSTACLE);
 			Obstacle possibleObstacle = obstacleDAO.find(newPosition);
 			if (possibleObstacle == null)
 				throw new IllegalArgumentException("obstacle does not exist");
@@ -75,6 +78,20 @@ public class ObstacleServiceImpl implements ObstacleService {
 		} catch (TransformException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+
+	@Override
+	public void deleteObstacle(long id) {
+		Obstacle o = obstacleDAO.findById(id);
+		if (o == null)
+			throw new IllegalArgumentException(
+					"Id does not correspond to any obstacle");
+		obstacleDAO.remove(o);
+	}
+
+	@Override
+	public List<Obstacle> getAll() {
+		return obstacleDAO.findAll();
 	}
 
 }

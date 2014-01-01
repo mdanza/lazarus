@@ -113,9 +113,8 @@ public class ShapefileService {
 	public String controlPoints(@HeaderParam("Authorization") String token,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-		return restResultsHelper.resultWrapper(false, fileDetail.getName());
-		//return uploadShapefile(token, uploadedInputStream, fileDetail,
-		//		controlPointLoader);
+		return uploadShapefile(token, uploadedInputStream, fileDetail,
+				controlPointLoader);
 	}
 
 	@POST
@@ -159,17 +158,22 @@ public class ShapefileService {
 	private String uploadShapefile(String token,
 			InputStream uploadedInputStream,
 			FormDataContentDisposition fileDetail, ShapefileLoader loader) {
-		if (token == null || token.equals("") || uploadedInputStream == null
-				|| fileDetail == null)
+		if (token == null || token.equals(""))
 			return restResultsHelper.resultWrapper(false,
-					gson.toJson("Url and token cannot be empty or null"));
-		String filename = fileDetail.getFileName();
-		String extension = filename.substring(filename.lastIndexOf(".") + 1,
-				filename.length());
-		if (extension == null || extension.equals("")
-				|| !extension.equalsIgnoreCase("zip"))
+					gson.toJson("Token cannot be empty or null"));
+		if(uploadedInputStream == null)
 			return restResultsHelper.resultWrapper(false,
-					gson.toJson("No .zip file uploaded"));
+					gson.toJson("Null file"));
+//		if(fileDetail == null)
+//			return restResultsHelper.resultWrapper(false,
+//					gson.toJson("Null detail"));
+//		String filename = fileDetail.getFileName();
+//		String extension = filename.substring(filename.lastIndexOf(".") + 1,
+//				filename.length());
+//		if (extension == null || extension.equals("")
+//				|| !extension.equalsIgnoreCase("zip"))
+//			return restResultsHelper.resultWrapper(false,
+//					gson.toJson("No .zip file uploaded"));
 		try {
 			User user = authenticationService.authenticate(token);
 			if (!user.getRole().equals(Role.ADMIN))

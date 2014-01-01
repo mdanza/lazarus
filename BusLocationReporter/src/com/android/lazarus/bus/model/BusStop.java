@@ -1,4 +1,4 @@
-package com.lazarus.busclient.model;
+package com.android.lazarus.bus.model;
 
 public class BusStop {
 	private double latitude;

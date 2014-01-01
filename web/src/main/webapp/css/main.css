@@ -30,3 +30,8 @@ body {
 	height: auto;
 	width: 100%;
 }
+
+.shapefileProgressTable{
+	text-align: left;
+	margin-left: 42%;
+}

@@ -100,4 +100,45 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 		return obstacles;
 	}
 
+	@Override
+	public List<Obstacle> findAll() {
+		List<Obstacle> obstacles = null;
+		try {
+			Query q = entityManager.createNamedQuery("Obstacle.findAll");
+			obstacles = q.getResultList();
+			if (obstacles != null && obstacles.isEmpty()) {
+				return null;
+			}
+		} catch (NoResultException e) {
+			obstacles = null;
+		}
+		return obstacles;
+	}
+
+	@Override
+	public void remove(Obstacle o) {
+		if (o != null)
+			entityManager.remove(o);
+	}
+
+	@Override
+	public Obstacle findById(long id) {
+		Obstacle o;
+		try {
+			Query q = entityManager.createNamedQuery("Obstacle.findById");
+			q.setParameter("id", id);
+			o = (Obstacle) q.getSingleResult();
+		} catch (Exception e) {
+			o = null;
+			e.printStackTrace();
+		}
+		return o;
+	}
+
+	@Override
+	public long addObstacle(Obstacle o) {
+		add(o);
+		return o.getId();
+	}
+
 }

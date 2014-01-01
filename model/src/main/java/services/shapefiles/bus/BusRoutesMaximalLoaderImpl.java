@@ -20,6 +20,8 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 
+import services.shapefiles.ShapefileStatusService;
+
 import com.vividsolutions.jts.geom.MultiLineString;
 
 @Stateless(name = "BusRoutesMaximalLoader")
@@ -32,6 +34,9 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
+	
+	@EJB(name = "ShapefileStatusService")
+	private ShapefileStatusService shapefileStatusService;
 
 	public void updateShp(File shapefile) {
 		try {
@@ -100,7 +105,9 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 							.toWKT());
 					shapefileWKTDAO.add(shapefileWKT);
 				} else {
-					shapefileWKT.setProgress((double) count / (double) total);
+					double progress = (double) 100 * count / total;
+					shapefileWKT.setProgress(progress);
+					shapefileStatusService.setBusRouteMaximalUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
 				logger.info("added bus route maximal");
@@ -110,5 +117,4 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 			e.printStackTrace();
 		}
 	}
-
 }

@@ -1,11 +1,13 @@
-package com.lazarus.busclient;
+package com.android.lazarus.bus;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -32,27 +34,30 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.lazarus.bus.deserializers.BusStopDeserializer;
+import com.android.lazarus.bus.helpers.GPScoordinateHelper;
+import com.android.lazarus.bus.httputils.HttpClientCreator;
+import com.android.lazarus.bus.model.BusStop;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.lazarus.busclient.deserializers.BusStopDeserializer;
-import com.lazarus.busclient.helpers.GPScoordinateHelper;
-import com.lazarus.busclient.httputils.HttpClientCreator;
-import com.lazarus.busclient.model.BusStop;
 
 public class MainActivity extends Activity implements LocationListener {
 	// in meters
 	private static final double MINIMUM_ACCEPTABLE_PRECISION = 100;
 	public static final String REST_API_URL = "https://ec2-54-209-91-189.compute-1.amazonaws.com:8443/services-1.0-SNAPSHOT/v1/api";
+	//public static final String REST_API_URL = "https://10.0.2.2:8443/services-1.0-SNAPSHOT/v1/api";
 
 	private static final String USER = "bus";
 	private static final String PWD = "superBusesSiQueSi";
 	private String token;
-	private Timer loginTaskTimer;
-	private Timer locationSenderTaskTimer;
+	private ScheduledFuture<?> helperTaskExecutor;
+	private ScheduledFuture<?> loginTaskExecutor;
+	private ScheduledFuture<?> locationSenderTaskExecutor;
+	private ScheduledExecutorService scheduledExecutorService;
 
 	private Button actionBtn;
 	private EditText variantCodeField;
@@ -78,6 +83,7 @@ public class MainActivity extends Activity implements LocationListener {
 		active = false;
 		isLastReportSent = false;
 		lastPassedStopOrdinal = -1;
+		scheduledExecutorService = Executors.newScheduledThreadPool(3);
 		// Get the location manager
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		// Define the criteria how to select the location provider -> use
@@ -157,25 +163,26 @@ public class MainActivity extends Activity implements LocationListener {
 
 		@Override
 		public void run() {
-			loginTaskTimer = new Timer();
-			loginTaskTimer.scheduleAtFixedRate(new LoginTask(), 0,
-					30 * 60 * 1000);
-			locationSenderTaskTimer = new Timer();
-			locationSenderTaskTimer.scheduleAtFixedRate(
-					new LocationSenderTask(), 10 * 1000, 60 * 1000);
+			loginTaskExecutor = scheduledExecutorService.scheduleAtFixedRate(
+					new LoginTask(), 0, 30 * 60, TimeUnit.SECONDS);
+			locationSenderTaskExecutor = scheduledExecutorService
+					.scheduleAtFixedRate(new LocationSenderTask(), 10, 60,
+							TimeUnit.SECONDS);
 		}
 	}
 
 	private void sendData() {
-		new Thread(new HttpHelper()).start();
+		helperTaskExecutor = scheduledExecutorService.schedule(
+				new HttpHelper(), 2, TimeUnit.SECONDS);
 	}
 
 	private void stopSendingData() {
-		loginTaskTimer.cancel();
-		locationSenderTaskTimer.cancel();
+		loginTaskExecutor.cancel(false);
+		locationSenderTaskExecutor.cancel(false);
+		helperTaskExecutor.cancel(false);
 	}
 
-	private class LoginTask extends TimerTask {
+	private class LoginTask implements Runnable {
 		@Override
 		public void run() {
 			HttpClient client = HttpClientCreator.getNewHttpClient();
@@ -205,7 +212,7 @@ public class MainActivity extends Activity implements LocationListener {
 		}
 	}
 
-	private class LocationSenderTask extends TimerTask {
+	private class LocationSenderTask implements Runnable {
 		@Override
 		public void run() {
 			if (!isLastReportSent && token != null) {

@@ -20,6 +20,8 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 
+import services.shapefiles.ShapefileStatusService;
+
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "BusStopLoader")
@@ -32,6 +34,9 @@ public class BusStopLoaderImpl implements BusStopLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
+	
+	@EJB(name = "ShapefileStatusService")
+	private ShapefileStatusService shapefileStatusService;
 
 	public void updateShp(File shapefile) {
 		try {
@@ -96,7 +101,9 @@ public class BusStopLoaderImpl implements BusStopLoader {
 							.toWKT());
 					shapefileWKTDAO.add(shapefileWKT);
 				} else {
-					shapefileWKT.setProgress((double) count / (double) total);
+					double progress = (double) 100 * count / total;
+					shapefileWKT.setProgress(progress);
+					shapefileStatusService.setBusStopsUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
 				logger.info("added bus stop");

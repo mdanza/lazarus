@@ -19,10 +19,12 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 @Entity
-@Table(name = "obstacle")
+@Table(name = "obstacles")
 @NamedQueries({
 		@NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre"),
-		@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true") })
+		@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true"), 
+		@NamedQuery(name = "Obstacle.findAll", query = "select o FROM Obstacle o"),
+		@NamedQuery(name = "Obstacle.findById", query = "SELECT o FROM Obstacle o WHERE o.id = :id")})
 public class Obstacle {
 
 	@Id
@@ -71,6 +73,20 @@ public class Obstacle {
 		this.circle = fac.createCircle();
 		this.createdAt = new Date();
 		this.description = description;
+	}
+	
+	public Obstacle(long id, Point centre, long radius, User user, String description) {
+		this.centre = centre;
+		this.radius = radius;
+		this.user = user;
+		GeometricShapeFactory fac = new GeometricShapeFactory();
+		fac.setSize(radius * 2.0);
+		fac.setNumPoints(360);
+		fac.setCentre(centre.getCoordinate());
+		this.circle = fac.createCircle();
+		this.createdAt = new Date();
+		this.description = description;
+		this.id = id;
 	}
 
 	public long getId() {

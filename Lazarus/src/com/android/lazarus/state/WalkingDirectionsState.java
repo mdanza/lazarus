@@ -17,9 +17,6 @@ import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.DirectionsServiceAdapter;
 import com.android.lazarus.serviceadapter.DirectionsServiceAdapterImpl;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class WalkingDirectionsState extends LocationDependentState {
 
@@ -75,13 +72,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 				Road road = roadManager.getRoad(waypoints);
 
 				if (positions != null) {
-					MarkerOptions markerOptions = new MarkerOptions();
-					for (WalkingPosition position : positions) {
-						LatLng latLng = new LatLng(position.getPoint()
-								.getLatitude(), position.getPoint()
-								.getLongitude());
-						markerOptions.position(latLng);
-					}
 					message = "Ahora te debería decir que dobles a la derecha";
 					tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
 				} else {

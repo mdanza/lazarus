@@ -1,27 +1,16 @@
 package com.android.lazarus;
 
-import java.util.ArrayList;
-
-import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
-import org.osmdroid.bonuspack.routing.Road;
-import org.osmdroid.bonuspack.routing.RoadManager;
-import org.osmdroid.util.GeoPoint;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
@@ -32,8 +21,6 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 
 public class VoiceInterpreterActivity extends FragmentActivity implements
 		TextToSpeech.OnInitListener {

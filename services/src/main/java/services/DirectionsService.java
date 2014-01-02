@@ -21,11 +21,9 @@ import org.opengis.referencing.operation.TransformException;
 
 import services.authentication.AuthenticationService;
 import services.directions.bus.BusDirectionsService;
+import services.directions.bus.BusExclusionStrategy;
 import services.directions.bus.BusRide;
 import services.directions.bus.Transshipment;
-import services.directions.walking.WalkingDirectionsService;
-import services.directions.walking.WalkingPosition;
-import services.directions.walking.WalkingPositionExclusionStrategy;
 import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
@@ -45,9 +43,6 @@ public class DirectionsService {
 
 	static Logger logger = Logger.getLogger(DirectionsService.class);
 
-	@EJB(name = "WalkingDirectionsService")
-	private WalkingDirectionsService walkingDirectionsService;
-
 	@EJB(name = "BusDirectionsService")
 	private BusDirectionsService busDirectionsService;
 
@@ -60,54 +55,12 @@ public class DirectionsService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+		builder.setExclusionStrategies(new BusExclusionStrategy());
 		return builder.create();
 	}
 
 	@EJB(name = "AuthenticationService")
 	private AuthenticationService authenticationService;
-
-	@GET
-	@Path("/walkingDirections")
-	public String getWalkingDirections(
-			@HeaderParam("Authorization") String token,
-			@QueryParam("origin") String origin, @QueryParam("end") String end) {
-		if (token == null || origin == null || end == null || token.equals("")
-				|| origin.equals("") || end.equals(""))
-			return restResultsHelper.resultWrapper(false,
-					"Empty or null arguments are not allowed");
-		try {
-			authenticationService.authenticate(token);
-			Double xOrigin = Double.valueOf(origin.split(",")[0]);
-			Double yOrigin = Double.valueOf(origin.split(",")[1]);
-			Double xEnd = Double.valueOf(end.split(",")[0]);
-			Double yEnd = Double.valueOf(end.split(",")[1]);
-			Coordinate originCoordinates = new Coordinate(
-					Double.valueOf(xOrigin), Double.valueOf(yOrigin));
-			Coordinate endCoordinates = new Coordinate(Double.valueOf(xEnd),
-					Double.valueOf(yEnd));
-			try {
-				List<WalkingPosition> walkingDirections = walkingDirectionsService
-						.getWalkingDirections(originCoordinates, endCoordinates);
-				if (walkingDirections != null) {
-					Type type = new TypeToken<List<WalkingPosition>>() {
-					}.getType();
-					String serializedDirections = gson.toJson(
-							walkingDirections, type);
-					return restResultsHelper.resultWrapper(true,
-							serializedDirections);
-				} else
-					return restResultsHelper.resultWrapper(false,
-							"No directions available");
-			} catch (Exception e) {
-				e.printStackTrace();
-				return restResultsHelper.resultWrapper(false,
-						"Could not get directions");
-			}
-		} catch (Exception e) {
-			return restResultsHelper.resultWrapper(false, "Invalid token");
-		}
-	}
 
 	@GET
 	@Path("/busDirections")

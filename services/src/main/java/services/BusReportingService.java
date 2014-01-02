@@ -27,7 +27,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import services.authentication.AuthenticationService;
-import services.directions.walking.WalkingPositionExclusionStrategy;
+import services.directions.bus.BusExclusionStrategy;
 import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
@@ -57,7 +57,7 @@ public class BusReportingService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+		builder.setExclusionStrategies(new BusExclusionStrategy());
 		return builder.create();
 	}
 

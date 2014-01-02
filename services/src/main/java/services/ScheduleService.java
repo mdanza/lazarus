@@ -14,8 +14,8 @@ import javax.ws.rs.QueryParam;
 
 import model.Bus;
 import services.authentication.AuthenticationService;
+import services.directions.bus.BusExclusionStrategy;
 import services.directions.bus.schedules.BusSchedulesService;
-import services.directions.walking.WalkingPositionExclusionStrategy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,7 +33,7 @@ public class ScheduleService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+		builder.setExclusionStrategies(new BusExclusionStrategy());
 		return builder.create();
 	}
 

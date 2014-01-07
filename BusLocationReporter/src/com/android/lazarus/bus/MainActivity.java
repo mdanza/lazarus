@@ -27,6 +27,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.View;
@@ -70,13 +71,30 @@ public class MainActivity extends Activity implements LocationListener {
 	private double lastReportedlongitude;
 	private boolean isLastReportSent;
 	private List<BusStop> stops;
-
+	private Handler handler;
 	private Gson gson = createGson();
+
+	private class ShowTextRunnable implements Runnable {
+
+		private String text;
+
+		public ShowTextRunnable(String text) {
+			super();
+			this.text = text;
+		}
+
+		@Override
+		public void run() {
+			Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+					.show();
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		handler = new Handler();
 		actionBtn = (Button) findViewById(R.id.pushToStartStopBtn);
 		variantCodeField = (EditText) findViewById(R.id.variantCodeField);
 		subLineCodeField = (EditText) findViewById(R.id.subLineCodeField);
@@ -123,9 +141,7 @@ public class MainActivity extends Activity implements LocationListener {
 								.toString();
 						if (inputVariantCode.equals("")
 								|| inputSubLineCode.equals(""))
-							Toast.makeText(getApplicationContext(),
-									"Códigos vacíos", Toast.LENGTH_SHORT)
-									.show();
+							handler.post(new ShowTextRunnable("Códigos vacíos"));
 						else {
 							variantCodeField.setEnabled(false);
 							subLineCodeField.setEnabled(false);
@@ -177,9 +193,12 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	private void stopSendingData() {
-		loginTaskExecutor.cancel(false);
-		locationSenderTaskExecutor.cancel(false);
-		helperTaskExecutor.cancel(false);
+		if (loginTaskExecutor != null)
+			loginTaskExecutor.cancel(false);
+		if (locationSenderTaskExecutor != null)
+			locationSenderTaskExecutor.cancel(false);
+		if (helperTaskExecutor != null)
+			helperTaskExecutor.cancel(false);
 	}
 
 	private class LoginTask implements Runnable {
@@ -197,17 +216,15 @@ public class MainActivity extends Activity implements LocationListener {
 						response.getEntity().getContent()));
 				JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
 						.getAsJsonObject();
-				if (jsonResponse.get("result").getAsString().equals("OK"))
+				if (jsonResponse.get("result").getAsString().equals("OK")) {
 					token = jsonResponse.get("data").getAsString();
-				else
-					Toast.makeText(getApplicationContext(),
-							"Error while attempting login", Toast.LENGTH_LONG)
-							.show();
+					handler.post(new ShowTextRunnable(
+							"Login realizado con éxito"));
+				} else
+					handler.post(new ShowTextRunnable("Error al intentar login"));
 			} catch (Exception e) {
-				Toast.makeText(
-						getApplicationContext(),
-						"Error connecting to server. Check your internet connectivity",
-						Toast.LENGTH_SHORT).show();
+				handler.post(new ShowTextRunnable(
+						"Error contactando servidor. Verificar conexión con Internet"));
 			}
 		}
 	}
@@ -267,11 +284,10 @@ public class MainActivity extends Activity implements LocationListener {
 					String.valueOf(lastPassedStopOrdinal)));
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			client.execute(request);
+			handler.post(new ShowTextRunnable("Posición enviada con éxito"));
 		} catch (Exception e) {
-			Toast.makeText(
-					getApplicationContext(),
-					"Error connecting to server. Check your internet connectivity",
-					Toast.LENGTH_SHORT).show();
+			handler.post(new ShowTextRunnable(
+					"Error contactando el servidor. Verificar conexión con Internet"));
 		}
 	}
 
@@ -295,25 +311,25 @@ public class MainActivity extends Activity implements LocationListener {
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
-			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+			JsonParser parser = new JsonParser();
+			JsonObject jsonResponse = parser.parse(rd.readLine())
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
-				JsonObject bus = jsonResponse.get("data").getAsJsonObject();
+				JsonObject bus = parser.parse(
+						jsonResponse.get("data").getAsString())
+						.getAsJsonObject();
 				long id = bus.get("id").getAsLong();
 				SharedPreferences preferences = PreferenceManager
 						.getDefaultSharedPreferences(getApplicationContext());
 				SharedPreferences.Editor editor = preferences.edit();
 				editor.putLong("busId", id);
 				editor.commit();
+				handler.post(new ShowTextRunnable("Bus registrado con éxito"));
 			} else
-				Toast.makeText(getApplicationContext(),
-						jsonResponse.get("data").getAsString(),
-						Toast.LENGTH_SHORT).show();
+				handler.post(new ShowTextRunnable("Error registrando bus"));
 		} catch (Exception e) {
-			Toast.makeText(
-					getApplicationContext(),
-					"Error connecting to server. Check your internet connectivity",
-					Toast.LENGTH_SHORT).show();
+			handler.post(new ShowTextRunnable(
+					"Error contactano el servidor. Verificar conexión con Internet"));
 		}
 	}
 
@@ -329,18 +345,17 @@ public class MainActivity extends Activity implements LocationListener {
 			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
-				stops = gson.fromJson(jsonResponse.get("data"),
+				stops = gson.fromJson(jsonResponse.get("data").getAsString(),
 						new TypeToken<List<BusStop>>() {
 						}.getType());
+				handler.post(new ShowTextRunnable(stops.size()
+						+ " paradas cargadas con éxito"));
 			} else
-				Toast.makeText(getApplicationContext(),
-						jsonResponse.get("data").getAsString(),
-						Toast.LENGTH_SHORT).show();
+				handler.post(new ShowTextRunnable(
+						"Error descargando paradas del recorrido"));
 		} catch (Exception e) {
-			Toast.makeText(
-					getApplicationContext(),
-					"Error connecting to server. Check your internet connectivity",
-					Toast.LENGTH_SHORT).show();
+			handler.post(new ShowTextRunnable(
+					"Error contactando el servidor. Verificar conexión con Internet"));
 		}
 	}
 
@@ -352,25 +367,20 @@ public class MainActivity extends Activity implements LocationListener {
 			lastReportedlongitude = location.getLongitude();
 			isLastReportSent = false;
 			if (active)
-				Toast.makeText(
-						this,
-						"lat: " + lastReportedlatitude + "; lng: "
-								+ lastReportedlongitude, Toast.LENGTH_SHORT)
-						.show();
+				handler.post(new ShowTextRunnable("lat: "
+						+ lastReportedlatitude + "; lng: "
+						+ lastReportedlongitude));
 		}
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		Toast.makeText(this, "Enabled new provider " + provider,
-				Toast.LENGTH_SHORT).show();
-
+		handler.post(new ShowTextRunnable("Enabled new provider " + provider));
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		Toast.makeText(this, "Disabled provider " + provider,
-				Toast.LENGTH_SHORT).show();
+		handler.post(new ShowTextRunnable("Disabled provider " + provider));
 	}
 
 	@Override

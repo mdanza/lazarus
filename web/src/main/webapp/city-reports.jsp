@@ -21,7 +21,6 @@
 	var showObstacles = true;
 	var obstaclesRequest;
 	var stopsRequest;
-	var aborted = false;
 	$(document).ready(function() {
 		if ($("#hiddenToken").val() == "")
 			window.location.replace("index.jsp");
@@ -47,10 +46,6 @@
 						}
 						else
 							alert(jsonResponse.data);
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						if(!aborted)
-							alert("No se pudo completar su solicitud");
 					}
 				});
 				return false;
@@ -75,10 +70,6 @@
 						}
 						else
 							alert(jsonResponse.data);
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						if(!aborted)
-							alert("No se pudo completar su solicitud");
 					}
 				});
 				return false;
@@ -172,10 +163,6 @@
 				}
 				else
 					alert(jsonResponse.data);
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				if(!aborted)
-					alert("No se pudo completar su solicitud");
 			}
 		});
 		return false;
@@ -200,10 +187,6 @@
 				}
 				else
 					alert(jsonResponse.data);
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				if(!aborted)
-					alert("No se pudo completar su solicitud");
 			}
 		});
 		return false;
@@ -238,10 +221,6 @@
 					$("#switchObstacles").attr("disabled", false);
 				} else
 					window.location.replace("index.jsp");
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				if(!aborted)
-					alert("No se pudo completar su solicitud");
 			}
 		});
 	}
@@ -263,10 +242,6 @@
 					$("#switchStops").attr("disabled", false);
 				} else
 					window.location.replace("index.jsp");
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				if(!aborted)
-					alert("No se pudo completar su solicitud");
 			}
 		});
 	}
@@ -326,27 +301,16 @@
 					}
 					else
 						alert("No se encontraron calles que satisfagan su búsqueda");
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					if(!aborted)
-						alert("No se pudo completar su solicitud");
 				}
 			});
 		}
 		return false;
 	}
-	
-	function cancelRequests(){
-		aborted = true;
-		if(obstaclesRequest !== undefined)
-			obstaclesRequest.abort();
-		if(stopsRequest !== undefined)
-			stopsRequest.abort();
-		return true;
-	}
 </script>
 </head>
 <body>
+	<a class="logout" href="LogoutServlet">Logout</a>
+	<br><br>
 	<div id="map_canvas"></div>
 	<div id="map_info">
 	Las paradas y obstáculos pueden tardar unos minutos en cargarse; los botones se habilitarán cuando estén listos.
@@ -376,7 +340,7 @@
 	<br>
 	<br>
 	<div class="linksDiv">
-		<a onclick="cancelRequests();" href="user.jsp">Menú de usuario</a>
+		<a href="user.jsp">Menú de usuario</a>
 	</div>
 	<input id="hiddenToken" type="hidden"
 		value="<%=request.getSession().getAttribute("token") != null ? request

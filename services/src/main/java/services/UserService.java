@@ -187,7 +187,7 @@ public class UserService {
 			String newPassword = generatePassword();
 			modifiedUser.setPassword(newPassword);
 			userDAO.modify(user, modifiedUser);
-			sendEmail(user.getEmail(), "<h1>Estimado" + username
+			sendEmail(user.getEmail(), "<h1>Estimado " + username
 					+ "</h1>Su nueva contraseña es: " + newPassword,
 					"Lazarus: Olvido de contraseña");
 			return restResultsHelper.resultWrapper(true,

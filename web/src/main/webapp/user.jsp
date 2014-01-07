@@ -175,6 +175,8 @@
 </script>
 </head>
 <body>
+	<a class="logout" href="LogoutServlet">Logout</a>
+	<br>
 	<h2>Sus datos:</h2>
 	<form method="post" id="userForm"
 		action="<%=SettingsHelper.REST_API_URL + "/users"%>">

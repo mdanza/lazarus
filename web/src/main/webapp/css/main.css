@@ -4,18 +4,23 @@ body {
 	text-align: center;
 }
 
+.logout {
+	float: right;
+	margin-right: 6%;
+}
+
 #map_canvas {
 	margin-left: 5%;
 	height: 700px;
 	width: 90%;
 }
 
-#map_info{
+#map_info {
 	height: auto;
 	width: 100%;
 }
 
-button{
+button {
 	width: 10%;
 }
 
@@ -30,18 +35,18 @@ button{
 	text-align: center;
 }
 
-.linksDiv > a {
+.linksDiv>a {
 	padding-left: 7px;
 	padding-top: 7px;
 }
 
-#adminMenu{
+#adminMenu {
 	text-align: center;
 	height: auto;
 	width: 100%;
 }
 
-.shapefileProgressTable{
+.shapefileProgressTable {
 	text-align: left;
 	margin-left: 42%;
 }

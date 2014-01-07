@@ -3,9 +3,9 @@ package com.android.lazarus.bus.model;
 public class BusStop {
 	private double latitude;
 	private double longitude;
-	private int ordinal;
+	private long ordinal;
 
-	public BusStop(double latitude, double longitude, int ordinal) {
+	public BusStop(double latitude, double longitude, long ordinal) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.ordinal = ordinal;
@@ -19,7 +19,7 @@ public class BusStop {
 		return longitude;
 	}
 
-	public int getOrdinal() {
+	public long getOrdinal() {
 		return ordinal;
 	}
 }

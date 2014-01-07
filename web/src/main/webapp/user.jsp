@@ -66,6 +66,7 @@
 				jsonResponse = JSON.parse(data);
 				if (jsonResponse.result == "OK"){
 					alert("Subido correctamente");
+					$("progress").attr("value", 0);
 				}
 				else
 					alert(jsonResponse.data);
@@ -189,6 +190,7 @@
 
 	<div id="adminMenu" style="display: none">
 		<h2>Menú de administración</h2>
+		*Solamente se puede actualizar un juego de datos a la vez
 		<form id="shapefileUpdateForm" enctype="multipart/form-data"
 			action="<%=SettingsHelper.REST_API_URL + "/shapes"%>">
 			Datos a actualizar: <select id="inputShapefileType">

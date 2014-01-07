@@ -2,6 +2,7 @@ package services;
 
 import helpers.RestResultsHelper;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,18 +21,20 @@ import model.Bus;
 import model.BusStop;
 import model.ShapefileWKT;
 import model.dao.BusDAO;
-import model.dao.BusStopDAO;
 
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
+import serialization.BusStopSerializer;
 import services.authentication.AuthenticationService;
 import services.directions.walking.WalkingPositionExclusionStrategy;
+import services.incidents.busstops.BusStopService;
 import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Stateless(name = "BusReportingService")
 @Path("v1/api/bus")
@@ -42,8 +45,8 @@ public class BusReportingService {
 	@EJB(name = "BusDAO")
 	private BusDAO busDAO;
 
-	@EJB(name = "BusStopDAO")
-	private BusStopDAO busStopDAO;
+	@EJB(name = "BusStopService")
+	private BusStopService busStopService;
 
 	@EJB(name = "RestResultsHelper")
 	private RestResultsHelper restResultsHelper;
@@ -58,6 +61,7 @@ public class BusReportingService {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
 		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
+		builder.registerTypeAdapter(BusStop.class, new BusStopSerializer());
 		return builder.create();
 	}
 
@@ -69,18 +73,28 @@ public class BusReportingService {
 			@FormParam("latitude") Double longitude) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || latitude == null || longitude == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Bus result = new Bus();
-		result.setLastPassedStopOrdinal(Long.MAX_VALUE);
-		result.setVariantCode(variantCode);
-		result.setSubLineCode(subLineCode);
-		result.setLatitude(latitude);
-		result.setLongitude(longitude);
-		result.setLastUpdated(new Date());
-		busDAO.add(result);
-		return gson.toJson(result);
+		try {
+			authenticationService.authenticate(token);
+			Bus result = new Bus();
+			result.setLastPassedStopOrdinal(Long.MAX_VALUE);
+			result.setVariantCode(variantCode);
+			result.setSubLineCode(subLineCode);
+			result.setLatitude(latitude);
+			result.setLongitude(longitude);
+			result.setLastUpdated(new Date());
+			try {
+				busDAO.add(result);
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(result));
+			} catch (Exception e) {
+				return restResultsHelper.resultWrapper(false,
+						"Error adding bus");
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@PUT
@@ -96,26 +110,37 @@ public class BusReportingService {
 				|| subLineCode == null || latitude == null || longitude == null
 				|| busId == null || busId == ""
 				|| lastPassedStopOrdinal == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
 		Long busIdLong = null;
 		try {
 			busIdLong = Long.parseLong(busId);
 		} catch (NumberFormatException e) {
-			return null;
+			return restResultsHelper.resultWrapper(false, "Malformed bus id");
 		}
-		authenticationService.authenticate(token);
-		Bus result = busDAO.find(busIdLong);
-		if (result == null)
-			return null;
-		result.setLastPassedStopOrdinal(lastPassedStopOrdinal);
-		result.setVariantCode(variantCode);
-		result.setSubLineCode(subLineCode);
-		result.setLatitude(latitude);
-		result.setLongitude(longitude);
-		result.setLastUpdated(new Date());
-		busDAO.modify(null, result);
-		return gson.toJson(result);
+		try {
+			authenticationService.authenticate(token);
+			Bus result = busDAO.find(busIdLong);
+			if (result == null)
+				return restResultsHelper.resultWrapper(false,
+						"Id does not match any bus");
+			result.setLastPassedStopOrdinal(lastPassedStopOrdinal);
+			result.setVariantCode(variantCode);
+			result.setSubLineCode(subLineCode);
+			result.setLatitude(latitude);
+			result.setLongitude(longitude);
+			result.setLastUpdated(new Date());
+			try {
+				busDAO.modify(null, result);
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(result));
+			} catch (Exception e) {
+				return restResultsHelper.resultWrapper(false,
+						"Error updating bus");
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 
 	@GET
@@ -143,34 +168,115 @@ public class BusReportingService {
 	public String getBusStops(@HeaderParam("Authorization") String token,
 			@PathParam("busId") Long busId) {
 		if (token == null || token == "" || busId == null)
-			throw new IllegalArgumentException(
+			return restResultsHelper.resultWrapper(false,
 					"Empty or null arguments are not allowed");
-		authenticationService.authenticate(token);
-		Bus bus = busDAO.find(busId);
-		if (bus == null)
-			return null;
-		List<BusStop> result = busStopDAO.getLineStops(bus.getVariantCode());
-		if (result != null) {
-			List<BusStop> stops = new ArrayList<BusStop>();
-			for (BusStop stop : result) {
-				try {
-					BusStop copy = new BusStop(stop);
-					copy.setPoint(coordinateConverter.convertToWGS84(
-							copy.getPoint(), ShapefileWKT.BUS_STOP));
-					stops.add(copy);
-				} catch (MismatchedDimensionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (FactoryException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (TransformException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		try {
+			authenticationService.authenticate(token);
+			Bus bus = busDAO.find(busId);
+			if (bus == null)
+				return restResultsHelper.resultWrapper(false,
+						"Id does not match any bus");
+			List<BusStop> result = busStopService.getLineStops(bus
+					.getVariantCode());
+			if (result != null) {
+				List<BusStop> stops = new ArrayList<BusStop>();
+				for (BusStop stop : result) {
+					try {
+						BusStop copy = new BusStop(stop);
+						copy.setPoint(coordinateConverter.convertToWGS84(
+								copy.getPoint(), ShapefileWKT.BUS_STOP));
+						stops.add(copy);
+					} catch (MismatchedDimensionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FactoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (TransformException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+				Type type = new TypeToken<List<BusStop>>() {
+				}.getType();
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(stops, type));
+			} else
+				return restResultsHelper.resultWrapper(false,
+						"No stops for given bus");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+	}
+
+	@GET
+	@Path("/all/all-stops")
+	public String getBusStops(@HeaderParam("Authorization") String token) {
+		if (token == null || token == "")
+			return restResultsHelper
+					.resultWrapper(false, "Empty or null token");
+		try {
+			authenticationService.authenticate(token);
+			List<BusStop> result = busStopService
+					.findAllDistinctLocationCodes();
+			if (result != null) {
+				List<BusStop> stops = new ArrayList<BusStop>();
+				for (BusStop stop : result) {
+					try {
+						BusStop copy = new BusStop(stop);
+						copy.setPoint(coordinateConverter.convertToWGS84(
+								copy.getPoint(), ShapefileWKT.BUS_STOP));
+						stops.add(copy);
+					} catch (MismatchedDimensionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FactoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (TransformException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				Type type = new TypeToken<List<BusStop>>() {
+				}.getType();
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson(stops, type));
+			} else
+				return restResultsHelper.resultWrapper(false, "No stops found");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+	}
+
+	@POST
+	@Path("/all/{locationCode}")
+	public String enableDisableBusStops(
+			@HeaderParam("Authorization") String token,
+			@FormParam("active") String active,
+			@PathParam("locationCode") String locationCode) {
+		if (token == null || token == "" || active == null || active == ""
+				|| locationCode == null || locationCode == "")
+			return restResultsHelper.resultWrapper(false,
+					"Empty or null token or params");
+		try {
+			authenticationService.authenticate(token);
+			try {
+				boolean boolActive = Boolean.parseBoolean(active);
+				long longLocationCode = Long.parseLong(locationCode);
+				if (boolActive)
+					busStopService.activateStops(longLocationCode);
+				else
+					busStopService.deactivateStops(longLocationCode);
+				return restResultsHelper.resultWrapper(true,
+						"Successfully completed operation");
+			} catch (Exception e) {
+				return restResultsHelper
+						.resultWrapper(false,
+								"Invalid fields; location code must be a long, active a boolean");
 			}
-			return gson.toJson(stops);
-		} else
-			return null;
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
 	}
 }

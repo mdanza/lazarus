@@ -42,12 +42,13 @@ public class CornerLoaderImpl implements CornerLoader {
 	GeometryFactory factory = new GeometryFactory();
 
 	public void updateShp(File shapefile) {
+		ShapefileDataStore store = null;
 		try {
 			cornerDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.CORNER);
 			URL shapeURL = shapefile.toURI().toURL();
-			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
+			store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -101,7 +102,6 @@ public class CornerLoaderImpl implements CornerLoader {
 					shapefileStatusService.setCornersUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
-				System.out.println(count);
 			}
 			reader.close();
 
@@ -109,6 +109,9 @@ public class CornerLoaderImpl implements CornerLoader {
 			throw new IllegalArgumentException("Malformed URL");
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e.getMessage());
+		}finally{
+			if(store != null)
+				store.dispose();
 		}
 	}
 

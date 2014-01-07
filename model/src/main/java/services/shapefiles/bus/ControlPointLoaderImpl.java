@@ -34,18 +34,19 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	@EJB(name = "ShapefileStatusService")
 	private ShapefileStatusService shapefileStatusService;
 
 	public void updateShp(File shapefile) {
+		ShapefileDataStore store = null;
 		try {
 			controlPointDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.CONTROL_POINT);
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
-			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
+			store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -102,7 +103,8 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 				} else {
 					double progress = (double) 100 * count / total;
 					shapefileWKT.setProgress(progress);
-					shapefileStatusService.setControlPointsUploadProgress(progress);
+					shapefileStatusService
+							.setControlPointsUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
 				logger.info("added control point");
@@ -110,6 +112,9 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (store != null)
+				store.dispose();
 		}
 	}
 }

@@ -34,18 +34,19 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	@EJB(name = "ShapefileStatusService")
 	private ShapefileStatusService shapefileStatusService;
 
 	public void updateShp(File shapefile) {
+		ShapefileDataStore store = null;
 		try {
 			busRouteMaximalDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.BUS_MAXIMAL);
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
-			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
+			store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -107,7 +108,8 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 				} else {
 					double progress = (double) 100 * count / total;
 					shapefileWKT.setProgress(progress);
-					shapefileStatusService.setBusRouteMaximalUploadProgress(progress);
+					shapefileStatusService
+							.setBusRouteMaximalUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
 				logger.info("added bus route maximal");
@@ -115,6 +117,9 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (store != null)
+				store.dispose();
 		}
 	}
 }

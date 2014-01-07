@@ -1,5 +1,6 @@
 package model.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,6 +9,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import model.BusStop;
+
+import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "BusStopDAO")
 public class BusStopDAOImpl implements BusStopDAO {
@@ -45,5 +48,30 @@ public class BusStopDAOImpl implements BusStopDAO {
 	@Override
 	public void removeAll() {
 		entityManager.createNamedQuery("BusStop.removeAll").executeUpdate();
+	}
+
+	@Override
+	public List<BusStop> getDistinctLocationCodeBusStops() {
+		List<BusStop> result = null;
+		List<Object[]> queryResult = entityManager
+				.createQuery(
+						"SELECT DISTINCT busStopLocationCode, point, active FROM BusStop b")
+				.getResultList();
+		if (queryResult != null && queryResult.size() != 0) {
+			result = new ArrayList<BusStop>();
+			for (Object[] row : queryResult)
+				result.add(new BusStop((Long) row[0], (Point) row[1],
+						(Boolean) row[2]));
+		}
+		return result;
+	}
+
+	@Override
+	public void changeActiveFieldByLocationCode(long locationCode,
+			boolean active) {
+		Query q = entityManager.createNamedQuery("BusStop.updateActiveField");
+		q.setParameter("busStopLocationCode", locationCode);
+		q.setParameter("active", active);
+		q.executeUpdate();
 	}
 }

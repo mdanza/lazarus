@@ -40,7 +40,6 @@ import com.android.lazarus.bus.httputils.HttpClientCreator;
 import com.android.lazarus.bus.model.BusStop;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -49,7 +48,8 @@ public class MainActivity extends Activity implements LocationListener {
 	// in meters
 	private static final double MINIMUM_ACCEPTABLE_PRECISION = 100;
 	public static final String REST_API_URL = "https://ec2-54-209-91-189.compute-1.amazonaws.com:8443/services-1.0-SNAPSHOT/v1/api";
-	//public static final String REST_API_URL = "https://10.0.2.2:8443/services-1.0-SNAPSHOT/v1/api";
+	// public static final String REST_API_URL =
+	// "https://10.0.2.2:8443/services-1.0-SNAPSHOT/v1/api";
 
 	private static final String USER = "bus";
 	private static final String PWD = "superBusesSiQueSi";
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private Button actionBtn;
 	private EditText variantCodeField;
 	private EditText subLineCodeField;
-	private int lastPassedStopOrdinal;
+	private long lastPassedStopOrdinal;
 	private boolean active;
 	private LocationManager locationManager;
 	private String provider;
@@ -295,15 +295,20 @@ public class MainActivity extends Activity implements LocationListener {
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
-			String jsonResponse = rd.readLine();
-			JsonElement element = new JsonParser().parse(jsonResponse);
-			JsonObject bus = element.getAsJsonObject();
-			long id = bus.get("id").getAsLong();
-			SharedPreferences preferences = PreferenceManager
-					.getDefaultSharedPreferences(getApplicationContext());
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putLong("busId", id);
-			editor.commit();
+			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+					.getAsJsonObject();
+			if (jsonResponse.get("result").getAsString().equals("OK")) {
+				JsonObject bus = jsonResponse.get("data").getAsJsonObject();
+				long id = bus.get("id").getAsLong();
+				SharedPreferences preferences = PreferenceManager
+						.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putLong("busId", id);
+				editor.commit();
+			} else
+				Toast.makeText(getApplicationContext(),
+						jsonResponse.get("data").getAsString(),
+						Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			Toast.makeText(
 					getApplicationContext(),
@@ -321,9 +326,16 @@ public class MainActivity extends Activity implements LocationListener {
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
-			String jsonResponse = rd.readLine();
-			stops = gson.fromJson(jsonResponse, new TypeToken<List<BusStop>>() {
-			}.getType());
+			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
+					.getAsJsonObject();
+			if (jsonResponse.get("result").getAsString().equals("OK")) {
+				stops = gson.fromJson(jsonResponse.get("data"),
+						new TypeToken<List<BusStop>>() {
+						}.getType());
+			} else
+				Toast.makeText(getApplicationContext(),
+						jsonResponse.get("data").getAsString(),
+						Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			Toast.makeText(
 					getApplicationContext(),

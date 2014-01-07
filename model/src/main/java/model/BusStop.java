@@ -28,7 +28,8 @@ import com.vividsolutions.jts.geom.Point;
 		@NamedQuery(name = "BusStop.findById", query = "SELECT b FROM BusStop b WHERE b.id = :id"),
 		@NamedQuery(name = "BusStop.findByOrdinalFromSameLine", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode AND stop.ordinal = :ordinal"),
 		@NamedQuery(name = "BusStop.findByVariantCode", query = "SELECT stop FROM BusStop stop WHERE stop.active = true AND stop.variantCode = :variantCode"),
-		@NamedQuery(name = "BusStop.removeAll", query = "DELETE FROM BusStop") })
+		@NamedQuery(name = "BusStop.removeAll", query = "DELETE FROM BusStop"),
+		@NamedQuery(name = "BusStop.updateActiveField", query = "UPDATE BusStop b SET b.active = :active WHERE b.busStopLocationCode = :busStopLocationCode") })
 public class BusStop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,6 +74,12 @@ public class BusStop {
 		this.cornerStreetCode = anotherBusStop.cornerStreetCode;
 		this.point = anotherBusStop.point;
 		this.active = anotherBusStop.active;
+	}
+
+	public BusStop(long busStopLocationCode, Point point, boolean active) {
+		this.busStopLocationCode = busStopLocationCode;
+		this.point = point;
+		this.active = active;
 	}
 
 	public long getOrdinal() {

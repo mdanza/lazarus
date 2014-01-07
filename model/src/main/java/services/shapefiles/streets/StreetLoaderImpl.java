@@ -35,19 +35,20 @@ public class StreetLoaderImpl implements StreetLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	@EJB(name = "ShapefileStatusService")
 	private ShapefileStatusService shapefileStatusService;
 
 	GeometryFactory factory = new GeometryFactory();
 
 	public void updateShp(File shapefile) {
+		ShapefileDataStore store = null;
 		try {
 			streetDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.STREET);
 			URL shapeURL = shapefile.toURI().toURL();
-			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
+			store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -92,7 +93,6 @@ public class StreetLoaderImpl implements StreetLoader {
 					shapefileStatusService.setStreetsUploadProgress(progress);
 					shapefileWKTDAO.modify(shapefileWKT, shapefileWKT);
 				}
-				System.out.println(count);
 			}
 			reader.close();
 
@@ -100,6 +100,9 @@ public class StreetLoaderImpl implements StreetLoader {
 			throw new IllegalArgumentException("Malformed URL");
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e.getMessage());
+		} finally {
+			if (store != null)
+				store.dispose();
 		}
 	}
 

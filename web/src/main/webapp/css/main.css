@@ -5,8 +5,18 @@ body {
 }
 
 #map_canvas {
+	margin-left: 5%;
 	height: 700px;
 	width: 90%;
+}
+
+#map_info{
+	height: auto;
+	width: 100%;
+}
+
+button{
+	width: 10%;
 }
 
 #addressSearchBarDiv {

@@ -34,18 +34,19 @@ public class BusStopLoaderImpl implements BusStopLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	@EJB(name = "ShapefileStatusService")
 	private ShapefileStatusService shapefileStatusService;
 
 	public void updateShp(File shapefile) {
+		ShapefileDataStore store = null;
 		try {
 			busStopDAO.removeAll();
 			ShapefileWKT shapefileWKT = shapefileWKTDAO
 					.find(ShapefileWKT.BUS_STOP);
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
-			ShapefileDataStore store = new ShapefileDataStore(shapeURL);
+			store = new ShapefileDataStore(shapeURL);
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -111,6 +112,9 @@ public class BusStopLoaderImpl implements BusStopLoader {
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (store != null)
+				store.dispose();
 		}
 	}
 }

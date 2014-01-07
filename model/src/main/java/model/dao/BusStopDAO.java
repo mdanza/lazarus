@@ -12,4 +12,9 @@ public interface BusStopDAO extends ModelDAO<BusStop, Long> {
 	public List<BusStop> getLineStops(long variantCode);
 
 	public void removeAll();
+
+	public List<BusStop> getDistinctLocationCodeBusStops();
+
+	public void changeActiveFieldByLocationCode(long locationCode,
+			boolean active);
 }

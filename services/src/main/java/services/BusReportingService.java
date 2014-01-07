@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import serialization.BusStopSerializer;
 import services.authentication.AuthenticationService;
-import services.directions.walking.WalkingPositionExclusionStrategy;
+import services.directions.bus.BusExclusionStrategy;
 import services.incidents.busstops.BusStopService;
 import services.shapefiles.utils.CoordinateConverter;
 
@@ -60,8 +60,8 @@ public class BusReportingService {
 	private Gson createGson() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
-		builder.setExclusionStrategies(new WalkingPositionExclusionStrategy());
 		builder.registerTypeAdapter(BusStop.class, new BusStopSerializer());
+		builder.setExclusionStrategies(new BusExclusionStrategy());
 		return builder.create();
 	}
 

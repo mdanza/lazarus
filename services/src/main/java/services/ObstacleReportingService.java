@@ -26,6 +26,10 @@ import services.shapefiles.utils.CoordinateConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -108,10 +112,10 @@ public class ObstacleReportingService {
 			GeometryFactory factory = new GeometryFactory();
 			Point point = factory.createPoint(position);
 			try {
-				long id = obstacleService.reportObstacle(point, intRadius, user,
-						description);
-				return restResultsHelper.resultWrapper(true,
-						String.valueOf(id));
+				long id = obstacleService.reportObstacle(point, intRadius,
+						user, description);
+				return restResultsHelper
+						.resultWrapper(true, String.valueOf(id));
 			} catch (Exception e) {
 				e.printStackTrace();
 				return restResultsHelper.resultWrapper(false,
@@ -127,8 +131,7 @@ public class ObstacleReportingService {
 	public String deactivateObstacle(
 			@HeaderParam("Authorization") String token,
 			@PathParam("id") String id) {
-		if (token == null || token.equals("") || id == null
-				|| id.equals(""))
+		if (token == null || token.equals("") || id == null || id.equals(""))
 			return restResultsHelper.resultWrapper(false,
 					"Token or id empty or null");
 		try {
@@ -140,11 +143,70 @@ public class ObstacleReportingService {
 						"Successfully deactivated obstacle");
 			} catch (Exception e) {
 				e.printStackTrace();
-				return restResultsHelper.resultWrapper(false,
-						"Invalid id");
+				return restResultsHelper.resultWrapper(false, "Invalid id");
 			}
 		} catch (Exception e) {
 			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
+	}
+
+	@POST
+	@Path("/route")
+	public String getObstaclesForRoute(
+			@HeaderParam("Authorization") String token,
+			@FormParam("coordinates") String coordinatesArray) {
+		if (token == null || token.equals("") || coordinatesArray == null
+				|| coordinatesArray.equals(""))
+			return restResultsHelper.resultWrapper(false,
+					"Token or id empty or null");
+		try {
+			User user = authenticationService.authenticate(token);
+			boolean conversionSucceded = false;
+			try {
+				JsonArray jsonRoute = new JsonParser().parse(coordinatesArray)
+						.getAsJsonArray();
+				List<Coordinate> coordinates = new ArrayList<Coordinate>();
+				for (int i = 0; i < jsonRoute.size(); i++) {
+					JsonObject object = jsonRoute.get(i).getAsJsonObject();
+					JsonElement x = object.get("x");
+					JsonElement y = object.get("y");
+					Coordinate coordinate = new Coordinate(x.getAsDouble(),
+							y.getAsDouble());
+					coordinates.add(coordinate);
+				}
+				conversionSucceded = true;
+				List<Obstacle> obstacles = obstacleService
+						.getObstaclesForRoute(coordinates);
+				Type type = new TypeToken<List<Obstacle>>() {
+				}.getType();
+				if (obstacles != null) {
+					List<Obstacle> result = new ArrayList<Obstacle>();
+					for (Obstacle o : obstacles) {
+						Obstacle copy = new Obstacle(o.getId(), o.getCentre(),
+								o.getRadius(), o.getUser(), o.getDescription());
+						copy.setCentre(coordinateConverter.convertToWGS84(
+								copy.getCentre(), ShapefileWKT.OBSTACLE));
+						result.add(copy);
+					}
+					return restResultsHelper.resultWrapper(true,
+							gson.toJson(result, type));
+				} else {
+					return restResultsHelper.resultWrapper(true,
+							gson.toJson(new ArrayList<Obstacle>(), type));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				if (!conversionSucceded) {
+					return restResultsHelper.resultWrapper(false,
+							"Invalid format");
+				} else {
+					return restResultsHelper.resultWrapper(false,
+							"Could not get obstacles");
+				}
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+
 	}
 }

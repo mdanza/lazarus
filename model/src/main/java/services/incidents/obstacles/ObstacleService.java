@@ -7,6 +7,7 @@ import javax.ejb.Local;
 import model.Obstacle;
 import model.User;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 
 @Local
@@ -20,4 +21,7 @@ public interface ObstacleService {
 	public List<Obstacle> getAll();
 
 	public void deleteObstacle(long id);
+	
+	public List<Obstacle> getObstaclesForRoute(List<Coordinate> route);
+
 }

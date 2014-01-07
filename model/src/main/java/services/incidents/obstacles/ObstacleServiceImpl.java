@@ -1,5 +1,6 @@
 package services.incidents.obstacles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -18,7 +19,11 @@ import org.opengis.referencing.operation.TransformException;
 
 import services.shapefiles.utils.CoordinateConverter;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 @Stateless(name = "ObstacleService")
 public class ObstacleServiceImpl implements ObstacleService {
@@ -94,4 +99,57 @@ public class ObstacleServiceImpl implements ObstacleService {
 		return obstacleDAO.findAll();
 	}
 
+	public List<Obstacle> getObstaclesForRoute(List<Coordinate> route) {
+		try {
+			if (route != null && !route.isEmpty()) {
+				List<Obstacle> toReturn = new ArrayList<Obstacle>();
+				for (int i = 0; i < route.size() - 1; i++) {
+
+					// Create LineString to find near obstacles
+					Coordinate firstCoordinate = route.get(i);
+					Coordinate secondCoordinate = route.get(i + 1);
+
+					GeometryFactory factory = new GeometryFactory();
+					Point firstPoint = coordinateConverter.convertFromWGS84(
+							factory.createPoint(firstCoordinate), "obstacle");
+					Point secondPoint = coordinateConverter.convertFromWGS84(
+							factory.createPoint(secondCoordinate), "obstacle");
+
+					List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
+					coordinatesList.add(firstPoint.getCoordinate());
+					coordinatesList.add(secondPoint.getCoordinate());
+
+					Coordinate[] coordinates = coordinatesList
+							.toArray(new Coordinate[0]);
+					CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(
+							coordinates);
+					LineString lineRoute = new LineString(
+							coordinateArraySequence, factory);
+
+					// Find near obstacles
+					List<Obstacle> nearObstacles = obstacleDAO.findByDistance(
+							lineRoute, 30.0);
+
+					if (nearObstacles != null && !nearObstacles.isEmpty()) {
+						for (Obstacle obstacle : nearObstacles) {
+							if (!toReturn.contains(obstacle)) {
+								toReturn.add(obstacle);
+							}
+						}
+					}
+
+				}
+				return toReturn;
+
+			} else {
+				return null;
+			}
+		} catch (MismatchedDimensionException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (FactoryException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (TransformException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 }

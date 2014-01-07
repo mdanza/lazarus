@@ -159,7 +159,7 @@
 					infoWindow.close();
 					marker.setMap(null);
 					marker._myCircle.setMap(null);
-					obstacles = obstacles.splice(obstacles.indexOf(marker), 1);
+					obstacles.splice(obstacles.indexOf(marker), 1);
 				}
 				else
 					alert(jsonResponse.data);

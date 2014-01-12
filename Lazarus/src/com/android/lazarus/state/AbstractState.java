@@ -13,8 +13,8 @@ public abstract class AbstractState implements State {
 
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
-	protected boolean stripAccents = true;
-	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estói,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estói,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,,";
+	protected boolean stripAccents = true; 
+	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
 
 	protected String message;
 

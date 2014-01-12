@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
@@ -76,8 +77,21 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	}
 
 	public void speak(String message) {
-		tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+		int maximumLength = 245;
+		tts.stop();
+		if (message != null) {
+			if (message.length() <= maximumLength) {
+				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+			} else {
+				String[] parts = MessageSplitter.splitMessage(message, maximumLength, "\\.\\.");
+				for (String part : parts) {
+					tts.speak(part, TextToSpeech.QUEUE_ADD, null);
+				}
+			}
+		}
 	}
+
+	
 
 	public void sayMessage() {
 		speak(this.state.getMessage());
@@ -89,7 +103,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 		setContentView(R.layout.activity_voice_interpreter);
 		sensorEventListenerImpl = new SensorEventListenerImpl(this);
-
 
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
@@ -111,12 +124,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-
 		locationListener = new LocationListenerImpl(this);
 		initializeFirstState();
 
 	}
-
 
 	private void initializeFirstState() {
 		String username = this.getSharedPreferences("usrpref", 0).getString(
@@ -180,7 +191,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			float rate = Float.parseFloat("1");
 			tts.setSpeechRate(rate);
 			if (state != null) {
-				tts.speak(state.getMessage(), TextToSpeech.QUEUE_FLUSH, null);
+				speak(state.getMessage());
 			}
 		} else if (initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",

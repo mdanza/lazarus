@@ -28,8 +28,7 @@ public class RecognitionListenerImpl implements RecognitionListener {
 	public void onResults(Bundle results) {
 		voiceInterpreterActivity.getState().setResults(results
 				.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
-		voiceInterpreterActivity.getTts().speak(voiceInterpreterActivity.getState().getMessage(), TextToSpeech.QUEUE_FLUSH, null);
-
+		voiceInterpreterActivity.sayMessage();
 	}
 
 	@Override
@@ -79,7 +78,7 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "No se ha escuchado nada, ";
 			break;
 		}
-		voiceInterpreterActivity.getTts().speak(message+voiceInterpreterActivity.getState().getMessage(), TextToSpeech.QUEUE_FLUSH, null);
+		voiceInterpreterActivity.speak(message+voiceInterpreterActivity.getState().getMessage());
 	}
 
 	@Override

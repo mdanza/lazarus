@@ -208,7 +208,7 @@ public class StreetSetState extends AbstractState {
 
 	@Override
 	protected void restartState() {
-		StreetSetState streetSetState = new StreetSetState(context, firstStreet);
-		context.setState(streetSetState);		
+		MainMenuState mainMenuState = new MainMenuState(context);
+		context.setState(mainMenuState);		
 	}
 }

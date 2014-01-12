@@ -59,7 +59,7 @@ public class DestinationSetState extends LocationDependentState {
 			if(!fromFavourite){
 				message = message+"para agregarlo a favoritos diga tres";
 			}
-			tts.speak(this.message, TextToSpeech.QUEUE_FLUSH, null);
+			context.speak(this.message);
 		}
 	}
 

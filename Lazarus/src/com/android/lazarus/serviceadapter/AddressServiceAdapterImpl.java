@@ -15,6 +15,7 @@ import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
+import com.android.lazarus.serviceadapter.utils.StringUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -41,7 +42,7 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 				}.getType();
 				List<String> possibleStreets = SerializationHelper.gson
 						.fromJson(jsonPossibleStreets, type);
-				return possibleStreets;
+				return StringUtil.toLowerCase(possibleStreets);
 			} else
 				return null;
 		} catch (Exception e) {
@@ -53,6 +54,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 	@Override
 	public Point getByDoorNumber(String token, String firstStreet,
 			int doorNumber, String letter) {
+		firstStreet = firstStreet.toUpperCase();
+		letter = letter.toUpperCase();
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
 			String uri = ConstantsHelper.REST_API_URL
@@ -81,6 +84,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 
 	@Override
 	public Point getCorner(String token, String mainStreet, String cornerStreet) {
+		mainStreet = mainStreet.toUpperCase();
+		cornerStreet = cornerStreet.toUpperCase();
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
 			String uri = ConstantsHelper.REST_API_URL

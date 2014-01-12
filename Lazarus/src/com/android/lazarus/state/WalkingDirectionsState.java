@@ -73,7 +73,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 				if (positions != null) {
 					message = "Ahora te debería decir que dobles a la derecha";
-					tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+					context.speak(message);
 				} else {
 					message = "No se han podido obtener resultados para dirigirse a destino";
 					context.speak(message);

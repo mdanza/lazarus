@@ -16,7 +16,7 @@ public class DestinationSetState extends LocationDependentState {
 
 	public DestinationSetState(VoiceInterpreterActivity context,
 			Point destination, boolean fromFavourite) {
-		super(context, 200);
+		super(context, 3000);
 		this.destination = destination;
 		this.fromFavourite = fromFavourite;
 		giveInstructions();

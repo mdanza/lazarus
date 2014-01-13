@@ -1,6 +1,9 @@
 package com.android.lazarus.helpers;
 
+import org.osmdroid.util.GeoPoint;
+
 import com.android.lazarus.model.Point;
+import com.android.lazarus.model.serialization.GeoPointSerializer;
 import com.android.lazarus.model.serialization.PointSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +15,8 @@ public class SerializationHelper {
 		GsonBuilder builder = new GsonBuilder();
 		PointSerializer pointSerializer = new PointSerializer();
 		builder.registerTypeAdapter(Point.class, pointSerializer);
+		GeoPointSerializer geoPointSerializer = new GeoPointSerializer();
+		builder.registerTypeAdapter(GeoPoint.class, geoPointSerializer);
 		return builder.create();
 	}
 }

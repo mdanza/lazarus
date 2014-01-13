@@ -6,8 +6,6 @@ public class WalkingPosition {
 
 	private String instruction;
 
-	private Obstacle obstacle;
-
 	public WalkingPosition() {
 		super();
 	}
@@ -21,12 +19,6 @@ public class WalkingPosition {
 		super();
 		this.point = point;
 		this.instruction = instruction;
-	}
-
-	public WalkingPosition(Point point, Obstacle obstacle) {
-		super();
-		this.point = point;
-		this.obstacle = obstacle;
 	}
 
 	public Point getPoint() {
@@ -43,14 +35,6 @@ public class WalkingPosition {
 
 	public void setInstruction(String instruction) {
 		this.instruction = instruction;
-	}
-
-	public Obstacle getObstacle() {
-		return obstacle;
-	}
-
-	public void setObstacle(Obstacle obstacle) {
-		this.obstacle = obstacle;
 	}
 
 	

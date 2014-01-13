@@ -14,6 +14,7 @@ public class SensorEventListenerImpl implements SensorEventListener {
 	private Sensor magnetometer;
 	private float[] mGravity;
 	private float[] mGeomagnetic;
+	private static final String[] DIRECTIONS = { "S", "SW", "W", "NW", "N", "NE", "E", "SE", "S" };
 
 	public SensorEventListenerImpl(Activity context){
 		super();
@@ -30,9 +31,7 @@ public class SensorEventListenerImpl implements SensorEventListener {
 	}
 
 	public static String headingToString2(double x) {
-		String directions[] = { "S", "SW", "W", "NW", "N", "NE", "E", "SE", "S" };
-		return directions[(int) Math.round((((double) x % 360) / 45))];
-
+		return DIRECTIONS[(int) Math.round((((double) x % 360) / 45))];
 	}
 
 	protected void init(Activity context) {

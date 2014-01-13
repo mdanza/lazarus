@@ -9,13 +9,6 @@ import com.android.lazarus.model.WalkingPosition;
 public interface DirectionsServiceAdapter {
 
 	/**
-	 * @return walking directions in case of success, null if no directions or
-	 *         invalid token
-	 */
-	public List<WalkingPosition> getWalkingDirections(String token,
-			String origin, String destination);
-
-	/**
 	 * @return bus ride directions in case of success, null if no directions or
 	 *         invalid token
 	 */

@@ -6,22 +6,26 @@ import java.util.List;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.util.GeoPoint;
 
 import android.os.AsyncTask;
-import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.ConstantsHelper;
+import com.android.lazarus.helpers.WalkingPositionHelper;
+import com.android.lazarus.model.Obstacle;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
-import com.android.lazarus.serviceadapter.DirectionsServiceAdapter;
-import com.android.lazarus.serviceadapter.DirectionsServiceAdapterImpl;
+import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapter;
+import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapterImpl;
 
 public class WalkingDirectionsState extends LocationDependentState {
 
 	Point destination;
 	List<WalkingPosition> positions;
+	List<Obstacle> obstacles;
+	int currentWalkingPosition;
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
@@ -29,7 +33,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
-		super(context, 300);
+		super(context, 3000);
 		this.destination = destination;
 		giveInstructions();
 	}
@@ -55,24 +59,27 @@ public class WalkingDirectionsState extends LocationDependentState {
 		@Override
 		protected String doInBackground(String... args) {
 			if (position != null && destination != null) {
-				DirectionsServiceAdapter directionsAdapter = new DirectionsServiceAdapterImpl();
-				String origin = Double.toString(position.getLatitude()) + ","
-						+ Double.toString(position.getLongitude());
-				String end = Double.toString(destination.getLatitude()) + ","
-						+ Double.toString(destination.getLongitude());
-				end = "-34.768216,-55.761541";
+				ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 				
 				RoadManager roadManager = new MapQuestRoadManager(ConstantsHelper.MAP_QUEST_API_KEY);
 				roadManager.addRequestOption("routeType=pedestrian");
 				roadManager.addRequestOption("locale=es_ES");
-				GeoPoint startPoint = new GeoPoint(-34.895928,-56.183251);
+				GeoPoint start = new GeoPoint(position.getLatitude(),position.getLongitude());
+				GeoPoint end = new GeoPoint(destination.getLatitude(),destination.getLongitude());
+				start = new GeoPoint(-34.778024,-55.754501);
+				end = new GeoPoint(-34.774305,-55.759072);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
-				waypoints.add(startPoint);
-				waypoints.add(new GeoPoint(-34.915215,-56.151665));
+				waypoints.add(start);
+				waypoints.add(end);
 				Road road = roadManager.getRoad(waypoints);
+				ArrayList<GeoPoint> route = road.mRouteHigh;
+				ArrayList<RoadNode> nodes = road.mNodes;
+				
+				obstacles = obstacleReportingServiceAdapter.getObstaclesForRoute(route,context.getToken());
+				positions = WalkingPositionHelper.createWalkingPositions(route,nodes);
 
 				if (positions != null) {
-					message = "Ahora te debería decir que dobles a la derecha";
+					message = WalkingPositionHelper.translateFirstInstruction(positions.get(currentWalkingPosition),context.getSensorEventListenerImpl().getPointingDirection());
 					context.speak(message);
 				} else {
 					message = "No se han podido obtener resultados para dirigirse a destino";

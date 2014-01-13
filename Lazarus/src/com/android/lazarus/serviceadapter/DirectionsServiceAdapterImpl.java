@@ -22,35 +22,6 @@ import com.google.gson.reflect.TypeToken;
 public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 
 	@Override
-	public List<WalkingPosition> getWalkingDirections(String token,
-			String origin, String end) {
-		HttpClient client = HttpClientCreator.getNewHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
-				+ "/directions/walkingDirections?origin=" + origin + "&end="
-				+ end);
-		try {
-			request.addHeader("Authorization", token);
-			HttpResponse response = client.execute(request);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent()));
-			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
-					.getAsJsonObject();
-			if (jsonResponse.get("result").getAsString().equals("OK")) {
-				String jsonDirections = jsonResponse.get("data").getAsString();
-				Type type = new TypeToken<List<WalkingPosition>>() {
-				}.getType();
-				List<WalkingPosition> directions = SerializationHelper.gson
-						.fromJson(jsonDirections, type);
-				return directions;
-			} else
-				return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
 	public List<BusRide> getBusDirections(Double xOrigin, Double yOrigin,
 			Double xEnd, Double yEnd, int distance, String token) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();

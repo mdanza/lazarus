@@ -15,12 +15,14 @@
 	var stops = new Array();
 	var selectedObstacleMarker;
 	var selectedStopMarker;
-	var greenIcon = new MQA.Icon("https://maps.google.com/mapfiles/ms/icons/green-dot.png", 20, 20);
-	var blueIcon = new MQA.Icon("https://maps.google.com/mapfiles/ms/icons/blue-dot.png", 20, 20);
+	var greenIcon = new MQA.Icon("images/green.png", 20, 20);
+	var redIcon = new MQA.Icon("images/red.png", 20, 20);
+	var orangeIcon = new MQA.Icon("images/orange.png", 20, 20);
 	var showStops = true;
 	var showObstacles = true;
 	var obstaclesRequest;
 	var stopsRequest;
+	var loadingStreetOptions = false;
 	$(document).ready(function() {
 		if ($("#hiddenToken").val() == "")
 			window.location.replace("index.jsp");
@@ -114,25 +116,17 @@
 			marker = new MQA.Poi(location);
 			marker.setRolloverContent(description);
 			var circle = new MQA.CircleOverlay();
-		    circle.radiusUnit = 'KM';
+		    circle.radiusUnit = "KM";
 			circle.radius = mRadius/1000;
 			circle.shapePoints=[location.lat, location.lng];
+			circle.fillColor="#FF6600";
+			circle.fillColorAlpha=.2;
 			mMap.addShape(circle);
-// 		marker = new google.maps.Marker({
-// 		      position: location,
-// 		      title : description,
-// 		      map : mMap
-// 		  });
-// 		  circle = new google.maps.Circle({
-// 			  map: mMap,
-// 			  radius: mRadius,
-// 			  fillColor: '#FF0000'
-// 		  });
 		  marker._customId = id;
 		  obstacles.push(marker);
-		  //circle.bindTo('center', marker, 'position');
 		  marker._myCircle = circle;
 		  addObstacleInfoWindow(marker);
+		  marker.setIcon(orangeIcon);
 		  mMap.addShape(marker);
 	}
 	function placeStop(location, id, active) {
@@ -140,13 +134,8 @@
 		  if(active)
 			  mIcon = greenIcon;
 		  else
-			  mIcon = blueIcon;
+			  mIcon = redIcon;
 		  marker = new MQA.Poi(location);
-// 		  marker = new google.maps.Marker({
-// 		      position: location,
-// 		      map : mMap,
-// 		      icon : mIcon
-// 		  });
 		  marker.setIcon(mIcon);
 		  marker._customId = id;
 		  marker._customActive = active;
@@ -155,30 +144,12 @@
 		  mMap.addShape(marker);
 	}
 	function addObstacleInfoWindow(marker) {
-// 		if(infoWindow !== undefined)
-// 			infoWindow.close();
-//         infoWindow = new google.maps.InfoWindow({
-//             content: "<button style=\"width: 100%;\" onclick=\"deleteObstacle();\">Borrar obstáculo?</button>"
-//         });
-//         google.maps.event.addListener(marker, 'click', function () {
-//             infoWindow.open(mMap, marker);
-//             selectedObstacleMarker = marker;
-//         });
 		marker.setInfoContentHTML("<button style=\"width: 100%;\" onclick=\"deleteObstacle();\">Borrar obstáculo?</button>");
 		MQA.EventManager.addListener(marker, 'rolloveropen', function(){
 			selectedObstacleMarker = marker;
 		});
     }
 	function addStopInfoWindow(marker) {
-// 		if(infoWindow !== undefined)
-// 			infoWindow.close();
-//         infoWindow = new google.maps.InfoWindow({
-//             content: "<button onclick=\"switchStopStatus();\">Cambiar estado de la parada?</button>"
-//         });
-//         google.maps.event.addListener(marker, 'click', function () {
-//             infoWindow.open(mMap, marker);
-//             selectedStopMarker = marker;
-//         });
 		marker.setInfoContentHTML("<button style=\"width: 100%;\" onclick=\"switchStopStatus();\">Cambiar estado de la parada?</button>");
 		MQA.EventManager.addListener(marker, 'rolloveropen', function(){
 			selectedStopMarker = marker;
@@ -194,9 +165,6 @@
 				jsonResponse = JSON.parse(data);
 				if (jsonResponse.result == "OK"){
 					alert("Borrado correctamente");
-// 					infoWindow.close();
-// 					marker.setMap(null);
-// 					marker._myCircle.setMap(null);
 					mMap.removeShape(marker);
 					mMap.removeShape(marker._myCircle);
 					obstacles.splice(obstacles.indexOf(marker), 1);
@@ -223,7 +191,7 @@
 					if(marker._customActive)
 						marker.setIcon(greenIcon);
 					else
-						marker.setIcon(blueIcon);
+						marker.setIcon(redIcon);
 				}
 				else
 					alert(jsonResponse.data);
@@ -290,16 +258,19 @@
 		showStops = !showStops;
 		if(showStops){
 			$("#switchStops").html("Esconder paradas");
-			for(var i in stops)
+			for(var i in stops){
+				if(stops[i]._customActive == true)
+					stops[i].setIcon(greenIcon);
+				else
+					stops[i].setIcon(redIcon);
 				mMap.addShape(stops[i]);
+			}
 		}
 		else{
 			$("#switchStops").html("Mostrar paradas");
 			for(var i in stops)
 				mMap.removeShape(stops[i]);
 		}
-// 		for(var i in stops)
-// 			stops[i].setMap(map);
 		return false;
 	}
 	
@@ -308,6 +279,7 @@
 		if(showObstacles){
 			$("#switchObstacles").html("Esconder obstáculos");
 			for(var i in obstacles){
+				obstacles[i].setIcon(orangeIcon);
 				mMap.addShape(obstacles[i]);
 				mMap.addShape(obstacles[i]._myCircle);
 			}
@@ -319,16 +291,12 @@
 				mMap.removeShape(obstacles[i]._myCircle);
 			}
 		}
-// 		for(var i in obstacles){
-// 			obstacles[i].setMap(map);
-// 			obstacles[i]._myCircle.setMap(map);
-// 		}
 		return false;
 	}
 	function checkStreets(){
-		$("#streets").html("");
 		var street = $("#inputStreet").val();
-		if(street.length > 2){
+		if(street.length > 2 && loadingStreetOptions == false){
+			loadingStreetOptions = true;
 			$.ajax({
 				url : "<%=SettingsHelper.REST_API_URL + "/addresses/possibleStreets"%>",
 				type : "GET",
@@ -344,6 +312,7 @@
 						for(var i in jsonStreets)
 							options += "<option value='" + jsonStreets[i] + "'/>";
 						$("#streets").html(options);
+						loadingStreetOptions = false;
 					}
 					else
 						alert("No se encontraron calles que satisfagan su búsqueda");

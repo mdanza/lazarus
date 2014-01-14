@@ -7,7 +7,7 @@
 <title>Mapa de reportes</title>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="https://www.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?Fmjtd%7Cluur2962nq%2Cbw%3Do5-90rxh6"></script>
 <script type="text/javascript">
 	var mMap; 
 	var infoWindow;
@@ -15,8 +15,8 @@
 	var stops = new Array();
 	var selectedObstacleMarker;
 	var selectedStopMarker;
-	var greenIcon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
-	var blueIcon = "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+	var greenIcon = new MQA.Icon("https://maps.google.com/mapfiles/ms/icons/green-dot.png", 20, 20);
+	var blueIcon = new MQA.Icon("https://maps.google.com/mapfiles/ms/icons/blue-dot.png", 20, 20);
 	var showStops = true;
 	var showObstacles = true;
 	var obstaclesRequest;
@@ -25,7 +25,7 @@
 		if ($("#hiddenToken").val() == "")
 			window.location.replace("index.jsp");
 		else {
-			google.maps.event.addDomListener(window, 'load', initializeMap);
+			MQA.EventUtil.observe(window, 'load', initializeMap);
 			$("#addObstacleForm").submit(function(event) {
 				form = $(this);
 				url = form.attr('action');
@@ -42,7 +42,7 @@
 						jsonResponse = JSON.parse(data);
 						if (jsonResponse.result == "OK"){
 							alert("Agregado correctamente");
-							placeObstacle(new google.maps.LatLng($("#coordinatesInput").val().split(",")[0], $("#coordinatesInput").val().split(",")[1]), $("#descriptionInput").val(), parseInt($("#radiusInput").val()), jsonResponse.data);
+							placeObstacle({lat:$("#coordinatesInput").val().split(",")[0], lng:$("#coordinatesInput").val().split(",")[1]}, $("#descriptionInput").val(), parseInt($("#radiusInput").val()), jsonResponse.data);
 						}
 						else
 							alert(jsonResponse.data);
@@ -78,35 +78,62 @@
 	});
 
 	function initializeMap() {
-		mapCanvas = document.getElementById('map_canvas');
-		mapOptions = {
-			center : new google.maps.LatLng(-34.894573, -56.153088),
-			zoom : 13,
-			mapTypeId : google.maps.MapTypeId.ROADMAP
-		};
-		mMap = new google.maps.Map(mapCanvas, mapOptions);
-		google.maps.event.addListener(mMap, 'click', function(event) {
-		    $("#coordinatesInput").val(event.latLng.lat() + "," + event.latLng.lng());
-		  });
-		loadObstacles();
-		loadStops();
+		MQA.withModule('largezoom','insetmapcontrol','mousewheel', 'shapes', function() {
+ 			var options={
+		       elt:document.getElementById('map_canvas'),       
+		       zoom:13,                                  
+		       latLng:{lat:-34.894573, lng:-56.153088},  
+		       mtype:'map',                              
+		       bestFitMargin:0,          
+		       zoomOnDoubleClick:true
+		     };
+		    mMap = new MQA.TileMap(options);
+		    mMap.addControl(
+		        new MQA.LargeZoom(),
+		        new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT, new MQA.Size(5,5))
+		    );
+		    var insetOptions={
+		      size:{width:150, height:125},
+		      zoom:3,
+		      mapType:'map',
+		      minimized:true
+		    };
+		    mMap.addControl(
+		  	     new MQA.InsetMapControl(insetOptions),
+		  	     new MQA.MapCornerPlacement(MQA.MapCorner.BOTTOM_RIGHT)
+		     );
+		    mMap.enableMouseWheelZoom();
+		    MQA.EventManager.addListener(mMap, 'click', function(event) {
+			    $("#coordinatesInput").val(event.ll.getLatitude() + "," + event.ll.getLongitude());
+			  });
+			loadObstacles();
+			loadStops();
+		});
 	}
 	function placeObstacle(location, description, mRadius, id) {
-		  marker = new google.maps.Marker({
-		      position: location,
-		      title : description,
-		      map : mMap
-		  });
-		  circle = new google.maps.Circle({
-			  map: mMap,
-			  radius: mRadius,
-			  fillColor: '#FF0000'
-		  });
+			marker = new MQA.Poi(location);
+			marker.setRolloverContent(description);
+			var circle = new MQA.CircleOverlay();
+		    circle.radiusUnit = 'KM';
+			circle.radius = mRadius/1000;
+			circle.shapePoints=[location.lat, location.lng];
+			mMap.addShape(circle);
+// 		marker = new google.maps.Marker({
+// 		      position: location,
+// 		      title : description,
+// 		      map : mMap
+// 		  });
+// 		  circle = new google.maps.Circle({
+// 			  map: mMap,
+// 			  radius: mRadius,
+// 			  fillColor: '#FF0000'
+// 		  });
 		  marker._customId = id;
 		  obstacles.push(marker);
-		  circle.bindTo('center', marker, 'position');
+		  //circle.bindTo('center', marker, 'position');
 		  marker._myCircle = circle;
 		  addObstacleInfoWindow(marker);
+		  mMap.addShape(marker);
 	}
 	function placeStop(location, id, active) {
 		  var mIcon;
@@ -114,37 +141,48 @@
 			  mIcon = greenIcon;
 		  else
 			  mIcon = blueIcon;
-		  marker = new google.maps.Marker({
-		      position: location,
-		      map : mMap,
-		      icon : mIcon
-		  });
+		  marker = new MQA.Poi(location);
+// 		  marker = new google.maps.Marker({
+// 		      position: location,
+// 		      map : mMap,
+// 		      icon : mIcon
+// 		  });
+		  marker.setIcon(mIcon);
 		  marker._customId = id;
 		  marker._customActive = active;
 		  stops.push(marker);
 		  addStopInfoWindow(marker);
+		  mMap.addShape(marker);
 	}
 	function addObstacleInfoWindow(marker) {
-		if(infoWindow !== undefined)
-			infoWindow.close();
-        infoWindow = new google.maps.InfoWindow({
-            content: "<button style=\"width: 100%;\" onclick=\"deleteObstacle();\">Borrar obstáculo?</button>"
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infoWindow.open(mMap, marker);
-            selectedObstacleMarker = marker;
-        });
+// 		if(infoWindow !== undefined)
+// 			infoWindow.close();
+//         infoWindow = new google.maps.InfoWindow({
+//             content: "<button style=\"width: 100%;\" onclick=\"deleteObstacle();\">Borrar obstáculo?</button>"
+//         });
+//         google.maps.event.addListener(marker, 'click', function () {
+//             infoWindow.open(mMap, marker);
+//             selectedObstacleMarker = marker;
+//         });
+		marker.setInfoContentHTML("<button style=\"width: 100%;\" onclick=\"deleteObstacle();\">Borrar obstáculo?</button>");
+		MQA.EventManager.addListener(marker, 'rolloveropen', function(){
+			selectedObstacleMarker = marker;
+		});
     }
 	function addStopInfoWindow(marker) {
-		if(infoWindow !== undefined)
-			infoWindow.close();
-        infoWindow = new google.maps.InfoWindow({
-            content: "<button onclick=\"switchStopStatus();\">Cambiar estado de la parada?</button>"
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infoWindow.open(mMap, marker);
-            selectedStopMarker = marker;
-        });
+// 		if(infoWindow !== undefined)
+// 			infoWindow.close();
+//         infoWindow = new google.maps.InfoWindow({
+//             content: "<button onclick=\"switchStopStatus();\">Cambiar estado de la parada?</button>"
+//         });
+//         google.maps.event.addListener(marker, 'click', function () {
+//             infoWindow.open(mMap, marker);
+//             selectedStopMarker = marker;
+//         });
+		marker.setInfoContentHTML("<button style=\"width: 100%;\" onclick=\"switchStopStatus();\">Cambiar estado de la parada?</button>");
+		MQA.EventManager.addListener(marker, 'rolloveropen', function(){
+			selectedStopMarker = marker;
+		});
     }
 	function deleteObstacle(){
 		marker = selectedObstacleMarker;
@@ -156,9 +194,11 @@
 				jsonResponse = JSON.parse(data);
 				if (jsonResponse.result == "OK"){
 					alert("Borrado correctamente");
-					infoWindow.close();
-					marker.setMap(null);
-					marker._myCircle.setMap(null);
+// 					infoWindow.close();
+// 					marker.setMap(null);
+// 					marker._myCircle.setMap(null);
+					mMap.removeShape(marker);
+					mMap.removeShape(marker._myCircle);
 					obstacles.splice(obstacles.indexOf(marker), 1);
 				}
 				else
@@ -178,7 +218,7 @@
 				jsonResponse = JSON.parse(data);
 				if (jsonResponse.result == "OK"){
 					alert("Modificado correctamente");
-					infoWindow.close();
+					//infoWindow.close();
 					marker._customActive = !marker._customActive;
 					if(marker._customActive)
 						marker.setIcon(greenIcon);
@@ -216,7 +256,7 @@
 					jsonData = JSON.parse(jsonResponse.data);
 					for(var i in jsonData) {
 						jsonObstacle = jsonData[i];
-						placeObstacle(new google.maps.LatLng(parseFloat(jsonObstacle.latitude), parseFloat(jsonObstacle.longitude)), jsonObstacle.description, jsonObstacle.radius, jsonObstacle.id);			
+						placeObstacle({lat:parseFloat(jsonObstacle.latitude), lng:parseFloat(jsonObstacle.longitude)}, jsonObstacle.description, jsonObstacle.radius, jsonObstacle.id);			
 					}
 					$("#switchObstacles").attr("disabled", false);
 				} else
@@ -237,7 +277,7 @@
 					jsonData = JSON.parse(jsonResponse.data);
 					for(var i in jsonData) {
 						jsonStop = jsonData[i];
-						placeStop(new google.maps.LatLng(parseFloat(jsonStop.latitude), parseFloat(jsonStop.longitude)), jsonStop.locationCode, jsonStop.active);			
+						placeStop({lat:parseFloat(jsonStop.latitude), lng:parseFloat(jsonStop.longitude)}, jsonStop.locationCode, jsonStop.active);			
 					}
 					$("#switchStops").attr("disabled", false);
 				} else
@@ -248,35 +288,41 @@
 	
 	function showHideStops(){
 		showStops = !showStops;
-		var map;
 		if(showStops){
 			$("#switchStops").html("Esconder paradas");
-			map = mMap;
+			for(var i in stops)
+				mMap.addShape(stops[i]);
 		}
 		else{
 			$("#switchStops").html("Mostrar paradas");
-			map = null;
+			for(var i in stops)
+				mMap.removeShape(stops[i]);
 		}
-		for(var i in stops)
-			stops[i].setMap(map);
+// 		for(var i in stops)
+// 			stops[i].setMap(map);
 		return false;
 	}
 	
 	function showHideObstacles(){
 		showObstacles = !showObstacles;
-		var map;
 		if(showObstacles){
 			$("#switchObstacles").html("Esconder obstáculos");
-			map = mMap;
+			for(var i in obstacles){
+				mMap.addShape(obstacles[i]);
+				mMap.addShape(obstacles[i]._myCircle);
+			}
 		}
 		else{
 			$("#switchObstacles").html("Mostrar obstáculos");
-			map = null;
+			for(var i in obstacles){
+				mMap.removeShape(obstacles[i]);
+				mMap.removeShape(obstacles[i]._myCircle);
+			}
 		}
-		for(var i in obstacles){
-			obstacles[i].setMap(map);
-			obstacles[i]._myCircle.setMap(map);
-		}
+// 		for(var i in obstacles){
+// 			obstacles[i].setMap(map);
+// 			obstacles[i]._myCircle.setMap(map);
+// 		}
 		return false;
 	}
 	function checkStreets(){

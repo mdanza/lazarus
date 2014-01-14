@@ -113,18 +113,21 @@
 		});
 	}
 	function placeObstacle(location, description, mRadius, id) {
-			marker = new MQA.Poi(location);
-			marker.setRolloverContent(description);
+	      marker = new MQA.Poi(location);
+		  marker.setRolloverContent(description);
+		  if(mRadius != null && mRadius >= 40){
 			var circle = new MQA.CircleOverlay();
 		    circle.radiusUnit = "KM";
 			circle.radius = mRadius/1000;
 			circle.shapePoints=[location.lat, location.lng];
 			circle.fillColor="#FF6600";
 			circle.fillColorAlpha=.2;
-			mMap.addShape(circle);
+			marker._myCircle = circle;
+		 	mMap.addShape(circle);
+		  }else
+			  marker._myCircle = null;
 		  marker._customId = id;
 		  obstacles.push(marker);
-		  marker._myCircle = circle;
 		  addObstacleInfoWindow(marker);
 		  marker.setIcon(orangeIcon);
 		  mMap.addShape(marker);
@@ -166,7 +169,8 @@
 				if (jsonResponse.result == "OK"){
 					alert("Borrado correctamente");
 					mMap.removeShape(marker);
-					mMap.removeShape(marker._myCircle);
+					if(marker._myCircle != null)
+						mMap.removeShape(marker._myCircle);
 					obstacles.splice(obstacles.indexOf(marker), 1);
 				}
 				else
@@ -281,14 +285,16 @@
 			for(var i in obstacles){
 				obstacles[i].setIcon(orangeIcon);
 				mMap.addShape(obstacles[i]);
-				mMap.addShape(obstacles[i]._myCircle);
+				if(obstacles[i]._myCircle != null)
+					mMap.addShape(obstacles[i]._myCircle);
 			}
 		}
 		else{
 			$("#switchObstacles").html("Mostrar obstáculos");
 			for(var i in obstacles){
 				mMap.removeShape(obstacles[i]);
-				mMap.removeShape(obstacles[i]._myCircle);
+				if(obstacles[i]._myCircle != null)
+					mMap.removeShape(obstacles[i]._myCircle);
 			}
 		}
 		return false;

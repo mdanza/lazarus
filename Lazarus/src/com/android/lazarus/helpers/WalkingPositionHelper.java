@@ -18,7 +18,7 @@ public class WalkingPositionHelper {
 	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en dirección opuesta por la calle en que te encuentras, ";
 	private static final String CONTINUE_INSTRUCCION = "Continúa en la misma dirección por la calle en que te encuentras, ";
 	private static final String TURN_LEFT_INSTRUCTION = "Avanza hacia la izquierda por la calle en que te encuentras, ";
-	private static final String TURN_RIGTH_INSTRUCTION = "Avanza hacia la izquierda por la calle en que te encuentras, ";
+	private static final String TURN_RIGTH_INSTRUCTION = "Avanza hacia la derecha por la calle en que te encuentras, ";
 
 	public static List<WalkingPosition> createWalkingPositions(
 			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes) {
@@ -93,18 +93,18 @@ public class WalkingPositionHelper {
 	private static String getInstruction(String cardinalDestination,
 			String cardinalDevice) {
 		String[] cardinals = rotateToCenter(cardinalDevice);
-		for(int i = 0;i<cardinals.length;i++){
-			if(cardinals[i].equals(cardinalDevice)){
-				if(i==0 || i==8){
+		for (int i = 0; i < cardinals.length; i++) {
+			if (cardinals[i].equals(cardinalDestination)) {
+				if (i == 0 || i == 8) {
 					return TURN_OPOSSITE_INTRUCTION;
 				}
-				if(i==4){
+				if (i==4) {
 					return CONTINUE_INSTRUCCION;
 				}
-				if(0<i && i<4){
+				if (0<i && i<4) {
 					return TURN_LEFT_INSTRUCTION;
 				}
-				if(4<i && i<8){
+				if (8>i && i>4) {
 					return TURN_RIGTH_INSTRUCTION;
 				}
 			}
@@ -113,8 +113,30 @@ public class WalkingPositionHelper {
 	}
 
 	private static String[] rotateToCenter(String cardinalDevice) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] rotated = new String[9];
+		for (int i = 0; i < SENSOR_ORIENTATIONS.length; i++) {
+			rotated[i] = SENSOR_ORIENTATIONS[i];
+		}
+		int maximumRotations = 30;
+		int i = 0;
+		while (i < maximumRotations && !rotated[4].equals(cardinalDevice)) {
+			rotated = rotateRight(rotated);
+		}
+		return rotated;
+	}
+
+	private static String[] rotateRight(String[] toRotate) {
+		String[] rotated = new String[toRotate.length];
+		for (int i = 0; i < toRotate.length; i++) {
+			if (i != toRotate.length - 1 && i != 0) {
+				rotated[i] = toRotate[i - 1];
+			}
+			if (i == toRotate.length - 1) {
+				rotated[i] = toRotate[i-1];
+				rotated[0] = rotated[i];
+			}
+		}
+		return rotated;
 	}
 
 	private static String translateCardinalDestination(String cardinalTarget) {

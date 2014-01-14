@@ -53,6 +53,7 @@ public class AddToFavouriteState extends AbstractState {
 			return;
 		}
 		if (toConfirmName) {
+			toConfirmName = false;
 			if (stringPresent(results, "si")) {
 				if (favouriteWithName(favourites, name)) {
 					this.message = "Ya existe un favorito con este nombre, por favor elija otro";
@@ -67,6 +68,7 @@ public class AddToFavouriteState extends AbstractState {
 				}
 			}
 			if(stringPresent(results, "no")){
+				toConfirmName = true;
 				position++;
 				this.handleResults(possibleNames);
 			}

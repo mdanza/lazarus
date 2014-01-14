@@ -83,7 +83,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			if (message.length() <= maximumLength) {
 				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
 			} else {
-				String[] parts = MessageSplitter.splitMessage(message, maximumLength, "\\.\\.");
+				String[] parts = MessageSplitter.splitMessage(message,
+						maximumLength, "\\.\\.");
 				for (String part : parts) {
 					tts.speak(part, TextToSpeech.QUEUE_ADD, null);
 				}
@@ -91,7 +92,26 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		}
 	}
 
-	
+	public void speak(String message, boolean addQueue) {
+		if (message != null) {
+			int maximumLength = 245;
+			if (addQueue == true) {
+				if (message != null) {
+					if (message.length() <= maximumLength) {
+						tts.speak(message, TextToSpeech.QUEUE_ADD, null);
+					} else {
+						String[] parts = MessageSplitter.splitMessage(message,
+								maximumLength, "\\.\\.");
+						for (String part : parts) {
+							tts.speak(part, TextToSpeech.QUEUE_ADD, null);
+						}
+					}
+				}
+			} else {
+				speak(message);
+			}
+		}
+	}
 
 	public void sayMessage() {
 		speak(this.state.getMessage());

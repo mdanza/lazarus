@@ -3,6 +3,7 @@ package com.android.lazarus.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osmdroid.bonuspack.routing.GoogleRoadManager;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
@@ -31,6 +32,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private double initialDistanceToCurrentPosition = -1;
 	private double initialDistanceToNextPosition = -1;
 	private String initialMessage = "";
+	private double distanceToFinalPosition = -1;
+	private static final int NEEDED_ACCURACY = 3000;
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
@@ -38,14 +41,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
-		super(context, 50);
+		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		giveInstructions();
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination, String initialMessage) {
-		super(context, 30);
+		super(context, NEEDED_ACCURACY);
 		this.initialMessage = initialMessage;
 		this.destination = destination;
 		giveInstructions();
@@ -53,14 +56,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		// TODO Auto-generated method stub
-
+		if(stringPresent(results, "listo")){
+			MainMenuState mainMenuState = new MainMenuState(context);
+		}
 	}
 
 	@Override
 	protected void giveInstructions() {
 		if (initialMessage != null && !initialMessage.equals("")) {
-			context.speak(initialMessage);
+			context.speak(initialMessage,true);
 		}
 		if (positions == null) {
 			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
@@ -72,11 +76,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 				if (closestPosition != -1 && olderPosition < closestPosition) {
 					currentWalkingPosition = getClosestPosition();
 				}
-				if (olderPosition != currentWalkingPosition) {
+				if (olderPosition != currentWalkingPosition
+						&& currentWalkingPosition != positions.size() - 1) {
 					String instruction = positions.get(currentWalkingPosition)
 							.getInstruction();
 					if (instruction != null) {
-						context.speak("En el siguiente cruce, " + instruction,true);
+						context.speak("En el siguiente cruce, " + instruction,
+								true);
 					}
 					initialDistanceToCurrentPosition = distanceToWalkingPosition(positions
 							.get(currentWalkingPosition));
@@ -84,14 +90,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 						initialDistanceToNextPosition = distanceToWalkingPosition(positions
 								.get(currentWalkingPosition + 1));
 					}
-				} else {
-					if (conditionsToRecalculate()) {
-						recalculate();
+				} else if (currentWalkingPosition == positions.size() - 1) {
+					double currentDistanceToFinalPosition = distanceToWalkingPosition(positions.get(currentWalkingPosition));
+					if(distanceToFinalPosition==-1 || Math.abs(distanceToFinalPosition-currentDistanceToFinalPosition)>5){
+						distanceToFinalPosition = currentDistanceToFinalPosition;
+						context.speak("Usted se encuentra aproximadamente a "+Math.ceil(currentDistanceToFinalPosition)+" metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga listo",true);
 					}
+				} else if (conditionsToRecalculate()) {
+					recalculate();
 				}
-
 			}
+
 		}
+
 	}
 
 	private void recalculate() {
@@ -167,7 +178,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				end = new GeoPoint(-34.779298,-55.755171);
+				end = new GeoPoint(-34.778305,-55.754454);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -186,7 +197,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl()
 									.getPointingDirection());
 					message = initialMessage + message;
-					context.speak(message,true);
+					context.speak(message, true);
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";

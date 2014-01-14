@@ -95,16 +95,16 @@ public class WalkingPositionHelper {
 		String[] cardinals = rotateToCenter(cardinalDevice);
 		for (int i = 0; i < cardinals.length; i++) {
 			if (cardinals[i].equals(cardinalDestination)) {
-				if (i == 0 || i==1 || i==7 || i == 8) {
+				if (i == 0 || i == 8) {
 					return TURN_OPOSSITE_INTRUCTION;
 				}
-				if (i == 4 || i==3 || i==5) {
+				if (i==4) {
 					return CONTINUE_INSTRUCCION;
 				}
-				if (i==2) {
+				if (0<i && i<4) {
 					return TURN_LEFT_INSTRUCTION;
 				}
-				if (i==6) {
+				if (8>i && i>4) {
 					return TURN_RIGTH_INSTRUCTION;
 				}
 			}

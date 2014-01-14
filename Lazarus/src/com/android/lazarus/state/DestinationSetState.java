@@ -13,10 +13,11 @@ public class DestinationSetState extends LocationDependentState {
 	Point destination;
 	boolean firstIntructionPassed;
 	boolean fromFavourite = false;
+	private static final int NEEDED_ACCURACY = 2000;
 
 	public DestinationSetState(VoiceInterpreterActivity context,
 			Point destination, boolean fromFavourite) {
-		super(context, 200);
+		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.fromFavourite = fromFavourite;
 		giveInstructions();

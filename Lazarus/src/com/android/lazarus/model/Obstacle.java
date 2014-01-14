@@ -6,13 +6,15 @@ public class Obstacle {
 
 	private Point centre;
 
-	private int radius;
+	private long radius;
 
 	private User user;
 
 	private Date createdAt;
 
 	private String description;
+
+	private long id;
 
 	public Obstacle() {
 		this.createdAt = new Date();
@@ -40,11 +42,11 @@ public class Obstacle {
 		this.centre = centre;
 	}
 
-	public int getRadius() {
+	public long getRadius() {
 		return radius;
 	}
 
-	public void setRadius(int radius) {
+	public void setRadius(long radius) {
 		this.radius = radius;
 	}
 
@@ -70,6 +72,11 @@ public class Obstacle {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+		
 	}
 
 }

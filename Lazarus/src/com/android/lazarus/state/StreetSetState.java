@@ -94,7 +94,7 @@ public class StreetSetState extends AbstractState {
 
 	private void goToDestinationSetState() {
 		SetDestinationTask setDestinationTask = new SetDestinationTask();
-		setDestinationTask.doInBackground(new String());
+		setDestinationTask.execute(new String());
 	}
 
 	private void checkForNumberOrCorner() {
@@ -120,7 +120,7 @@ public class StreetSetState extends AbstractState {
 		}
 		message = "";
 		GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
-		getStreetNameTask.doInBackground(firstResults.get(position));
+		getStreetNameTask.execute(firstResults.get(position));
 	}
 
 	private void goToNextPosition() {
@@ -209,6 +209,6 @@ public class StreetSetState extends AbstractState {
 	@Override
 	protected void restartState() {
 		MainMenuState mainMenuState = new MainMenuState(context);
-		context.setState(mainMenuState);		
+		context.setState(mainMenuState);
 	}
 }

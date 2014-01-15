@@ -55,7 +55,7 @@ public class SignUpState extends AbstractState {
 				CheckUsernameAvailableTask checkUsernameAvailableTask = new CheckUsernameAvailableTask();
 				String[] args = new String[1];
 				args[0] = username;
-				checkUsernameAvailableTask.doInBackground(args);
+				checkUsernameAvailableTask.execute(args);
 			}
 			return;
 		}
@@ -78,7 +78,7 @@ public class SignUpState extends AbstractState {
 				String[] args = new String[3];
 				args[0] = username;
 				args[1] = password;
-				saveDataTask.doInBackground(args);
+				saveDataTask.execute(args);
 			}
 			return;
 		}

@@ -5,7 +5,7 @@ import java.util.List;
 import com.android.lazarus.VoiceInterpreterActivity;
 
 public class MoreMainMenuState extends AbstractState {
-	
+
 	int action;
 	private final int DELETE = 2;
 
@@ -18,16 +18,17 @@ public class MoreMainMenuState extends AbstractState {
 
 	@Override
 	public void handleResults(List<String> results) {
-		if(containsNumber(results,2)){
-			this.message = "¿Está seguro que desea borrar los datos del celular?";	
+		if (containsNumber(results, 2)) {
+			this.message = "¿Está seguro que desea borrar los datos del celular?";
 			this.action = DELETE;
 			return;
 		}
-		if(stringPresent(results,"si")){
-			if(this.action==DELETE){
-				context.getSharedPreferences("usrpref", 0).edit().clear().commit();
+		if (stringPresent(results, "si")) {
+			if (this.action == DELETE) {
+				context.getSharedPreferences("usrpref", 0).edit().clear()
+						.commit();
 				String nextMessage = "Sus datos fueron borrados del celular.";
-				State logInState = new LogInState(this.context,nextMessage);
+				State logInState = new LogInState(this.context, nextMessage);
 				this.context.setState(logInState);
 			}
 		}
@@ -37,7 +38,7 @@ public class MoreMainMenuState extends AbstractState {
 	@Override
 	protected void restartState() {
 		MoreMainMenuState moreMainMenuState = new MoreMainMenuState(context);
-		this.context.setState(moreMainMenuState);		
+		this.context.setState(moreMainMenuState);
 	}
 
 }

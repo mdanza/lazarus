@@ -12,10 +12,9 @@ public abstract class LocationDependentState extends AbstractState {
 
 	float minimumAccuraccy;
 	Location position;
-	LocationListenerImpl locationListener;
 	boolean enoughAccuraccy = true;
 	TextToSpeech tts;
-	String notEnoughAccuracyMessage = "No se puede obtener su posición actual, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el gps por favor espere unos instantes mientras obtenemos su ubicación";
+	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el g p s por favor espere unos instantes mientras obtenemos su ubicación";
 
 	public LocationDependentState(VoiceInterpreterActivity context) {
 		super(context);
@@ -25,7 +24,6 @@ public abstract class LocationDependentState extends AbstractState {
 			float minimumAccuraccy) {
 		super(context);
 		this.minimumAccuraccy = minimumAccuraccy;
-		this.locationListener = context.getLocationListener();
 		tts = this.context.getTts();
 		loadPosition();
 	}
@@ -43,21 +41,21 @@ public abstract class LocationDependentState extends AbstractState {
 	}
 
 	public void loadPosition() {
-		setPosition(locationListener.getLocation());
+		setPosition(context.getLocationListener().getLocation());
 	}
 
 	public void setPosition(Location position) {
-		if (locationListener.getLocation() == null) {
+		if (position == null) {
 			this.message = notEnoughAccuracyMessage;
 			context.speak(this.message);
 		} else {
-			if (!(locationListener.getLocation().getAccuracy() < minimumAccuraccy)) {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
 				enoughAccuraccy = false;
 				this.message = notEnoughAccuracyMessage;
 				context.speak(this.message);
 			} else {
 				enoughAccuraccy = true;
-				this.position = locationListener.getLocation();
+				this.position = position;
 				giveInstructions();
 			}
 		}

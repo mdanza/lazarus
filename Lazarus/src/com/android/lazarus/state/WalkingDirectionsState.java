@@ -40,6 +40,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
+		context.mockLocationListener.startMoving();
 		this.destination = destination;
 		giveInstructions();
 	}
@@ -48,6 +49,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 			Point destination, String initialMessage) {
 		super(context, NEEDED_ACCURACY);
 		this.initialMessage = initialMessage;
+		context.mockLocationListener.startMoving();
 		this.destination = destination;
 		giveInstructions();
 	}
@@ -56,6 +58,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	protected void handleResults(List<String> results) {
 		if (stringPresent(results, "listo")) {
 			MainMenuState mainMenuState = new MainMenuState(context);
+			context.setState(mainMenuState);
 		}
 	}
 
@@ -66,7 +69,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 		if (positions == null) {
 			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
-			getInstructionsTask.doInBackground(new String[2]);
+			getInstructionsTask.execute(new String[2]);
 		} else {
 			if (position != null) {
 				checkForObstacles();
@@ -206,7 +209,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.7785,-55.755885);
+				// end = new GeoPoint(-34.7785,-55.755885);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);

@@ -13,7 +13,7 @@ public abstract class AbstractState implements State {
 
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
-	protected boolean stripAccents = true; 
+	protected boolean stripAccents = true;
 	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
 
 	protected String message;
@@ -51,27 +51,29 @@ public abstract class AbstractState implements State {
 	}
 
 	public void setResults(List<String> results) {
-		if (stripAccents) {
-			results = stripAccents(results);
-		}
-		if (stringPresent(results, "donde estoy")) {
-			this.message = getWhereAmIMessage() + this.defaultMessage;
-			return;
-		}
-		if (stringPresent(results, "cancelar")) {
-			this.restartState();
-		}
-		if (stringPresent(results, "menu")) {
-			if (context.getToken() != null) {
-				initializeMainMenu();
+		if (results != null) {
+			if (stripAccents) {
+				results = stripAccents(results);
 			}
-			return;
+			if (stringPresent(results, "donde estoy")) {
+				this.message = getWhereAmIMessage() + this.defaultMessage;
+				return;
+			}
+			if (stringPresent(results, "cancelar")) {
+				this.restartState();
+			}
+			if (stringPresent(results, "menu")) {
+				if (context.getToken() != null) {
+					initializeMainMenu();
+				}
+				return;
+			}
+			if (stringPresent(results, "ayuda")) {
+				message = instructions + message;
+				return;
+			}
+			handleResults(results);
 		}
-		if (stringPresent(results, "ayuda")) {
-			message = instructions + message;
-			return;
-		}
-		handleResults(results);
 	}
 
 	protected abstract void restartState();

@@ -59,7 +59,7 @@ public class MainMenuState extends AbstractState {
 			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 			String[] args = new String[1];
 			args[0] = firstResults.get(position);
-			possibleDestinationTask.doInBackground(args);
+			possibleDestinationTask.execute(args);
 		}
 		if (firstResults != null && position == firstResults.size()) {
 			if (position != 0 && !toChooseStreet && !toConfirmFavourite) {

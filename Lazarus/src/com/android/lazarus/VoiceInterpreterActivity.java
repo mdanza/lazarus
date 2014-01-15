@@ -9,10 +9,12 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
+import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -39,6 +41,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private String initialMessage = "Bienvenido, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
+	public MockLocationListener mockLocationListener = new MockLocationListener(this);
 
 	public SensorEventListenerImpl getSensorEventListenerImpl() {
 		return sensorEventListenerImpl;
@@ -137,8 +140,9 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 //						100000);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
-		findViewById(R.id.pushToTalkButton).setOnTouchListener(
-				pushToTalkListener);
+		Button pushToTalkBtn = (Button) findViewById(R.id.pushToTalkButton);
+		pushToTalkBtn.setOnTouchListener(pushToTalkListener);
+		pushToTalkBtn.setSoundEffectsEnabled(false);
 
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -159,7 +163,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			String[] args = new String[2];
 			args[0] = username;
 			args[1] = password;
-			logInTask.doInBackground(args);
+			logInTask.execute(args);
 		} else {
 			LogInState logInState = new LogInState(this, initialMessage);
 			this.setState(logInState);
@@ -172,15 +176,16 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			case MotionEvent.ACTION_DOWN:
 				speechRecognizer.startListening(recognizerIntent);
 				tts.stop();
-				break;
+				return true;
 			case MotionEvent.ACTION_UP:
 				speechRecognizer.stopListening();
 				tts.speak(
 						". Espere mientras procesamos el resultado por favor",
 						TextToSpeech.QUEUE_FLUSH, null);
-				break;
+				return true;
+			case MotionEvent.ACTION_MOVE:
+				return true;
 			}
-
 			return true;
 		}
 	};
@@ -208,8 +213,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
-			//float rate = Float.parseFloat("1");
-			//tts.setSpeechRate(rate);
+			// float rate = Float.parseFloat("1");
+			// tts.setSpeechRate(rate);
 			if (state != null) {
 				speak(state.getMessage());
 			}
@@ -229,7 +234,6 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		sensorEventListenerImpl.resume();
-		
 	}
 
 	@Override

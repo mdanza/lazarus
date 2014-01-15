@@ -56,9 +56,7 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("username", username));
 			nameValuePairs.add(new BasicNameValuePair("password", password));
-			if (email != null && !"".equals(email)) {
-				nameValuePairs.add(new BasicNameValuePair("email", email));
-			}
+			nameValuePairs.add(new BasicNameValuePair("email", email));
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(

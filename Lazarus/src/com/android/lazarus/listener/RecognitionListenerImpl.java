@@ -5,7 +5,6 @@ import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 
@@ -13,7 +12,8 @@ public class RecognitionListenerImpl implements RecognitionListener {
 
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 
-	private final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+	private final ToneGenerator tg = new ToneGenerator(
+			AudioManager.STREAM_MUSIC, 100);
 
 	public RecognitionListenerImpl(VoiceInterpreterActivity context) {
 		this.voiceInterpreterActivity = context;
@@ -26,14 +26,16 @@ public class RecognitionListenerImpl implements RecognitionListener {
 
 	@Override
 	public void onResults(Bundle results) {
-		voiceInterpreterActivity.getState().setResults(results
-				.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
+		voiceInterpreterActivity
+				.getState()
+				.setResults(
+						results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
 		voiceInterpreterActivity.sayMessage();
 	}
 
 	@Override
 	public void onReadyForSpeech(Bundle params) {
-         tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+		tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 	}
 
 	@Override
@@ -78,7 +80,8 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "No se ha escuchado nada, ";
 			break;
 		}
-		voiceInterpreterActivity.speak(message+voiceInterpreterActivity.getState().getMessage());
+		voiceInterpreterActivity.speak(message
+				+ voiceInterpreterActivity.getState().getMessage());
 	}
 
 	@Override

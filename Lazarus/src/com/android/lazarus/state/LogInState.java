@@ -65,7 +65,7 @@ public class LogInState extends AbstractState {
 				}
 				message = "";
 				LogInTask logInTask = new LogInTask();
-				logInTask.doInBackground(args);
+				logInTask.execute(args);
 			}
 			if (stringPresent(results, "no")) {
 				cleanValues();

@@ -2,8 +2,6 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
-import android.speech.tts.TextToSpeech;
-
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.GPScoordinateHelper;
 import com.android.lazarus.model.Point;
@@ -57,8 +55,8 @@ public class DestinationSetState extends LocationDependentState {
 			this.message = "Usted se encuentra aproximadamente a "
 					+ approximateDistance
 					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, ";
-			if(!fromFavourite){
-				message = message+"para agregarlo a favoritos diga tres";
+			if (!fromFavourite) {
+				message = message + "para agregarlo a favoritos diga tres";
 			}
 			context.speak(this.message);
 		}

@@ -206,7 +206,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.7785,-55.755885);
+				// end = new GeoPoint(-34.7785,-55.755885);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);

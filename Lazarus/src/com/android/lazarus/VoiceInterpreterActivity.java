@@ -127,14 +127,14 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-				"es-ES");
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-				"voice.recognition.test");
-		recognizerIntent
-				.putExtra(
-						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
-						100000);
+//		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
+//				"es-ES");
+//		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+//				"voice.recognition.test");
+//		recognizerIntent
+//				.putExtra(
+//						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
+//						100000);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 		findViewById(R.id.pushToTalkButton).setOnTouchListener(
@@ -208,8 +208,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			// if (tts.isLanguageAvailable(Locale.US) ==
 			// TextToSpeech.LANG_AVAILABLE)
 			// tts.setLanguage(Locale.US);
-			float rate = Float.parseFloat("1");
-			tts.setSpeechRate(rate);
+			//float rate = Float.parseFloat("1");
+			//tts.setSpeechRate(rate);
 			if (state != null) {
 				speak(state.getMessage());
 			}

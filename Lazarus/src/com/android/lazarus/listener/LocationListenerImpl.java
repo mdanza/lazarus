@@ -17,6 +17,10 @@ public class LocationListenerImpl implements LocationListener {
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
 
+	public LocationListenerImpl(){
+		
+	}
+	
 	public LocationListenerImpl(
 			VoiceInterpreterActivity voiceInterpreterActivity) {
 		this.voiceInterpreterActivity = voiceInterpreterActivity;

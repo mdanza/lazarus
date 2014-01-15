@@ -41,7 +41,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private String initialMessage = "Bienvenido, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
-	public MockLocationListener mockLocationListener = new MockLocationListener(this);
+	public MockLocationListener mockLocationListener;
 
 	public SensorEventListenerImpl getSensorEventListenerImpl() {
 		return sensorEventListenerImpl;
@@ -132,8 +132,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 //		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
 //				"es-ES");
-//		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-//				"voice.recognition.test");
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+				"voice.recognition.test");
 //		recognizerIntent
 //				.putExtra(
 //						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
@@ -148,7 +148,9 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		locationListener = new LocationListenerImpl(this);
+		//locationListener = new LocationListenerImpl(this);
+		mockLocationListener = new MockLocationListener(this);
+		locationListener = mockLocationListener;
 		initializeFirstState();
 
 	}

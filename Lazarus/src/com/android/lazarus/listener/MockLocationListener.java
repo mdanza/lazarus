@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.state.LocationDependentState;
 
-public class MockLocationListener implements LocationListener {
+public class MockLocationListener extends LocationListenerImpl {
 
 	private Location location = null;
 	private VoiceInterpreterActivity voiceInterpreterActivity;
@@ -25,7 +25,7 @@ public class MockLocationListener implements LocationListener {
 					wait(3000);
 				} catch (InterruptedException e) {
 					
-				}
+				}if(locations.indexOf(location)!=0)
 	    		onLocationChanged(location);
 	    	}
 	    }
@@ -34,6 +34,14 @@ public class MockLocationListener implements LocationListener {
 	public MockLocationListener(
 			VoiceInterpreterActivity voiceInterpreterActivity) {
 		this.voiceInterpreterActivity = voiceInterpreterActivity;
+		Location location = new Location("");
+		location.setLatitude(Double.valueOf(points[0].split("\\,")[0]));
+		location.setLongitude(Double.valueOf(points[0].split("\\,")[1]));
+		location.setAccuracy(20);
+		location.setAltitude(0);
+		location.setTime(System.currentTimeMillis());
+		location.setBearing(0F);
+		onLocationChanged(location);
 	}
 
 	public void setPoints(String[] points){

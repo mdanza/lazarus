@@ -81,8 +81,10 @@ public class User {
 	}
 
 	public void setEmail(String email) {
-		if (email != "")
+		if (email != null && !email.equals(""))
 			this.email = email;
+		else
+			email = null;
 	}
 
 	public Role getRole() {

@@ -66,7 +66,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 		if (positions == null) {
 			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
-			getInstructionsTask.doInBackground(new String[2]);
+			getInstructionsTask.execute(new String[2]);
 		} else {
 			if (position != null) {
 				checkForObstacles();

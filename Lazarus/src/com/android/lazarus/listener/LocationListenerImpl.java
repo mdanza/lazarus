@@ -49,8 +49,10 @@ public class LocationListenerImpl implements LocationListener {
 	@Override
 	public void onLocationChanged(final Location location) {
 		// Check if the provider has better accuracy
-		if(location!=null && (this.location==null || location.getAccuracy()<this.location.getAccuracy())){
-			if(!location.getProvider().equals(provider)){
+		if (location != null
+				&& (this.location == null || location.getAccuracy() < this.location
+						.getAccuracy())) {
+			if (!location.getProvider().equals(provider)) {
 				provider = location.getProvider();
 			}
 		}

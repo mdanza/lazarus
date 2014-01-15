@@ -15,7 +15,7 @@ public abstract class LocationDependentState extends AbstractState {
 	LocationListenerImpl locationListener;
 	boolean enoughAccuraccy = true;
 	TextToSpeech tts;
-	String notEnoughAccuracyMessage = "No se puede obtener su posición actual, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el gps por favor espere unos instantes mientras obtenemos su ubicación";
+	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el g p s por favor espere unos instantes mientras obtenemos su ubicación";
 
 	public LocationDependentState(VoiceInterpreterActivity context) {
 		super(context);

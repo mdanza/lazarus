@@ -37,7 +37,7 @@ public class AddToFavouriteState extends AbstractState {
 		GetFavouritesTask getFavouritesTask = new GetFavouritesTask();
 		String[] args = new String[1];
 		args[0] = context.getToken();
-		getFavouritesTask.doInBackground(args);
+		getFavouritesTask.execute(args);
 	}
 
 	@Override
@@ -64,28 +64,28 @@ public class AddToFavouriteState extends AbstractState {
 					args[1] = point.getLatitude() + "," + point.getLongitude();
 					args[2] = name;
 					AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
-					addToFavouriteTask.doInBackground(args);
+					addToFavouriteTask.execute(args);
 				}
 			}
-			if(stringPresent(results, "no")){
+			if (stringPresent(results, "no")) {
 				toConfirmName = true;
 				position++;
 				this.handleResults(possibleNames);
 			}
 			return;
 		}
-		if(!toConfirmName && position==results.size()){
+		if (!toConfirmName && position == results.size()) {
 			this.message = "Por favor repita el nombre del favorito que desea agregar";
 			resetData();
 		}
-		if(choosingToGoToFavourite){
+		if (choosingToGoToFavourite) {
 			choosingToGoToFavourite = false;
-			if(stringPresent(results, "si")){
+			if (stringPresent(results, "si")) {
 				DestinationSetState destinationSetState = new DestinationSetState(
 						this.context, point, true);
 				this.context.setState(destinationSetState);
 			}
-			if(stringPresent(results, "no")){
+			if (stringPresent(results, "no")) {
 				MainMenuState mainMenuState = new MainMenuState(context);
 				context.setState(mainMenuState);
 			}

@@ -92,7 +92,8 @@
 </script>
 </head>
 <body>
-	<h2>Bienvenido a Lazarus!</h2>
+	<a style="float: right" href="thanks.jsp">Reconocimientos</a>
+	<h2 style="margin-left: 7%">Bienvenido a Lazarus!</h2>
 	<form method="post" id="loginForm"
 		action="<%=SettingsHelper.REST_API_URL + "/users/login"%>">
 		<input type="text" id="inputUsername" placeholder="Ingrese su usuario"

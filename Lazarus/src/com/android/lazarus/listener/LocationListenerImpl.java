@@ -23,6 +23,7 @@ public class LocationListenerImpl implements LocationListener {
 		locationManager = (LocationManager) voiceInterpreterActivity
 				.getSystemService(Activity.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
+		
 		String bestProvider = locationManager.getBestProvider(criteria, true);
 		if (bestProvider != null) {
 			provider = bestProvider;
@@ -34,16 +35,15 @@ public class LocationListenerImpl implements LocationListener {
 			if (!bestProvider.equals(LocationManager.GPS_PROVIDER)) {
 				requestUpdates(LocationManager.GPS_PROVIDER);
 			}
+		}else{
+			requestUpdates(LocationManager.GPS_PROVIDER);			
 		}
 
 	}
 
 	private void requestUpdates(String updatesForProvider) {
-		if (locationManager.isProviderEnabled(updatesForProvider)) {
 			locationManager.requestLocationUpdates(updatesForProvider, 1000, 1,
 					this);
-		}
-
 	}
 
 	@Override

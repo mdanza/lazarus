@@ -229,6 +229,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		sensorEventListenerImpl.resume();
+		
 	}
 
 	@Override

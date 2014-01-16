@@ -42,7 +42,7 @@ public class AddToFavouriteState extends AbstractState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (!toConfirmName && position < results.size()) {
+		if (!toConfirmName && position < results.size() && !choosingToGoToFavourite) {
 			if (possibleNames == null) {
 				possibleNames = results;
 			}
@@ -74,7 +74,7 @@ public class AddToFavouriteState extends AbstractState {
 			}
 			return;
 		}
-		if (!toConfirmName && position == results.size()) {
+		if (!toConfirmName && position == results.size() && !choosingToGoToFavourite) {
 			this.message = "Por favor repita el nombre del favorito que desea agregar";
 			resetData();
 		}

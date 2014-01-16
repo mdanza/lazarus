@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.location.Location;
-import android.location.LocationListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -15,24 +15,15 @@ public class MockLocationListener extends LocationListenerImpl {
 	private Location location = null;
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
-	private String[] points = {"-34.90111,-56.14013","-34.901377,-56.14007","-34.90162,-56.13995","-34.90162,-56.13995","-34.901736,-56.140301","-34.901848,-56.140513","-34.90171,-56.14033","-34.901978,-56.140757","-34.90171,-56.14033","-34.902242,-56.141253","-34.90254,-56.14187","-34.90324,-56.14286","-34.90432,-56.14469","-34.90432,-56.14469","-34.90490,-56.14446","-34.90614,-56.14412","-34.90614,-56.14412","-34.90624,-56.14460"};
-
-	Thread locationUpdatesThread = new Thread() {
-		public void run() {
-			List<Location> locations = getLocationsFromPoints();
-			for (Location location : locations) {
-				try {
-					synchronized (locations) {
-						locations.wait(3000);
-					}
-				} catch (InterruptedException e) {
-
-				}
-				if (locations.indexOf(location) != 0)
-					onLocationChanged(location);
-			}
-		}
-	};
+	private String[] points = { "-34.90111,-56.14013", "-34.901377,-56.14007",
+			"-34.90162,-56.13995", "-34.90162,-56.13995",
+			"-34.901736,-56.140301", "-34.901848,-56.140513",
+			"-34.90171,-56.14033", "-34.901978,-56.140757",
+			"-34.90171,-56.14033", "-34.902242,-56.141253",
+			"-34.90254,-56.14187", "-34.90324,-56.14286",
+			"-34.90432,-56.14469", "-34.90432,-56.14469",
+			"-34.90490,-56.14446", "-34.90614,-56.14412",
+			"-34.90614,-56.14412", "-34.90624,-56.14460" };
 
 	public MockLocationListener(
 			VoiceInterpreterActivity voiceInterpreterActivity) {
@@ -51,9 +42,9 @@ public class MockLocationListener extends LocationListenerImpl {
 		this.points = points;
 	}
 
-	public List<Location> getLocationsFromPoints() {
+	public List<Location> getLocationsFromPoints(String[] args) {
 		List<Location> locations = new ArrayList<Location>();
-		for (String point : points) {
+		for (String point : args) {
 			Location location = new Location("");
 			location.setLatitude(Double.valueOf(point.split("\\,")[0]));
 			location.setLongitude(Double.valueOf(point.split("\\,")[1]));
@@ -67,7 +58,8 @@ public class MockLocationListener extends LocationListenerImpl {
 	}
 
 	public void startMoving() {
-		locationUpdatesThread.run();
+		WalkTask walkTask = new WalkTask();
+		walkTask.execute(points);
 	}
 
 	@Override
@@ -92,7 +84,6 @@ public class MockLocationListener extends LocationListenerImpl {
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -100,4 +91,23 @@ public class MockLocationListener extends LocationListenerImpl {
 		return location;
 	}
 
+	private class WalkTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			List<Location> locations = getLocationsFromPoints(args);
+			for (Location location : locations) {
+				try {
+					synchronized (locations) {
+						locations.wait(3000);
+					}
+				} catch (InterruptedException e) {
+
+				}
+				if (locations.indexOf(location) != 0)
+					onLocationChanged(location);
+			}
+			return "Walking";
+		}
+	}
 }

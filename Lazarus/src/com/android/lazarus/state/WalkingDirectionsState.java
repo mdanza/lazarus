@@ -40,18 +40,18 @@ public class WalkingDirectionsState extends LocationDependentState {
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
-		context.mockLocationListener.startMoving();
 		this.destination = destination;
 		giveInstructions();
+		context.mockLocationListener.startMoving();
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination, String initialMessage) {
 		super(context, NEEDED_ACCURACY);
 		this.initialMessage = initialMessage;
-		context.mockLocationListener.startMoving();
 		this.destination = destination;
 		giveInstructions();
+		context.mockLocationListener.startMoving();
 	}
 
 	@Override
@@ -68,6 +68,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 			context.speak(initialMessage, true);
 		}
 		if (positions == null) {
+			message = "";
 			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
 			getInstructionsTask.execute(new String[2]);
 		} else {

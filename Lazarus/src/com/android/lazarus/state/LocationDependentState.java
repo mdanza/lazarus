@@ -6,14 +6,12 @@ import android.location.Location;
 import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
-import com.android.lazarus.listener.LocationListenerImpl;
 
 public abstract class LocationDependentState extends AbstractState {
 
 	float minimumAccuraccy;
 	Location position;
 	boolean enoughAccuraccy = true;
-	TextToSpeech tts;
 	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el g p s por favor espere unos instantes mientras obtenemos su ubicación";
 
 	public LocationDependentState(VoiceInterpreterActivity context) {
@@ -24,8 +22,7 @@ public abstract class LocationDependentState extends AbstractState {
 			float minimumAccuraccy) {
 		super(context);
 		this.minimumAccuraccy = minimumAccuraccy;
-		tts = this.context.getTts();
-		loadPosition();
+		loadFirstTimePosition();
 	}
 
 	public float getMinimumAccuraccy() {
@@ -40,8 +37,24 @@ public abstract class LocationDependentState extends AbstractState {
 		return position;
 	}
 
-	public void loadPosition() {
-		setPosition(context.getLocationListener().getLocation());
+	public void loadFirstTimePosition() {
+		setFirstTimePosition(context.getLocationListener().getLocation());
+	}
+
+	public void setFirstTimePosition(Location position) {
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+			}
+		}
 	}
 
 	public void setPosition(Location position) {

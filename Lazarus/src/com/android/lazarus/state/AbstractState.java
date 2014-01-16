@@ -52,9 +52,9 @@ public abstract class AbstractState implements State {
 
 	public void setResults(List<String> results) {
 		if (results != null) {
-			if (stripAccents) {
+			//if (stripAccents) {
 				results = stripAccents(results);
-			}
+			//}
 			if (stringPresent(results, "donde estoy")) {
 				this.message = getWhereAmIMessage() + this.defaultMessage;
 				return;

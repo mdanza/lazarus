@@ -60,6 +60,7 @@ public class AddToFavouriteState extends AbstractState {
 					resetData();
 				} else {
 					String[] args = new String[3];
+					message = "";
 					args[0] = context.getToken();
 					args[1] = point.getLatitude() + "," + point.getLongitude();
 					args[2] = name;
@@ -68,7 +69,6 @@ public class AddToFavouriteState extends AbstractState {
 				}
 			}
 			if (stringPresent(results, "no")) {
-				toConfirmName = true;
 				position++;
 				this.handleResults(possibleNames);
 			}
@@ -139,6 +139,7 @@ public class AddToFavouriteState extends AbstractState {
 				message = "Ha ocurrido un error, al agregar el favorito, por favor diga el nombre nuevamente";
 				resetData();
 			}
+			context.sayMessage();
 			return null;
 		}
 	}

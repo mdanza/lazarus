@@ -78,6 +78,7 @@ public class SignUpState extends AbstractState {
 				String[] args = new String[3];
 				args[0] = username;
 				args[1] = password;
+				message = "";
 				saveDataTask.execute(args);
 			}
 			return;
@@ -95,6 +96,7 @@ public class SignUpState extends AbstractState {
 		toConfirmUsername = false;
 		toChoosePassword = false;
 		toConfirmPassword = false;
+		stripAccents = false;
 		this.message = defaultMessage;
 	}
 

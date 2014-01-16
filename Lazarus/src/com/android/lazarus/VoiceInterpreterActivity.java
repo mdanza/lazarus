@@ -81,8 +81,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	public void speak(String message) {
 		int maximumLength = 245;
-		tts.stop();
-		if (message != null) {
+		if (message != null && !message.equals("")) {
+			tts.stop();
 			if (message.length() <= maximumLength) {
 				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
 			} else {
@@ -130,14 +130,14 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-//				"es-ES");
+		// recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
+		// "es-ES");
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
 				"voice.recognition.test");
-//		recognizerIntent
-//				.putExtra(
-//						RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
-//						100000);
+		// recognizerIntent
+		// .putExtra(
+		// RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
+		// 100000);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 		Button pushToTalkBtn = (Button) findViewById(R.id.pushToTalkButton);
@@ -148,7 +148,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		//locationListener = new LocationListenerImpl(this);
+		// locationListener = new LocationListenerImpl(this);
 		mockLocationListener = new MockLocationListener(this);
 		locationListener = mockLocationListener;
 		initializeFirstState();

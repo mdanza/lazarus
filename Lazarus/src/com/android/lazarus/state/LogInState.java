@@ -1,5 +1,6 @@
 package com.android.lazarus.state;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -51,6 +52,7 @@ public class LogInState extends AbstractState {
 			}
 			if (waitingForUsername) {
 				waitingForUsername = false;
+				stripAccents = true;
 				this.usernames = results;
 				usernamePresent = true;
 				this.message = "¿Es su nombre de usuario " + usernames.get(0)
@@ -64,16 +66,19 @@ public class LogInState extends AbstractState {
 					args[i] = passwords.get(i);
 				}
 				message = "";
+				stripAccents = true;
 				LogInTask logInTask = new LogInTask();
 				logInTask.execute(args);
 			}
 			if (stringPresent(results, "no")) {
-				cleanValues();
+				cleanValuesForTryAgain();
 				this.message = "Repita su nombre de usuario";
+				stripAccents = false;
 			}
 			if (stringPresent(results, "si")) {
 				this.message = "Diga su contraseña";
 				waitingForPassword = true;
+				stripAccents = false;
 			}
 
 		}
@@ -85,6 +90,16 @@ public class LogInState extends AbstractState {
 		usernames = null;
 		waitingForPassword = false;
 		waitingForUsername = false;
+		stripAccents = true;
+		message = "";
+	}
+	
+	private void cleanValuesForTryAgain() {
+		usernamePresent = false;
+		usernames = null;
+		waitingForPassword = false;
+		waitingForUsername = true;
+		stripAccents = false;
 		message = "";
 	}
 
@@ -112,7 +127,7 @@ public class LogInState extends AbstractState {
 				}
 			}
 			if (!validCredentialsFound) {
-				cleanValues();
+				cleanValuesForTryAgain();
 				message = "Nombre de usuario o contraseña incorrecto, diga su nombre de usuario";
 			}
 			context.sayMessage();
@@ -125,8 +140,7 @@ public class LogInState extends AbstractState {
 	@Override
 	protected void restartState() {
 		LogInState logInState = new LogInState(context);
-		this.context.setState(logInState);
-		
+		this.context.setState(logInState);		
 	}
 
 }

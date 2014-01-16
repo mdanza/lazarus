@@ -94,6 +94,7 @@ public class StreetSetState extends AbstractState {
 
 	private void goToDestinationSetState() {
 		SetDestinationTask setDestinationTask = new SetDestinationTask();
+		message = "";
 		setDestinationTask.execute(new String());
 	}
 

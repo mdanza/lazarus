@@ -123,9 +123,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getLatitude(), position.getLatitude(),
 									obstacle.getCentre().getLongitude(),
 									position.getLongitude());
-					if (distanceToObstacle <= obstacle.getRadius()) {
+					if (distanceToObstacle <= obstacle.getRadius()+position.getAccuracy()) {
 						context.speak(
-								"Cuidado, proximamente se puede encontrar con un obstáculo con la siguiente descripción: "
+								"Cuidado, próximamente se puede encontrar con un obstáculo con la siguiente descripción: "
 										+ obstacle.getDescription() + ", ",
 								true);
 						obstacles.remove(obstacle);

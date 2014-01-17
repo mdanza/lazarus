@@ -73,6 +73,7 @@ public class MainMenuState extends AbstractState {
 			}
 			position = 0;
 			firstResults = null;
+			context.sayMessage();
 			return;
 		}
 		if (stringPresent(results, "si") && toConfirmFavourite) {

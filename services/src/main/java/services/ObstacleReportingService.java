@@ -74,8 +74,6 @@ public class ObstacleReportingService {
 					for (Obstacle o : obstacles) {
 						Obstacle copy = new Obstacle(o.getId(), o.getCentre(),
 								o.getRadius(), o.getUser(), o.getDescription());
-						copy.setCentre(coordinateConverter.convertToWGS84(
-								copy.getCentre(), ShapefileWKT.OBSTACLE));
 						result.add(copy);
 					}
 					return restResultsHelper.resultWrapper(true,
@@ -184,8 +182,6 @@ public class ObstacleReportingService {
 					for (Obstacle o : obstacles) {
 						Obstacle copy = new Obstacle(o.getId(), o.getCentre(),
 								o.getRadius(), o.getUser(), o.getDescription());
-						copy.setCentre(coordinateConverter.convertToWGS84(
-								copy.getCentre(), ShapefileWKT.OBSTACLE));
 						result.add(copy);
 					}
 					return restResultsHelper.resultWrapper(true,

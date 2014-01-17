@@ -42,7 +42,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		giveInstructions();
-		context.mockLocationListener.startMoving();
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
@@ -51,7 +50,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		this.initialMessage = initialMessage;
 		this.destination = destination;
 		giveInstructions();
-		context.mockLocationListener.startMoving();
 	}
 
 	@Override
@@ -230,6 +228,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getPointingDirection());
 					message = initialMessage + message;
 					context.speak(message, true);
+					context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";

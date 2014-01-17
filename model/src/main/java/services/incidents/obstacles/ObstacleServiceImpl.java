@@ -52,16 +52,10 @@ public class ObstacleServiceImpl implements ObstacleService {
 			throw new IllegalArgumentException(
 					"Obstacle already exists in that position");
 		try {
-			Point newPosition = coordinateConverter.convertFromWGS84(position,
-					"obstacle");
-			Obstacle obstacle = new Obstacle(newPosition, radius, possibleUser,
+			Obstacle obstacle = new Obstacle(position, radius, possibleUser,
 					description);
 			return obstacleDAO.addObstacle(obstacle);
 		} catch (MismatchedDimensionException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (FactoryException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (TransformException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -70,19 +64,13 @@ public class ObstacleServiceImpl implements ObstacleService {
 		if (position == null)
 			throw new IllegalArgumentException("position is null");
 		try {
-			Point newPosition = coordinateConverter.convertFromWGS84(position,
-					ShapefileWKT.OBSTACLE);
-			Obstacle possibleObstacle = obstacleDAO.find(newPosition);
+			Obstacle possibleObstacle = obstacleDAO.find(position);
 			if (possibleObstacle == null)
 				throw new IllegalArgumentException("obstacle does not exist");
 			obstacleDAO.delete(possibleObstacle);
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		} catch (FactoryException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (TransformException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+		} 
 	}
 
 	@Override
@@ -109,20 +97,16 @@ public class ObstacleServiceImpl implements ObstacleService {
 					Coordinate firstCoordinate = route.get(i);
 					Coordinate secondCoordinate = route.get(i + 1);
 
-					GeometryFactory factory = new GeometryFactory();
-					Point firstPoint = coordinateConverter.convertFromWGS84(
-							factory.createPoint(firstCoordinate), "obstacle");
-					Point secondPoint = coordinateConverter.convertFromWGS84(
-							factory.createPoint(secondCoordinate), "obstacle");
-
 					List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
-					coordinatesList.add(firstPoint.getCoordinate());
-					coordinatesList.add(secondPoint.getCoordinate());
+					coordinatesList.add(firstCoordinate);
+					coordinatesList.add(secondCoordinate);
 
 					Coordinate[] coordinates = coordinatesList
 							.toArray(new Coordinate[0]);
 					CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(
 							coordinates);
+
+					GeometryFactory factory = new GeometryFactory();
 					LineString lineRoute = new LineString(
 							coordinateArraySequence, factory);
 
@@ -146,10 +130,6 @@ public class ObstacleServiceImpl implements ObstacleService {
 			}
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		} catch (FactoryException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (TransformException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+		} 
 	}
 }

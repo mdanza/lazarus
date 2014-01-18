@@ -27,6 +27,12 @@ public class DestinationSetState extends LocationDependentState {
 
 	@Override
 	protected void handleResults(List<String> results) {
+		if (this.containsNumber(results, 1)) {
+			BusDirectionsState busDirectionsState = new BusDirectionsState(
+					this.context, destination);
+			this.context.setState(busDirectionsState);
+			return;
+		}
 		if (this.containsNumber(results, 2)) {
 			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 					this.context, destination);

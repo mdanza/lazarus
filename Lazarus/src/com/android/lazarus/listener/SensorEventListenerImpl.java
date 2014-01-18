@@ -14,6 +14,8 @@ public class SensorEventListenerImpl implements SensorEventListener {
 	private Sensor magnetometer;
 	private float[] mGravity;
 	private float[] mGeomagnetic;
+	private Float roll;
+	private Float pitch;
 	private static final String[] DIRECTIONS = { "S", "SW", "W", "NW", "N", "NE", "E", "SE", "S" };
 
 	public SensorEventListenerImpl(Activity context){
@@ -24,13 +26,29 @@ public class SensorEventListenerImpl implements SensorEventListener {
 	public String getPointingDirection() {
 		if (azimut != null) {
 			float newAzimut = azimut * 360 / (2 * 3.14159f);
-			return headingToString2(newAzimut + 180);
+			return headingToString(newAzimut + 180);
 		} else {
 			return null;
 		}
 	}
 
-	public static String headingToString2(double x) {
+	public float getPointingDirectionInDeegres(){
+		if (azimut != null) {
+			return azimut * 360 / (2 * 3.14159f);
+		}else{
+			return -1000;
+		}
+	}
+	
+	public float getBearing(){
+		if(roll!=null){
+			return roll * 180 / (float) Math.PI;
+		}else{
+			return -1000;
+		}
+	}
+	
+	public static String headingToString(double x) {
 		return DIRECTIONS[(int) Math.round((((double) x % 360) / 45))];
 	}
 
@@ -72,7 +90,33 @@ public class SensorEventListenerImpl implements SensorEventListener {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				azimut = orientation[0];
+				pitch = orientation[1];
+				roll = orientation[2];
 			}
+		}
+	}
+
+	public float getAzimuth() {
+		if(azimut!=null){
+			return azimut;
+		}else{
+			return -1000;
+		}
+	}
+	
+	public float getPitch(){
+		if(pitch!=null){
+			return pitch;
+		}else{
+			return -1000;
+		}
+	}
+	
+	public float getRoll(){
+		if(roll!=null){
+			return roll;
+		}else{
+			return -1000;
 		}
 	}
 }

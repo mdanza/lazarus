@@ -6,6 +6,9 @@ import java.util.List;
 import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.util.GeoPoint;
 
+import android.hardware.GeomagneticField;
+import android.location.Location;
+
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
 
@@ -69,25 +72,50 @@ public class WalkingPositionHelper {
 		return false;
 	}
 
-	public static String translateFirstInstruction(
-			WalkingPosition walkingPosition, String cardinalDevice) {
+	public static String translateFirstInstruction(Location currentLocation,
+			WalkingPosition secondWalkingPosition, float azimuth, float roll) {
 		String returnInstruction = "Continua por la calle en que te encuentras";
-		if (walkingPosition != null && walkingPosition.getInstruction() != null) {
-			String instruction = walkingPosition.getInstruction();
-			String[] words = instruction.split("\\ ");
-			String cardinalTarget = null;
-			for (String cardinal : MAPQUEST_ORIENTATIONS) {
-				if (stringPresent(words, cardinal)) {
-					cardinalTarget = cardinal;
-				}
-			}
-			if (cardinalTarget != null) {
-				String cardinalDestination = translateCardinalDestination(cardinalTarget);
-				returnInstruction = getInstruction(cardinalDestination,
-						cardinalDevice);
-			}
+		if (azimuth != -1000) {
+			Location secondLocation = createLocation(secondWalkingPosition);
+
+			azimuth = (float) Math.toDegrees(azimuth);
+			roll = (float) Math.toDegrees(roll);
+			GeomagneticField geoField = new GeomagneticField(Double.valueOf(
+					currentLocation.getLatitude()).floatValue(), Double
+					.valueOf(currentLocation.getLongitude()).floatValue(),
+					Double.valueOf(currentLocation.getAltitude()).floatValue(),
+					System.currentTimeMillis());
+			azimuth += geoField.getDeclination(); 
+			roll += geoField.getDeclination(); // converts magnetic north
+													// into
+													// true north
+			float bearing = currentLocation.bearingTo(secondLocation); // (it's
+																		// already
+																		// in
+			// degrees)
+			float direction = azimuth - bearing;
+			float postDirection = roll - bearing;
+			float nut = 0;
+			float s = 2;
 		}
+		/*
+		 * if (walkingPosition != null && walkingPosition.getInstruction() !=
+		 * null) { String instruction = walkingPosition.getInstruction();
+		 * String[] words = instruction.split("\\ "); String cardinalTarget =
+		 * null; for (String cardinal : MAPQUEST_ORIENTATIONS) { if
+		 * (stringPresent(words, cardinal)) { cardinalTarget = cardinal; } } if
+		 * (cardinalTarget != null) { String cardinalDestination =
+		 * translateCardinalDestination(cardinalTarget); returnInstruction =
+		 * getInstruction(cardinalDestination, cardinalDevice); } }
+		 */
 		return returnInstruction;
+	}
+
+	private static Location createLocation(WalkingPosition walkingPosition) {
+		Location location = new Location("Fake provider");
+		location.setLatitude(walkingPosition.getPoint().getLatitude());
+		location.setLongitude(walkingPosition.getPoint().getLongitude());
+		return location;
 	}
 
 	private static String getInstruction(String cardinalDestination,
@@ -98,13 +126,13 @@ public class WalkingPositionHelper {
 				if (i == 0 || i == 8) {
 					return TURN_OPOSSITE_INTRUCTION;
 				}
-				if (i==4) {
+				if (i == 4) {
 					return CONTINUE_INSTRUCCION;
 				}
-				if (0<i && i<4) {
+				if (0 < i && i < 4) {
 					return TURN_LEFT_INSTRUCTION;
 				}
-				if (8>i && i>4) {
+				if (8 > i && i > 4) {
 					return TURN_RIGTH_INSTRUCTION;
 				}
 			}
@@ -132,7 +160,7 @@ public class WalkingPositionHelper {
 				rotated[i] = toRotate[i - 1];
 			}
 			if (i == toRotate.length - 1) {
-				rotated[i] = toRotate[i-1];
+				rotated[i] = toRotate[i - 1];
 				rotated[0] = rotated[i];
 			}
 		}
@@ -158,4 +186,5 @@ public class WalkingPositionHelper {
 		}
 		return stringPresent;
 	}
+
 }

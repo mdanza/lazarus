@@ -24,6 +24,7 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.android.lazarus.test.WalkingDirectionsTester;
 
 public class VoiceInterpreterActivity extends FragmentActivity implements
 		TextToSpeech.OnInitListener {
@@ -41,6 +42,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private String initialMessage = "Bienvenido, ";
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
+	private WalkingDirectionsTester walkingDirectionsTester = new WalkingDirectionsTester(this);
 	public MockLocationListener mockLocationListener;
 
 	public SensorEventListenerImpl getSensorEventListenerImpl() {
@@ -93,6 +95,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 				}
 			}
 		}
+		//walkingDirectionsTester.setResultsOnState();
 	}
 
 	public void speak(String message, boolean addQueue) {
@@ -148,7 +151,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		// locationListener = new LocationListenerImpl(this);
+		 //locationListener = new LocationListenerImpl(this);
 		mockLocationListener = new MockLocationListener(this);
 		locationListener = mockLocationListener;
 		initializeFirstState();

@@ -15,6 +15,7 @@ public class MockLocationListener extends LocationListenerImpl {
 	private Location location = null;
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
+	Boolean restarted = false;
 	private String[] points = { "-34.90111,-56.14013", "-34.901377,-56.14007",
 			"-34.90162,-56.13995", "-34.90162,-56.13995",
 			"-34.901736,-56.140301", "-34.901848,-56.140513",
@@ -31,7 +32,7 @@ public class MockLocationListener extends LocationListenerImpl {
 		Location location = new Location("");
 		location.setLatitude(Double.valueOf(points[0].split("\\,")[0]));
 		location.setLongitude(Double.valueOf(points[0].split("\\,")[1]));
-		location.setAccuracy(20);
+		location.setAccuracy(19);
 		location.setAltitude(0);
 		location.setTime(System.currentTimeMillis());
 		location.setBearing(0F);
@@ -48,7 +49,7 @@ public class MockLocationListener extends LocationListenerImpl {
 			Location location = new Location("");
 			location.setLatitude(Double.valueOf(point.split("\\,")[0]));
 			location.setLongitude(Double.valueOf(point.split("\\,")[1]));
-			location.setAccuracy(20);
+			location.setAccuracy(19);
 			location.setAltitude(0);
 			location.setTime(System.currentTimeMillis());
 			location.setBearing(0F);
@@ -97,6 +98,7 @@ public class MockLocationListener extends LocationListenerImpl {
 		protected String doInBackground(String... args) {
 			List<Location> locations = getLocationsFromPoints(args);
 			for (Location location : locations) {
+				if(!restarted){
 				try {
 					synchronized (locations) {
 						locations.wait(3000);
@@ -106,8 +108,15 @@ public class MockLocationListener extends LocationListenerImpl {
 				}
 				if (locations.indexOf(location) != 0)
 					onLocationChanged(location);
+				}
 			}
 			return "Walking";
 		}
+	}
+
+	public void restart() {
+		restarted = true;
+		MockLocationListener mockLocationListener = new MockLocationListener(this.voiceInterpreterActivity);
+		voiceInterpreterActivity.setLocationListener(mockLocationListener);		
 	}
 }

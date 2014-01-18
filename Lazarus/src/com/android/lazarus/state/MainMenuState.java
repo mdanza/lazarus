@@ -1,5 +1,7 @@
 package com.android.lazarus.state;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -80,6 +82,7 @@ public class MainMenuState extends AbstractState {
 			DestinationSetState destinationSetState = new DestinationSetState(
 					this.context, favourite.getPoint(), true);
 			this.context.setState(destinationSetState);
+			//destinationSetState.handleResults(new ArrayList<String>(Arrays.asList(new String[] {"dos","dos","dos"})));
 			return;
 		}
 		if (streets != null && toChooseStreet) {

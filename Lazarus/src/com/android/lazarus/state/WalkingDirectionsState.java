@@ -22,7 +22,6 @@ import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapter;
 import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapterImpl;
 
 public class WalkingDirectionsState extends LocationDependentState {
-
 	private Point destination;
 	private List<WalkingPosition> positions;
 	private List<Obstacle> obstacles;
@@ -32,6 +31,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
 	private static final int NEEDED_ACCURACY = 20000;
+	private BusRideState parentState;
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
@@ -40,6 +40,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
+		this.destination = destination;
+		giveInstructions();
+	}
+
+	public WalkingDirectionsState(VoiceInterpreterActivity context,
+			Point destination, BusRideState parentState) {
+		super(context, NEEDED_ACCURACY);
+		this.parentState = parentState;
 		this.destination = destination;
 		giveInstructions();
 	}
@@ -55,8 +63,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 	@Override
 	protected void handleResults(List<String> results) {
 		if (stringPresent(results, "destino")) {
-			MainMenuState mainMenuState = new MainMenuState(context);
-			context.setState(mainMenuState);
+			if (parentState == null) {
+				MainMenuState mainMenuState = new MainMenuState(context);
+				context.setState(mainMenuState);
+			} else {
+				context.setState(parentState);
+				parentState.arrivedToDestination();
+			}
 		}
 	}
 
@@ -268,7 +281,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.778449,-55.755814);
+				// end = new GeoPoint(-34.778449,-55.755814);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -281,8 +294,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 				positions = WalkingPositionHelper.createWalkingPositions(route,
 						nodes);
 
-				if (positions != null && positions.size()>1) {
-					message = WalkingPositionHelper.translateFirstInstruction(position, positions.get(currentWalkingPosition+1), context.getSensorEventListenerImpl().getAzimuth(), context.getSensorEventListenerImpl().getRoll());
+				if (positions != null && positions.size() > 1) {
+					message = WalkingPositionHelper.translateFirstInstruction(
+							position,
+							positions.get(currentWalkingPosition + 1), context
+									.getSensorEventListenerImpl().getAzimuth(),
+							context.getSensorEventListenerImpl().getRoll());
 					message = initialMessage + message;
 					context.speak(message, true);
 					context.mockLocationListener.startMoving();

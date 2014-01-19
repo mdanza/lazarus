@@ -29,19 +29,7 @@ public class BusDirectionsState extends LocationDependentState {
 	private InternalState state = InternalState.SEARCH_OPTIONS;
 
 	private enum InternalState {
-		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND, BUS_RIDE_SELECTED, TRANSSHIPMENT_SELECTED, BUS_RIDE_WALKING_TO_STOP, BUS_RIDE_WAITING_BUS
-	}
-
-	public BusDirectionsState(VoiceInterpreterActivity context) {
-		super(context);
-	}
-
-	public BusDirectionsState(VoiceInterpreterActivity context,
-			Point destination, String initialMessage) {
-		super(context, NEEDED_ACCURACY);
-		this.destination = destination;
-		this.message = initialMessage;
-		giveInstructions();
+		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND
 	}
 
 	public BusDirectionsState(VoiceInterpreterActivity context,
@@ -53,14 +41,25 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (state.equals(InternalState.BUS_RIDE_SELECTED)
-				|| state.equals(InternalState.TRANSSHIPMENT_SELECTED)) {
-			if (stringPresent(results, "destino")) {
-				MainMenuState mainMenuState = new MainMenuState(context);
-				context.setState(mainMenuState);
+		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
+			for (int i = 0; i < busRides.size(); i++) {
+				if (containsNumber(results, i)) {
+					context.setState(new BusRideState(this.context,
+							destination, busRides.get(i)));
+					return;
+				}
 			}
-		} else
-			giveInstructions();
+		}
+		if (state.equals(InternalState.AWAITING_USER_DECISION_TRANSSHIPMENT)) {
+			for (int i = 0; i < transshipments.size(); i++) {
+				if (containsNumber(results, i)) {
+					context.setState(new TransshipmentState(this.context,
+							destination, transshipments.get(i)));
+					return;
+				}
+			}
+		}
+		giveInstructions();
 	}
 
 	@Override
@@ -113,11 +112,14 @@ public class BusDirectionsState extends LocationDependentState {
 
 	private void appendDistanceToStop(BusStop stop) {
 		message += " a "
-				+ GPScoordinateHelper
-						.getDistanceBetweenPoints(position.getLatitude(), stop
-								.getPoint().getLatitude(), position
-								.getLongitude(), stop.getPoint().getLongitude())
-				+ " metros de su posición actual";
+				+ Double.valueOf(
+						Math.floor(GPScoordinateHelper
+								.getDistanceBetweenPoints(position
+										.getLatitude(), stop.getPoint()
+										.getLatitude(),
+										position.getLongitude(), stop
+												.getPoint().getLongitude())))
+						.intValue() + " metros de su posición actual";
 	}
 
 	@Override

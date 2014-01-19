@@ -18,7 +18,7 @@ public class BusReportingServiceAdapterImpl implements
 		BusReportingServiceAdapter {
 
 	@Override
-	public Bus getBus(String token, int busId) {
+	public Bus getBus(String token, long busId) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL + "/bus/"
 				+ busId);

@@ -18,10 +18,10 @@ public class WalkingPositionHelper {
 			"oeste", "noroeste", "norte", "noreste", "este", "sureste", "sur" };
 	private static final String[] SENSOR_ORIENTATIONS = { "S", "SW", "W", "NW",
 			"N", "NE", "E", "SE", "S" };
-	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en dirección opuesta por la calle en que te encuentras, ";
-	private static final String CONTINUE_INSTRUCCION = "Continúa en la misma dirección por la calle en que te encuentras, ";
-	private static final String TURN_LEFT_INSTRUCTION = "Avanza hacia la izquierda por la calle en que te encuentras, ";
-	private static final String TURN_RIGTH_INSTRUCTION = "Avanza hacia la derecha por la calle en que te encuentras, ";
+	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en dirección opuesta por ";
+	private static final String CONTINUE_INSTRUCCION = "Continúa en la misma dirección por ";
+	private static final String TURN_LEFT_INSTRUCTION = "Avanza hacia la izquierda por ";
+	private static final String TURN_RIGHT_INSTRUCTION = "Avanza hacia la derecha por ";
 
 	public static List<WalkingPosition> createWalkingPositions(
 			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes) {
@@ -72,31 +72,43 @@ public class WalkingPositionHelper {
 		return false;
 	}
 
-	public static String translateFirstInstruction(Location currentLocation,
-			WalkingPosition secondWalkingPosition, float azimuth, float roll) {
-		String returnInstruction = "Continua por la calle en que te encuentras";
+	public static String translateFirstInstruction(
+			String firstMapQuestInstruction, Location currentLocation,
+			WalkingPosition secondWalkingPosition, float azimuth) {
+		String street = getStreetFromMapQuestFirstInstruction(firstMapQuestInstruction);
+		String returnInstruction = "Avanza por ";
 		if (azimuth != -1000) {
 			Location secondLocation = createLocation(secondWalkingPosition);
-
 			azimuth = (float) Math.toDegrees(azimuth);
-			roll = (float) Math.toDegrees(roll);
 			GeomagneticField geoField = new GeomagneticField(Double.valueOf(
 					currentLocation.getLatitude()).floatValue(), Double
 					.valueOf(currentLocation.getLongitude()).floatValue(),
 					Double.valueOf(currentLocation.getAltitude()).floatValue(),
 					System.currentTimeMillis());
-			azimuth += geoField.getDeclination(); 
-			roll += geoField.getDeclination(); // converts magnetic north
-													// into
-													// true north
-			float bearing = currentLocation.bearingTo(secondLocation); // (it's
-																		// already
-																		// in
-			// degrees)
-			float direction = azimuth - bearing;
-			float postDirection = roll - bearing;
-			float nut = 0;
-			float s = 2;
+			azimuth += geoField.getDeclination();
+			if (azimuth < -180) {
+				azimuth = 360 + azimuth;
+			}
+
+			// azimuth = azimuth + 180;
+			float bearing = currentLocation.bearingTo(secondLocation);
+			// bearing += 180;
+			float direction = bearing - azimuth;
+			boolean headingFound = false;
+			if (Math.abs(direction)>140 && Math.abs(direction) < 180){
+				returnInstruction = TURN_OPOSSITE_INTRUCTION;
+				headingFound = true;
+			}
+			if(Math.abs(direction)>320 || Math.abs(direction)<40){
+				returnInstruction = CONTINUE_INSTRUCCION;
+				headingFound = true;
+			}
+			if (!headingFound && ((direction < 0 && Math.abs(direction) <180) || (direction > 0 && Math.abs(direction) > 180)))
+				returnInstruction = TURN_LEFT_INSTRUCTION;
+			if(!headingFound && ((direction > 0 && Math.abs(direction) >180) || (direction < 0 && Math.abs(direction) > 180)))
+				returnInstruction = TURN_RIGHT_INSTRUCTION;
+			returnInstruction += street + ", ";
+			return returnInstruction;
 		}
 		/*
 		 * if (walkingPosition != null && walkingPosition.getInstruction() !=
@@ -133,11 +145,36 @@ public class WalkingPositionHelper {
 					return TURN_LEFT_INSTRUCTION;
 				}
 				if (8 > i && i > 4) {
-					return TURN_RIGTH_INSTRUCTION;
+					return TURN_RIGHT_INSTRUCTION;
 				}
 			}
 		}
 		return null;
+	}
+
+	private static String getStreetFromMapQuestFirstInstruction(
+			String firstMapQuestInstruction) {
+		String street = "la calle en que te encuentras";
+		if (firstMapQuestInstruction != null) {
+			boolean isStreetAfter = false;
+			String[] splitted = firstMapQuestInstruction.split("\\ ");
+			for (int i = 0; i < splitted.length; i++) {
+				String word = splitted[i];
+				if (!isStreetAfter) {
+					if ("on".equals(word)) {
+						isStreetAfter = true;
+						street = "";
+					}
+				} else {
+					if (i < splitted.length - 1) {
+						street = word + " ";
+					} else {
+						street = street + word;
+					}
+				}
+			}
+		}
+		return street;
 	}
 
 	private static String[] rotateToCenter(String cardinalDevice) {

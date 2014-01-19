@@ -31,7 +31,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private double initialDistanceToNextPosition = -1;
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
-	private static final int NEEDED_ACCURACY = 20000;
+	private static final int NEEDED_ACCURACY = 50;
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
@@ -268,7 +268,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.778449,-55.755814);
+				end = new GeoPoint(-34.777368,-55.755021);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -282,10 +282,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes);
 
 				if (positions != null && positions.size()>1) {
-					message = WalkingPositionHelper.translateFirstInstruction(position, positions.get(currentWalkingPosition+1), context.getSensorEventListenerImpl().getAzimuth(), context.getSensorEventListenerImpl().getRoll());
+					message = WalkingPositionHelper.translateFirstInstruction(positions.get(0).getInstruction(), position, positions.get(currentWalkingPosition+1), context.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					context.mockLocationListener.startMoving();
+					//context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";

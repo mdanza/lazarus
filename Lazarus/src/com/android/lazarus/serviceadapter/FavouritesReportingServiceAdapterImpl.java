@@ -92,7 +92,7 @@ public class FavouritesReportingServiceAdapterImpl implements
 				String jsonFavourites = jsonResponse.get("data").getAsString();
 				Type type = new TypeToken<List<Favourite>>() {
 				}.getType();
-				List<Favourite> favourites = SerializationHelper.gson.fromJson(
+				List<Favourite> favourites = SerializationHelper.gsonInvertedCoords.fromJson(
 						jsonFavourites, type);
 				return favourites;
 			} else

@@ -86,7 +86,7 @@ public class ObstacleReportingServiceAdapterImpl implements
 		try {
 			HttpPost request = new HttpPost(ConstantsHelper.REST_API_URL
 					+ "/obstacles/route");
-			String stringRoute = SerializationHelper.gson.toJson(route);
+			String stringRoute = SerializationHelper.gsonInvertedCoords.toJson(route);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("coordinates",
 					stringRoute));
@@ -101,7 +101,7 @@ public class ObstacleReportingServiceAdapterImpl implements
 				String jsonObstacles = jsonResponse.get("data").getAsString();
 				Type type = new TypeToken<List<Obstacle>>() {
 				}.getType();
-				List<Obstacle> obstacles = SerializationHelper.gson.fromJson(
+				List<Obstacle> obstacles = SerializationHelper.gsonInvertedCoords.fromJson(
 						jsonObstacles, type);
 				return obstacles;
 			}else{

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.Transshipment;
-import com.android.lazarus.model.WalkingPosition;
 
 public interface DirectionsServiceAdapter {
 
@@ -13,7 +12,7 @@ public interface DirectionsServiceAdapter {
 	 *         invalid token
 	 */
 	public List<BusRide> getBusDirections(Double xOrigin, Double yOrigin,
-			Double xEnd, Double yEnd, int distance, String token);
+			Double xEnd, Double yEnd, int distance, int pageNumber, String token);
 
 	/**
 	 * @return bus transshipment directions in case of success, null if no
@@ -21,5 +20,5 @@ public interface DirectionsServiceAdapter {
 	 */
 	public List<Transshipment> getBusDirectionsWithTransshipment(
 			Double xOrigin, Double yOrigin, Double xEnd, Double yEnd,
-			int distance, String token);
+			int distance, int pageNumber, String token);
 }

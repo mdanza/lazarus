@@ -3,6 +3,7 @@ package com.android.lazarus.serviceadapter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -21,15 +22,16 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 
 	@Override
 	public List<String> getBusSchedule(String token, String lineName,
-			String subLineDescription, int busStopLocationCode,
+			String subLineDescription, long busStopLocationCode,
 			int minutesSinceStartOfDay) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
-		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
-				+ "/schedule?lineName=" + lineName + "&subLineDescription="
-				+ subLineDescription + "&busStopLocationCode="
-				+ busStopLocationCode + "&minutesSinceStartOfDay="
-				+ minutesSinceStartOfDay);
 		try {
+			HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
+					+ "/schedule?" + "lineName=" + lineName
+					+ "&subLineDescription="
+					+ URLEncoder.encode(subLineDescription, "UTF-8")
+					+ "&busStopLocationCode=" + busStopLocationCode
+					+ "&minutesSinceStartOfDay=" + minutesSinceStartOfDay);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
@@ -40,7 +42,7 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 				String jsonSchedule = jsonResponse.get("data").getAsString();
 				Type type = new TypeToken<List<String>>() {
 				}.getType();
-				List<String> schedule = SerializationHelper.gson.fromJson(
+				List<String> schedule = SerializationHelper.gsonInvertedCoords.fromJson(
 						jsonSchedule, type);
 				return schedule;
 			} else
@@ -52,8 +54,8 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 	}
 
 	@Override
-	public Bus getClosestBus(String token, int variantCode, int subLineCode,
-			int busStopOrdinal) {
+	public Bus getClosestBus(String token, long variantCode, long subLineCode,
+			long busStopOrdinal) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/schedule/bus?variantCode=" + variantCode + "&subLineCode="
@@ -67,7 +69,7 @@ public class ScheduleServiceAdapterImpl implements ScheduleServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonBus = jsonResponse.get("data").getAsString();
-				Bus bus = SerializationHelper.gson.fromJson(jsonBus, Bus.class);
+				Bus bus = SerializationHelper.gsonInvertedCoords.fromJson(jsonBus, Bus.class);
 				return bus;
 			} else
 				return null;

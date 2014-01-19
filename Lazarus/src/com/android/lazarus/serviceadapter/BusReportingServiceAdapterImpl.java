@@ -31,7 +31,7 @@ public class BusReportingServiceAdapterImpl implements
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonBus = jsonResponse.get("data").getAsString();
-				Bus bus = SerializationHelper.gson.fromJson(jsonBus, Bus.class);
+				Bus bus = SerializationHelper.gsonInvertedCoords.fromJson(jsonBus, Bus.class);
 				return bus;
 			} else
 				return null;

@@ -13,7 +13,6 @@ import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.SerializationHelper;
 import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.Transshipment;
-import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -23,12 +22,13 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 
 	@Override
 	public List<BusRide> getBusDirections(Double xOrigin, Double yOrigin,
-			Double xEnd, Double yEnd, int distance, String token) {
+			Double xEnd, Double yEnd, int distance, int pageNumber, String token) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/directions/busDirections?xOrigin=" + xOrigin + "&yOrigin="
-				+ yOrigin + "&xEnd=" + xEnd + "&yEnd=" + yEnd + "&distance"
-				+ distance);
+				+ yOrigin + "&xEnd=" + xEnd + "&yEnd=" + yEnd
+				+ "&maxWalkingDistance=" + distance + "&pageNumber="
+				+ pageNumber);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -42,7 +42,10 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 				}.getType();
 				List<BusRide> directions = SerializationHelper.gson.fromJson(
 						jsonDirections, type);
-				return directions;
+				if (directions.size() > 0)
+					return directions;
+				else
+					return null;
 			} else
 				return null;
 		} catch (Exception e) {
@@ -54,12 +57,13 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 	@Override
 	public List<Transshipment> getBusDirectionsWithTransshipment(
 			Double xOrigin, Double yOrigin, Double xEnd, Double yEnd,
-			int distance, String token) {
+			int distance, int pageNumber, String token) {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 				+ "/directions/busDirectionsWithTransshipment?xOrigin="
 				+ xOrigin + "&yOrigin=" + yOrigin + "&xEnd=" + xEnd + "&yEnd="
-				+ yEnd + "&distance" + distance);
+				+ yEnd + "&maxWalkingDistance=" + distance + "&pageNumber="
+				+ pageNumber);
 		try {
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -73,7 +77,10 @@ public class DirectionsServiceAdapterImpl implements DirectionsServiceAdapter {
 				}.getType();
 				List<Transshipment> directions = SerializationHelper.gson
 						.fromJson(jsonDirections, type);
-				return directions;
+				if (directions.size() > 0)
+					return directions;
+				else
+					return null;
 			} else
 				return null;
 		} catch (Exception e) {

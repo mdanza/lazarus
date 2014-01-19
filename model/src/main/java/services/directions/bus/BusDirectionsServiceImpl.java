@@ -75,7 +75,7 @@ public class BusDirectionsServiceImpl implements BusDirectionsService {
 			}
 
 			result.add(new BusRide(startStop, endStop, (String) o[3],
-					(String) o[4], (Integer) o[5], previousStop,
+					(String) o[4], (Long) o[5], previousStop,
 					secondPreviousStop, (String) o[6]));
 		}
 		return result;

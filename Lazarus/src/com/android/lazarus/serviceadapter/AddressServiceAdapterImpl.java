@@ -40,7 +40,7 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 						.getAsString();
 				Type type = new TypeToken<List<String>>() {
 				}.getType();
-				List<String> possibleStreets = SerializationHelper.gson
+				List<String> possibleStreets = SerializationHelper.gsonInvertedCoords
 						.fromJson(jsonPossibleStreets, type);
 				return StringUtil.toLowerCase(possibleStreets);
 			} else
@@ -71,7 +71,7 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonPoint = jsonResponse.get("data").getAsString();
-				Point point = SerializationHelper.gson.fromJson(jsonPoint,
+				Point point = SerializationHelper.gsonInvertedCoords.fromJson(jsonPoint,
 						Point.class);
 				return point;
 			} else
@@ -100,7 +100,7 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonPoint = jsonResponse.get("data").getAsString();
-				Point point = SerializationHelper.gson.fromJson(jsonPoint,
+				Point point = SerializationHelper.gsonInvertedCoords.fromJson(jsonPoint,
 						Point.class);
 				return point;
 			} else
@@ -127,7 +127,7 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonCloseLocationData = jsonResponse.get("data")
 						.getAsString();
-				CloseLocationData closeLocationData = SerializationHelper.gson
+				CloseLocationData closeLocationData = SerializationHelper.gsonInvertedCoords
 						.fromJson(jsonCloseLocationData,
 								CloseLocationData.class);
 				return closeLocationData;

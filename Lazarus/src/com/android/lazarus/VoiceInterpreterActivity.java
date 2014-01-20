@@ -82,7 +82,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	}
 
 	public void speak(String message) {
-		int maximumLength = 245;
+		int maximumLength = 185;
 		if (message != null && !message.equals("")) {
 			tts.stop();
 			if (message.length() <= maximumLength) {
@@ -95,7 +95,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 				}
 			}
 		}
-		walkingDirectionsTester.setResultsOnState();
+		//walkingDirectionsTester.setResultsOnState();
 	}
 
 	public void speak(String message, boolean addQueue) {

@@ -21,18 +21,30 @@ public class MessageSplitter {
 						restart = false;
 					}
 					String piece = pieces[i];
-					if (piece.length() > maximumSize) {
-						pieces = subdividePiece(pieces, i, regExp);
-						i = 0;
-					} else {
-						if (i < pieces.length - 1) {
-							if ((piece.length() + pieces[i + 1].length()) <= maximumSize) {
-								String strippedRegExp = regExp.replaceAll(
-										"\\\\", "");
-								pieces = joinPieces(pieces, i, strippedRegExp);
-								restart = true;
+					try {
+						if (piece.length() > maximumSize) {
+							pieces = subdividePiece(pieces, i, regExp,maximumSize);
+							i = 0;
+						} else {
+							if (i < pieces.length - 1) {
+								if ((piece.length() + pieces[i + 1].length() +2) <= maximumSize) {
+									if(piece.length() + pieces[i+1].length() == maximumSize){
+										int length1 = piece.length();
+										int length2 = pieces[i+1].length();
+										int legth3 = 55;
+										int length34=44;
+									}
+									String strippedRegExp = regExp.replaceAll(
+											"\\\\", "");
+									pieces = joinPieces(pieces, i,
+											strippedRegExp);
+									restart = true;
+								}
 							}
 						}
+
+					} catch (NullPointerException e) {
+						System.out.println();
 					}
 				}
 			} else {
@@ -51,12 +63,12 @@ public class MessageSplitter {
 		return message.split("(?<=\\G.{" + maximumLength + "})");
 	}
 
-	private static String[] subdividePiece(String[] pieces, int i, String regExp) {
-		String[] newPiece = splitMessage(pieces[i], 4000, regExp);
+	private static String[] subdividePiece(String[] pieces, int i, String regExp,int maximumSize) {
+		String[] newPiece = splitMessage(pieces[i], maximumSize, regExp);
 		String[] newArray = new String[pieces.length + newPiece.length - 1];
 		for (int j = 0; j < newArray.length; j++) {
 			if (j != i) {
-				newArray[i] = pieces[i];
+				newArray[j] = pieces[j];
 			} else {
 				for (int k = 0; k < newPiece.length; k++) {
 					newArray[j] = newPiece[k];
@@ -76,7 +88,8 @@ public class MessageSplitter {
 				newArray[j] = pieces[positionPieces];
 				positionPieces++;
 			} else {
-				newArray[j] = pieces[positionPieces] + regExp + pieces[positionPieces + 1];
+				newArray[j] = pieces[positionPieces] + regExp
+						+ pieces[positionPieces + 1];
 				positionPieces = positionPieces + 2;
 			}
 		}

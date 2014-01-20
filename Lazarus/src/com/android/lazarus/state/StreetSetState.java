@@ -13,7 +13,7 @@ public class StreetSetState extends AbstractState {
 
 	String firstStreet;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
-	String defaultMessage = "Diga el nombre de otra calle o el número de puerta, ";
+	String defaultMessage = "Diga el nombre de otra calle, o el número de puerta, dígito a dígito, ";
 	int position = 0;
 	List<String> streets = null;
 	List<String> firstResults;
@@ -112,7 +112,7 @@ public class StreetSetState extends AbstractState {
 		if (isAddressNumber(firstResults.get(position))) {
 			toConfirmDoorNumber = true;
 			this.message = "Desea ir a " + firstStreet + " "
-					+ getAddressNumberString(firstResults.get(position)).get(0)
+					+ getStringDigits(Integer.valueOf(getAddressNumberString(firstResults.get(position)).get(0)))
 					+ " "
 					+ getAddressNumberString(firstResults.get(position)).get(1)
 					+ "?";

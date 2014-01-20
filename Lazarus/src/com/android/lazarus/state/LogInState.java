@@ -111,6 +111,9 @@ public class LogInState extends AbstractState {
 			boolean validCredentialsFound = false;
 			for (String arg : args) {
 				if (!validCredentialsFound) {
+					if(isNumber(arg)){
+						arg = getNumber(arg);
+					}
 					String possibleToken = userServiceAdapter.login(
 							usernames.get(0), arg);
 					if (possibleToken != null) {

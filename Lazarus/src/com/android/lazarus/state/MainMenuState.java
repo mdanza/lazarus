@@ -20,26 +20,34 @@ public class MainMenuState extends AbstractState {
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	FavouritesReportingServiceAdapter favouritesReportingServiceAdapter = new FavouritesReportingServiceAdapterImpl();
-	String defaultMessage = "Diga el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 	int position = 0;
 	List<String> streets = null;
 	Favourite favourite = null;
 	boolean toChooseStreet = false;
 	boolean toConfirmFavourite = false;
 	List<String> firstResults;
+	List<Favourite> favourites = null;
 
 	public MainMenuState(VoiceInterpreterActivity context) {
 		super(context);
 		this.context = context;
-		this.message = defaultMessage;
+		loadFavourites("");
 	}
 
 	public MainMenuState(VoiceInterpreterActivity context, String initialText) {
 		super(context);
 		this.context = context;
-		this.message = initialText + defaultMessage;
+		loadFavourites(initialText);
 	}
 
+	private void loadFavourites(String initialText){
+		LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
+		String[] args = new String[2];
+		args[0] = context.getToken();
+		args[1] = initialText;
+		loadFavouritesTask.execute(args);
+	}
+	
 	public void handleResults(List<String> results) {
 		if (wantsMoreMainMenu(results)) {
 			initializeMoreMainMenu();
@@ -82,7 +90,9 @@ public class MainMenuState extends AbstractState {
 			DestinationSetState destinationSetState = new DestinationSetState(
 					this.context, favourite.getPoint(), true);
 			this.context.setState(destinationSetState);
-			destinationSetState.handleResults(new ArrayList<String>(Arrays.asList(new String[] {"dos","dos","dos"})));
+			// destinationSetState.handleResults(new
+			// ArrayList<String>(Arrays.asList(new String[]
+			// {"dos","dos","dos"})));
 			return;
 		}
 		if (streets != null && toChooseStreet) {
@@ -142,8 +152,6 @@ public class MainMenuState extends AbstractState {
 		protected String doInBackground(String... args) {
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), args[0]);
-			List<Favourite> favourites = favouritesReportingServiceAdapter
-					.getFavourites(context.getToken());
 			favourite = getFavourite(args[0], favourites);
 			if (favourite == null && (streets == null || streets.isEmpty())) {
 				goToNextPosition();
@@ -171,6 +179,24 @@ public class MainMenuState extends AbstractState {
 			}
 
 			return null;
+		}
+
+	}
+
+	private class LoadFavouritesTask extends
+			AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			favourites = favouritesReportingServiceAdapter
+					.getFavourites(args[0]);
+			if(!favourites.isEmpty()){
+				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
+			}else{
+				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, para más opciones diga más";
+			}
+			context.speak(message);
+			return message;
 		}
 
 	}

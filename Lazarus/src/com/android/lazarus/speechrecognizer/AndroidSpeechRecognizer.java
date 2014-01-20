@@ -29,6 +29,7 @@ public class AndroidSpeechRecognizer implements
 
 	@Override
 	public void stopListening() {
+		//speechRecognizer.cancel();
 		speechRecognizer.stopListening();
 	}
 

@@ -97,7 +97,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.CONFIRMING_DESCRIPTION)) {
 			if (stringPresent(results, "si")) {
 				obstacleToReport.setDescription(possibleDescriptions.get(0));
-				message = "Espere";
+				message = "";
 				reportObstacle(obstacleToReport);
 			}
 			if (stringPresent(results, "no")) {
@@ -291,7 +291,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				end = new GeoPoint(-34.777368, -55.755021);
+				end = new GeoPoint(-34.771871,-55.765883);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -311,7 +311,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					// context.mockLocationListener.startMoving();
+					//context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -331,14 +331,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination);
 		context.setState(walkingDirectionsState);
-		context.mockLocationListener.restart();
+		//context.mockLocationListener.restart();
 	}
 
 	protected void restartState(String initialMessage) {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination, initialMessage);
 		context.setState(walkingDirectionsState);
-		context.mockLocationListener.restart();
+		//context.mockLocationListener.restart();
 	}
 
 	private class ReportObstacleTask extends AsyncTask<String, Void, String> {

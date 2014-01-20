@@ -52,9 +52,9 @@ public abstract class AbstractState implements State {
 
 	public void setResults(List<String> results) {
 		if (results != null) {
-			//if (stripAccents) {
-				results = stripAccents(results);
-			//}
+			// if (stripAccents) {
+			results = stripAccents(results);
+			// }
 			if (stringPresent(results, "donde estoy")) {
 				this.message = getWhereAmIMessage() + this.defaultMessage;
 				return;
@@ -117,8 +117,13 @@ public abstract class AbstractState implements State {
 	protected String getStringDigits(int number) {
 		List<Integer> numbers = getNumbersByDigits(number);
 		String digits = "";
-		for (Integer digit : numbers) {
-			digits = digit + " ";
+		for (int i = 0; i < numbers.size(); i++) {
+			Integer digit = numbers.get(i);
+			if (i == 0) {
+				digits = Integer.toString(digit);
+			} else {
+				digits = digit + " " + digits;
+			}
 		}
 		return digits;
 	}
@@ -218,29 +223,36 @@ public abstract class AbstractState implements State {
 	}
 
 	/**
-	 * List of strings each including possible numbers, for example [3 4 5 7 1,3
-	 * 6 9 0]
-	 * 
-	 * @param string
+	 * @param numbers List of strings each including possible numbers, for example [3 4 5 7 1, 3 6 9 0, uno uno uno]
 	 * @return null if there is no number inside numbers, the first number
-	 *         encountered otherwise
+	 *         encountered otherwise, for the example "34571"
 	 */
 	protected String getNumber(List<String> numbers) {
 		String toReturn = null;
 		for (String number : numbers) {
-			String[] separated = number.split(" ");
-			int i = 0;
-			StringBuilder numberBuilder = new StringBuilder();
-			while (i < separated.length && containsAnyDigit(separated[i])) {
-				numberBuilder.append(toDigit(separated[i]));
-				i++;
-			}
-			if (i < separated.length) {
-				toReturn = null;
-			} else {
-				return numberBuilder.toString();
+			if (getNumber(number) != null) {
+				return number;
 			}
 		}
+		return toReturn;
+	}
+
+	
+	protected String getNumber(String number) {
+		String toReturn = null;
+		String[] separated = number.split(" ");
+		int i = 0;
+		StringBuilder numberBuilder = new StringBuilder();
+		while (i < separated.length && containsAnyDigit(separated[i])) {
+			numberBuilder.append(toDigit(separated[i]));
+			i++;
+		}
+		if (i < separated.length) {
+			toReturn = null;
+		} else {
+			return numberBuilder.toString();
+		}
+
 		return toReturn;
 	}
 
@@ -260,6 +272,19 @@ public abstract class AbstractState implements State {
 			i++;
 		}
 		if (i == separated.length || (i == separated.length - 1 && i != 0)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean isNumber(String string) {
+		String[] separated = string.split(" ");
+		int i = 0;
+		while (i < separated.length && containsAnyDigit(separated[i])) {
+			i++;
+		}
+		if (i == separated.length) {
 			return true;
 		} else {
 			return false;

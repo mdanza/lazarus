@@ -38,16 +38,16 @@ public class SignUpState extends AbstractState {
 	public void handleResults(List<String> results) {
 		if (username == null) {
 			username = results.get(0);
-			this.message = "¿Desea que su nombre de usuario sea " + username
-					+ "?";
-			toConfirmUsername = true;
-			stripAccents = true;
+				this.message = "¿Desea que su nombre de usuario sea "
+						+ username + "?";
+				toConfirmUsername = true;
+				stripAccents = true;
 			return;
 		}
 		if (toConfirmUsername) {
 			toConfirmUsername = false;
 			if (stringPresent(results, "no")) {
-				resetData();
+				resetData(defaultMessage);
 			}
 			if (stringPresent(results, "si")) {
 				stripAccents = false;
@@ -62,8 +62,13 @@ public class SignUpState extends AbstractState {
 		if (toChoosePassword) {
 			toChoosePassword = false;
 			password = results.get(0);
-			this.message = "¿Desea que su contraseña sea " + password
-					+ "?";
+			String passwordToBeUttered = password;
+			if (isNumber(password)) {
+				password = getNumber(password);
+				passwordToBeUttered = getStringDigits(Integer.valueOf(password));
+			}
+			this.message = "¿Desea que su contraseña sea "
+					+ passwordToBeUttered + "?";
 			stripAccents = true;
 			toConfirmPassword = true;
 			return;
@@ -87,17 +92,17 @@ public class SignUpState extends AbstractState {
 
 	private void toChoosePassword() {
 		toChoosePassword = true;
-		message = "Diga la contraseña que desea tener";
+		message = "Diga la contraseña que desea tener,, si quiere elegir un número, dígalo dígito a dígito ";
 	}
 
-	private void resetData() {
+	private void resetData(String message) {
 		username = null;
 		password = null;
 		toConfirmUsername = false;
 		toChoosePassword = false;
 		toConfirmPassword = false;
 		stripAccents = false;
-		this.message = defaultMessage;
+		this.message = message;
 	}
 
 	private class CheckUsernameAvailableTask extends
@@ -109,8 +114,7 @@ public class SignUpState extends AbstractState {
 			if (validUsername) {
 				toChoosePassword();
 			} else {
-				resetData();
-				message = "El nombre de usuario ya está en uso, diga otro";
+				resetData("El nombre de usuario ya está en uso, diga otro");
 			}
 			context.sayMessage();
 			return message;
@@ -141,7 +145,7 @@ public class SignUpState extends AbstractState {
 					context.getSharedPreferences("usrpref", 0).edit()
 							.putString("password", password).commit();
 					MainMenuState mainMenuState = new MainMenuState(context,
-							"Gracias por registrarse, "+instructions);
+							"Gracias por registrarse, " + instructions);
 					context.setState(mainMenuState);
 					context.sayMessage();
 				}
@@ -160,6 +164,6 @@ public class SignUpState extends AbstractState {
 	protected void restartState() {
 		SignUpState signUpState = new SignUpState(context);
 		context.setState(signUpState);
-		
+
 	}
 }

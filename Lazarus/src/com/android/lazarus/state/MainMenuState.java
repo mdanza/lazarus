@@ -190,7 +190,7 @@ public class MainMenuState extends AbstractState {
 		protected String doInBackground(String... args) {
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
-			if(!favourites.isEmpty()){
+			if(favourites!=null){
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 			}else{
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, para más opciones diga más";

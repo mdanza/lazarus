@@ -32,6 +32,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private double distanceToFinalPosition = -1;
 	private static final int NEEDED_ACCURACY = 50;
 	private BusRideState parentState;
+	private InternalState state = InternalState.WALKING_INSTRUCTIONS;
+	private Obstacle obstacleToReport = null;
+	List<String> possibleDescriptions = null;
+
+	private enum InternalState {
+		WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
+	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
@@ -62,15 +69,72 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (stringPresent(results, "destino")) {
-			if (parentState == null) {
-				MainMenuState mainMenuState = new MainMenuState(context);
-				context.setState(mainMenuState);
-			} else {
-				context.setState(parentState);
-				parentState.arrivedToDestination();
+		if (state.equals(InternalState.WALKING_INSTRUCTIONS)) {
+			if (stringPresent(results, "destino")) {
+				if (parentState == null) {
+					MainMenuState mainMenuState = new MainMenuState(context);
+					context.setState(mainMenuState);
+				} else {
+					context.setState(parentState);
+					parentState.arrivedToDestination();
+				}
 			}
+			if (stringPresent(results, "obstaculo")) {
+				initializeSelectingObstacleName();
+			}
+			return;
+
 		}
+		if (state.equals(InternalState.SELECTING_OBSTACLE_DESCRIPTION)) {
+			if (possibleDescriptions == null) {
+				possibleDescriptions = results;
+			}
+			message = "¿Desea que la descripción sea: " + results.get(0) + "?";
+			state = InternalState.CONFIRMING_DESCRIPTION;
+			return;
+
+		}
+		if (state.equals(InternalState.CONFIRMING_DESCRIPTION)) {
+			if (stringPresent(results, "si")) {
+				obstacleToReport.setDescription(possibleDescriptions.get(0));
+				message = "Espere";
+				reportObstacle(obstacleToReport);
+			}
+			if (stringPresent(results, "no")) {
+				possibleDescriptions.remove(0);
+				if (!possibleDescriptions.isEmpty()) {
+					message = "¿Desea que la descripción sea: "
+							+ results.get(0) + "?";
+				} else {
+					message = "Repita nuevamente la descripción del obstáculo, ";
+				}
+			}
+			return;
+
+		}
+	}
+
+	private void reportObstacle(Obstacle obstacle) {
+		ReportObstacleTask reportObstacleTask = new ReportObstacleTask();
+		String[] args = new String[4];
+		args[0] = context.getToken();
+		args[1] = obstacle.getCentre().getLatitude() + ","
+				+ obstacle.getCentre().getLongitude();
+		args[2] = Long.toString(obstacle.getRadius());
+		args[3] = obstacle.getDescription();
+		reportObstacleTask.execute(args);
+	}
+
+	private void initializeSelectingObstacleName() {
+
+		message = "Diga la descripción del obstáculo que desea registrar, ";
+		obstacleToReport = new Obstacle();
+		Point point = new Point(position.getLatitude(), position.getLongitude());
+		obstacleToReport.setCentre(point);
+		Double radius = Double.valueOf((Math.ceil(position.getAccuracy())));
+		obstacleToReport.setRadius(radius.intValue());
+		state = InternalState.SELECTING_OBSTACLE_DESCRIPTION;
+
 	}
 
 	@Override
@@ -108,8 +172,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private String getInstructionForCurrentWalkingPosition() {
 		String instruction = null;
 		if (currentWalkingPosition == positions.size() - 1) {
-			double currentDistanceToFinalPosition = distanceToWalkingPosition(positions
-					.get(currentWalkingPosition));
+			double currentDistanceToFinalPosition = WalkingPositionHelper
+					.distanceToWalkingPosition(position,
+							positions.get(currentWalkingPosition));
 			if (distanceToFinalPosition == -1
 					|| Math.abs(distanceToFinalPosition
 							- currentDistanceToFinalPosition) > 5) {
@@ -119,70 +184,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 						+ " metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga destino";
 			}
 		} else {
-			initialDistanceToCurrentPosition = distanceToWalkingPosition(positions
-					.get(currentWalkingPosition));
-			initialDistanceToNextPosition = distanceToWalkingPosition(positions
-					.get(currentWalkingPosition + 1));
+			initialDistanceToCurrentPosition = WalkingPositionHelper
+					.distanceToWalkingPosition(position,
+							positions.get(currentWalkingPosition));
+			initialDistanceToNextPosition = WalkingPositionHelper
+					.distanceToWalkingPosition(position,
+							positions.get(currentWalkingPosition + 1));
 			if (positions.get(currentWalkingPosition).getInstruction() != null) {
-				instruction = generateInstructionForNotFinalWalkingPosition(currentWalkingPosition);
+				instruction = WalkingPositionHelper
+						.generateInstructionForNotFinalWalkingPosition(
+								currentWalkingPosition, positions);
 			}
 		}
 		return instruction;
-	}
-
-	private String generateInstructionForNotFinalWalkingPosition(
-			int walkingPosition) {
-		String instruction = null;
-		String currentInstruction = positions.get(walkingPosition)
-				.getInstruction();
-		if (currentInstruction != null) {
-			boolean currentHasRight = hasRight(currentInstruction);
-			boolean currentHasLeft = hasLeft(currentInstruction);
-			boolean nextHasRight = false;
-			boolean nextHasLeft = false;
-			for (int i = walkingPosition + 1; i < positions.size(); i++) {
-				if (!nextHasLeft && !nextHasRight) {
-					String nextInstruction = positions.get(i).getInstruction();
-					if (nextInstruction != null) {
-						nextHasRight = hasRight(nextInstruction);
-						nextHasLeft = hasLeft(nextInstruction);
-					}
-				}
-			}
-			if ((currentHasLeft && nextHasRight)
-					|| (currentHasRight && nextHasLeft)) {
-				instruction = "En la siguiente esquina, cruza la calle en la dirección en que estás avanzando, y luego "
-						+ currentInstruction;
-			} else {
-				instruction = "En la siguiente esquina, " + currentInstruction;
-			}
-		}
-		return instruction;
-	}
-
-	private boolean hasRight(String instruction) {
-		return hasString(instruction, "derecha")
-				|| hasString(instruction, "Derecha")
-				|| hasString(instruction, "DERECHA");
-	}
-
-	private boolean hasLeft(String instruction) {
-		return hasString(instruction, "izquierda")
-				|| hasString(instruction, "Izquierda")
-				|| hasString(instruction, "IZQUIERDA");
-	}
-
-	private boolean hasString(String instruction, String string) {
-		boolean hasString = false;
-		if (instruction != null) {
-			String[] splitInstruction = instruction.split("\\ ");
-			for (String word : splitInstruction) {
-				if (word != null && word.equals(string)) {
-					hasString = true;
-				}
-			}
-		}
-		return hasString;
 	}
 
 	private void checkForObstacles() {
@@ -221,8 +235,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 				WalkingPosition nextWalkingPosition = positions
 						.get(currentWalkingPosition + 1);
 				if (walkingPosition != null && nextWalkingPosition != null) {
-					double newDistanceToCurrentPosition = distanceToWalkingPosition(walkingPosition);
-					double newDistanceToNextPosition = distanceToWalkingPosition(nextWalkingPosition);
+					double newDistanceToCurrentPosition = WalkingPositionHelper
+							.distanceToWalkingPosition(position,
+									walkingPosition);
+					double newDistanceToNextPosition = WalkingPositionHelper
+							.distanceToWalkingPosition(position,
+									nextWalkingPosition);
 					double differenceOfCurrent = newDistanceToCurrentPosition
 							- initialDistanceToCurrentPosition;
 					double differenceOfNext = newDistanceToNextPosition
@@ -237,16 +255,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	}
 
-	private double distanceToWalkingPosition(WalkingPosition walkingPosition) {
-		if (walkingPosition != null) {
-			return GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
-					.getPoint().getLatitude(), position.getLatitude(),
-					walkingPosition.getPoint().getLongitude(), walkingPosition
-							.getPoint().getLongitude());
-		}
-		return 0;
-	}
-
 	private int getClosestPosition() {
 		int closestPosition = -1;
 		if (positions != null) {
@@ -254,7 +262,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 			for (int i = 0; i < positions.size(); i++) {
 				WalkingPosition walkingPosition = positions.get(i);
 				if (positions.get(i) != null) {
-					double newDistance = distanceToWalkingPosition(walkingPosition);
+					double newDistance = WalkingPositionHelper
+							.distanceToWalkingPosition(position,
+									walkingPosition);
 					if (distance == -1 || newDistance < distance) {
 						distance = newDistance;
 						closestPosition = i;
@@ -281,7 +291,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.777368,-55.755021);
+				end = new GeoPoint(-34.777368, -55.755021);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -294,11 +304,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 				positions = WalkingPositionHelper.createWalkingPositions(route,
 						nodes);
 
-				if (positions != null && positions.size()>1) {
-					message = WalkingPositionHelper.translateFirstInstruction(positions.get(0).getInstruction(), position, positions.get(currentWalkingPosition+1), context.getSensorEventListenerImpl().getAzimuth());
+				if (positions != null && positions.size() > 1) {
+					message = WalkingPositionHelper.translateFirstInstruction(
+							positions.get(0).getInstruction(), position,
+							positions.get(currentWalkingPosition + 1), context
+									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					//context.mockLocationListener.startMoving();
+					// context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -326,6 +339,26 @@ public class WalkingDirectionsState extends LocationDependentState {
 				context, destination, initialMessage);
 		context.setState(walkingDirectionsState);
 		context.mockLocationListener.restart();
+	}
+
+	private class ReportObstacleTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
+			boolean succeded = obstacleReportingServiceAdapter.reportObstacle(
+					args[0], args[1], args[2], args[3]);
+			if (succeded) {
+				message = "Se ha registrado el obstáculo, continúe avanzando, ";
+				state = InternalState.WALKING_INSTRUCTIONS;
+			} else {
+				message = "Ha ocurrido un problema al registrar el obstáculo, por favor diga la descripción del obstáculo que desea registrar, ";
+				possibleDescriptions = null;
+				state = InternalState.SELECTING_OBSTACLE_DESCRIPTION;
+			}
+			context.sayMessage();
+			return message;
+		}
 	}
 
 }

@@ -223,5 +223,70 @@ public class WalkingPositionHelper {
 		}
 		return stringPresent;
 	}
+	
+	public static String generateInstructionForNotFinalWalkingPosition(
+			int walkingPosition,List<WalkingPosition> positions) {
+		String instruction = null;
+		String currentInstruction = positions.get(walkingPosition)
+				.getInstruction();
+		if (currentInstruction != null) {
+			boolean currentHasRight = hasRight(currentInstruction);
+			boolean currentHasLeft = hasLeft(currentInstruction);
+			boolean nextHasRight = false;
+			boolean nextHasLeft = false;
+			for (int i = walkingPosition + 1; i < positions.size(); i++) {
+				if (!nextHasLeft && !nextHasRight) {
+					String nextInstruction = positions.get(i).getInstruction();
+					if (nextInstruction != null) {
+						nextHasRight = hasRight(nextInstruction);
+						nextHasLeft = hasLeft(nextInstruction);
+					}
+				}
+			}
+			if ((currentHasLeft && nextHasRight)
+					|| (currentHasRight && nextHasLeft)) {
+				instruction = "En la siguiente esquina, cruza la calle en la dirección en que estás avanzando, y luego "
+						+ currentInstruction;
+			} else {
+				instruction = "En la siguiente esquina, " + currentInstruction;
+			}
+		}
+		return instruction;
+	}
+
+	private static boolean hasRight(String instruction) {
+		return hasString(instruction, "derecha")
+				|| hasString(instruction, "Derecha")
+				|| hasString(instruction, "DERECHA");
+	}
+
+	private static boolean hasLeft(String instruction) {
+		return hasString(instruction, "izquierda")
+				|| hasString(instruction, "Izquierda")
+				|| hasString(instruction, "IZQUIERDA");
+	}
+
+	private static boolean hasString(String instruction, String string) {
+		boolean hasString = false;
+		if (instruction != null) {
+			String[] splitInstruction = instruction.split("\\ ");
+			for (String word : splitInstruction) {
+				if (word != null && word.equals(string)) {
+					hasString = true;
+				}
+			}
+		}
+		return hasString;
+	}
+	
+	public static double distanceToWalkingPosition(Location position, WalkingPosition walkingPosition) {
+		if (walkingPosition != null) {
+			return GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
+					.getPoint().getLatitude(), position.getLatitude(),
+					walkingPosition.getPoint().getLongitude(), walkingPosition
+							.getPoint().getLongitude());
+		}
+		return 0;
+	}
 
 }

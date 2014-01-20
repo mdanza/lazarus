@@ -82,7 +82,7 @@ public class MainMenuState extends AbstractState {
 			DestinationSetState destinationSetState = new DestinationSetState(
 					this.context, favourite.getPoint(), true);
 			this.context.setState(destinationSetState);
-			//destinationSetState.handleResults(new ArrayList<String>(Arrays.asList(new String[] {"dos","dos","dos"})));
+			destinationSetState.handleResults(new ArrayList<String>(Arrays.asList(new String[] {"dos","dos","dos"})));
 			return;
 		}
 		if (streets != null && toChooseStreet) {

@@ -95,7 +95,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 				}
 			}
 		}
-		//walkingDirectionsTester.setResultsOnState();
+		walkingDirectionsTester.setResultsOnState();
 	}
 
 	public void speak(String message, boolean addQueue) {

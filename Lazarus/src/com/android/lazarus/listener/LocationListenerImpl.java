@@ -1,11 +1,13 @@
 package com.android.lazarus.listener;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.state.LocationDependentState;
@@ -66,6 +68,12 @@ public class LocationListenerImpl implements LocationListener {
 				((LocationDependentState) voiceInterpreterActivity.getState())
 						.setPosition(location);
 			}
+			Context context = voiceInterpreterActivity.getApplicationContext();
+			CharSequence text = "Accuracy = "+location.getAccuracy();
+			int duration = Toast.LENGTH_SHORT;
+
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
 			this.location = location;
 		}
 	}

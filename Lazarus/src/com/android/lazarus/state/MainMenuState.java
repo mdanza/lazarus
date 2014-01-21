@@ -117,7 +117,7 @@ public class MainMenuState extends AbstractState {
 			if (state.equals(InternalState.TO_CHOOSE_STREET)) {
 				message = "No se han encontrado otros resultados.";
 			} else {
-				message = "No se han encontrado resultados";
+				message = "No se han encontrado resultados.";
 			}
 			MainMenuState mainMenuState = new MainMenuState(context, message);
 			context.setState(mainMenuState);

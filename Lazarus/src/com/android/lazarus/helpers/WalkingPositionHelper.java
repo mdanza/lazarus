@@ -18,8 +18,8 @@ public class WalkingPositionHelper {
 			"oeste", "noroeste", "norte", "noreste", "este", "sureste", "sur" };
 	private static final String[] SENSOR_ORIENTATIONS = { "S", "SW", "W", "NW",
 			"N", "NE", "E", "SE", "S" };
-	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en dirección opuesta por ";
-	private static final String CONTINUE_INSTRUCCION = "Continúa en la misma dirección por ";
+	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en la dirección opuesta a la que apunta el celular por ";
+	private static final String CONTINUE_INSTRUCCION = "Avanza en la dirección a la que apunta el celular por ";
 	private static final String TURN_LEFT_INSTRUCTION = "Avanza hacia la izquierda por ";
 	private static final String TURN_RIGHT_INSTRUCTION = "Avanza hacia la derecha por ";
 
@@ -95,17 +95,17 @@ public class WalkingPositionHelper {
 			// bearing += 180;
 			float direction = bearing - azimuth;
 			boolean headingFound = false;
-			if (Math.abs(direction)>140 && Math.abs(direction) < 180){
+			if (Math.abs(direction)>150 && Math.abs(direction) < 180){
 				returnInstruction = TURN_OPOSSITE_INTRUCTION;
 				headingFound = true;
 			}
-			if(Math.abs(direction)>320 || Math.abs(direction)<40){
+			if(Math.abs(direction)>330 || Math.abs(direction)<30){
 				returnInstruction = CONTINUE_INSTRUCCION;
 				headingFound = true;
 			}
 			if (!headingFound && ((direction < 0 && Math.abs(direction) <180) || (direction > 0 && Math.abs(direction) > 180)))
 				returnInstruction = TURN_LEFT_INSTRUCTION;
-			if(!headingFound && ((direction > 0 && Math.abs(direction) >180) || (direction < 0 && Math.abs(direction) > 180)))
+			if(!headingFound && ((direction > 0 && Math.abs(direction) <180) || (direction < 0 && Math.abs(direction) > 180)))
 				returnInstruction = TURN_RIGHT_INSTRUCTION;
 			returnInstruction += street + ", ";
 			return returnInstruction;

@@ -158,6 +158,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				if (olderPosition != currentWalkingPosition) {
 					String instruction = getInstructionForCurrentWalkingPosition();
 					if (instruction != null) {
+						message = instruction;
 						context.speak(instruction, true);
 					}
 				} else if (conditionsToRecalculate()) {
@@ -291,7 +292,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				end = new GeoPoint(-34.771871,-55.765883);
+				//end = new GeoPoint(-34.778068,-55.754438);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -311,7 +312,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					context.mockLocationListener.startMoving();
+					//context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -331,12 +332,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination);
 		context.setState(walkingDirectionsState);
-		context.mockLocationListener.restart();
+		//context.mockLocationListener.restart();
 	}
 
 	protected void restartState(String initialMessage) {
-		int position = context.mockLocationListener.position;
-		context.mockLocationListener.restartFromPosition(position);
+	//	int position = context.mockLocationListener.position;
+		//context.mockLocationListener.restartFromPosition(position);
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination, initialMessage);
 		context.setState(walkingDirectionsState);

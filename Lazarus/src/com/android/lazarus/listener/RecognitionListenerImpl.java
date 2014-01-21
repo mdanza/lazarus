@@ -7,6 +7,8 @@ import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 
 import com.android.lazarus.VoiceInterpreterActivity;
+import com.android.lazarus.state.LocationDependentState;
+import com.android.lazarus.state.WalkingDirectionsState;
 
 public class RecognitionListenerImpl implements RecognitionListener {
 
@@ -80,8 +82,13 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "No se ha escuchado nada, ";
 			break;
 		}
-		voiceInterpreterActivity.speak(message
-				+ voiceInterpreterActivity.getState().getMessage());
+		if(voiceInterpreterActivity.getState()!=null){
+			if (voiceInterpreterActivity.getState() instanceof WalkingDirectionsState) {
+				message = message + "La última instrucción fue, ";
+			}
+			message = message + voiceInterpreterActivity.getState().getMessage();
+		}
+		voiceInterpreterActivity.speak(message);
 	}
 
 	@Override

@@ -18,8 +18,7 @@ public class MockLocationListener extends LocationListenerImpl {
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
 	Boolean restarted = false;
-	// private String[] points = { "-34.90111,-56.14013",
-	// "-34.901377,-56.14007",
+	// public String[] points = { "-34.90111,-56.14013", "-34.901377,-56.14007",
 	// "-34.90162,-56.13995", "-34.90162,-56.13995",
 	// "-34.901736,-56.140301", "-34.901848,-56.140513",
 	// "-34.90171,-56.14033", "-34.901978,-56.140757",
@@ -28,6 +27,7 @@ public class MockLocationListener extends LocationListenerImpl {
 	// "-34.90432,-56.14469", "-34.90432,-56.14469",
 	// "-34.90490,-56.14446", "-34.90614,-56.14412",
 	// "-34.90614,-56.14412", "-34.90624,-56.14460" };
+	// public int position;
 
 	// alternative: para prueba bus D11
 	private String[] points = { "-34.90111,-56.14013", "-34.90111,-56.14013",
@@ -67,6 +67,19 @@ public class MockLocationListener extends LocationListenerImpl {
 		Location location = new Location("");
 		location.setLatitude(Double.valueOf(points[0].split("\\,")[0]));
 		location.setLongitude(Double.valueOf(points[0].split("\\,")[1]));
+		location.setAccuracy(19);
+		location.setAltitude(0);
+		location.setTime(System.currentTimeMillis());
+		location.setBearing(0F);
+		onLocationChanged(location);
+	}
+
+	public MockLocationListener(
+			VoiceInterpreterActivity voiceInterpreterActivity, int position) {
+		this.voiceInterpreterActivity = voiceInterpreterActivity;
+		Location location = new Location("");
+		location.setLatitude(Double.valueOf(points[position].split("\\,")[0]));
+		location.setLongitude(Double.valueOf(points[position].split("\\,")[1]));
 		location.setAccuracy(19);
 		location.setAltitude(0);
 		location.setTime(System.currentTimeMillis());
@@ -148,5 +161,14 @@ public class MockLocationListener extends LocationListenerImpl {
 		// this.voiceInterpreterActivity);
 		// voiceInterpreterActivity.setLocationListener(mockLocationListener);
 		counter = 0;
+	}
+
+	public void restartFromPosition(int position) {
+		restarted = true;
+//		MockLocationListener mockLocationListener = new MockLocationListener(
+//				this.voiceInterpreterActivity, position);
+//		voiceInterpreterActivity.setLocationListener(mockLocationListener);
+//		mockLocationListener.position = position;
+		counter = position;
 	}
 }

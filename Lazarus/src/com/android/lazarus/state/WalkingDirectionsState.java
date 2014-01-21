@@ -311,7 +311,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					//context.mockLocationListener.startMoving();
+					context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -331,14 +331,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination);
 		context.setState(walkingDirectionsState);
-		//context.mockLocationListener.restart();
+		context.mockLocationListener.restart();
 	}
 
 	protected void restartState(String initialMessage) {
+		int position = context.mockLocationListener.position;
+		context.mockLocationListener.restartFromPosition(position);
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination, initialMessage);
 		context.setState(walkingDirectionsState);
-		//context.mockLocationListener.restart();
 	}
 
 	private class ReportObstacleTask extends AsyncTask<String, Void, String> {

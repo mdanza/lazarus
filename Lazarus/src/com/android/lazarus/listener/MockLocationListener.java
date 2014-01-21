@@ -16,29 +16,30 @@ public class MockLocationListener extends LocationListenerImpl {
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
 	Boolean restarted = false;
-	// private String[] points = { "-34.90111,-56.14013",
-	// "-34.901377,-56.14007",
-	// "-34.90162,-56.13995", "-34.90162,-56.13995",
-	// "-34.901736,-56.140301", "-34.901848,-56.140513",
-	// "-34.90171,-56.14033", "-34.901978,-56.140757",
-	// "-34.90171,-56.14033", "-34.902242,-56.141253",
-	// "-34.90254,-56.14187", "-34.90324,-56.14286",
-	// "-34.90432,-56.14469", "-34.90432,-56.14469",
-	// "-34.90490,-56.14446", "-34.90614,-56.14412",
-	// "-34.90614,-56.14412", "-34.90624,-56.14460" };
+	 public String[] points = { "-34.90111,-56.14013",
+	 "-34.901377,-56.14007",
+	 "-34.90162,-56.13995", "-34.90162,-56.13995",
+	 "-34.901736,-56.140301", "-34.901848,-56.140513",
+	 "-34.90171,-56.14033", "-34.901978,-56.140757",
+	 "-34.90171,-56.14033", "-34.902242,-56.141253",
+	 "-34.90254,-56.14187", "-34.90324,-56.14286",
+	 "-34.90432,-56.14469", "-34.90432,-56.14469",
+	 "-34.90490,-56.14446", "-34.90614,-56.14412",
+	 "-34.90614,-56.14412", "-34.90624,-56.14460" };
+	 public int position;
 
 	// alternative: para prueba bus D11
-	private String[] points = { "-34.90111,-56.14013", "-34.90126,-56.140074",
-			"-34.901366,-56.140042", "-34.90163,-56.139935",
-			"-34.901568,-56.139634", "-34.901489,-56.139334",
-			"-34.901384,-56.139001", "-34.901252,-56.138583",
-			"-34.901181,-56.138314", "-34.899518,-56.133401",
-			"-34.897442,-56.124678", "-34.891563,-56.112286",
-			"-34.891053,-56.095045", "-34.893526,-56.092535",
-			"-34.890718,-56.071409", "-34.888906,-56.066431",
-			"-34.888105,-56.06391", "-34.887295,-56.061711",
-			"-34.886292,-56.058814", "-34.88623,-56.058578" };
-	
+//	private String[] points = { "-34.90111,-56.14013", "-34.90126,-56.140074",
+//			"-34.901366,-56.140042", "-34.90163,-56.139935",
+//			"-34.901568,-56.139634", "-34.901489,-56.139334",
+//			"-34.901384,-56.139001", "-34.901252,-56.138583",
+//			"-34.901181,-56.138314", "-34.899518,-56.133401",
+//			"-34.897442,-56.124678", "-34.891563,-56.112286",
+//			"-34.891053,-56.095045", "-34.893526,-56.092535",
+//			"-34.890718,-56.071409", "-34.888906,-56.066431",
+//			"-34.888105,-56.06391", "-34.887295,-56.061711",
+//			"-34.886292,-56.058814", "-34.88623,-56.058578" };
+//	
 	// alternative: para prueba bus D11 conexión L21
 	// private String[] points = { "-34.90111,-56.14013",
 	// "-34.90126,-56.140074",
@@ -139,6 +140,7 @@ public class MockLocationListener extends LocationListenerImpl {
 					}
 					if (locations.indexOf(location) != 0)
 						onLocationChanged(location);
+					position++;
 				}
 			}
 			return "Walking";
@@ -150,5 +152,13 @@ public class MockLocationListener extends LocationListenerImpl {
 		MockLocationListener mockLocationListener = new MockLocationListener(
 				this.voiceInterpreterActivity);
 		voiceInterpreterActivity.setLocationListener(mockLocationListener);
+	}
+	
+	public void restartFromPosition(int position) {
+		restarted = true;
+		MockLocationListener mockLocationListener = new MockLocationListener(
+				this.voiceInterpreterActivity);
+		voiceInterpreterActivity.setLocationListener(mockLocationListener);
+		mockLocationListener.position = position;
 	}
 }

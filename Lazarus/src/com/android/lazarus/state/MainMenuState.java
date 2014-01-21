@@ -1,7 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -23,10 +21,13 @@ public class MainMenuState extends AbstractState {
 	int position = 0;
 	List<String> streets = null;
 	Favourite favourite = null;
-	boolean toChooseStreet = false;
-	boolean toConfirmFavourite = false;
 	List<String> firstResults;
 	List<Favourite> favourites = null;
+	private InternalState state = InternalState.GET_DESTINATION;
+
+	private enum InternalState {
+		GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
+	}
 
 	public MainMenuState(VoiceInterpreterActivity context) {
 		super(context);
@@ -40,71 +41,61 @@ public class MainMenuState extends AbstractState {
 		loadFavourites(initialText);
 	}
 
-	private void loadFavourites(String initialText){
+	private void loadFavourites(String initialText) {
 		LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 		String[] args = new String[2];
 		args[0] = context.getToken();
 		args[1] = initialText;
 		loadFavouritesTask.execute(args);
 	}
-	
+
 	public void handleResults(List<String> results) {
-		if (wantsMoreMainMenu(results)) {
-			initializeMoreMainMenu();
-			return;
-		}
-		// for each position checks if there is an available street or favourite
-		// place
-		// if there is none or user asks for more results, go to next position
-		if (wantsMoreResults(results) && firstResults != null
-				&& position < firstResults.size()) {
-			goToNextPosition();
-			return;
-		}
-		if ((firstResults == null || position < firstResults.size())
-				&& !toChooseStreet && !toConfirmFavourite) {
-			if (firstResults == null) {
+		if (state.equals(InternalState.GET_DESTINATION)) {
+			if (wantsMore(results)) {
+				initializeMoreMainMenu();
+				return;
+			} else {
+				state = InternalState.DESTINATION_SAID;
 				firstResults = results;
+				PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
+				String[] args = new String[1];
+				args[0] = firstResults.get(0);
+				message = "";
+				possibleDestinationTask.execute(args);
+				return;
 			}
-			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
-			String[] args = new String[1];
-			args[0] = firstResults.get(position);
-			message = "";
-			possibleDestinationTask.execute(args);
 		}
-		if (firstResults != null && position == firstResults.size()) {
-			if (position != 0 && !toChooseStreet && !toConfirmFavourite) {
-				this.message = "No se han encontrado resultados."
-						+ defaultMessage;
+		if (state.equals(InternalState.TO_CHOOSE_STREET)) {
+			if (wantsMore(results)) {
+				goToNextPosition();
+				return;
 			}
-			if (position != 0 && (toChooseStreet || toConfirmFavourite)) {
-				this.message = "No se han encontrado otros resultados."
-						+ defaultMessage;
-			}
-			position = 0;
-			firstResults = null;
-			context.sayMessage();
-			return;
-		}
-		if (stringPresent(results, "si") && toConfirmFavourite) {
-			DestinationSetState destinationSetState = new DestinationSetState(
-					this.context, favourite.getPoint(), true);
-			this.context.setState(destinationSetState);
-			// destinationSetState.handleResults(new
-			// ArrayList<String>(Arrays.asList(new String[]
-			// {"dos","dos","dos"})));
-			return;
-		}
-		if (streets != null && toChooseStreet) {
-			for (int i = 1; i < streets.size() + 1; i++) {
-				if (containsNumber(results, i)) {
-					StreetSetState streetSetState = new StreetSetState(
-							this.context, streets.get(i - 1));
-					this.context.setState(streetSetState);
+			if (streets != null) {
+				for (int i = 1; i < streets.size() + 1; i++) {
+					if (containsNumber(results, i)) {
+						StreetSetState streetSetState = new StreetSetState(
+								this.context, streets.get(i - 1));
+						this.context.setState(streetSetState);
+					}
 				}
+				return;
 			}
-			return;
 		}
+		if (state.equals(InternalState.TO_CONFIRM_FAVOURITE)) {
+			if (stringPresent(results, "si")) {
+				DestinationSetState destinationSetState = new DestinationSetState(
+						this.context, favourite.getPoint(), true);
+				this.context.setState(destinationSetState);
+				// destinationSetState.handleResults(new
+				// ArrayList<String>(Arrays.asList(new String[]
+				// {"dos","dos","dos"})));
+				return;
+			}
+			if (stringPresent(results, "no")) {
+				goToNextPosition();
+			}
+		}
+
 	}
 
 	private void initializeMoreMainMenu() {
@@ -116,21 +107,27 @@ public class MainMenuState extends AbstractState {
 
 	private void goToNextPosition() {
 		position++;
-		favourite = null;
-		streets = null;
-		toChooseStreet = false;
-		toConfirmFavourite = false;
-		setResults(firstResults);
+		message = "";
+		if (position < firstResults.size()) {
+			favourite = null;
+			streets = null;
+			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
+			possibleDestinationTask.execute(firstResults.get(position));
+		} else {
+			if (state.equals(InternalState.TO_CHOOSE_STREET)) {
+				message = "No se han encontrado otros resultados.";
+			} else {
+				message = "No se han encontrado resultados";
+			}
+			MainMenuState mainMenuState = new MainMenuState(context, message);
+			context.setState(mainMenuState);
+			context.sayMessage();
+			return;
+		}
 	}
 
-	private boolean wantsMoreResults(List<String> results) {
-		return (toChooseStreet && stringPresent(results, "mas"))
-				|| (toConfirmFavourite && stringPresent(results, "no"));
-	}
-
-	private boolean wantsMoreMainMenu(List<String> results) {
-		return stringPresent(results, "mas") && !toChooseStreet
-				&& !toConfirmFavourite;
+	private boolean wantsMore(List<String> results) {
+		return (stringPresent(results, "mas"));
 	}
 
 	private Favourite getFavourite(String string, List<Favourite> favourites) {
@@ -157,15 +154,14 @@ public class MainMenuState extends AbstractState {
 				goToNextPosition();
 				return null;
 			}
-			if (favourite != null && !toChooseStreet && !toConfirmFavourite) {
-				toConfirmFavourite = true;
+			if (favourite != null) {
+				state = InternalState.TO_CONFIRM_FAVOURITE;
 				message = "Desea dirigirse a " + favourite.getName() + "?";
 				context.speak(message);
 				return favourite.getName();
 			}
-			if (streets != null && !streets.isEmpty() && !toChooseStreet
-					&& !toConfirmFavourite) {
-				toChooseStreet = true;
+			if (streets != null && !streets.isEmpty()) {
+				state = InternalState.TO_CHOOSE_STREET;
 				message = "";
 				for (int i = 1; i < streets.size() + 1; i++) {
 					message = message + "Si desea dirigirse a "
@@ -183,18 +179,23 @@ public class MainMenuState extends AbstractState {
 
 	}
 
-	private class LoadFavouritesTask extends
-			AsyncTask<String, Void, String> {
+	private class LoadFavouritesTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... args) {
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
-			if(favourites!=null){
+			String initialMessage = "";
+			if(args.length==2 && args[1]!=null){
+				initialMessage = args[1];
+			}
+			if (favourites != null) {
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
-			}else{
+			} else {
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, para más opciones diga más";
 			}
+			defaultMessage = message;
+			message = initialMessage + message;
 			context.speak(message);
 			return message;
 		}

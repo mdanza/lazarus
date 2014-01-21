@@ -151,9 +151,9 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		locationListener = new LocationListenerImpl(this);
-		//mockLocationListener = new MockLocationListener(this);
-		//locationListener = mockLocationListener;
+		//locationListener = new LocationListenerImpl(this);
+		mockLocationListener = new MockLocationListener(this);
+		locationListener = mockLocationListener;
 		initializeFirstState();
 
 	}

@@ -2,9 +2,10 @@ package com.android.lazarus.listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -12,6 +13,7 @@ import com.android.lazarus.state.LocationDependentState;
 
 public class MockLocationListener extends LocationListenerImpl {
 
+	private int counter = 0;
 	private Location location = null;
 	private VoiceInterpreterActivity voiceInterpreterActivity;
 	String provider = null;
@@ -28,7 +30,8 @@ public class MockLocationListener extends LocationListenerImpl {
 	// "-34.90614,-56.14412", "-34.90624,-56.14460" };
 
 	// alternative: para prueba bus D11
-	private String[] points = { "-34.90111,-56.14013", "-34.90126,-56.140074",
+	private String[] points = { "-34.90111,-56.14013", "-34.90111,-56.14013",
+			"-34.90111,-56.14013", "-34.90126,-56.140074",
 			"-34.901366,-56.140042", "-34.90163,-56.139935",
 			"-34.901568,-56.139634", "-34.901489,-56.139334",
 			"-34.901384,-56.139001", "-34.901252,-56.138583",
@@ -38,9 +41,10 @@ public class MockLocationListener extends LocationListenerImpl {
 			"-34.890718,-56.071409", "-34.888906,-56.066431",
 			"-34.888105,-56.06391", "-34.887295,-56.061711",
 			"-34.886292,-56.058814", "-34.88623,-56.058578" };
-	
+
 	// alternative: para prueba bus D11 conexión L21
-	// private String[] points = { "-34.90111,-56.14013",
+	// private String[] points = { "-34.90111,-56.14013", "-34.90111,-56.14013",
+	// "-34.90111,-56.14013",
 	// "-34.90126,-56.140074",
 	// "-34.901366,-56.140042", "-34.90163,-56.139935",
 	// "-34.901568,-56.139634", "-34.901489,-56.139334",
@@ -90,8 +94,10 @@ public class MockLocationListener extends LocationListenerImpl {
 	}
 
 	public void startMoving() {
-		WalkTask walkTask = new WalkTask();
-		walkTask.execute(points);
+		// WalkTask walkTask = new WalkTask();
+		// walkTask.execute(points);
+		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new WalkTask(),
+				0, 20, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -123,32 +129,24 @@ public class MockLocationListener extends LocationListenerImpl {
 		return location;
 	}
 
-	private class WalkTask extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... args) {
-			List<Location> locations = getLocationsFromPoints(args);
-			for (Location location : locations) {
-				if (!restarted) {
-					try {
-						synchronized (locations) {
-							locations.wait(3000);
-						}
-					} catch (InterruptedException e) {
-
-					}
-					if (locations.indexOf(location) != 0)
-						onLocationChanged(location);
-				}
+	private class WalkTask implements Runnable {
+		public void run() {
+			if (counter < points.length) {
+				List<Location> locations = getLocationsFromPoints(points);
+				location = locations.get(counter);
+				onLocationChanged(location);
+				counter++;
+				voiceInterpreterActivity.showToast(location.getLatitude()
+						+ ", " + location.getLongitude());
 			}
-			return "Walking";
 		}
 	}
 
 	public void restart() {
-		restarted = true;
-		MockLocationListener mockLocationListener = new MockLocationListener(
-				this.voiceInterpreterActivity);
-		voiceInterpreterActivity.setLocationListener(mockLocationListener);
+		// restarted = true;
+		// MockLocationListener mockLocationListener = new MockLocationListener(
+		// this.voiceInterpreterActivity);
+		// voiceInterpreterActivity.setLocationListener(mockLocationListener);
+		counter = 0;
 	}
 }

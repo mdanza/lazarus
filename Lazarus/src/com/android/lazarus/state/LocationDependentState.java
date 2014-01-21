@@ -3,7 +3,6 @@ package com.android.lazarus.state;
 import java.util.List;
 
 import android.location.Location;
-import android.speech.tts.TextToSpeech;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 
@@ -57,22 +56,7 @@ public abstract class LocationDependentState extends AbstractState {
 		}
 	}
 
-	public void setPosition(Location position) {
-		if (position == null) {
-			this.message = notEnoughAccuracyMessage;
-			context.speak(this.message);
-		} else {
-			if (!(position.getAccuracy() < minimumAccuraccy)) {
-				enoughAccuraccy = false;
-				this.message = notEnoughAccuracyMessage;
-				context.speak(this.message);
-			} else {
-				enoughAccuraccy = true;
-				this.position = position;
-				giveInstructions();
-			}
-		}
-	}
+	public abstract void setPosition(Location position);
 
 	public boolean isEnoughAccuraccy() {
 		return enoughAccuraccy;

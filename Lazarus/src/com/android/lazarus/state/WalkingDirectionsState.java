@@ -9,6 +9,7 @@ import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.util.GeoPoint;
 
+import android.location.Location;
 import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -291,7 +292,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				end = new GeoPoint(-34.771871,-55.765883);
+				// end = new GeoPoint(-34.771871,-55.765883);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -311,7 +312,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					//context.mockLocationListener.startMoving();
+					context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -331,14 +332,33 @@ public class WalkingDirectionsState extends LocationDependentState {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination);
 		context.setState(walkingDirectionsState);
-		//context.mockLocationListener.restart();
+		// context.mockLocationListener.restart();
 	}
 
 	protected void restartState(String initialMessage) {
 		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
 				context, destination, initialMessage);
 		context.setState(walkingDirectionsState);
-		//context.mockLocationListener.restart();
+		// context.mockLocationListener.restart();
+	}
+	
+	@Override
+	public void setPosition(Location position) {
+
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+				giveInstructions();
+			}
+		}
 	}
 
 	private class ReportObstacleTask extends AsyncTask<String, Void, String> {

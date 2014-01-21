@@ -1,5 +1,7 @@
 package com.android.lazarus.state;
 
+import android.location.Location;
+
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.Transshipment;
@@ -33,6 +35,24 @@ public class TransshipmentState extends LocationDependentState {
 	protected void restartState() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setPosition(Location position) {
+
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+			}
+		}
 	}
 
 }

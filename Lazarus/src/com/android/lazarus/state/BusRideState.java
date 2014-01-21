@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
 
+import android.location.Location;
 import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -95,14 +96,14 @@ public class BusRideState extends LocationDependentState {
 										bus.getLongitude())).intValue()
 						+ " metros, lo mantendremos actualizado";
 				busUpdateTask = scheduledExecutorService.scheduleAtFixedRate(
-						new UpdateBusTask(), 15, 15, TimeUnit.SECONDS);
+						new UpdateBusTask(), 10, 10, TimeUnit.SECONDS);
 			}
 			message += ", diga,, arriba,, cuando aborde el coche, diga,, recalcular,, si desea buscar nuevamente";
 			context.speak(message);
 		}
 		if (state.equals(InternalState.WAITING_END_STOP)) {
 			checkEndStopTask = scheduledExecutorService.scheduleAtFixedRate(
-					new CheckEndStopClosenessTask(), 10, 15, TimeUnit.SECONDS);
+					new CheckEndStopClosenessTask(), 5, 5, TimeUnit.SECONDS);
 			message = "Disfrute su viaje, le informaremos algunas paradas antes de que deba bajarse";
 			context.speak(message);
 		}
@@ -114,13 +115,37 @@ public class BusRideState extends LocationDependentState {
 
 	private void appendSchedule() {
 		message += " las próximas pasadas están agendadas para las";
-		for (String time : schedule)
+		int counter = 0;
+		for (String time : schedule) {
 			message += ",," + time;
+			counter++;
+			if (counter == 3)
+				break;
+		}
+
 	}
 
 	@Override
 	protected void restartState() {
 		state = InternalState.WALKING_TO_START_STOP;
+	}
+	
+	@Override
+	public void setPosition(Location position) {
+
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+			}
+		}
 	}
 
 	public void arrivedToDestination() {

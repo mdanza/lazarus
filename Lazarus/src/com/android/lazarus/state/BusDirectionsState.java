@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import android.location.Location;
 import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -43,7 +44,7 @@ public class BusDirectionsState extends LocationDependentState {
 	protected void handleResults(List<String> results) {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			for (int i = 0; i < busRides.size(); i++) {
-				if (containsNumber(results, i)) {
+				if (containsNumber(results, i + 1)) {
 					context.setState(new BusRideState(this.context,
 							destination, busRides.get(i)));
 					return;
@@ -52,7 +53,7 @@ public class BusDirectionsState extends LocationDependentState {
 		}
 		if (state.equals(InternalState.AWAITING_USER_DECISION_TRANSSHIPMENT)) {
 			for (int i = 0; i < transshipments.size(); i++) {
-				if (containsNumber(results, i)) {
+				if (containsNumber(results, i + 1)) {
 					context.setState(new TransshipmentState(this.context,
 							destination, transshipments.get(i)));
 					return;
@@ -69,7 +70,7 @@ public class BusDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < busRides.size(); i++) {
-				message += ",,diga " + i + " , para tomar un "
+				message += ",,diga " + (i + 1) + " , para tomar un "
 						+ busRides.get(i).getLineName() + " con destino "
 						+ busRides.get(i).getDestination();
 				appendDistanceToStop(busRides.get(i).getStartStop());
@@ -81,7 +82,7 @@ public class BusDirectionsState extends LocationDependentState {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < transshipments.size(); i++) {
 				message += ",,diga "
-						+ i
+						+ (i + 1)
 						+ " , para tomar un "
 						+ transshipments.get(i).getFirstRoute().getLineName()
 						+ " con destino "
@@ -106,8 +107,13 @@ public class BusDirectionsState extends LocationDependentState {
 
 	private void appendSchedule(int pos) {
 		message += " a las";
-		for (String time : schedule.get(pos))
+		int counter = 0;
+		for (String time : schedule.get(pos)) {
 			message += ",," + time;
+			counter++;
+			if (counter == 3)
+				break;
+		}
 	}
 
 	private void appendDistanceToStop(BusStop stop) {
@@ -161,6 +167,25 @@ public class BusDirectionsState extends LocationDependentState {
 						.getLineName());
 				distinctSecondLines.add(transshipments.get(i).getSecondRoute()
 						.getLineName());
+			}
+		}
+	}
+
+	@Override
+	public void setPosition(Location position) {
+
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+				giveInstructions();
 			}
 		}
 	}

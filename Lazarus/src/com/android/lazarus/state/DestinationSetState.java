@@ -2,6 +2,8 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
+import android.location.Location;
+
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.GPScoordinateHelper;
 import com.android.lazarus.model.Point;
@@ -74,6 +76,25 @@ public class DestinationSetState extends LocationDependentState {
 				context, destination, fromFavourite);
 		context.setState(destinationSetState);
 
+	}
+	
+	@Override
+	public void setPosition(Location position) {
+
+		if (position == null) {
+			this.message = notEnoughAccuracyMessage;
+			context.speak(this.message);
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				enoughAccuraccy = false;
+				this.message = notEnoughAccuracyMessage;
+				context.speak(this.message);
+			} else {
+				enoughAccuraccy = true;
+				this.position = position;
+				giveInstructions();
+			}
+		}
 	}
 
 }

@@ -1,8 +1,11 @@
 package com.android.lazarus.state;
 
+import java.util.List;
+
 import android.location.Location;
 
 import com.android.lazarus.VoiceInterpreterActivity;
+import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.Point;
 import com.android.lazarus.model.Transshipment;
 
@@ -11,10 +14,11 @@ public class TransshipmentState extends LocationDependentState {
 	private Point destination;
 	private String message = "";
 	private static final int NEEDED_ACCURACY = 50;
-	private InternalState state = InternalState.WAITING;
+	private InternalState state = InternalState.FIRST_ROUTE;
+	private boolean sameIntermediateStop;
 
 	private enum InternalState {
-		WAITING
+		FIRST_ROUTE, SECOND_ROUTE
 	}
 
 	public TransshipmentState(VoiceInterpreterActivity context,
@@ -22,19 +26,45 @@ public class TransshipmentState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.transshipment = transshipment;
+		BusRide rideOne = transshipment.getFirstRoute();
+		BusRide rideTwo = transshipment.getSecondRoute();
+		if (rideOne.getEndStop().getBusStopLocationCode() == rideTwo
+				.getStartStop().getBusStopLocationCode())
+			sameIntermediateStop = true;
+		else
+			sameIntermediateStop = false;
+		giveInstructions();
+	}
+
+	@Override
+	protected void handleResults(List<String> results) {
 		giveInstructions();
 	}
 
 	@Override
 	protected void giveInstructions() {
-		// TODO Auto-generated method stub
-
+		if (state.equals(InternalState.FIRST_ROUTE)) {
+			context.setState(new BusRideState(
+					context,
+					transshipment.getSecondRoute().getStartStop().getPoint(),
+					transshipment.getFirstRoute(),
+					this,
+					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP));
+		}
+		if (state.equals(InternalState.SECOND_ROUTE)) {
+			com.android.lazarus.state.BusRideState.InternalState initialState;
+			if (sameIntermediateStop)
+				initialState = com.android.lazarus.state.BusRideState.InternalState.SEARCHING_BUS;
+			else
+				initialState = com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP;
+			context.setState(new BusRideState(context, destination,
+					transshipment.getSecondRoute(), this, initialState));
+		}
 	}
 
 	@Override
 	protected void restartState() {
-		// TODO Auto-generated method stub
-
+		state = InternalState.FIRST_ROUTE;
 	}
 
 	@Override
@@ -52,6 +82,17 @@ public class TransshipmentState extends LocationDependentState {
 				enoughAccuraccy = true;
 				this.position = position;
 			}
+		}
+	}
+
+	public void arrivedToDestination() {
+		if (state.equals(InternalState.FIRST_ROUTE)) {
+			state = InternalState.SECOND_ROUTE;
+			giveInstructions();
+		}
+		if (state.equals(InternalState.SECOND_ROUTE)) {
+			MainMenuState mainMenuState = new MainMenuState(context);
+			context.setState(mainMenuState);
 		}
 	}
 

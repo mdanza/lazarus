@@ -28,15 +28,16 @@ public class BusRideState extends LocationDependentState {
 	private Bus bus;
 	private List<String> schedule;
 	private static final int NEEDED_ACCURACY = 50;
-	private InternalState state = InternalState.WALKING_TO_START_STOP;
+	private InternalState state;
 	private ScheduledExecutorService scheduledExecutorService = Executors
 			.newScheduledThreadPool(1);
 	private ScheduledFuture<?> busUpdateTask;
 	private ScheduledFuture<?> checkEndStopTask;
 	private boolean passedSecondLastStop = false;
 	private boolean passedThirdLastStop = false;
+	private TransshipmentState parent;
 
-	private enum InternalState {
+	public enum InternalState {
 		WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, WAITING_END_STOP, WALKING_TO_DESTINATION
 	}
 
@@ -45,6 +46,17 @@ public class BusRideState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.ride = ride;
+		this.state = InternalState.WALKING_TO_START_STOP;
+		giveInstructions();
+	}
+
+	public BusRideState(VoiceInterpreterActivity context, Point destination,
+			BusRide ride, TransshipmentState parent, InternalState initialState) {
+		super(context, NEEDED_ACCURACY);
+		this.destination = destination;
+		this.ride = ride;
+		this.parent = parent;
+		this.state = initialState;
 		giveInstructions();
 	}
 
@@ -129,7 +141,7 @@ public class BusRideState extends LocationDependentState {
 	protected void restartState() {
 		state = InternalState.WALKING_TO_START_STOP;
 	}
-	
+
 	@Override
 	public void setPosition(Location position) {
 
@@ -154,8 +166,13 @@ public class BusRideState extends LocationDependentState {
 			giveInstructions();
 		}
 		if (state.equals(InternalState.WALKING_TO_DESTINATION)) {
-			MainMenuState mainMenuState = new MainMenuState(context);
-			context.setState(mainMenuState);
+			if (parent == null) {
+				MainMenuState mainMenuState = new MainMenuState(context);
+				context.setState(mainMenuState);
+			} else {
+				context.setState(parent);
+				parent.arrivedToDestination();
+			}
 		}
 	}
 

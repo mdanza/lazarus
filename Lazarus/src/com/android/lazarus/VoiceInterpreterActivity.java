@@ -173,9 +173,9 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		// locationListener = new LocationListenerImpl(this);
-		mockLocationListener = new MockLocationListener(this);
-		locationListener = mockLocationListener;
+		locationListener = new LocationListenerImpl(this);
+		// mockLocationListener = new MockLocationListener(this);
+		// locationListener = mockLocationListener;
 		initializeFirstState();
 
 	}
@@ -199,20 +199,24 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	View.OnTouchListener pushToTalkListener = new View.OnTouchListener() {
 		public boolean onTouch(View view, MotionEvent motionEvent) {
-			switch (motionEvent.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				speechRecognizer.startListening(recognizerIntent);
-				tts.stop();
-				return true;
-			case MotionEvent.ACTION_UP:
-				speechRecognizer.stopListening();
-				tts.speak(
-						". Espere mientras procesamos el resultado por favor",
-						TextToSpeech.QUEUE_FLUSH, null);
-				return true;
-			case MotionEvent.ACTION_MOVE:
-				return true;
+
+			if (tts != null && speechRecognizer != null) {
+				switch (motionEvent.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					speechRecognizer.startListening(recognizerIntent);
+					tts.stop();
+					return true;
+				case MotionEvent.ACTION_UP:
+					speechRecognizer.stopListening();
+					tts.speak(
+							". Espere mientras procesamos el resultado por favor",
+							TextToSpeech.QUEUE_FLUSH, null);
+					return true;
+				case MotionEvent.ACTION_MOVE:
+					return true;
+				}
 			}
+
 			return true;
 		}
 	};

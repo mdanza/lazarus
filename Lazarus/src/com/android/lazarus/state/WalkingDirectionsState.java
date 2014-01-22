@@ -36,6 +36,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private InternalState state = InternalState.WALKING_INSTRUCTIONS;
 	private Obstacle obstacleToReport = null;
 	List<String> possibleDescriptions = null;
+	ReportObstacleTask reportObstacleTask = new ReportObstacleTask();
+	GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
 
 	private enum InternalState {
 		WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
@@ -83,6 +85,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (stringPresent(results, "obstaculo")) {
 				initializeSelectingObstacleName();
 			}
+			if (!stringPresent(results, "destino")
+					&& !stringPresent(results, "obstaculo"))
+				context.speak("La última instrucción fue, " + message);
 			return;
 
 		}
@@ -116,14 +121,16 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	private void reportObstacle(Obstacle obstacle) {
-		ReportObstacleTask reportObstacleTask = new ReportObstacleTask();
 		String[] args = new String[4];
 		args[0] = context.getToken();
 		args[1] = obstacle.getCentre().getLatitude() + ","
 				+ obstacle.getCentre().getLongitude();
 		args[2] = Long.toString(obstacle.getRadius());
 		args[3] = obstacle.getDescription();
-		reportObstacleTask.execute(args);
+		if (reportObstacleTask.getStatus() != AsyncTask.Status.PENDING){
+			//TODO
+			reportObstacleTask.execute(args);
+		}
 	}
 
 	private void initializeSelectingObstacleName() {
@@ -146,8 +153,16 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 		if (positions == null) {
 			message = "";
-			GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
-			getInstructionsTask.execute(new String[2]);
+			if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING){
+					getInstructionsTask.execute(new String[2]);
+				}else{
+					if(getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED){
+						getInstructionsTask = new GetInstructionsTask();
+						getInstructionsTask.execute(new String[2]);
+					}
+				}
+			}
 		} else {
 			if (position != null) {
 				checkForObstacles();
@@ -247,7 +262,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 							- initialDistanceToCurrentPosition;
 					double differenceOfNext = newDistanceToNextPosition
 							- initialDistanceToNextPosition;
-					if (differenceOfCurrent > 50 && differenceOfNext > -20) {
+					if (differenceOfCurrent > 35 && differenceOfNext > -10) {
 						conditionsToRecalculate = true;
 					}
 				}
@@ -277,10 +292,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 		return closestPosition;
 	}
 
-	private class GetInstructionsTask extends AsyncTask<String, Void, String> {
+	private class GetInstructionsTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
+			if(initialMessage==null){
+				initialMessage = "";
+			}
 			if (position != null && destination != null) {
 				ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 
@@ -293,7 +311,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				// end = new GeoPoint(-34.778068,-55.754438);
+				//end = new GeoPoint(-34.771635, -55.749975);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -313,7 +331,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					context.mockLocationListener.startMoving();
+					// context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -322,27 +340,32 @@ public class WalkingDirectionsState extends LocationDependentState {
 					context.setState(mainMenuState);
 				}
 			}
-			return message;
+			return null;
 
 		}
 
 	}
 
-	@Override
-	protected void restartState() {
-		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
-				context, destination);
-		context.setState(walkingDirectionsState);
+	protected void restartState(String initialMessage) {
+		positions = null;
+		obstacles = null;
+		currentWalkingPosition = 0;
+		initialDistanceToCurrentPosition = -1;
+		initialDistanceToNextPosition = -1;
+		this.initialMessage = initialMessage;
+		distanceToFinalPosition = -1;
+		state = InternalState.WALKING_INSTRUCTIONS;
+		obstacleToReport = null;
+		possibleDescriptions = null;
+		giveInstructions();
+		// int position = context.mockLocationListener.position;
+		// context.mockLocationListener.restartFromPosition(position);
 		// context.mockLocationListener.restart();
 	}
 
-	protected void restartState(String initialMessage) {
-		// int position = context.mockLocationListener.position;
-		// context.mockLocationListener.restartFromPosition(position);
-		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
-				context, destination, initialMessage);
-		context.setState(walkingDirectionsState);
-		// context.mockLocationListener.restart();
+	@Override
+	protected void restartState() {
+		restartState("");
 	}
 
 	@Override

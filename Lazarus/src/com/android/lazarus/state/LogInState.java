@@ -1,6 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -16,6 +15,7 @@ public class LogInState extends AbstractState {
 	private UserServiceAdapter userServiceAdapter;
 	private boolean waitingForPassword = false;
 	private boolean waitingForUsername = false;
+	LogInTask logInTask = new LogInTask();
 
 	public LogInState(VoiceInterpreterActivity context) {
 		super(context);
@@ -46,13 +46,11 @@ public class LogInState extends AbstractState {
 			}
 			if (stringPresent(results, "no")) {
 				waitingForUsername = true;
-				stripAccents = false;
 				this.message = "Diga su nombre de usuario";
 				return;
 			}
 			if (waitingForUsername) {
 				waitingForUsername = false;
-				stripAccents = true;
 				this.usernames = results;
 				usernamePresent = true;
 				this.message = "¿Es su nombre de usuario " + usernames.get(0)
@@ -65,20 +63,25 @@ public class LogInState extends AbstractState {
 				for (int i = 0; i < passwords.size(); i++) {
 					args[i] = passwords.get(i);
 				}
-				message = "";
-				stripAccents = true;
-				LogInTask logInTask = new LogInTask();
-				logInTask.execute(args);
+				message = "Espere mientras procesamos sus datos";
+				if (logInTask.getStatus() != AsyncTask.Status.RUNNING) {
+					if (logInTask.getStatus() == AsyncTask.Status.PENDING){
+						logInTask.execute(args);
+					}else{
+						if(logInTask.getStatus() == AsyncTask.Status.FINISHED){
+							logInTask = new LogInTask();
+							logInTask.execute(args);
+						}
+					}
+				}
 			}
 			if (stringPresent(results, "no")) {
 				cleanValuesForTryAgain();
 				this.message = "Repita su nombre de usuario";
-				stripAccents = false;
 			}
 			if (stringPresent(results, "si")) {
 				this.message = "Diga su contraseña";
 				waitingForPassword = true;
-				stripAccents = false;
 			}
 
 		}
@@ -90,7 +93,6 @@ public class LogInState extends AbstractState {
 		usernames = null;
 		waitingForPassword = false;
 		waitingForUsername = false;
-		stripAccents = true;
 		message = "";
 	}
 	
@@ -99,15 +101,13 @@ public class LogInState extends AbstractState {
 		usernames = null;
 		waitingForPassword = false;
 		waitingForUsername = true;
-		stripAccents = false;
 		message = "";
 	}
 
-	private class LogInTask extends AsyncTask<String, Void, String> {
+	private class LogInTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
-			String token = null;
+		protected Void doInBackground(String... args) {
 			boolean validCredentialsFound = false;
 			for (String arg : args) {
 				if (!validCredentialsFound) {
@@ -117,7 +117,7 @@ public class LogInState extends AbstractState {
 					String possibleToken = userServiceAdapter.login(
 							usernames.get(0), arg);
 					if (possibleToken != null) {
-						token = possibleToken;
+						context.setToken(possibleToken);
 						context.getSharedPreferences("usrpref", 0).edit()
 								.putString("username", usernames.get(0))
 								.commit();
@@ -132,10 +132,9 @@ public class LogInState extends AbstractState {
 			if (!validCredentialsFound) {
 				cleanValuesForTryAgain();
 				message = "Nombre de usuario o contraseña incorrecto, diga su nombre de usuario";
+				context.sayMessage();
 			}
-			context.sayMessage();
-			context.setToken(token);
-			return token;
+			return null;
 		}
 
 	}

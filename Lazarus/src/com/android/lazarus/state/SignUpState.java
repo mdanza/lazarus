@@ -2,9 +2,7 @@ package com.android.lazarus.state;
 
 import java.util.List;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.telephony.TelephonyManager;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -24,7 +22,6 @@ public class SignUpState extends AbstractState {
 		this.defaultMessage = "Diga el nombre de usuario que desea tener";
 		this.message = defaultMessage;
 		this.context = context;
-		stripAccents = false;
 	}
 
 	public SignUpState(VoiceInterpreterActivity context, String initialMessage) {
@@ -32,7 +29,6 @@ public class SignUpState extends AbstractState {
 		this.defaultMessage = "Diga el nombre de usuario que desea tener";
 		this.message = initialMessage + defaultMessage;
 		this.context = context;
-		stripAccents = false;
 	}
 
 	public void handleResults(List<String> results) {
@@ -41,7 +37,6 @@ public class SignUpState extends AbstractState {
 				this.message = "¿Desea que su nombre de usuario sea "
 						+ username + "?";
 				toConfirmUsername = true;
-				stripAccents = true;
 			return;
 		}
 		if (toConfirmUsername) {
@@ -50,7 +45,6 @@ public class SignUpState extends AbstractState {
 				resetData(defaultMessage);
 			}
 			if (stringPresent(results, "si")) {
-				stripAccents = false;
 				message = "";
 				CheckUsernameAvailableTask checkUsernameAvailableTask = new CheckUsernameAvailableTask();
 				String[] args = new String[1];
@@ -69,7 +63,6 @@ public class SignUpState extends AbstractState {
 			}
 			this.message = "¿Desea que su contraseña sea "
 					+ passwordToBeUttered + "?";
-			stripAccents = true;
 			toConfirmPassword = true;
 			return;
 		}
@@ -101,7 +94,6 @@ public class SignUpState extends AbstractState {
 		toConfirmUsername = false;
 		toChoosePassword = false;
 		toConfirmPassword = false;
-		stripAccents = false;
 		this.message = message;
 	}
 
@@ -119,12 +111,6 @@ public class SignUpState extends AbstractState {
 			context.sayMessage();
 			return message;
 		}
-	}
-
-	private String getPhoneNumber() {
-		TelephonyManager tMgr = (TelephonyManager) context
-				.getSystemService(Context.TELEPHONY_SERVICE);
-		return tMgr.getLine1Number();
 	}
 
 	private class SaveDataTask extends AsyncTask<String, Void, String> {

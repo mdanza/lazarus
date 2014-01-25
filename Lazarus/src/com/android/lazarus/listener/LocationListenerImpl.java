@@ -40,16 +40,15 @@ public class LocationListenerImpl implements LocationListener {
 			if (!bestProvider.equals(LocationManager.GPS_PROVIDER)) {
 				requestUpdates(LocationManager.GPS_PROVIDER);
 			}
+		}else{
+			requestUpdates(LocationManager.GPS_PROVIDER);
 		}
 
 	}
 
 	private void requestUpdates(String updatesForProvider) {
-		if (locationManager.isProviderEnabled(updatesForProvider)) {
 			locationManager.requestLocationUpdates(updatesForProvider, 1000, 1,
 					this);
-		}
-
 	}
 
 	@Override

@@ -24,6 +24,7 @@ public class MainMenuState extends AbstractState {
 	List<String> firstResults;
 	List<Favourite> favourites = null;
 	private InternalState state = InternalState.GET_DESTINATION;
+	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 
 	private enum InternalState {
 		GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
@@ -42,11 +43,21 @@ public class MainMenuState extends AbstractState {
 	}
 
 	private void loadFavourites(String initialText) {
-		LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 		String[] args = new String[2];
 		args[0] = context.getToken();
 		args[1] = initialText;
-		loadFavouritesTask.execute(args);
+		if (loadFavouritesTask.getStatus() != AsyncTask.Status.RUNNING) {
+			if (loadFavouritesTask.getStatus() == AsyncTask.Status.PENDING){
+				loadFavouritesTask.execute(args);
+			}else{
+				if(loadFavouritesTask.getStatus() == AsyncTask.Status.FINISHED){
+					loadFavouritesTask = new LoadFavouritesTask();
+					loadFavouritesTask.execute(args);
+				}
+			}
+		}else{
+			message = "Espere mientras cargamos sus datos por favor";
+		}
 	}
 
 	public void handleResults(List<String> results) {

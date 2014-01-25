@@ -31,7 +31,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private double initialDistanceToNextPosition = -1;
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
-	private static final int NEEDED_ACCURACY = 50;
+	private static final int NEEDED_ACCURACY = 2000;
 	private BusRideState parentState;
 	private InternalState state = InternalState.WALKING_INSTRUCTIONS;
 	private Obstacle obstacleToReport = null;
@@ -103,7 +103,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.CONFIRMING_DESCRIPTION)) {
 			if (stringPresent(results, "si")) {
 				obstacleToReport.setDescription(possibleDescriptions.get(0));
-				message = "";
+				message = "Espere mientras reportamos el obstáculo";
 				reportObstacle(obstacleToReport);
 			}
 			if (stringPresent(results, "no")) {
@@ -158,7 +158,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 			initialMessage = null;
 		}
 		if (positions == null) {
-			message = "";
+			message = "Espere mientras se cargan las instrucciones para llegar a destino";
 			if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
 				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING){
 					getInstructionsTask.execute(new String[2]);
@@ -317,7 +317,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				//end = new GeoPoint(-34.771635, -55.749975);
+				end = new GeoPoint(-34.771635, -55.749975);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);

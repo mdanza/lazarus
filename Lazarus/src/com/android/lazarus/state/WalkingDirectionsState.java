@@ -21,14 +21,15 @@ import com.android.lazarus.model.Point;
 import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapter;
 import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapterImpl;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineSegment;
 
 public class WalkingDirectionsState extends LocationDependentState {
 	private Point destination;
 	private List<WalkingPosition> positions;
 	private List<Obstacle> obstacles;
 	private int currentWalkingPosition = 0;
-	private double initialDistanceToCurrentPosition = -1;
-	private double initialDistanceToNextPosition = -1;
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
 	private static final int NEEDED_ACCURACY = 2000;
@@ -128,10 +129,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		args[2] = Long.toString(obstacle.getRadius());
 		args[3] = obstacle.getDescription();
 		if (reportObstacleTask.getStatus() != AsyncTask.Status.RUNNING) {
-			if (reportObstacleTask.getStatus() == AsyncTask.Status.PENDING){
+			if (reportObstacleTask.getStatus() == AsyncTask.Status.PENDING) {
 				reportObstacleTask.execute(args);
-			}else{
-				if(reportObstacleTask.getStatus() == AsyncTask.Status.FINISHED){
+			} else {
+				if (reportObstacleTask.getStatus() == AsyncTask.Status.FINISHED) {
 					reportObstacleTask = new ReportObstacleTask();
 					reportObstacleTask.execute(args);
 				}
@@ -160,10 +161,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		if (positions == null) {
 			message = "Espere mientras se cargan las instrucciones para llegar a destino";
 			if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
-				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING){
+				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING) {
 					getInstructionsTask.execute(new String[2]);
-				}else{
-					if(getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED){
+				} else {
+					if (getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED) {
 						getInstructionsTask = new GetInstructionsTask();
 						getInstructionsTask.execute(new String[2]);
 					}
@@ -174,17 +175,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 				checkForObstacles();
 				int olderPosition = currentWalkingPosition;
 				int closestPosition = getClosestPosition();
-				if (closestPosition != -1 && olderPosition < closestPosition) {
+				if (closestPosition != -1 && olderPosition+1 == closestPosition) {
 					currentWalkingPosition = getClosestPosition();
 				}
-				if (olderPosition != currentWalkingPosition) {
-					String instruction = getInstructionForCurrentWalkingPosition();
-					if (instruction != null) {
-						message = instruction;
-						context.speak(instruction, true);
-					}
-				} else if (conditionsToRecalculate()) {
+				if (conditionsToRecalculate()) {
 					recalculate();
+				} else {
+					if (olderPosition != currentWalkingPosition) {
+						String instruction = getInstructionForCurrentWalkingPosition();
+						if (instruction != null) {
+							message = instruction;
+							context.speak(instruction, true);
+						}
+					}
 				}
 			}
 
@@ -207,12 +210,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 						+ " metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga destino";
 			}
 		} else {
-			initialDistanceToCurrentPosition = WalkingPositionHelper
-					.distanceToWalkingPosition(position,
-							positions.get(currentWalkingPosition));
-			initialDistanceToNextPosition = WalkingPositionHelper
-					.distanceToWalkingPosition(position,
-							positions.get(currentWalkingPosition + 1));
 			if (positions.get(currentWalkingPosition).getInstruction() != null) {
 				instruction = WalkingPositionHelper
 						.generateInstructionForNotFinalWalkingPosition(
@@ -251,31 +248,101 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	private boolean conditionsToRecalculate() {
 		boolean conditionsToRecalculate = false;
-		if (positions != null) {
-			if (currentWalkingPosition != positions.size() - 1) {
-				WalkingPosition walkingPosition = positions
-						.get(currentWalkingPosition);
-				WalkingPosition nextWalkingPosition = positions
-						.get(currentWalkingPosition + 1);
-				if (walkingPosition != null && nextWalkingPosition != null) {
-					double newDistanceToCurrentPosition = WalkingPositionHelper
-							.distanceToWalkingPosition(position,
-									walkingPosition);
-					double newDistanceToNextPosition = WalkingPositionHelper
-							.distanceToWalkingPosition(position,
-									nextWalkingPosition);
-					double differenceOfCurrent = newDistanceToCurrentPosition
-							- initialDistanceToCurrentPosition;
-					double differenceOfNext = newDistanceToNextPosition
-							- initialDistanceToNextPosition;
-					if (differenceOfCurrent > 35 && differenceOfNext > -10) {
-						conditionsToRecalculate = true;
-					}
-				}
+		Coordinate standingOn = createJTSCoordinate(new Point(
+				position.getLatitude(), position.getLongitude()));
+		Coordinate[] points = getCoordinates(currentWalkingPosition);
+		double distanceFromStandingOnToPath = -1;
+		// First position
+		if (points[0] == null && points[1] != null && points[2] != null) {
+			distanceFromStandingOnToPath = distanceFromPointToLine(standingOn,
+					points[1], points[2]);
+		}
+		// Middle position
+		if (points[0] != null && points[1] != null && points[2] != null) {
+			double firstDistanceFromStandingOnToPath = distanceFromPointToLine(
+					standingOn, points[1], points[2]);
+			double secondDistanceFromStandingOnToPath = distanceFromPointToLine(
+					standingOn, points[0], points[1]);
+			if (firstDistanceFromStandingOnToPath > secondDistanceFromStandingOnToPath) {
+				distanceFromStandingOnToPath = secondDistanceFromStandingOnToPath;
+			} else {
+				distanceFromStandingOnToPath = firstDistanceFromStandingOnToPath;
 			}
+		}
+		// Last position
+		if (points[0] != null && points[1] != null && points[2] == null) {
+			distanceFromStandingOnToPath = distanceFromPointToLine(standingOn,
+					points[0], points[1]);
+		}
+		if (distanceFromStandingOnToPath > position.getAccuracy() + 40) {
+			conditionsToRecalculate = true;
 		}
 		return conditionsToRecalculate;
 
+	}
+
+	private double distanceFromPointToLine(Coordinate standingOn,
+			Coordinate coordinate, Coordinate coordinate2) {
+		LineSegment lineSegment = new LineSegment(coordinate, coordinate2);
+		Coordinate closestPointToStandingOn = lineSegment
+				.closestPoint(standingOn);
+		return GPScoordinateHelper.getDistanceBetweenPoints(standingOn.y,
+				closestPointToStandingOn.y, standingOn.x,
+				closestPointToStandingOn.x);
+	}
+
+	private Coordinate createJTSCoordinate(Point point) {
+		if (point != null) {
+			return new Coordinate(point.getLongitude(), point.getLatitude());
+		} else {
+			return null;
+		}
+	}
+
+	private Coordinate[] getCoordinates(int currentWalkingPosition) {
+		Coordinate[] points = new Coordinate[3];
+		if (positions != null && positions.size() > 1) {
+			WalkingPosition actualWalkingPosition = null;
+			WalkingPosition previousWalkingPosition = null;
+			WalkingPosition nextWalkingPosition = null;
+			Point currentPoint = null;
+			Point previousPoint = null;
+			Point nextPoint = null;
+			actualWalkingPosition = positions.get(currentWalkingPosition);
+			if (currentWalkingPosition > 0)
+				previousWalkingPosition = positions
+						.get(currentWalkingPosition - 1);
+			if (currentWalkingPosition < positions.size() - 1)
+				nextWalkingPosition = positions.get(currentWalkingPosition + 1);
+			if (actualWalkingPosition != null)
+				currentPoint = actualWalkingPosition.getPoint();
+			if (nextWalkingPosition != null)
+				nextPoint = nextWalkingPosition.getPoint();
+			if (previousWalkingPosition != null)
+				previousPoint = previousWalkingPosition.getPoint();
+			if (previousPoint != null) {
+				points[0] = createJTSCoordinate(previousPoint);
+			}
+			if (currentPoint != null) {
+				points[1] = createJTSCoordinate(currentPoint);
+			}
+			if (nextPoint != null) {
+				points[2] = createJTSCoordinate(nextPoint);
+			}
+		}
+		return points;
+
+	}
+
+	private com.vividsolutions.jts.geom.Point createJTSPoint(Point currentPoint) {
+		if (currentPoint != null) {
+			GeometryFactory geometryFactory = new GeometryFactory();
+			Coordinate coordinate = new Coordinate(currentPoint.getLongitude(),
+					currentPoint.getLatitude());
+			return geometryFactory.createPoint(coordinate);
+		} else {
+			return null;
+		}
 	}
 
 	private int getClosestPosition() {
@@ -302,7 +369,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 		@Override
 		protected Void doInBackground(String... args) {
-			if(initialMessage==null){
+			if (initialMessage == null) {
 				initialMessage = "";
 			}
 			if (position != null && destination != null) {
@@ -317,7 +384,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
 				// start = new GeoPoint(-34.778024, -55.754501);
-				end = new GeoPoint(-34.771635, -55.749975);
+				// end = new GeoPoint(-34.771635, -55.749975);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -337,7 +404,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					message = initialMessage + message;
 					context.speak(message, true);
-					// context.mockLocationListener.startMoving();
+					// TODO
+					//context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -356,16 +424,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 		positions = null;
 		obstacles = null;
 		currentWalkingPosition = 0;
-		initialDistanceToCurrentPosition = -1;
-		initialDistanceToNextPosition = -1;
 		this.initialMessage = initialMessage;
 		distanceToFinalPosition = -1;
 		state = InternalState.WALKING_INSTRUCTIONS;
 		obstacleToReport = null;
 		possibleDescriptions = null;
 		giveInstructions();
-		// int position = context.mockLocationListener.position;
-		// context.mockLocationListener.restartFromPosition(position);
+		// TODO
+		//int position = context.mockLocationListener.counter;
+		//context.mockLocationListener.restartFromPosition(position);
 		// context.mockLocationListener.restart();
 	}
 

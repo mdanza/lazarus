@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
+import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -48,7 +49,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
-	// public MockLocationListener mockLocationListener;
+	//TODO
+	//public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -177,7 +179,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
 		locationListener = new LocationListenerImpl(this);
-		// mockLocationListener = new MockLocationListener(this);
+		//TODO
+		//mockLocationListener = new MockLocationListener(this);
 		// locationListener = mockLocationListener;
 		initializeFirstState();
 

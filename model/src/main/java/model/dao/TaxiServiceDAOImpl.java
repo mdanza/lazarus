@@ -59,7 +59,7 @@ public class TaxiServiceDAOImpl implements TaxiServiceDAO {
 	public List<TaxiService> findAll() {
 		List<TaxiService> result;
 		try {
-			result =  entityManager.createNamedQuery("TaxiService.findByName").getResultList();
+			result =  entityManager.createNamedQuery("TaxiService.findAll").getResultList();
 		} catch (Exception e) {
 			result = null;
 		}

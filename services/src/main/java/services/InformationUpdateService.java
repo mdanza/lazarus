@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -36,16 +35,17 @@ import services.shapefiles.bus.ControlPointLoader;
 import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
 import services.streets.abbreviations.AbbreviationService;
+import services.taxis.TaxiServiceService;
 
 import com.google.gson.Gson;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
-@Stateless(name = "ShapeService")
-@Path("v1/api/shapes")
-public class ShapefileService {
+@Stateless(name = "InformationUpdateService")
+@Path("v1/api/information")
+public class InformationUpdateService {
 
-	static Logger logger = Logger.getLogger(ShapefileService.class);
+	static Logger logger = Logger.getLogger(InformationUpdateService.class);
 
 	private Gson gson = new Gson();
 
@@ -78,9 +78,12 @@ public class ShapefileService {
 
 	@EJB(name = "CornerLoader")
 	private CornerLoader cornerLoader;
-	
+
 	@EJB(name = "AbbreviationService")
 	private AbbreviationService abbreviationService;
+
+	@EJB(name = "TaxiServiceService")
+	private TaxiServiceService taxiServiceService;
 
 	@POST
 	@Path("/uploadStreets")
@@ -114,7 +117,7 @@ public class ShapefileService {
 
 	@POST
 	@Path("/uploadControlPoints")
-	@Consumes(MediaType.MULTIPART_FORM_DATA) 
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String controlPoints(@HeaderParam("Authorization") String token,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
@@ -166,19 +169,9 @@ public class ShapefileService {
 		if (token == null || token.equals(""))
 			return restResultsHelper.resultWrapper(false,
 					gson.toJson("Token cannot be empty or null"));
-		if(uploadedInputStream == null)
+		if (uploadedInputStream == null)
 			return restResultsHelper.resultWrapper(false,
 					gson.toJson("Null file"));
-//		if(fileDetail == null)
-//			return restResultsHelper.resultWrapper(false,
-//					gson.toJson("Null detail"));
-//		String filename = fileDetail.getFileName();
-//		String extension = filename.substring(filename.lastIndexOf(".") + 1,
-//				filename.length());
-//		if (extension == null || extension.equals("")
-//				|| !extension.equalsIgnoreCase("zip"))
-//			return restResultsHelper.resultWrapper(false,
-//					gson.toJson("No .zip file uploaded"));
 		try {
 			User user = authenticationService.authenticate(token);
 			if (!user.getRole().equals(Role.ADMIN))
@@ -207,24 +200,126 @@ public class ShapefileService {
 			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
 	}
-	
-	 @POST
-     @Path("/uploadStreetTitles")
-     public String uploadStreetTitles(@FormParam("url") String url) {
-             if (url == null || url.equals(""))
-                     throw new IllegalArgumentException("Url cannot be empty or null");
-             abbreviationService.saveRouteTitles(url);
-             return "Done";
-     }
-	 
 
-	 @POST
-     @Path("/uploadStreetTypes")
-     public String uploadStreetTypes(@FormParam("url") String url) {
-             if (url == null || url.equals(""))
-                     throw new IllegalArgumentException("Url cannot be empty or null");
-             abbreviationService.saveRouteTypes(url);
-             return "Done";
-     }
+	@POST
+	@Path("/uploadStreetTitles")
+	public String uploadStreetTitles(
+			@HeaderParam("Authorization") String token,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		if (token == null || token.equals(""))
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Token cannot be empty or null"));
+		if (uploadedInputStream == null)
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Null file"));
+		try {
+			User user = authenticationService.authenticate(token);
+			if (!user.getRole().equals(Role.ADMIN))
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+			try {
+				File file = File.createTempFile(
+						RandomStringUtils.randomAlphanumeric(8), ".csv");
+				OutputStream out = new FileOutputStream(file);
+				int read = 0;
+				byte[] buffer = new byte[1024];
+				while ((read = uploadedInputStream.read(buffer)) != -1) {
+					out.write(buffer, 0, read);
+				}
+				out.flush();
+				out.close();
+				abbreviationService.saveRouteTitles(file);
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson("Successfully received csv"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						gson.toJson("Error uploading file"));
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+	}
 
+	@POST
+	@Path("/uploadStreetTypes")
+	public String uploadStreetTypes(@HeaderParam("Authorization") String token,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		if (token == null || token.equals(""))
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Token cannot be empty or null"));
+		if (uploadedInputStream == null)
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Null file"));
+		try {
+			User user = authenticationService.authenticate(token);
+			if (!user.getRole().equals(Role.ADMIN))
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+			try {
+				File file = File.createTempFile(
+						RandomStringUtils.randomAlphanumeric(8), ".csv");
+				OutputStream out = new FileOutputStream(file);
+				int read = 0;
+				byte[] buffer = new byte[1024];
+				while ((read = uploadedInputStream.read(buffer)) != -1) {
+					out.write(buffer, 0, read);
+				}
+				out.flush();
+				out.close();
+				abbreviationService.saveRouteTypes(file);
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson("Successfully received csv"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						gson.toJson("Error uploading file"));
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+	}
+
+	@POST
+	@Path("/uploadTaxiServices")
+	public String uploadTaxiServices(
+			@HeaderParam("Authorization") String token,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		if (token == null || token.equals(""))
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Token cannot be empty or null"));
+		if (uploadedInputStream == null)
+			return restResultsHelper.resultWrapper(false,
+					gson.toJson("Null file"));
+		try {
+			User user = authenticationService.authenticate(token);
+			if (!user.getRole().equals(Role.ADMIN))
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+			try {
+				File file = File.createTempFile(
+						RandomStringUtils.randomAlphanumeric(8), ".csv");
+				OutputStream out = new FileOutputStream(file);
+				int read = 0;
+				byte[] buffer = new byte[1024];
+				while ((read = uploadedInputStream.read(buffer)) != -1) {
+					out.write(buffer, 0, read);
+				}
+				out.flush();
+				out.close();
+				taxiServiceService.uploadInfo(file);
+				return restResultsHelper.resultWrapper(true,
+						gson.toJson("Successfully received csv"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return restResultsHelper.resultWrapper(false,
+						gson.toJson("Error uploading file"));
+			}
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
+		}
+	}
 }

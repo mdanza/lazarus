@@ -1,6 +1,7 @@
 package services.streets.abbreviations;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,10 +30,10 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 	private List<RouteTitle> routeTitles;
 
 	@Override
-	public void saveRouteTypes(String url) {
+	public void saveRouteTypes(File file) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(url));
+			reader = new BufferedReader(new FileReader(file));
 			String line = reader.readLine();
 			routeTypeDAO.removeAll();
 			for (line = reader.readLine(); line != null; line = reader
@@ -69,10 +70,10 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 	}
 
 	@Override
-	public void saveRouteTitles(String url) {
+	public void saveRouteTitles(File file) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(url));
+			reader = new BufferedReader(new FileReader(file));
 			String line = reader.readLine();
 			routeTitleDAO.removeAll();
 			for (line = reader.readLine(); line != null; line = reader
@@ -160,28 +161,30 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 	private List<RouteType> getRouteTypesOrderedByNumberOfWords(
 			List<RouteType> routeTypes) {
 		List<RouteType> newRouteTypes = new ArrayList<RouteType>();
-		if(routeTypes!=null){
-			for(int i = 0;i<routeTypes.size();i++){
+		if (routeTypes != null) {
+			for (int i = 0; i < routeTypes.size(); i++) {
 				RouteType routeType = routeTypes.get(i);
-				if(newRouteTypes.isEmpty()){
+				if (newRouteTypes.isEmpty()) {
 					newRouteTypes.add(routeType);
-				}else{
+				} else {
 					boolean added = false;
-					for(int j = 0;j<newRouteTypes.size();j++){
-						if(!added){
-						RouteType newRouteType = newRouteTypes.get(j);
-						if(newRouteType!=null && routeType!=null){
-							String description = routeType.getDescription();
-							String newDescription = newRouteType.getDescription();
-							if(description.split("\\ ").length>newDescription.split("\\ ").length){
-								added = true;
-								newRouteTypes.add(j,routeType);
+					for (int j = 0; j < newRouteTypes.size(); j++) {
+						if (!added) {
+							RouteType newRouteType = newRouteTypes.get(j);
+							if (newRouteType != null && routeType != null) {
+								String description = routeType.getDescription();
+								String newDescription = newRouteType
+										.getDescription();
+								if (description.split("\\ ").length > newDescription
+										.split("\\ ").length) {
+									added = true;
+									newRouteTypes.add(j, routeType);
+								}
+								if (j == newRouteTypes.size() - 1 && !added) {
+									added = true;
+									newRouteTypes.add(routeType);
+								}
 							}
-							if(j==newRouteTypes.size()-1 && !added){
-								added = true;
-								newRouteTypes.add(routeType);
-							}
-						}
 						}
 					}
 				}
@@ -193,28 +196,31 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 	private List<RouteTitle> getRouteTitlesOrderedByNumberOfWords(
 			List<RouteTitle> routeTitles) {
 		List<RouteTitle> newRouteTitles = new ArrayList<RouteTitle>();
-		if(routeTitles!=null){
-			for(int i = 0;i<routeTitles.size();i++){
+		if (routeTitles != null) {
+			for (int i = 0; i < routeTitles.size(); i++) {
 				RouteTitle routeTitle = routeTitles.get(i);
-				if(newRouteTitles.isEmpty()){
+				if (newRouteTitles.isEmpty()) {
 					newRouteTitles.add(routeTitle);
-				}else{
+				} else {
 					boolean added = false;
-					for(int j = 0;j<newRouteTitles.size();j++){
-						if(!added){
-						RouteTitle newRouteTitle = newRouteTitles.get(j);
-						if(newRouteTitle!=null && routeTitle!=null){
-							String description = routeTitle.getDescription();
-							String newDescription = newRouteTitle.getDescription();
-							if(description.split("\\ ").length>newDescription.split("\\ ").length){
-								added = true;
-								newRouteTitles.add(j,routeTitle);
+					for (int j = 0; j < newRouteTitles.size(); j++) {
+						if (!added) {
+							RouteTitle newRouteTitle = newRouteTitles.get(j);
+							if (newRouteTitle != null && routeTitle != null) {
+								String description = routeTitle
+										.getDescription();
+								String newDescription = newRouteTitle
+										.getDescription();
+								if (description.split("\\ ").length > newDescription
+										.split("\\ ").length) {
+									added = true;
+									newRouteTitles.add(j, routeTitle);
+								}
+								if (j == newRouteTitles.size() - 1 && !added) {
+									added = true;
+									newRouteTitles.add(routeTitle);
+								}
 							}
-							if(j==newRouteTitles.size()-1 && !added){
-								added = true;
-								newRouteTitles.add(routeTitle);
-							}
-						}
 						}
 					}
 				}
@@ -222,8 +228,7 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 		}
 		return newRouteTitles;
 	}
-	
-	
+
 	public String expandAbbreviations(String street) {
 		loadData();
 		if (routeTypes != null) {
@@ -261,18 +266,20 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 							boolean match = true;
 							for (int j = 0; j < length; j++) {
 								int positionInPartOfStreet = j + i;
-								if (!toMatch.split("\\ ")[j].equals(partsOfStreet[positionInPartOfStreet])) {
+								if (!toMatch.split("\\ ")[j]
+										.equals(partsOfStreet[positionInPartOfStreet])) {
 									match = false;
 								}
 							}
-							if(match){
+							if (match) {
 								for (int j = 0; j < length; j++) {
 									int positionInPartOfStreet = j + i;
-									partsOfStreet[positionInPartOfStreet] = toReplace.split("\\ ")[j];
+									partsOfStreet[positionInPartOfStreet] = toReplace
+											.split("\\ ")[j];
 								}
 							}
 						}
-						
+
 					}
 				}
 			}

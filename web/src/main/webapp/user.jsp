@@ -56,7 +56,7 @@
 			xhr: function() {
 	            var myXhr = $.ajaxSettings.xhr();
 	            if(myXhr.upload){ // Check if upload property exists
-	                myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+	                myXhr.upload.addEventListener('#shapefileProgress',progressHandlingFunction, false); // For handling the progress of the upload
 	            }
 	            return myXhr;
 	        },
@@ -66,7 +66,7 @@
 				jsonResponse = JSON.parse(data);
 				if (jsonResponse.result == "OK"){
 					alert("Subido correctamente");
-					$("progress").attr("value", 0);
+					$("#shapefileProgress").attr("value", 0);
 				}
 				else
 					alert(jsonResponse.data);
@@ -130,7 +130,7 @@
 
 	function loadAdminMenu() {
 		$.ajax({
-			        url : "<%=SettingsHelper.REST_API_URL + "/shapes/status"%>",
+			        url : "<%=SettingsHelper.REST_API_URL + "/information/status"%>",
 					type : "GET",
 					headers : {
 						Authorization : $("#hiddenToken").val()
@@ -172,6 +172,41 @@
 				});
 		$("#adminMenu").css("display", "inline");
 	}
+	
+	function uploadCsv(){
+		form = $("#csvUpdateForm");
+		url = form.attr('action') + $("#inputCsvType").val();
+		formData = new FormData(form[0]);
+		$.ajax({
+			url : url,
+			type : "POST",
+			enctype: "multipart/form-data",
+			xhr: function() {
+	            var myXhr = $.ajaxSettings.xhr();
+	            if(myXhr.upload){ // Check if upload property exists
+	                myXhr.upload.addEventListener('#csvProgress',progressHandlingFunction, false); // For handling the progress of the upload
+	            }
+	            return myXhr;
+	        },
+			headers: { Authorization: $("#hiddenToken").val()},
+			data : formData,
+			success : function(data, textStatus, jqXHR) {
+				jsonResponse = JSON.parse(data);
+				if (jsonResponse.result == "OK"){
+					alert("Subido correctamente");
+					$("#csvProgress").attr("value", 0);
+				}
+				else
+					alert(jsonResponse.data);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				alert("No se pudo completar su solicitud");
+			},
+			cache: false,
+	        contentType: false,
+	        processData: false
+		});
+	}
 </script>
 </head>
 <body>
@@ -191,10 +226,12 @@
 	<button id="toggler" onclick="toggleEditability();">Modificar</button>
 
 	<div id="adminMenu" style="display: none">
-		<h2>Menú de administración</h2>
-		*Solamente se puede actualizar un juego de datos a la vez
+	<h2>Menú de administración</h2>
+	*Solamente se puede actualizar un juego de datos a la vez
+	<div>
+		<h3>Formato shapefile</h3>
 		<form id="shapefileUpdateForm" enctype="multipart/form-data"
-			action="<%=SettingsHelper.REST_API_URL + "/shapes"%>">
+			action="<%=SettingsHelper.REST_API_URL + "/information"%>">
 			Datos a actualizar: <select id="inputShapefileType">
 				<option value="/uploadBusRoutesMaximal">Destinos ómnibus</option>
 				<option value="/uploadBusStops">Paradas ómnibus</option>
@@ -206,7 +243,7 @@
 				accept="application/zip">
 		</form>
 		<button onclick="uploadShapefile(); return false;">Actualizar</button>
-		<progress></progress>
+		<progress id="shapefileProgress"></progress>
 		<h3>Estado de subida de datos</h3>
 		<button onclick="loadAdminMenu(); return false;">Refrescar</button>
 		<br> <br>
@@ -246,6 +283,22 @@
 		</table>
 	</div>
 	<br>
+	<div>
+	<h3>Formato csv</h3>
+	<form id="csvUpdateForm" enctype="multipart/form-data"
+			action="<%=SettingsHelper.REST_API_URL + "/information"%>">
+			Datos a actualizar: <select id="inputCsvType">
+				<option value="/uploadStreetTitles">Títulos de calle</option>
+				<option value="/uploadStreetTypes">Tipos de calle</option>
+				<option value="/uploadTaxiServices">Servicios de Taxi</option>
+			</select> <input id="inputCsvFile" name="file" type="file"
+				accept="text/csv">
+		</form>
+		<button onclick="uploadCsv(); return false;">Actualizar</button>
+		<progress id="csvProgress"></progress>
+	</div>
+	</div>
+		<br>
 	<a href="city-reports.jsp">Volver al mapa</a>
 	<input id="hiddenToken" type="hidden"
 		value="<%=request.getSession().getAttribute("token") != null ? request

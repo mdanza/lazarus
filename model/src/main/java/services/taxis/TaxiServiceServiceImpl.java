@@ -1,6 +1,7 @@
 package services.taxis;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import model.RouteType;
 import model.TaxiService;
 import model.dao.TaxiServiceDAO;
 
@@ -39,10 +39,10 @@ public class TaxiServiceServiceImpl implements TaxiServiceService {
 		return taxiServiceDAO.find(name);
 	}
 
-	public void uploadInfo(String url) {
+	public void uploadInfo(File file) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(url));
+			reader = new BufferedReader(new FileReader(file));
 			String line = reader.readLine();
 			taxiServiceDAO.removeAll();
 			for (line = reader.readLine(); line != null; line = reader

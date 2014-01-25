@@ -43,8 +43,8 @@ public class AbbreviationServiceLoaderTest {
 	@Test
 	public void testParseAddress() {
 		
-		abbreviationService.saveRouteTypes("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/tipos_via.csv");
-		abbreviationService.saveRouteTitles("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/titulos_vias.csv");
+//		abbreviationService.saveRouteTypes("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/tipos_via.csv");
+//		abbreviationService.saveRouteTitles("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/titulos_vias.csv");
 		
 		
 	

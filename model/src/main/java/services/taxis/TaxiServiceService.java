@@ -1,5 +1,6 @@
 package services.taxis;
 
+import java.io.File;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -16,7 +17,7 @@ public interface TaxiServiceService {
 	public List<TaxiService> getAllTaxiService();
 
 	public TaxiService getTaxiServiceByName(String name);
-	
-	public void uploadInfo(String url);
+
+	public void uploadInfo(File file);
 
 }

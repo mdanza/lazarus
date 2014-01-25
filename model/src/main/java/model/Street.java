@@ -20,7 +20,9 @@ import com.vividsolutions.jts.geom.MultiLineString;
 		@NamedQuery(name = "Street.findByNameCode", query = "SELECT s FROM Street s WHERE s.nameCode = :nameCode"),
 		@NamedQuery(name = "Street.findPossibleStreets", query = "SELECT s.name FROM Street s WHERE s.name LIKE :name"),
 		@NamedQuery(name = "Street.findClosestToPoint", query = "select s FROM Street s ORDER BY distance(:point, s.segments)"),
-		@NamedQuery(name = "Street.removeAll", query = "DELETE FROM Street") })
+		@NamedQuery(name = "Street.removeAll", query = "DELETE FROM Street"),
+		@NamedQuery(name = "Street.findEndsOfMultiLines", query = "SELECT s.id, s.name, boundary(s.segments) FROM Street s")
+})
 public class Street {
 
 	@Id

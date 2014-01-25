@@ -12,4 +12,5 @@ import com.vividsolutions.jts.geom.Point;
 public interface CoordinateConverter {
 	public Point convertToWGS84(Point point, String type) throws FactoryException, MismatchedDimensionException, TransformException;
 	public Point convertFromWGS84(Point point, String type) throws FactoryException, MismatchedDimensionException, TransformException;
+	public String getWKTFromType(String type);
 }

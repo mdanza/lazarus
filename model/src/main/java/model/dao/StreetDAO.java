@@ -6,6 +6,7 @@ import javax.ejb.Local;
 
 import model.Street;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 @Local
@@ -20,5 +21,7 @@ public interface StreetDAO extends ModelDAO<Street, String> {
 	public List<String> findPossibleStreets(String approximate);
 
 	public void removeAll();
+	
+	public List<Object[]> getStreetsMultiLinesEnd();
 
 }

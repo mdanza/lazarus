@@ -51,7 +51,7 @@ public class CoordinateConverterImpl implements CoordinateConverter{
 			return null;
 	}
 
-	private String getWKTFromType(String type) {
+	public String getWKTFromType(String type) {
 		ShapefileWKT shapefileWKT = shapefileWKTDAO.find(type);
 		if (shapefileWKT != null)
 			return shapefileWKT.getWkt();

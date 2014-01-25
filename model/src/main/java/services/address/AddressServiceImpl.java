@@ -19,6 +19,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import services.shapefiles.utils.CoordinateConverter;
+import services.streets.abbreviations.AbbreviationService;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -36,12 +37,16 @@ public class AddressServiceImpl implements AddressService {
 	@EJB(beanName = "AddressDAO")
 	protected AddressDAO addressDAO;
 
+	@EJB(beanName = "AbbreviationService")
+	protected AbbreviationService abbreviationService;
+
 	@EJB(beanName = "CoordinateConverter")
 	protected CoordinateConverter coordinateConverter;
 
 	public Coordinate parseAddressToCoordinates(String streetName,
 			long addressNumber, String letter) {
 		try {
+			streetName = abbreviationService.abbreviate(streetName);
 			Address address = addressDAO.findByStreetNameAndNumber(streetName,
 					addressNumber, letter);
 			if (address == null)
@@ -63,6 +68,8 @@ public class AddressServiceImpl implements AddressService {
 	public Coordinate parseAddressToCoordinates(String mainStreet,
 			String cornerStreet) {
 		try {
+			mainStreet = abbreviationService.abbreviate(mainStreet);
+			cornerStreet = abbreviationService.abbreviate(cornerStreet);
 			List<Corner> corners = cornerDAO.findByStreetNames(mainStreet,
 					cornerStreet);
 			if (corners == null || corners.isEmpty())
@@ -99,6 +106,13 @@ public class AddressServiceImpl implements AddressService {
 			toReturn.addAll(possibleStreets);
 		}
 		toReturn = removeDuplicates(toReturn);
+		if (toReturn != null) {
+			for (int i = 0; i < toReturn.size(); i++) {
+				String street = toReturn.remove(i);
+				street = abbreviationService.expandAbbreviations(street);
+				toReturn.add(street);
+			}
+		}
 		return toReturn;
 	}
 
@@ -164,9 +178,11 @@ public class AddressServiceImpl implements AddressService {
 			Point streetPoint = coordinateConverter.convertFromWGS84(
 					factory.createPoint(coordinate), "street");
 			Street street = streetDAO.findClosestToPoint(streetPoint);
+			Corner copyCorner = expandAbbreviations(corner);
+			Street copyStreet = expandAbbreviations(street);
 			CloseLocationData closeData = new CloseLocationData();
-			closeData.setClosestCorner(corner);
-			closeData.setClosestStreet(street);
+			closeData.setClosestCorner(copyCorner);
+			closeData.setClosestStreet(copyStreet);
 			return closeData;
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -175,6 +191,35 @@ public class AddressServiceImpl implements AddressService {
 		} catch (TransformException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+
+	private Street expandAbbreviations(Street street) {
+		Street newStreet = null;
+		if (street != null) {
+			newStreet = new Street();
+			newStreet.setId(street.getId());
+			newStreet.setName(abbreviationService.expandAbbreviations(street
+					.getName()));
+			newStreet.setNameCode(street.getNameCode());
+			newStreet.setSegments(street.getSegments());
+		}
+		return newStreet;
+	}
+
+	private Corner expandAbbreviations(Corner corner) {
+		Corner newCorner = null;
+		if (corner != null) {
+			newCorner = new Corner();
+			newCorner.setFirstStreetName(abbreviationService
+					.expandAbbreviations(corner.getFirstStreetName()));
+			newCorner.setSecondStreetName(abbreviationService
+					.expandAbbreviations(corner.getSecondStreetName()));
+			newCorner.setId(corner.getId());
+			newCorner.setFirstStreetNameCode(corner.getFirstStreetNameCode());
+			newCorner.setPoint(corner.getPoint());
+			newCorner.setSecondStreetNameCode(corner.getSecondStreetNameCode());
+		}
+		return newCorner;
 	}
 
 }

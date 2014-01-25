@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import model.Street;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "StreetDAO")
@@ -122,6 +123,18 @@ public class StreetDAOImpl implements StreetDAO {
 			streets = null;
 		}
 		return streets;
+	}
+	
+	public List<Object[]> getStreetsMultiLinesEnd() {
+		List<Object[]> boundary;
+		try {
+			Query q = entityManager
+					.createNamedQuery("Street.findEndsOfMultiLines");
+			boundary = (List<Object[]>) q.getResultList();
+		} catch (NoResultException e) {
+			boundary = null;
+		}
+		return boundary;
 	}
 
 	public void removeAll() {

@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -34,6 +35,7 @@ import services.shapefiles.bus.BusStopLoader;
 import services.shapefiles.bus.ControlPointLoader;
 import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
+import services.streets.abbreviations.AbbreviationService;
 
 import com.google.gson.Gson;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -76,6 +78,9 @@ public class ShapefileService {
 
 	@EJB(name = "CornerLoader")
 	private CornerLoader cornerLoader;
+	
+	@EJB(name = "AbbreviationService")
+	private AbbreviationService abbreviationService;
 
 	@POST
 	@Path("/uploadStreets")
@@ -202,5 +207,24 @@ public class ShapefileService {
 			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
 	}
+	
+	 @POST
+     @Path("/uploadStreetTitles")
+     public String uploadStreetTitles(@FormParam("url") String url) {
+             if (url == null || url.equals(""))
+                     throw new IllegalArgumentException("Url cannot be empty or null");
+             abbreviationService.saveRouteTitles(url);
+             return "Done";
+     }
+	 
+
+	 @POST
+     @Path("/uploadStreetTypes")
+     public String uploadStreetTypes(@FormParam("url") String url) {
+             if (url == null || url.equals(""))
+                     throw new IllegalArgumentException("Url cannot be empty or null");
+             abbreviationService.saveRouteTypes(url);
+             return "Done";
+     }
 
 }

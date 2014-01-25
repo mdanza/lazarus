@@ -10,4 +10,6 @@ import model.TaxiService;
 public interface TaxiServiceDAO extends ModelDAO<TaxiService, String> {
 
 	public List<TaxiService> findAll();
+	
+	public void removeAll();
 }

@@ -127,9 +127,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 				+ obstacle.getCentre().getLongitude();
 		args[2] = Long.toString(obstacle.getRadius());
 		args[3] = obstacle.getDescription();
-		if (reportObstacleTask.getStatus() != AsyncTask.Status.PENDING){
-			//TODO
-			reportObstacleTask.execute(args);
+		if (reportObstacleTask.getStatus() != AsyncTask.Status.RUNNING) {
+			if (reportObstacleTask.getStatus() == AsyncTask.Status.PENDING){
+				reportObstacleTask.execute(args);
+			}else{
+				if(reportObstacleTask.getStatus() == AsyncTask.Status.FINISHED){
+					reportObstacleTask = new ReportObstacleTask();
+					reportObstacleTask.execute(args);
+				}
+			}
 		}
 	}
 

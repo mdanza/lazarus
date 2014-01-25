@@ -13,7 +13,8 @@ import javax.persistence.Table;
 @Table(name = "taxis")
 @NamedQueries({
 		@NamedQuery(name = "TaxiService.findByName", query = "SELECT t FROM TaxiService t WHERE t.name = :name"),
-		@NamedQuery(name = "TaxiService.findAll", query = "SELECT t FROM TaxiService t") })
+		@NamedQuery(name = "TaxiService.findAll", query = "SELECT t FROM TaxiService t"),
+		@NamedQuery(name = "TaxiService.removeAll", query = "DELETE FROM TaxiService") })
 public class TaxiService {
 
 	@Id

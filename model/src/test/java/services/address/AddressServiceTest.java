@@ -1,6 +1,5 @@
 package services.address;
 
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -10,13 +9,12 @@ import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.vividsolutions.jts.geom.Coordinate;
+import services.taxis.TaxiServiceService;
 
 public class AddressServiceTest {
 
 	private AddressService addressService;
+	private TaxiServiceService taxiServiceService;
 
 	@Before
 	public void configure() throws NamingException {
@@ -40,11 +38,17 @@ public class AddressServiceTest {
 		addressService = (AddressService) context
 				.lookup("AddressServiceLocal");
 
+		taxiServiceService = (TaxiServiceService) context
+				.lookup("TaxiServiceServiceLocal");
+
 	
 	}
 
 	@Test
 	public void testParseAddress() {
+		
+		taxiServiceService.uploadInfo("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/taxis_montevideo.csv");
+		/*
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();
 		builder.setExclusionStrategies(new CloseLocationDataExclusionStrategy());
@@ -59,6 +63,7 @@ public class AddressServiceTest {
 		
 		System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", 1417, ""));
 		System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", "AVENIDA GENERAL RIVERA"));
+		*/
 	}
 
 

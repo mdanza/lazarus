@@ -65,5 +65,9 @@ public class TaxiServiceDAOImpl implements TaxiServiceDAO {
 		}
 		return result;
 	}
+	
+	public void removeAll() {
+		entityManager.createNamedQuery("TaxiService.removeAll").executeUpdate();
+	}
 
 }

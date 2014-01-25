@@ -1,6 +1,8 @@
 package com.android.lazarus;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +10,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +18,6 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
-import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -28,7 +30,7 @@ import com.android.lazarus.state.State;
 
 public class VoiceInterpreterActivity extends FragmentActivity implements
 		TextToSpeech.OnInitListener {
-
+	public String TAG = "VoiceInterpreterActivity";
 	private SpeechRecognizerInterface speechRecognizer;
 	private Intent recognizerIntent;
 	private SensorEventListenerImpl sensorEventListenerImpl;
@@ -43,9 +45,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
+
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
-	public MockLocationListener mockLocationListener;
+	// public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -309,4 +312,13 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		}
 	}
 
+	public void makeCall(String number) {
+		try {
+			Intent callIntent = new Intent(Intent.ACTION_CALL);
+			callIntent.setData(Uri.parse("tel:" + number));
+			startActivity(callIntent);
+		} catch (ActivityNotFoundException e) {
+			Log.e(TAG, "Could not make phone call");
+		}
+	}
 }

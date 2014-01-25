@@ -12,7 +12,6 @@ import com.android.lazarus.model.Transshipment;
 public class TransshipmentState extends LocationDependentState {
 	private Transshipment transshipment;
 	private Point destination;
-	private String message = "";
 	private static final int NEEDED_ACCURACY = 50;
 	private InternalState state = InternalState.FIRST_ROUTE;
 	private boolean sameIntermediateStop;

@@ -18,6 +18,10 @@ public class MoreMainMenuState extends AbstractState {
 
 	@Override
 	public void handleResults(List<String> results) {
+		if (containsNumber(results, 1)) {
+			context.setState(new TaxiCallState(context));
+			return;
+		}
 		if (containsNumber(results, 2)) {
 			this.message = "¿Está seguro que desea borrar los datos del celular?";
 			this.action = DELETE;

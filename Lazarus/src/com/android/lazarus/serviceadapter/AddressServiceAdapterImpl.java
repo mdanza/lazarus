@@ -27,7 +27,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
 			String url = ConstantsHelper.REST_API_URL
-					+ "/addresses/possibleStreets?name=" + URLEncoder.encode(name, ConstantsHelper.ENCODING);
+					+ "/addresses/possibleStreets?name="
+					+ URLEncoder.encode(name, ConstantsHelper.ENCODING);
 			HttpGet request = new HttpGet(url);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -60,7 +61,10 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 		try {
 			String uri = ConstantsHelper.REST_API_URL
 					+ "/addresses/addressNumberToCoordinates?streetName="
-					+ URLEncoder.encode(firstStreet, ConstantsHelper.ENCODING) + "&number=" + URLEncoder.encode(Integer.toString(doorNumber), ConstantsHelper.ENCODING) + "&letter="
+					+ URLEncoder.encode(firstStreet, ConstantsHelper.ENCODING)
+					+ "&number="
+					+ URLEncoder.encode(Integer.toString(doorNumber),
+							ConstantsHelper.ENCODING) + "&letter="
 					+ URLEncoder.encode(letter, ConstantsHelper.ENCODING);
 			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
@@ -71,8 +75,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonPoint = jsonResponse.get("data").getAsString();
-				Point point = SerializationHelper.gsonInvertedCoords.fromJson(jsonPoint,
-						Point.class);
+				Point point = SerializationHelper.gsonInvertedCoords.fromJson(
+						jsonPoint, Point.class);
 				return point;
 			} else
 				return null;
@@ -89,8 +93,10 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
 			String uri = ConstantsHelper.REST_API_URL
-					+ "/addresses/cornerToCoordinates?mainStreet=" + URLEncoder.encode(mainStreet, ConstantsHelper.ENCODING)
-					+ "&cornerStreet=" + URLEncoder.encode(cornerStreet, ConstantsHelper.ENCODING);
+					+ "/addresses/cornerToCoordinates?mainStreet="
+					+ URLEncoder.encode(mainStreet, ConstantsHelper.ENCODING)
+					+ "&cornerStreet="
+					+ URLEncoder.encode(cornerStreet, ConstantsHelper.ENCODING);
 			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -100,8 +106,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonPoint = jsonResponse.get("data").getAsString();
-				Point point = SerializationHelper.gsonInvertedCoords.fromJson(jsonPoint,
-						Point.class);
+				Point point = SerializationHelper.gsonInvertedCoords.fromJson(
+						jsonPoint, Point.class);
 				return point;
 			} else
 				return null;
@@ -116,7 +122,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 		HttpClient client = HttpClientCreator.getNewHttpClient();
 		try {
 			String uri = ConstantsHelper.REST_API_URL
-					+ "/addresses/closeData?position=" + URLEncoder.encode(position, ConstantsHelper.ENCODING);
+					+ "/addresses/closeData?position="
+					+ URLEncoder.encode(position, ConstantsHelper.ENCODING);
 			HttpGet request = new HttpGet(uri);
 			request.addHeader("Authorization", token);
 			HttpResponse response = client.execute(request);
@@ -127,7 +134,8 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
 				String jsonCloseLocationData = jsonResponse.get("data")
 						.getAsString();
-				CloseLocationData closeLocationData = SerializationHelper.gsonInvertedCoords
+				CloseLocationData closeLocationData = null;
+				closeLocationData = SerializationHelper.gsonInvertedCoords
 						.fromJson(jsonCloseLocationData,
 								CloseLocationData.class);
 				return closeLocationData;

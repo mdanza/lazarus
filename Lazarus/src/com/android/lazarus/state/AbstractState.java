@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.location.Location;
+import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
+import com.android.lazarus.model.CloseLocationData;
 import com.android.lazarus.serviceadapter.AddressServiceAdapter;
 import com.android.lazarus.serviceadapter.AddressServiceAdapterImpl;
 
@@ -41,12 +43,10 @@ public abstract class AbstractState implements State {
 	protected String getWhereAmIMessage() {
 		Location location = this.context.getLocationListener().getLocation();
 		if (location == null) {
-			return "No se puede obtener información de su posición, por favor encienda el g p s";
+			return "No se puede obtener información de su posición, por favor encienda el g p s,,";
 		} else {
-			// CloseLocationData closeLocationData = addressServiceAdapter
-			// .getCloseLocation(context.getToken(),
-			// location.getLatitude(), location.getLongitude());
-			return "Usted se encuentra en la concha de su hermana. ";
+			new WhereAmITask().execute(new Location[] { location });
+			return "Calculando su ubicación,,";
 		}
 	}
 
@@ -56,7 +56,7 @@ public abstract class AbstractState implements State {
 			results = stripAccents(results);
 			// }
 			if (stringPresent(results, "donde estoy")) {
-				this.message = getWhereAmIMessage() + this.defaultMessage;
+				this.message = getWhereAmIMessage();
 				return;
 			}
 			if (stringPresent(results, "cancelar")) {
@@ -223,7 +223,9 @@ public abstract class AbstractState implements State {
 	}
 
 	/**
-	 * @param numbers List of strings each including possible numbers, for example [3 4 5 7 1, 3 6 9 0, uno uno uno]
+	 * @param numbers
+	 *            List of strings each including possible numbers, for example
+	 *            [3 4 5 7 1, 3 6 9 0, uno uno uno]
 	 * @return null if there is no number inside numbers, the first number
 	 *         encountered otherwise, for the example "34571"
 	 */
@@ -237,7 +239,6 @@ public abstract class AbstractState implements State {
 		return toReturn;
 	}
 
-	
 	protected String getNumber(String number) {
 		String toReturn = null;
 		String[] separated = number.split(" ");
@@ -277,7 +278,7 @@ public abstract class AbstractState implements State {
 			return false;
 		}
 	}
-	
+
 	protected boolean isNumber(String string) {
 		String[] separated = string.split(" ");
 		int i = 0;
@@ -289,6 +290,34 @@ public abstract class AbstractState implements State {
 		} else {
 			return false;
 		}
+	}
+
+	private class WhereAmITask extends AsyncTask<Location, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Location... args) {
+			Location location = args[0];
+			CloseLocationData closeLocationData = null;
+				closeLocationData = addressServiceAdapter.getCloseLocation(
+						context.getToken(), location.getLatitude() + ","
+								+ location.getLongitude());
+			if (closeLocationData != null) {
+				String corner = closeLocationData.getClosestCorner()
+						.getFirstStreetName()
+						.equals(closeLocationData.getClosestStreet().getName()) ? closeLocationData
+						.getClosestCorner().getSecondStreetName()
+						: closeLocationData.getClosestCorner()
+								.getFirstStreetName();
+				message = "Usted se encuentra en, "
+						+ closeLocationData.getClosestStreet().getName()
+						+ ", esquina, " + corner + ",,";
+			} else
+				message = "No se pudo obtener información sobre su posición,,";
+			message += defaultMessage;
+			context.speak(message);
+			return null;
+		}
+
 	}
 
 }

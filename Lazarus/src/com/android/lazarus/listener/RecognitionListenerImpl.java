@@ -1,5 +1,7 @@
 package com.android.lazarus.listener;
 
+import java.util.List;
+
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -7,7 +9,6 @@ import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 
 import com.android.lazarus.VoiceInterpreterActivity;
-import com.android.lazarus.state.LocationDependentState;
 import com.android.lazarus.state.WalkingDirectionsState;
 
 public class RecognitionListenerImpl implements RecognitionListener {
@@ -28,10 +29,13 @@ public class RecognitionListenerImpl implements RecognitionListener {
 
 	@Override
 	public void onResults(Bundle results) {
-		voiceInterpreterActivity
-				.getState()
-				.setResults(
-						results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
+		List<String> stringResults = null;
+		if (results != null)
+			stringResults = results
+					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+		if (stringResults != null && stringResults.size() > 3)
+			stringResults = stringResults.subList(0, 3);
+		voiceInterpreterActivity.getState().setResults(stringResults);
 		voiceInterpreterActivity.sayMessage();
 	}
 
@@ -58,7 +62,7 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "Ha ocurrido un error al grabar el audio, ";
 			break;
 		case SpeechRecognizer.ERROR_CLIENT:
-			message = "Ha ocurrido un error, ";
+			message = "Ha ocurrido un error, verifique su conexión con Internet";
 			break;
 		case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
 			message = "Ha ocurrido un error de permisos, ";
@@ -82,11 +86,12 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "No se ha escuchado nada, ";
 			break;
 		}
-		if(voiceInterpreterActivity.getState()!=null){
+		if (voiceInterpreterActivity.getState() != null) {
 			if (voiceInterpreterActivity.getState() instanceof WalkingDirectionsState) {
 				message = message + "La última instrucción fue, ";
 			}
-			message = message + voiceInterpreterActivity.getState().getMessage();
+			message = message
+					+ voiceInterpreterActivity.getState().getMessage();
 		}
 		voiceInterpreterActivity.speak(message);
 	}

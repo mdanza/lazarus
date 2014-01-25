@@ -21,7 +21,6 @@ import com.android.lazarus.serviceadapter.ScheduleServiceAdapterImpl;
 
 public class BusDirectionsState extends LocationDependentState {
 	private Point destination;
-	private String message = "";
 	private static final int NEEDED_ACCURACY = 50;
 	private List<BusRide> busRides;
 	private List<Transshipment> transshipments;
@@ -71,7 +70,7 @@ public class BusDirectionsState extends LocationDependentState {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < busRides.size(); i++) {
 				message += ",,diga " + (i + 1) + " , para tomar un "
-						+ busRides.get(i).getLineName() + " con destino "
+						+ busRides.get(i).getLineName() + ", "
 						+ busRides.get(i).getDestination();
 				appendDistanceToStop(busRides.get(i).getStartStop());
 				appendSchedule(i);
@@ -85,12 +84,12 @@ public class BusDirectionsState extends LocationDependentState {
 						+ (i + 1)
 						+ " , para tomar un "
 						+ transshipments.get(i).getFirstRoute().getLineName()
-						+ " con destino "
+						+ " "
 						+ transshipments.get(i).getFirstRoute()
 								.getDestination()
 						+ " y luego un "
 						+ transshipments.get(i).getSecondRoute().getLineName()
-						+ " con destino "
+						+ " "
 						+ transshipments.get(i).getSecondRoute()
 								.getDestination();
 				appendDistanceToStop(transshipments.get(i).getFirstRoute()
@@ -125,7 +124,7 @@ public class BusDirectionsState extends LocationDependentState {
 										.getLatitude(),
 										position.getLongitude(), stop
 												.getPoint().getLongitude())))
-						.intValue() + " metros de su posición actual";
+						.intValue() + " metros";
 	}
 
 	@Override
@@ -134,41 +133,47 @@ public class BusDirectionsState extends LocationDependentState {
 	}
 
 	private void filterBusRides() {
-		List<String> distinctLines = new ArrayList<String>();
+		List<BusRide> unique = new ArrayList<BusRide>();
 		for (int i = 0; i < busRides.size(); i++) {
-			if (distinctLines.contains(busRides.get(i).getLineName())) {
-				busRides.remove(i);
-				i--;
-			} else
-				distinctLines.add(busRides.get(i).getLineName());
+			if (!containsBusRide(unique, busRides.get(i)))
+				unique.add(busRides.get(i));
 		}
+		busRides = unique;
+	}
+
+	private boolean containsBusRide(List<BusRide> list, BusRide newItem) {
+		for (BusRide busRide : list) {
+			if (busRide.getLineName().equals(newItem.getLineName())
+					&& busRide.getDestination()
+							.equals(newItem.getDestination()))
+				return true;
+		}
+		return false;
 	}
 
 	private void filterTransshipments() {
-		List<String> distinctFirstLines = new ArrayList<String>();
-		List<String> distinctSecondLines = new ArrayList<String>();
+		List<Transshipment> unique = new ArrayList<Transshipment>();
 		for (int i = 0; i < transshipments.size(); i++) {
-			if (distinctFirstLines.contains(transshipments.get(i)
-					.getFirstRoute().getLineName())) {
-				int pos = distinctFirstLines.indexOf(transshipments.get(i)
-						.getFirstRoute().getLineName());
-				if (distinctSecondLines.get(pos).equals(
-						transshipments.get(i).getSecondRoute().getLineName())) {
-					transshipments.remove(i);
-					i--;
-				} else {
-					distinctFirstLines.add(transshipments.get(i)
-							.getFirstRoute().getLineName());
-					distinctSecondLines.add(transshipments.get(i)
-							.getSecondRoute().getLineName());
-				}
-			} else {
-				distinctFirstLines.add(transshipments.get(i).getFirstRoute()
-						.getLineName());
-				distinctSecondLines.add(transshipments.get(i).getSecondRoute()
-						.getLineName());
-			}
+			if (!containsTransshipment(unique, transshipments.get(i)))
+				unique.add(transshipments.get(i));
 		}
+		transshipments = unique;
+	}
+
+	private boolean containsTransshipment(List<Transshipment> list,
+			Transshipment newItem) {
+		for (Transshipment transshipment : list) {
+			if (transshipment.getFirstRoute().getLineName()
+					.equals(newItem.getFirstRoute().getLineName())
+					&& transshipment.getFirstRoute().getDestination()
+							.equals(newItem.getFirstRoute().getDestination())
+					&& transshipment.getSecondRoute().getLineName()
+							.equals(newItem.getSecondRoute().getLineName())
+					&& transshipment.getSecondRoute().getDestination()
+							.equals(newItem.getSecondRoute().getDestination()))
+				return true;
+		}
+		return false;
 	}
 
 	@Override

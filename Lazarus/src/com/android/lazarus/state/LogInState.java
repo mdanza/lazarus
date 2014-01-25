@@ -61,7 +61,7 @@ public class LogInState extends AbstractState {
 		} else {
 			if (waitingForPassword) {
 				List<String> passwords = results;
-				String[] args = new String[3];
+				String[] args = new String[passwords.size()];
 				for (int i = 0; i < passwords.size(); i++) {
 					args[i] = passwords.get(i);
 				}

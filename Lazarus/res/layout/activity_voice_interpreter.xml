@@ -11,6 +11,4 @@
         android:layout_height="match_parent"
         android:text="@string/push_to_talk" />
 
-
-
 </FrameLayout>

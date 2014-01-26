@@ -2,6 +2,8 @@ package com.android.lazarus;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +11,6 @@ import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
+import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -27,8 +29,14 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.mapquest.android.maps.DefaultItemizedOverlay;
+import com.mapquest.android.maps.GeoPoint;
+import com.mapquest.android.maps.MapActivity;
+import com.mapquest.android.maps.MapView;
+import com.mapquest.android.maps.MapView.MapViewEventListener;
+import com.mapquest.android.maps.OverlayItem;
 
-public class VoiceInterpreterActivity extends FragmentActivity implements
+public class VoiceInterpreterActivity extends MapActivity implements
 		TextToSpeech.OnInitListener {
 	public String TAG = "VoiceInterpreterActivity";
 	private SpeechRecognizerInterface speechRecognizer;
@@ -46,11 +54,14 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
+	private final boolean testing = true;
+	private MapView map;
+	private DefaultItemizedOverlay itemizedOverlay;
 
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
 	// TODO
-	//public MockLocationListener mockLocationListener;
+	public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -153,8 +164,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_voice_interpreter);
+		if (!testing)
+			setContentView(R.layout.activity_voice_interpreter);
+		else
+			setContentView(R.layout.activity_voice_interpreter_testing);
 		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
 		speechRecognizer = new AndroidSpeechRecognizer(this,
@@ -178,12 +191,89 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		 locationListener = new LocationListenerImpl(this);
-		// TODO
-		//mockLocationListener = new MockLocationListener(this);
-		//locationListener = mockLocationListener;
+		if (!testing)
+			locationListener = new LocationListenerImpl(this);
+		else {
+			mockLocationListener = new MockLocationListener(this);
+			locationListener = mockLocationListener;
+			setUpMap();
+		}
 		initializeFirstState();
 
+	}
+
+	private void setUpMap() {
+		map = (MapView) findViewById(R.id.map);
+		map.getController().setZoom(16);
+		map.getController().setCenter(new GeoPoint(-34.900557, -56.140355));
+		map.setBuiltInZoomControls(true);
+		map.addMapViewEventListener(new MapViewEventListener() {
+
+			@Override
+			public void longTouch(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mapLoaded(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void move(MapView map) {
+				GeoPoint center = map.getMapCenter();
+				Location location = new Location("");
+				location.setLatitude(center.getLatitude());
+				location.setLongitude(center.getLongitude());
+				location.setAccuracy(19);
+				location.setAltitude(0);
+				location.setTime(System.currentTimeMillis());
+				location.setBearing(0F);
+				locationListener.onLocationChanged(location);
+				if (itemizedOverlay != null)
+					map.getOverlays().remove(itemizedOverlay);
+				Drawable icon = getResources().getDrawable(
+						R.drawable.location_marker);
+				itemizedOverlay = new DefaultItemizedOverlay(icon);
+				OverlayItem myPosition = new OverlayItem(center, "", "");
+				itemizedOverlay.addItem(myPosition);
+				map.getOverlays().add(itemizedOverlay);
+				map.invalidate();
+			}
+
+			@Override
+			public void moveEnd(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void moveStart(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void touch(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void zoomEnd(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void zoomStart(MapView arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
 	}
 
 	private void initializeFirstState() {
@@ -324,5 +414,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "Could not make phone call");
 		}
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
 	}
 }

@@ -61,8 +61,7 @@ public class ModifyPasswordState extends AbstractState {
 		}
 		if (state.equals(InternalState.AWAITING_NEW_PASSWORD)) {
 			newPassword = results.get(confirmationAttempts);
-			message = "Desea que su contraseña sea "
-					+ newPassword + " ?";
+			message = "Desea que su contraseña sea " + newPassword + " ?";
 			state = InternalState.AWAITING_NEW_PASSWORD_CONFIRMATION;
 		}
 		if (state.equals(InternalState.AWAITING_NEW_PASSWORD_CONFIRMATION)) {
@@ -98,6 +97,8 @@ public class ModifyPasswordState extends AbstractState {
 			String nextMessage = "";
 			if (success) {
 				nextMessage = "Su contraseña se modificó con éxito,,";
+				context.getSharedPreferences("usrpref", 0).edit()
+						.putString("password", newPassword).commit();
 			} else {
 				nextMessage = "Hubo un error al modificar su contraseña,,";
 			}

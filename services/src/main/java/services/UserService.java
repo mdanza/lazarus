@@ -100,36 +100,61 @@ public class UserService {
 	@DELETE
 	public String delete(@HeaderParam("Authorization") String token,
 			@QueryParam("username") String username) {
-		User actionUser = authenticationService.authenticate(token);
-		User deleting = userDAO.find(username);
-		if (actionUser.getUsername().equals(username)
-				|| actionUser.getRole().equals(model.User.Role.ADMIN)) {
-			deleting.setActive(false);
-			userDAO.modify(deleting, deleting);
-			return "deleted";
+		if (token == null || token.equals("") || username == null
+				|| username.equals(""))
+			return restResultsHelper.resultWrapper(false,
+					"Empty or null arguments");
+		try {
+			User actionUser = authenticationService.authenticate(token);
+			User deleting = userDAO.find(username);
+			if (actionUser.getUsername().equals(username)
+					|| actionUser.getRole().equals(model.User.Role.ADMIN)) {
+				deleting.setActive(false);
+				try {
+					userDAO.modify(deleting, deleting);
+					return restResultsHelper.resultWrapper(true,
+							"Successfully deactivated account");
+				} catch (Exception e) {
+					return restResultsHelper.resultWrapper(false,
+							"Could not deactivate account");
+				}
+			} else
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+		} catch (Exception e) {
+			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
-		throw new IllegalArgumentException("Invalid credentials");
 	}
 
 	@PUT
-	public String modify(@FormParam("username") String username,
+	public String modify(@HeaderParam("Authorization") String token,
+			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email) {
-		User user = userDAO.find(username);
-		User modifiedUser = new User();
-		modifiedUser.setId(user.getId());
-		modifiedUser.setUsername(username);
-		modifiedUser.setPassword(password);
-		modifiedUser.setEmail(email);
-		modifiedUser.setActive(true);
-		modifiedUser.setRole(model.User.Role.USER);
 		try {
-			userDAO.modify(user, modifiedUser);
-			return restResultsHelper.resultWrapper(true,
-					"User modified successfuly");
+			User actionUser = authenticationService.authenticate(token);
+			if (!actionUser.getUsername().equals(username)
+					&& !actionUser.getRole().equals(model.User.Role.ADMIN))
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+			User user = userDAO.find(username);
+			User modifiedUser = new User();
+			modifiedUser.setId(user.getId());
+			modifiedUser.setUsername(username);
+			modifiedUser.setPassword(password);
+			modifiedUser.setEmail(email);
+			modifiedUser.setActive(true);
+			modifiedUser.setRole(model.User.Role.USER);
+			try {
+				userDAO.modify(user, modifiedUser);
+				return restResultsHelper.resultWrapper(true,
+						"User modified successfuly");
+			} catch (Exception e) {
+				return restResultsHelper.resultWrapper(false,
+						"could not modify user");
+			}
 		} catch (Exception e) {
-			return restResultsHelper.resultWrapper(false,
-					"could not modify user");
+			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
 	}
 

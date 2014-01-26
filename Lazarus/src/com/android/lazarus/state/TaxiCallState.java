@@ -5,11 +5,13 @@ import java.util.List;
 import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
-import com.android.lazarus.model.Taxi;
+import com.android.lazarus.model.TaxiService;
+import com.android.lazarus.serviceadapter.TaxiServicesAdapter;
+import com.android.lazarus.serviceadapter.TaxiServicesAdapterImpl;
 
 public class TaxiCallState extends AbstractState {
 	private InternalState state;
-	private List<Taxi> taxiOptions;
+	private List<TaxiService> taxiOptions;
 
 	private enum InternalState {
 		SEARCHING_OPTIONS, WAITING_USER_DECISION, NO_OPTIONS
@@ -19,6 +21,7 @@ public class TaxiCallState extends AbstractState {
 		super(context);
 		this.context = context;
 		this.state = InternalState.SEARCHING_OPTIONS;
+		giveInstructions();
 	}
 
 	@Override
@@ -31,7 +34,7 @@ public class TaxiCallState extends AbstractState {
 		if (state.equals(InternalState.WAITING_USER_DECISION)) {
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				if (containsNumber(results, i + 1)) {
-					context.makeCall(taxiOptions.get(i).getNumber());
+					context.makeCall(taxiOptions.get(i).getPhone());
 					context.setState(new MainMenuState(context));
 				}
 			}
@@ -49,7 +52,7 @@ public class TaxiCallState extends AbstractState {
 			message = "Las opciones encontradas son,";
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				message += "diga " + (i + 1) + " para llamar a "
-						+ taxiOptions.get(i).getCompanyName() + ",,";
+						+ taxiOptions.get(i).getName() + ",,";
 			}
 			context.speak(message);
 		}
@@ -64,8 +67,13 @@ public class TaxiCallState extends AbstractState {
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
-			taxiOptions = null;
-			state = InternalState.NO_OPTIONS;
+			TaxiServicesAdapter taxiServicesAdapter = new TaxiServicesAdapterImpl();
+			taxiOptions = taxiServicesAdapter.getAllTaxiServices(context
+					.getToken());
+			if (taxiOptions == null)
+				state = InternalState.NO_OPTIONS;
+			else
+				state = InternalState.WAITING_USER_DECISION;
 			giveInstructions();
 			return null;
 		}

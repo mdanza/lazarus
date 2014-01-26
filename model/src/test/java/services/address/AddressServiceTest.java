@@ -47,7 +47,7 @@ public class AddressServiceTest {
 	@Test
 	public void testParseAddress() {
 		
-		taxiServiceService.uploadInfo("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/taxis_montevideo.csv");
+		//taxiServiceService.uploadInfo("C:/Users/Mateo/Downloads/vias_titulo_tipo_2/taxis_montevideo.csv");
 		/*
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeSpecialFloatingPointValues();

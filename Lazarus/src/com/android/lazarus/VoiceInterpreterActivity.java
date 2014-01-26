@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
-import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -321,6 +320,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			Intent callIntent = new Intent(Intent.ACTION_CALL);
 			callIntent.setData(Uri.parse("tel:" + number));
 			startActivity(callIntent);
+			System.exit(0);
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "Could not make phone call");
 		}

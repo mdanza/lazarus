@@ -16,6 +16,7 @@ public class SignUpState extends AbstractState {
 	private boolean toConfirmUsername = false;
 	private boolean toChoosePassword = false;
 	private boolean toConfirmPassword = false;
+	CheckUsernameAvailableTask checkUsernameAvailableTask = new CheckUsernameAvailableTask();
 
 	public SignUpState(VoiceInterpreterActivity context) {
 		super(context);
@@ -34,9 +35,9 @@ public class SignUpState extends AbstractState {
 	public void handleResults(List<String> results) {
 		if (username == null) {
 			username = results.get(0);
-				this.message = "¿Desea que su nombre de usuario sea "
-						+ username + "?";
-				toConfirmUsername = true;
+			this.message = "¿Desea que su nombre de usuario sea " + username
+					+ "?";
+			toConfirmUsername = true;
 			return;
 		}
 		if (toConfirmUsername) {
@@ -46,10 +47,18 @@ public class SignUpState extends AbstractState {
 			}
 			if (stringPresent(results, "si")) {
 				message = "";
-				CheckUsernameAvailableTask checkUsernameAvailableTask = new CheckUsernameAvailableTask();
 				String[] args = new String[1];
 				args[0] = username;
-				checkUsernameAvailableTask.execute(args);
+				if (checkUsernameAvailableTask.getStatus() != AsyncTask.Status.RUNNING) {
+					if (checkUsernameAvailableTask.getStatus() == AsyncTask.Status.PENDING) {
+						checkUsernameAvailableTask.execute(args);
+					} else {
+						if (checkUsernameAvailableTask.getStatus() == AsyncTask.Status.FINISHED) {
+							checkUsernameAvailableTask = new CheckUsernameAvailableTask();
+							checkUsernameAvailableTask.execute(args);
+						}
+					}
+				}
 			}
 			return;
 		}
@@ -77,7 +86,16 @@ public class SignUpState extends AbstractState {
 				args[0] = username;
 				args[1] = password;
 				message = "";
-				saveDataTask.execute(args);
+				if (saveDataTask.getStatus() != AsyncTask.Status.RUNNING) {
+					if (saveDataTask.getStatus() == AsyncTask.Status.PENDING) {
+						saveDataTask.execute(args);
+					} else {
+						if (saveDataTask.getStatus() == AsyncTask.Status.FINISHED) {
+							saveDataTask = new SaveDataTask();
+							saveDataTask.execute(args);
+						}
+					}
+				}
 			}
 			return;
 		}
@@ -101,6 +119,7 @@ public class SignUpState extends AbstractState {
 			AsyncTask<String, Void, String> {
 		@Override
 		protected String doInBackground(String... args) {
+			message = "Espere mientras cargamos sus datos por favor";
 			String username = args[0];
 			boolean validUsername = !userServiceAdapter.usernameInUse(username);
 			if (validUsername) {
@@ -117,6 +136,7 @@ public class SignUpState extends AbstractState {
 
 		@Override
 		protected String doInBackground(String... args) {
+			message = "Espere mientras guardamos sus datos";
 			String username = args[0];
 			String password = args[1];
 			boolean success = userServiceAdapter.register(username, password,

@@ -25,6 +25,7 @@ public class MainMenuState extends AbstractState {
 	List<Favourite> favourites = null;
 	private InternalState state = InternalState.GET_DESTINATION;
 	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
+	PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 
 	private enum InternalState {
 		GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
@@ -68,11 +69,19 @@ public class MainMenuState extends AbstractState {
 			} else {
 				state = InternalState.DESTINATION_SAID;
 				firstResults = results;
-				PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 				String[] args = new String[1];
 				args[0] = firstResults.get(0);
 				message = "";
-				possibleDestinationTask.execute(args);
+				if (possibleDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
+					if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING){
+						possibleDestinationTask.execute(args);
+					}else{
+						if(possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED){
+							possibleDestinationTask = new PossibleDestinationTask();
+							possibleDestinationTask.execute(args);
+						}
+					}
+				}
 				return;
 			}
 		}
@@ -123,7 +132,17 @@ public class MainMenuState extends AbstractState {
 			favourite = null;
 			streets = null;
 			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
-			possibleDestinationTask.execute(firstResults.get(position));
+			message = "";
+			if (possibleDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING){
+					possibleDestinationTask.execute(firstResults.get(position));
+				}else{
+					if(possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED){
+						possibleDestinationTask = new PossibleDestinationTask();
+						possibleDestinationTask.execute(firstResults.get(position));
+					}
+				}
+			}
 		} else {
 			if (state.equals(InternalState.TO_CHOOSE_STREET)) {
 				message = "No se han encontrado otros resultados.";
@@ -158,6 +177,7 @@ public class MainMenuState extends AbstractState {
 
 		@Override
 		protected String doInBackground(String... args) {
+			message = "Espere mientras cargamos sus resultados";
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), args[0]);
 			favourite = getFavourite(args[0], favourites);

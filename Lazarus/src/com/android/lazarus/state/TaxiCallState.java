@@ -12,6 +12,7 @@ import com.android.lazarus.serviceadapter.TaxiServicesAdapterImpl;
 public class TaxiCallState extends AbstractState {
 	private InternalState state;
 	private List<TaxiService> taxiOptions;
+	private FindTaxiOptions findTaxiOptions = new FindTaxiOptions();
 
 	private enum InternalState {
 		SEARCHING_OPTIONS, WAITING_USER_DECISION, NO_OPTIONS
@@ -44,8 +45,17 @@ public class TaxiCallState extends AbstractState {
 
 	private void giveInstructions() {
 		if (state.equals(InternalState.SEARCHING_OPTIONS)) {
-			new FindTaxiOptions().execute();
-			message = "Buscando opciones de taxi";
+			if (findTaxiOptions.getStatus() != AsyncTask.Status.RUNNING) {
+				if (findTaxiOptions.getStatus() == AsyncTask.Status.PENDING) {
+					findTaxiOptions.execute();
+				} else {
+					if (findTaxiOptions.getStatus() == AsyncTask.Status.FINISHED) {
+						findTaxiOptions = new FindTaxiOptions();
+						findTaxiOptions.execute();
+					}
+				}
+			}
+			message = "";
 			context.speak(message);
 		}
 		if (state.equals(InternalState.WAITING_USER_DECISION)) {
@@ -67,6 +77,7 @@ public class TaxiCallState extends AbstractState {
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
+			message = "Buscando opciones de taxi";
 			TaxiServicesAdapter taxiServicesAdapter = new TaxiServicesAdapterImpl();
 			taxiOptions = taxiServicesAdapter.getAllTaxiServices(context
 					.getToken());

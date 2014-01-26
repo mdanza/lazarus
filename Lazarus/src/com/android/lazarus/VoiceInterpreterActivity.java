@@ -58,9 +58,12 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlay;
 
+	LogInTask logInTask = new LogInTask(this);
+
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
 	// TODO
+
 	public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
@@ -190,7 +193,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-
 		if (!testing)
 			locationListener = new LocationListenerImpl(this);
 		else {
@@ -199,7 +201,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			setUpMap();
 		}
 		initializeFirstState();
-
 	}
 
 	private void setUpMap() {
@@ -282,11 +283,19 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		String password = this.getSharedPreferences("usrpref", 0).getString(
 				"password", null);
 		if (username != null && password != null) {
-			LogInTask logInTask = new LogInTask(this);
 			String[] args = new String[2];
 			args[0] = username;
 			args[1] = password;
-			logInTask.execute(args);
+			if (logInTask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (logInTask.getStatus() == AsyncTask.Status.PENDING) {
+					logInTask.execute(args);
+				} else {
+					if (logInTask.getStatus() == AsyncTask.Status.FINISHED) {
+						logInTask = new LogInTask(this);
+						logInTask.execute(args);
+					}
+				}
+			}
 		} else {
 			LogInState logInState = new LogInState(this, initialMessage);
 			this.setState(logInState);
@@ -374,7 +383,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		super.onDestroy();
 	}
 
-	private class LogInTask extends AsyncTask<String, Void, String> {
+	private class LogInTask extends AsyncTask<String, Void, Void> {
 
 		VoiceInterpreterActivity voiceInterpreterActivity;
 
@@ -384,7 +393,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		}
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			String result = userServiceAdapter.login(args[0], args[1]);
 			if (result != null) {
 				token = result;
@@ -401,7 +410,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			}
 			if (ttsInitialize)
 				speak(state.getMessage());
-			return result;
+			return null;
 		}
 	}
 

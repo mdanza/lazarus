@@ -112,24 +112,34 @@ public class UserService {
 	}
 
 	@PUT
-	public String modify(@FormParam("username") String username,
+	public String modify(@HeaderParam("Authorization") String token,
+			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("email") String email) {
-		User user = userDAO.find(username);
-		User modifiedUser = new User();
-		modifiedUser.setId(user.getId());
-		modifiedUser.setUsername(username);
-		modifiedUser.setPassword(password);
-		modifiedUser.setEmail(email);
-		modifiedUser.setActive(true);
-		modifiedUser.setRole(model.User.Role.USER);
 		try {
-			userDAO.modify(user, modifiedUser);
-			return restResultsHelper.resultWrapper(true,
-					"User modified successfuly");
+			User actionUser = authenticationService.authenticate(token);
+			if (!actionUser.getUsername().equals(username)
+					&& !actionUser.getRole().equals(model.User.Role.ADMIN))
+				return restResultsHelper.resultWrapper(false,
+						"Unauthorized access");
+			User user = userDAO.find(username);
+			User modifiedUser = new User();
+			modifiedUser.setId(user.getId());
+			modifiedUser.setUsername(username);
+			modifiedUser.setPassword(password);
+			modifiedUser.setEmail(email);
+			modifiedUser.setActive(true);
+			modifiedUser.setRole(model.User.Role.USER);
+			try {
+				userDAO.modify(user, modifiedUser);
+				return restResultsHelper.resultWrapper(true,
+						"User modified successfuly");
+			} catch (Exception e) {
+				return restResultsHelper.resultWrapper(false,
+						"could not modify user");
+			}
 		} catch (Exception e) {
-			return restResultsHelper.resultWrapper(false,
-					"could not modify user");
+			return restResultsHelper.resultWrapper(false, "Invalid token");
 		}
 	}
 

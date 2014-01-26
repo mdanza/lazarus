@@ -12,6 +12,10 @@ public interface UserServiceAdapter {
 	 */
 	public boolean register(String username, String password, String email);
 
+	public boolean deactivateUser(String token);
+
+	public boolean modifyPassword(String token, String newPassword);
+
 	public boolean usernameInUse(String username);
 
 	public boolean emailInUse(String email);

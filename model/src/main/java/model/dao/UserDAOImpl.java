@@ -64,9 +64,11 @@ public class UserDAOImpl implements UserDAO {
 		if (role == null)
 			throw new IllegalArgumentException(
 					"role of new user cannot be null");
-		if (!userOld.getEmail().equals(userNew.getEmail())
-				&& findByEmail(userNew.getEmail()) != null)
-			throw new IllegalArgumentException("email already in use");
+		if (userOld.getEmail() != null && userNew.getEmail() != null) {
+			if (!userOld.getEmail().equals(userNew.getEmail())
+					&& findByEmail(userNew.getEmail()) != null)
+				throw new IllegalArgumentException("email already in use");
+		}
 		entityManager.merge(userNew);
 	}
 

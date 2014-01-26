@@ -34,7 +34,7 @@ public class TaxiServicesAdapterImpl implements TaxiServicesAdapter {
 				Type type = new TypeToken<List<TaxiService>>() {
 				}.getType();
 				List<TaxiService> taxis = SerializationHelper.gson.fromJson(
-						jsonResponse.get("data"), type);
+						jsonResponse.get("data").getAsString(), type);
 				if (taxis != null && taxis.size() > 0)
 					return taxis;
 				else

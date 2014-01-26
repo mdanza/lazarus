@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
-import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
@@ -49,8 +48,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
-	//TODO
-	//public MockLocationListener mockLocationListener;
+	// TODO
+	// public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -179,8 +178,8 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
 		locationListener = new LocationListenerImpl(this);
-		//TODO
-		//mockLocationListener = new MockLocationListener(this);
+		// TODO
+		// mockLocationListener = new MockLocationListener(this);
 		// locationListener = mockLocationListener;
 		initializeFirstState();
 
@@ -320,6 +319,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			Intent callIntent = new Intent(Intent.ACTION_CALL);
 			callIntent.setData(Uri.parse("tel:" + number));
 			startActivity(callIntent);
+			System.exit(0);
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "Could not make phone call");
 		}

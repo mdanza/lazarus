@@ -63,7 +63,7 @@ public class LogInState extends AbstractState {
 				for (int i = 0; i < passwords.size(); i++) {
 					args[i] = passwords.get(i);
 				}
-				message = "Espere mientras procesamos sus datos";
+				message = "";
 				if (logInTask.getStatus() != AsyncTask.Status.RUNNING) {
 					if (logInTask.getStatus() == AsyncTask.Status.PENDING){
 						logInTask.execute(args);
@@ -108,6 +108,7 @@ public class LogInState extends AbstractState {
 
 		@Override
 		protected Void doInBackground(String... args) {
+			message = "Espere mientras procesamos sus datos";
 			boolean validCredentialsFound = false;
 			for (String arg : args) {
 				if (!validCredentialsFound) {

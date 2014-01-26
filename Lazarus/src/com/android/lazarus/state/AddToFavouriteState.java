@@ -20,6 +20,7 @@ public class AddToFavouriteState extends AbstractState {
 	private FavouritesReportingServiceAdapter favouritesReportingServiceAdapter = new FavouritesReportingServiceAdapterImpl();
 	private List<String> possibleNames = null;
 	private boolean choosingToGoToFavourite = false;
+	AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
 
 	public AddToFavouriteState(VoiceInterpreterActivity context) {
 		super(context);
@@ -29,7 +30,6 @@ public class AddToFavouriteState extends AbstractState {
 		super(context);
 		this.point = point;
 		this.defaultMessage = "Elija el nombre para este destino favorito";
-		this.message = defaultMessage;
 		loadFavourites();
 	}
 
@@ -37,12 +37,23 @@ public class AddToFavouriteState extends AbstractState {
 		GetFavouritesTask getFavouritesTask = new GetFavouritesTask();
 		String[] args = new String[1];
 		args[0] = context.getToken();
-		getFavouritesTask.execute(args);
+		message = "";
+		if (getFavouritesTask.getStatus() != AsyncTask.Status.RUNNING) {
+			if (getFavouritesTask.getStatus() == AsyncTask.Status.PENDING) {
+				getFavouritesTask.execute(args);
+			} else {
+				if (getFavouritesTask.getStatus() == AsyncTask.Status.FINISHED) {
+					getFavouritesTask = new GetFavouritesTask();
+					getFavouritesTask.execute(args);
+				}
+			}
+		}
 	}
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (!toConfirmName && position < results.size() && !choosingToGoToFavourite) {
+		if (!toConfirmName && position < results.size()
+				&& !choosingToGoToFavourite) {
 			if (possibleNames == null) {
 				possibleNames = results;
 			}
@@ -64,8 +75,16 @@ public class AddToFavouriteState extends AbstractState {
 					args[0] = context.getToken();
 					args[1] = point.getLatitude() + "," + point.getLongitude();
 					args[2] = name;
-					AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
-					addToFavouriteTask.execute(args);
+					if (addToFavouriteTask.getStatus() != AsyncTask.Status.RUNNING) {
+						if (addToFavouriteTask.getStatus() == AsyncTask.Status.PENDING) {
+							addToFavouriteTask.execute(args);
+						} else {
+							if (addToFavouriteTask.getStatus() == AsyncTask.Status.FINISHED) {
+								addToFavouriteTask = new AddToFavouriteTask();
+								addToFavouriteTask.execute(args);
+							}
+						}
+					}
 				}
 			}
 			if (stringPresent(results, "no")) {
@@ -74,7 +93,8 @@ public class AddToFavouriteState extends AbstractState {
 			}
 			return;
 		}
-		if (!toConfirmName && position == results.size() && !choosingToGoToFavourite) {
+		if (!toConfirmName && position == results.size()
+				&& !choosingToGoToFavourite) {
 			this.message = "Por favor repita el nombre del favorito que desea agregar";
 			resetData();
 		}
@@ -126,6 +146,7 @@ public class AddToFavouriteState extends AbstractState {
 
 		@Override
 		protected String doInBackground(String... args) {
+			message = "Espere mientras agregamos el favorito";
 			boolean added = false;
 			if (args != null && args.length == 3) {
 				added = favouritesReportingServiceAdapter.addToFavourite(
@@ -136,7 +157,7 @@ public class AddToFavouriteState extends AbstractState {
 						+ " a favoritos, ¿desea ir a " + args[2] + "?";
 				choosingToGoToFavourite = true;
 			} else {
-				message = "Ha ocurrido un error, al agregar el favorito, por favor diga el nombre nuevamente";
+				message = "Ha ocurrido un error al agregar el favorito, por favor diga el nombre nuevamente";
 				resetData();
 			}
 			context.sayMessage();
@@ -144,13 +165,15 @@ public class AddToFavouriteState extends AbstractState {
 		}
 	}
 
-	private class GetFavouritesTask extends AsyncTask<String, Void, String> {
+	private class GetFavouritesTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
+			message = "Espere por favor";
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(context.getToken());
-			return "Done";
+			message = defaultMessage;
+			return null;
 		}
 
 	}

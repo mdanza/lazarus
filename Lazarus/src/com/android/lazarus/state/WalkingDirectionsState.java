@@ -160,16 +160,18 @@ public class WalkingDirectionsState extends LocationDependentState {
 			initialMessage = null;
 		}
 		if (positions == null) {
-			message = "Espere mientras se cargan las instrucciones para llegar a destino";
+			message = "";
 			if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
 				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING) {
-					getInstructionsTask.execute(new String[2]);
+					getInstructionsTask.execute();
 				} else {
 					if (getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED) {
 						getInstructionsTask = new GetInstructionsTask();
-						getInstructionsTask.execute(new String[2]);
+						getInstructionsTask.execute();
 					}
 				}
+			}else{
+				message = "Espere mientras se cargan las instrucciones para llegar a destino";
 			}
 		} else {
 			if (position != null) {
@@ -367,10 +369,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 		return closestPosition;
 	}
 
-	private class GetInstructionsTask extends AsyncTask<String, Void, Void> {
+	private class GetInstructionsTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(String... args) {
+		protected Void doInBackground(Void... voids) {
+			message = "Espere mientras se cargan las instrucciones para llegar a destino";
 			if (initialMessage == null) {
 				initialMessage = "";
 			}
@@ -482,6 +485,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 		@Override
 		protected String doInBackground(String... args) {
+			message = "Registrando el obstáculo, por favor espere, ";
 			ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 			boolean succeded = obstacleReportingServiceAdapter.reportObstacle(
 					args[0], args[1], args[2], args[3]);

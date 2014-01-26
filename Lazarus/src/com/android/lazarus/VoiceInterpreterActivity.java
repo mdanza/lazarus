@@ -47,10 +47,12 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
 
+	LogInTask logInTask = new LogInTask(this);
+
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
 	// TODO
-	//public MockLocationListener mockLocationListener;
+	// public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -178,10 +180,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		 locationListener = new LocationListenerImpl(this);
+		locationListener = new LocationListenerImpl(this);
 		// TODO
-		//mockLocationListener = new MockLocationListener(this);
-		//locationListener = mockLocationListener;
+		// mockLocationListener = new MockLocationListener(this);
+		// locationListener = mockLocationListener;
 		initializeFirstState();
 
 	}
@@ -192,11 +194,19 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		String password = this.getSharedPreferences("usrpref", 0).getString(
 				"password", null);
 		if (username != null && password != null) {
-			LogInTask logInTask = new LogInTask(this);
 			String[] args = new String[2];
 			args[0] = username;
 			args[1] = password;
-			logInTask.execute(args);
+			if (logInTask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (logInTask.getStatus() == AsyncTask.Status.PENDING) {
+					logInTask.execute(args);
+				} else {
+					if (logInTask.getStatus() == AsyncTask.Status.FINISHED) {
+						logInTask = new LogInTask(this);
+						logInTask.execute(args);
+					}
+				}
+			}
 		} else {
 			LogInState logInState = new LogInState(this, initialMessage);
 			this.setState(logInState);
@@ -284,7 +294,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		super.onDestroy();
 	}
 
-	private class LogInTask extends AsyncTask<String, Void, String> {
+	private class LogInTask extends AsyncTask<String, Void, Void> {
 
 		VoiceInterpreterActivity voiceInterpreterActivity;
 
@@ -294,7 +304,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		}
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			String result = userServiceAdapter.login(args[0], args[1]);
 			if (result != null) {
 				token = result;
@@ -311,7 +321,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 			}
 			if (ttsInitialize)
 				speak(state.getMessage());
-			return result;
+			return null;
 		}
 	}
 

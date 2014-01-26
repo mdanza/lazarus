@@ -24,6 +24,7 @@ public class StreetSetState extends AbstractState {
 	private String secondStreet = null;
 	private String addressNumber = null;
 	private boolean passedFirstTime = false;
+	GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
 
 	public StreetSetState(VoiceInterpreterActivity context) {
 		super(context);
@@ -95,7 +96,16 @@ public class StreetSetState extends AbstractState {
 	private void goToDestinationSetState() {
 		SetDestinationTask setDestinationTask = new SetDestinationTask();
 		message = "";
-		setDestinationTask.execute(new String());
+		if (setDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
+			if (setDestinationTask.getStatus() == AsyncTask.Status.PENDING) {
+				setDestinationTask.execute();
+			} else {
+				if (setDestinationTask.getStatus() == AsyncTask.Status.FINISHED) {
+					setDestinationTask = new SetDestinationTask();
+					setDestinationTask.execute();
+				}
+			}
+		}
 	}
 
 	private void checkForNumberOrCorner() {
@@ -111,17 +121,27 @@ public class StreetSetState extends AbstractState {
 		}
 		if (isAddressNumber(firstResults.get(position))) {
 			toConfirmDoorNumber = true;
-			this.message = "Desea ir a " + firstStreet + " "
-					+ getStringDigits(Integer.valueOf(getAddressNumberString(firstResults.get(position)).get(0)))
+			this.message = "Desea ir a "
+					+ firstStreet
 					+ " "
+					+ getStringDigits(Integer.valueOf(getAddressNumberString(
+							firstResults.get(position)).get(0))) + " "
 					+ getAddressNumberString(firstResults.get(position)).get(1)
 					+ "?";
 			addressNumber = firstResults.get(position);
 			return;
 		}
-		message = "";
-		GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
-		getStreetNameTask.execute(firstResults.get(position));
+		message = "Espere mientras cargamos sus datos";
+		if (getStreetNameTask.getStatus() != AsyncTask.Status.RUNNING) {
+			if (getStreetNameTask.getStatus() == AsyncTask.Status.PENDING) {
+				getStreetNameTask.execute();
+			} else {
+				if (getStreetNameTask.getStatus() == AsyncTask.Status.FINISHED) {
+					GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
+					getStreetNameTask.execute();
+				}
+			}
+		}
 	}
 
 	private void goToNextPosition() {
@@ -147,10 +167,11 @@ public class StreetSetState extends AbstractState {
 		passedFirstTime = false;
 	}
 
-	private class GetStreetNameTask extends AsyncTask<String, Void, String> {
+	private class GetStreetNameTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(Void... voids) {
+			message = "Espere mientras cargamos sus datos";
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), firstResults.get(position));
 			if (streets != null && !streets.isEmpty()) {
@@ -174,10 +195,11 @@ public class StreetSetState extends AbstractState {
 
 	}
 
-	private class SetDestinationTask extends AsyncTask<String, Void, String> {
+	private class SetDestinationTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(Void... voids) {
+			message = "Espere mientras cargamos los datos";
 			Point destination = null;
 			if (secondStreet != null) {
 				destination = addressServiceAdapter.getCorner(

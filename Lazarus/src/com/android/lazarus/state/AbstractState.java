@@ -17,6 +17,8 @@ public abstract class AbstractState implements State {
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
 
+	private WhereAmITask whereAmITask = new WhereAmITask();
+
 	protected String message;
 
 	protected String defaultMessage;
@@ -44,7 +46,16 @@ public abstract class AbstractState implements State {
 		if (location == null) {
 			return "No se puede obtener información de su posición, por favor encienda el g p s,,";
 		} else {
-			new WhereAmITask().execute(new Location[] { location });
+			if (whereAmITask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (whereAmITask.getStatus() == AsyncTask.Status.PENDING) {
+					whereAmITask.execute(new Location[] { location });
+				} else {
+					if (whereAmITask.getStatus() == AsyncTask.Status.FINISHED) {
+						whereAmITask = new WhereAmITask();
+						whereAmITask.execute(new Location[] { location });
+					}
+				}
+			}
 			return "Calculando su ubicación,,";
 		}
 	}
@@ -295,9 +306,9 @@ public abstract class AbstractState implements State {
 		protected Void doInBackground(Location... args) {
 			Location location = args[0];
 			CloseLocationData closeLocationData = null;
-				closeLocationData = addressServiceAdapter.getCloseLocation(
-						context.getToken(), location.getLatitude() + ","
-								+ location.getLongitude());
+			closeLocationData = addressServiceAdapter.getCloseLocation(
+					context.getToken(),
+					location.getLatitude() + "," + location.getLongitude());
 			if (closeLocationData != null) {
 				String corner = closeLocationData.getClosestCorner()
 						.getFirstStreetName()

@@ -39,6 +39,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	List<String> possibleDescriptions = null;
 	ReportObstacleTask reportObstacleTask = new ReportObstacleTask();
 	GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
+	String secondStreetInstruction = null;
 
 	private enum InternalState {
 		WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
@@ -172,10 +173,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 			}
 		} else {
 			if (position != null) {
-				checkForObstacles();
+				//checkForObstacles();
 				int olderPosition = currentWalkingPosition;
 				int closestPosition = getClosestPosition();
-				if (closestPosition != -1 && olderPosition+1 == closestPosition) {
+				if (closestPosition != -1
+						&& olderPosition + 1 == closestPosition) {
 					currentWalkingPosition = getClosestPosition();
 				}
 				if (conditionsToRecalculate()) {
@@ -383,6 +385,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
+				//SImon bolivar 
+				//end = new GeoPoint(-34.904507,-56.159493);
 				// start = new GeoPoint(-34.778024, -55.754501);
 				// end = new GeoPoint(-34.771635, -55.749975);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
@@ -402,10 +406,24 @@ public class WalkingDirectionsState extends LocationDependentState {
 							positions.get(0).getInstruction(), position,
 							positions.get(currentWalkingPosition + 1), context
 									.getSensorEventListenerImpl().getAzimuth());
-					message = initialMessage + message;
-					context.speak(message, true);
+					boolean firstTurnMissed = false;
+					if (secondStreetInstruction != null) {
+						firstTurnMissed = WalkingPositionHelper.checkForFirstTurnMissed(secondStreetInstruction,positions);
+					}
+					if (!firstTurnMissed) {
+						message = initialMessage + message;
+						context.speak(message, true);
+						secondStreetInstruction = WalkingPositionHelper
+								.getSecondStreetIntruction(positions);
+					} else {
+						message = "No ha doblado en la esquina en que debía, es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
+								+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo cancelar. Si no es este el caso, " + message;
+						secondStreetInstruction = WalkingPositionHelper
+								.getSecondStreetIntruction(positions);
+						context.speak(message, true);
+					}
 					// TODO
-					//context.mockLocationListener.startMoving();
+					 //context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -431,8 +449,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 		possibleDescriptions = null;
 		giveInstructions();
 		// TODO
-		//int position = context.mockLocationListener.counter;
-		//context.mockLocationListener.restartFromPosition(position);
+		// int position = context.mockLocationListener.counter;
+		// context.mockLocationListener.restartFromPosition(position);
 		// context.mockLocationListener.restart();
 	}
 

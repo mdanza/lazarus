@@ -46,10 +46,11 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	private UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
+	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
 
 	// private WalkingDirectionsTester walkingDirectionsTester = new
 	// WalkingDirectionsTester(this);
-	//TODO
+	// TODO
 	//public MockLocationListener mockLocationListener;
 
 	public void showToast(String content) {
@@ -109,7 +110,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 	}
 
 	public void speak(String message) {
-		int maximumLength = 185;
+		int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 		if (message != null && !message.equals("")) {
 			tts.stop();
 			if (message.length() <= maximumLength) {
@@ -127,7 +128,7 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 
 	public void speak(String message, boolean addQueue) {
 		if (message != null) {
-			int maximumLength = 245;
+			int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 			if (addQueue == true) {
 				if (message != null) {
 					if (message.length() <= maximumLength) {
@@ -178,10 +179,10 @@ public class VoiceInterpreterActivity extends FragmentActivity implements
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-		locationListener = new LocationListenerImpl(this);
-		//TODO
+		 locationListener = new LocationListenerImpl(this);
+		// TODO
 		//mockLocationListener = new MockLocationListener(this);
-		// locationListener = mockLocationListener;
+		//locationListener = mockLocationListener;
 		initializeFirstState();
 
 	}

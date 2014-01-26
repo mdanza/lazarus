@@ -23,16 +23,17 @@ public class MessageSplitter {
 					String piece = pieces[i];
 					try {
 						if (piece.length() > maximumSize) {
-							pieces = subdividePiece(pieces, i, regExp,maximumSize);
+							pieces = subdividePiece(pieces, i, regExp,
+									maximumSize);
 							i = 0;
 						} else {
 							if (i < pieces.length - 1) {
-								if ((piece.length() + pieces[i + 1].length() +2) <= maximumSize) {
-									if(piece.length() + pieces[i+1].length() == maximumSize){
+								if ((piece.length() + pieces[i + 1].length() + 2) <= maximumSize) {
+									if (piece.length() + pieces[i + 1].length() == maximumSize) {
 										int length1 = piece.length();
-										int length2 = pieces[i+1].length();
+										int length2 = pieces[i + 1].length();
 										int legth3 = 55;
-										int length34=44;
+										int length34 = 44;
 									}
 									String strippedRegExp = regExp.replaceAll(
 											"\\\\", "");
@@ -63,16 +64,20 @@ public class MessageSplitter {
 		return message.split("(?<=\\G.{" + maximumLength + "})");
 	}
 
-	private static String[] subdividePiece(String[] pieces, int i, String regExp,int maximumSize) {
+	private static String[] subdividePiece(String[] pieces, int i,
+			String regExp, int maximumSize) {
 		String[] newPiece = splitMessage(pieces[i], maximumSize, regExp);
 		String[] newArray = new String[pieces.length + newPiece.length - 1];
+		int k = 0;
 		for (int j = 0; j < newArray.length; j++) {
 			if (j != i) {
-				newArray[j] = pieces[j];
+				newArray[j] = pieces[j-k+1];
 			} else {
-				for (int k = 0; k < newPiece.length; k++) {
+				for (k = 0; k < newPiece.length; k++) {
 					newArray[j] = newPiece[k];
-					j++;
+					if (k != newPiece.length - 1) {
+						j++;
+					}
 				}
 			}
 		}

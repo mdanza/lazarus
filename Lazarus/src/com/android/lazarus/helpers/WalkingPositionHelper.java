@@ -288,5 +288,80 @@ public class WalkingPositionHelper {
 		}
 		return 0;
 	}
+	
+	public static String getSecondStreetIntruction(List<WalkingPosition> positions){
+		String secondStreetInstruction = null;
+		if(positions!=null && positions.size()>1){
+			String firstStreet = null;
+			for(int i = 0;i<positions.size();i++){
+				WalkingPosition position = positions.get(i);
+				if(position!=null){
+					String instruction = position.getInstruction();
+					if(instruction!=null){
+						if(firstStreet==null){
+							firstStreet = getFirstStreet(instruction.toLowerCase());
+						}else{
+							if(secondStreetInstruction==null){
+								secondStreetInstruction = getSecondStreetInstruction(instruction.toLowerCase(),firstStreet.toLowerCase());
+							}
+						}
+					}
+				}
+			}
+		}
+		return secondStreetInstruction;
+	}
+
+	private static String getSecondStreetInstruction(String instruction,
+			String firstStreet) {
+		String secondStreetInstruction = null;
+		if(instruction!=null && !instruction.toLowerCase().contains(firstStreet.toLowerCase())){
+			secondStreetInstruction = instruction.toLowerCase();
+		}
+		return secondStreetInstruction;
+	}
+
+
+	private static String getFirstStreet(String instruction) {
+		instruction = instruction.toLowerCase();
+		String firstStreet = null;
+		if(instruction!=null){
+			String[] words = instruction.split("\\ ");
+			boolean passedOn = false;
+			for(int i = 0;i<words.length;i++){
+				if(!passedOn && ("on".equals(words[i]))){
+					passedOn = true;
+				}
+				if(passedOn){
+					if(firstStreet==null){
+					firstStreet = words[i];
+					}else{
+						firstStreet = firstStreet + words[i];
+					}
+				}
+			}
+		}
+		return firstStreet;
+	}
+
+	public static boolean checkForFirstTurnMissed(
+			String oldSecondStreetInstruction, List<WalkingPosition> positions) {
+		boolean firstTurnMissed = false;
+		if(oldSecondStreetInstruction!=null && positions!=null){
+			String newSecondStreetInstruction = getSecondStreetIntruction(positions);
+			oldSecondStreetInstruction = oldSecondStreetInstruction.toLowerCase();
+			newSecondStreetInstruction = newSecondStreetInstruction.toLowerCase();
+			if(oldSecondStreetInstruction.contains("derecha")){
+				newSecondStreetInstruction = newSecondStreetInstruction.replace("izquierda","derecha");	
+			}else{
+				if(oldSecondStreetInstruction.contains("izquierda")){
+					newSecondStreetInstruction = newSecondStreetInstruction.replace("derecha","izquierda");
+				}
+			}
+			firstTurnMissed = newSecondStreetInstruction.equals(oldSecondStreetInstruction);
+		}
+		return firstTurnMissed;
+		
+	}
 
 }

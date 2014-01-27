@@ -48,12 +48,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
+		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
+		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 
@@ -62,6 +64,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.parentState = parentState;
 		this.destination = destination;
+		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 
@@ -70,6 +73,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.initialMessage = initialMessage;
 		this.destination = destination;
+		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 

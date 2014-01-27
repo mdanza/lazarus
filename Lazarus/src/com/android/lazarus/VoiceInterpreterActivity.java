@@ -83,7 +83,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 
 		@Override
 		public void run() {
-			Toast.makeText(getApplicationContext(), content, Toast.LENGTH_SHORT)
+			Toast.makeText(getApplicationContext(), content, Toast.LENGTH_LONG)
 					.show();
 		}
 
@@ -228,9 +228,8 @@ public class VoiceInterpreterActivity extends MapActivity implements
 											initialMessage));
 
 					}
-				}, ConstantsHelper.refreshTokenRate,
-				ConstantsHelper.refreshTokenRate,
-				TimeUnit.MINUTES);
+				}, ConstantsHelper.REFRESH_TOKEN_RATE,
+				ConstantsHelper.REFRESH_TOKEN_RATE, TimeUnit.MINUTES);
 	}
 
 	private void setUpMap() {
@@ -427,7 +426,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			String result = userServiceAdapter.login(args[0], args[1]);
 			if (result != null) {
 				token = result;
-				showToast(token);
 				MainMenuState mainMenuState = new MainMenuState(
 						voiceInterpreterActivity, initialMessage);
 				voiceInterpreterActivity.setState(mainMenuState);

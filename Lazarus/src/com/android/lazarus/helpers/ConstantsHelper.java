@@ -5,5 +5,6 @@ public class ConstantsHelper {
 	public static final String ENCODING = "UTF-8";
 	public static final String MAP_QUEST_API_KEY = "Fmjtd%7Cluur2962nq%2Cbw%3Do5-90rxh6";
 	// in minutes
-	public static final int refreshTokenRate = 60;
+	public static final int REFRESH_TOKEN_RATE = 60;
+	public static final String OPEN_STREET_MAP_ACKNOWLEDGEMENT = "Agradecemos a © OpenStreetMap contributors por sus servicio de navegación. Términos y condiciones en www.openstreetmap.org/copyright";
 }

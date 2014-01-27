@@ -176,6 +176,7 @@ public class AddToFavouriteState extends AbstractState {
 				favourites=null;
 			}
 			message = defaultMessage;
+			context.speak(message);
 			return null;
 		}
 

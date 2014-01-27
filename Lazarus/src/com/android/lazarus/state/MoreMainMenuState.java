@@ -44,6 +44,7 @@ public class MoreMainMenuState extends AbstractState {
 			if (containsNumber(results, 4)) {
 				this.message = "¿Está seguro de que desea desactivar su cuenta del sistema?";
 				this.state = InternalState.DEACTIVATE_ACCOUNT_SELECTED;
+				return;
 			}
 		}
 		if (state.equals(InternalState.DELETE_PHONE_DATA_SELECTED)) {

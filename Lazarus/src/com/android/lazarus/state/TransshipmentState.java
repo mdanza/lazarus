@@ -48,7 +48,8 @@ public class TransshipmentState extends LocationDependentState {
 					transshipment.getSecondRoute().getStartStop().getPoint(),
 					transshipment.getFirstRoute(),
 					this,
-					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP));
+					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP,
+					null));
 		}
 		if (state.equals(InternalState.SECOND_ROUTE)) {
 			com.android.lazarus.state.BusRideState.InternalState initialState;
@@ -57,7 +58,7 @@ public class TransshipmentState extends LocationDependentState {
 			else
 				initialState = com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP;
 			context.setState(new BusRideState(context, destination,
-					transshipment.getSecondRoute(), this, initialState));
+					transshipment.getSecondRoute(), this, initialState, null));
 		}
 	}
 
@@ -85,13 +86,13 @@ public class TransshipmentState extends LocationDependentState {
 	}
 
 	public void arrivedToDestination() {
-		if (state.equals(InternalState.FIRST_ROUTE)) {
-			state = InternalState.SECOND_ROUTE;
-			giveInstructions();
-		}
 		if (state.equals(InternalState.SECOND_ROUTE)) {
 			MainMenuState mainMenuState = new MainMenuState(context);
 			context.setState(mainMenuState);
+		}
+		if (state.equals(InternalState.FIRST_ROUTE)) {
+			state = InternalState.SECOND_ROUTE;
+			giveInstructions();
 		}
 	}
 

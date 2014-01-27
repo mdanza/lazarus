@@ -45,7 +45,9 @@ public class BusDirectionsState extends LocationDependentState {
 			for (int i = 0; i < busRides.size(); i++) {
 				if (containsNumber(results, i + 1)) {
 					context.setState(new BusRideState(this.context,
-							destination, busRides.get(i)));
+							destination, busRides.get(i),
+							getOtherRidesWithSameStartStop(busRides,
+									busRides.get(i))));
 					return;
 				}
 			}
@@ -69,9 +71,9 @@ public class BusDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < busRides.size(); i++) {
-				message += ",,diga " + (i + 1) + " , para tomar un "
-						+ busRides.get(i).getLineName() + ", "
-						+ busRides.get(i).getDestination();
+				message += ",,diga " + getStringDigits(i + 1)
+						+ " , para tomar un " + busRides.get(i).getLineName()
+						+ ", " + busRides.get(i).getDestination();
 				appendDistanceToStop(busRides.get(i).getStartStop());
 				appendSchedule(i);
 			}
@@ -81,7 +83,7 @@ public class BusDirectionsState extends LocationDependentState {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < transshipments.size(); i++) {
 				message += ",,diga "
-						+ (i + 1)
+						+ getStringDigits(i + 1)
 						+ " , para tomar un "
 						+ transshipments.get(i).getFirstRoute().getLineName()
 						+ " "
@@ -102,6 +104,19 @@ public class BusDirectionsState extends LocationDependentState {
 			message = "No se encontraron buses hacia ese destino, ni siquiera con conexión";
 			context.speak(message);
 		}
+	}
+
+	private List<BusRide> getOtherRidesWithSameStartStop(List<BusRide> all,
+			BusRide target) {
+		List<BusRide> result = new ArrayList<BusRide>();
+		for (BusRide ride : all) {
+			if (!ride.getDestination().equals(target.getDestination())
+					&& !ride.getLineName().equals(target.getLineName())
+					&& ride.getStartStop().getBusStopLocationCode() == target
+							.getStartStop().getBusStopLocationCode())
+				result.add(ride);
+		}
+		return result;
 	}
 
 	private void appendSchedule(int pos) {

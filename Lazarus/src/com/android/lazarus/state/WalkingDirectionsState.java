@@ -89,6 +89,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				} else {
 					context.setState(parentState);
 					parentState.arrivedToDestination();
+					return;
 				}
 			}
 			if (stringPresent(results, "obstaculo")) {

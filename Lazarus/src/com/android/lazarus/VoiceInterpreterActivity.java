@@ -1,5 +1,9 @@
 package com.android.lazarus;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -17,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.MockLocationListener;
@@ -57,12 +62,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private final boolean testing = true;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlay;
+	private ScheduledExecutorService scheduledThreadPoolExecutor = Executors
+			.newScheduledThreadPool(1);
 
 	LogInTask logInTask = new LogInTask(this);
-
-	// private WalkingDirectionsTester walkingDirectionsTester = new
-	// WalkingDirectionsTester(this);
-	// TODO
 
 	public MockLocationListener mockLocationListener;
 
@@ -201,6 +204,33 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			setUpMap();
 		}
 		initializeFirstState();
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(
+				new Runnable() {
+
+					@Override
+					public void run() {
+						String username = VoiceInterpreterActivity.this
+								.getSharedPreferences("usrpref", 0).getString(
+										"username", null);
+						String password = VoiceInterpreterActivity.this
+								.getSharedPreferences("usrpref", 0).getString(
+										"password", null);
+						String result = null;
+						if (username != null && password != null)
+							result = userServiceAdapter.login(username,
+									password);
+						if (result != null)
+							token = result;
+						else
+							VoiceInterpreterActivity.this
+									.setState(new LogInState(
+											VoiceInterpreterActivity.this,
+											initialMessage));
+
+					}
+				}, ConstantsHelper.refreshTokenRate,
+				ConstantsHelper.refreshTokenRate,
+				TimeUnit.MINUTES);
 	}
 
 	private void setUpMap() {
@@ -397,7 +427,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			String result = userServiceAdapter.login(args[0], args[1]);
 			if (result != null) {
 				token = result;
-
+				showToast(token);
 				MainMenuState mainMenuState = new MainMenuState(
 						voiceInterpreterActivity, initialMessage);
 				voiceInterpreterActivity.setState(mainMenuState);

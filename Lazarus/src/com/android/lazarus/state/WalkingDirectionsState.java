@@ -34,15 +34,16 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private double distanceToFinalPosition = -1;
 	private static final int NEEDED_ACCURACY = 2000;
 	private BusRideState parentState;
-	private InternalState state = InternalState.WALKING_INSTRUCTIONS;
+	private InternalState state = InternalState.WAITING_TO_START;
 	private Obstacle obstacleToReport = null;
 	List<String> possibleDescriptions = null;
 	ReportObstacleTask reportObstacleTask = new ReportObstacleTask();
 	GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
 	String secondStreetInstruction = null;
+	private String defaultMessage = "Párese sobre la vereda, y sostenga el celular frente a usted, paralelo al suelo, cuando esté listo, diga comenzar, ";
 
 	private enum InternalState {
-		WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
+		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
@@ -74,6 +75,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void handleResults(List<String> results) {
+		if (state.equals(InternalState.WAITING_TO_START)) {
+			if (stringPresent(results, "comenzar")) {
+				this.state = InternalState.WALKING_INSTRUCTIONS;
+				giveInstructions();
+			}
+		}
 		if (state.equals(InternalState.WALKING_INSTRUCTIONS)) {
 			if (stringPresent(results, "destino")) {
 				if (parentState == null) {
@@ -159,42 +166,47 @@ public class WalkingDirectionsState extends LocationDependentState {
 			context.speak(initialMessage, true);
 			initialMessage = null;
 		}
-		if (positions == null) {
-			message = "";
-			if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
-				if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING) {
-					getInstructionsTask.execute();
-				} else {
-					if (getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED) {
-						getInstructionsTask = new GetInstructionsTask();
+		if (state.equals(InternalState.WAITING_TO_START)) {
+			context.speak(defaultMessage, true);
+		}
+		if (!state.equals(InternalState.WAITING_TO_START)) {
+			if (positions == null) {
+				message = "";
+				if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
+					if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING) {
 						getInstructionsTask.execute();
+					} else {
+						if (getInstructionsTask.getStatus() == AsyncTask.Status.FINISHED) {
+							getInstructionsTask = new GetInstructionsTask();
+							getInstructionsTask.execute();
+						}
 					}
-				}
-			}else{
-				message = "Espere mientras se cargan las instrucciones para llegar a destino";
-			}
-		} else {
-			if (position != null) {
-				//checkForObstacles();
-				int olderPosition = currentWalkingPosition;
-				int closestPosition = getClosestPosition();
-				if (closestPosition != -1
-						&& olderPosition + 1 == closestPosition) {
-					currentWalkingPosition = getClosestPosition();
-				}
-				if (conditionsToRecalculate()) {
-					recalculate();
 				} else {
-					if (olderPosition != currentWalkingPosition) {
-						String instruction = getInstructionForCurrentWalkingPosition();
-						if (instruction != null) {
-							message = instruction;
-							context.speak(instruction, true);
+					message = "Espere mientras se cargan las instrucciones para llegar a destino";
+				}
+			} else {
+				if (position != null) {
+					checkForObstacles();
+					int olderPosition = currentWalkingPosition;
+					int closestPosition = getClosestPosition();
+					if (closestPosition != -1
+							&& olderPosition + 1 == closestPosition) {
+						currentWalkingPosition = getClosestPosition();
+					}
+					if (conditionsToRecalculate()) {
+						recalculate();
+					} else {
+						if (olderPosition != currentWalkingPosition) {
+							String instruction = getInstructionForCurrentWalkingPosition();
+							if (instruction != null) {
+								message = instruction;
+								context.speak(instruction, true);
+							}
 						}
 					}
 				}
-			}
 
+			}
 		}
 
 	}
@@ -388,8 +400,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
-				//SImon bolivar 
-				//end = new GeoPoint(-34.904507,-56.159493);
+				// SImon bolivar
+				// end = new GeoPoint(-34.904507,-56.159493);
 				// start = new GeoPoint(-34.778024, -55.754501);
 				// end = new GeoPoint(-34.771635, -55.749975);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
@@ -411,7 +423,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getSensorEventListenerImpl().getAzimuth());
 					boolean firstTurnMissed = false;
 					if (secondStreetInstruction != null) {
-						firstTurnMissed = WalkingPositionHelper.checkForFirstTurnMissed(secondStreetInstruction,positions);
+						firstTurnMissed = WalkingPositionHelper
+								.checkForFirstTurnMissed(
+										secondStreetInstruction, positions);
 					}
 					if (!firstTurnMissed) {
 						message = initialMessage + message;
@@ -420,13 +434,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.getSecondStreetIntruction(positions);
 					} else {
 						message = "No ha doblado en la esquina en que debía, es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
-								+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo cancelar. Si no es este el caso, " + message;
+								+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo cancelar. Si no es este el caso, "
+								+ message;
 						secondStreetInstruction = WalkingPositionHelper
 								.getSecondStreetIntruction(positions);
 						context.speak(message, true);
 					}
 					// TODO
-					 //context.mockLocationListener.startMoving();
+					// context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -447,7 +462,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 		currentWalkingPosition = 0;
 		this.initialMessage = initialMessage;
 		distanceToFinalPosition = -1;
-		state = InternalState.WALKING_INSTRUCTIONS;
+		if (!state.equals(InternalState.WAITING_TO_START)) {
+			state = InternalState.WALKING_INSTRUCTIONS;
+		}
 		obstacleToReport = null;
 		possibleDescriptions = null;
 		giveInstructions();

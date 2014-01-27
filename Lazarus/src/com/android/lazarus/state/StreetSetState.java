@@ -25,15 +25,13 @@ public class StreetSetState extends AbstractState {
 	private String addressNumber = null;
 	private boolean passedFirstTime = false;
 	GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
+	private boolean hasFavourites = false;
 
-	public StreetSetState(VoiceInterpreterActivity context) {
-		super(context);
-	}
-
-	public StreetSetState(VoiceInterpreterActivity context, String street) {
+	public StreetSetState(VoiceInterpreterActivity context, String street, boolean hasFavourites) {
 		super(context);
 		firstStreet = street;
 		this.message = defaultMessage;
+		this.hasFavourites = hasFavourites;
 	}
 
 	@Override
@@ -222,7 +220,7 @@ public class StreetSetState extends AbstractState {
 				context.speak(message);
 			} else {
 				DestinationSetState destinationSetState = new DestinationSetState(
-						context, destination, false);
+						context, destination, false, hasFavourites);
 				context.setState(destinationSetState);
 			}
 			return null;

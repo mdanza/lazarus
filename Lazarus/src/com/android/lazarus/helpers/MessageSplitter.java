@@ -71,7 +71,11 @@ public class MessageSplitter {
 		int k = 0;
 		for (int j = 0; j < newArray.length; j++) {
 			if (j != i) {
-				newArray[j] = pieces[j-k+1];
+				if (k != 0) {
+					newArray[j] = pieces[j - k + 1];
+				} else {
+					newArray[j] = pieces[j];
+				}
 			} else {
 				for (k = 0; k < newPiece.length; k++) {
 					newArray[j] = newPiece[k];

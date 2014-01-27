@@ -48,15 +48,15 @@ public class MainMenuState extends AbstractState {
 		args[0] = context.getToken();
 		args[1] = initialText;
 		if (loadFavouritesTask.getStatus() != AsyncTask.Status.RUNNING) {
-			if (loadFavouritesTask.getStatus() == AsyncTask.Status.PENDING){
+			if (loadFavouritesTask.getStatus() == AsyncTask.Status.PENDING) {
 				loadFavouritesTask.execute(args);
-			}else{
-				if(loadFavouritesTask.getStatus() == AsyncTask.Status.FINISHED){
+			} else {
+				if (loadFavouritesTask.getStatus() == AsyncTask.Status.FINISHED) {
 					loadFavouritesTask = new LoadFavouritesTask();
 					loadFavouritesTask.execute(args);
 				}
 			}
-		}else{
+		} else {
 			message = "Espere mientras cargamos sus datos por favor";
 		}
 	}
@@ -73,10 +73,10 @@ public class MainMenuState extends AbstractState {
 				args[0] = firstResults.get(0);
 				message = "";
 				if (possibleDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
-					if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING){
+					if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING) {
 						possibleDestinationTask.execute(args);
-					}else{
-						if(possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED){
+					} else {
+						if (possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED) {
 							possibleDestinationTask = new PossibleDestinationTask();
 							possibleDestinationTask.execute(args);
 						}
@@ -94,7 +94,8 @@ public class MainMenuState extends AbstractState {
 				for (int i = 1; i < streets.size() + 1; i++) {
 					if (containsNumber(results, i)) {
 						StreetSetState streetSetState = new StreetSetState(
-								this.context, streets.get(i - 1));
+								this.context, streets.get(i - 1),
+								favourites != null);
 						this.context.setState(streetSetState);
 					}
 				}
@@ -104,7 +105,7 @@ public class MainMenuState extends AbstractState {
 		if (state.equals(InternalState.TO_CONFIRM_FAVOURITE)) {
 			if (stringPresent(results, "si")) {
 				DestinationSetState destinationSetState = new DestinationSetState(
-						this.context, favourite.getPoint(), true);
+						this.context, favourite.getPoint(), true, true);
 				this.context.setState(destinationSetState);
 				// destinationSetState.handleResults(new
 				// ArrayList<String>(Arrays.asList(new String[]
@@ -134,12 +135,13 @@ public class MainMenuState extends AbstractState {
 			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 			message = "";
 			if (possibleDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
-				if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING){
+				if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING) {
 					possibleDestinationTask.execute(firstResults.get(position));
-				}else{
-					if(possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED){
+				} else {
+					if (possibleDestinationTask.getStatus() == AsyncTask.Status.FINISHED) {
 						possibleDestinationTask = new PossibleDestinationTask();
-						possibleDestinationTask.execute(firstResults.get(position));
+						possibleDestinationTask.execute(firstResults
+								.get(position));
 					}
 				}
 			}
@@ -217,13 +219,14 @@ public class MainMenuState extends AbstractState {
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
 			String initialMessage = "";
-			if(args.length==2 && args[1]!=null){
+			if (args.length == 2 && args[1] != null) {
 				initialMessage = args[1];
 			}
-			if (favourites != null) {
-				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
-			} else {
+			if (favourites == null || favourites.isEmpty()) {
+				favourites = null;
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, para más opciones diga más";
+			} else {
+				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 			}
 			defaultMessage = message;
 			message = initialMessage + message;

@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.android.lazarus.helpers.ConstantsHelper;
+import com.android.lazarus.helpers.EncoderHelper;
 import com.android.lazarus.serviceadapter.utils.HttpClientCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -80,7 +81,7 @@ public class UserServiceAdapterImpl implements UserServiceAdapter {
 		try {
 			HttpGet request = new HttpGet(ConstantsHelper.REST_API_URL
 					+ "/users/username/"
-					+ URLEncoder.encode(username, ConstantsHelper.ENCODING));
+					+ EncoderHelper.encode(username));
 			HttpResponse response = client.execute(request);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));

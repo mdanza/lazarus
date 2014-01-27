@@ -102,7 +102,7 @@ public class AddToFavouriteState extends AbstractState {
 			choosingToGoToFavourite = false;
 			if (stringPresent(results, "si")) {
 				DestinationSetState destinationSetState = new DestinationSetState(
-						this.context, point, true);
+						this.context, point, true, true);
 				this.context.setState(destinationSetState);
 			}
 			if (stringPresent(results, "no")) {
@@ -172,6 +172,9 @@ public class AddToFavouriteState extends AbstractState {
 			message = "Espere por favor";
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(context.getToken());
+			if(favourites!=null && favourites.isEmpty()){
+				favourites=null;
+			}
 			message = defaultMessage;
 			return null;
 		}

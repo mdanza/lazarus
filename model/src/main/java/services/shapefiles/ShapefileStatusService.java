@@ -14,15 +14,12 @@ public interface ShapefileStatusService {
 
 	public void setCornersUploadProgress(double progress);
 
-	public void setControlPointsUploadProgress(double progress);
-
 	public void setBusStopsUploadProgress(double progress);
 
 	public class ShapefileStatus {
 		private double addressesUploadPercentage;
 		private double busRoutesMaximalUploadPercentage;
 		private double busStopsUploadPercentage;
-		private double controlPointsUploadPercentage;
 		private double cornersUploadPercentage;
 		private double streetsUploadPercentage;
 
@@ -50,15 +47,6 @@ public interface ShapefileStatusService {
 
 		public void setBusStopsUploadPercentage(double busStopsUploadPercentage) {
 			this.busStopsUploadPercentage = busStopsUploadPercentage;
-		}
-
-		public double getControlPointsUploadPercentage() {
-			return controlPointsUploadPercentage;
-		}
-
-		public void setControlPointsUploadPercentage(
-				double controlPointsUploadPercentage) {
-			this.controlPointsUploadPercentage = controlPointsUploadPercentage;
 		}
 
 		public double getCornersUploadPercentage() {

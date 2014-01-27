@@ -157,10 +157,6 @@
 									.html(
 											Math
 													.round(100 * jsonData.busStopsUploadPercentage) / 100);
-							$('#controlPointsProgress')
-									.html(
-											Math
-													.round(100 * jsonData.controlPointsUploadPercentage) / 100);
 							$('#cornersProgress')
 									.html(
 											Math
@@ -241,7 +237,6 @@
 			Datos a actualizar: <select id="inputShapefileType">
 				<option value="/uploadBusRoutesMaximal">Destinos ómnibus</option>
 				<option value="/uploadBusStops">Paradas ómnibus</option>
-				<option value="/uploadControlPoints">Puntos de control</option>
 				<option value="/uploadAddresses">Direcciones</option>
 				<option value="/uploadStreets">Calles</option>
 				<option value="/uploadCorners">Esquinas</option>
@@ -268,10 +263,6 @@
 				<tr>
 					<td>Paradas de ómnibus</td>
 					<td id="busStopsProgress"></td>
-				</tr>
-				<tr>
-					<td>Puntos de control</td>
-					<td id="controlPointsProgress"></td>
 				</tr>
 				<tr>
 					<td>Calles</td>

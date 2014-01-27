@@ -31,7 +31,6 @@ import services.shapefiles.ShapefileStatusService.ShapefileStatus;
 import services.shapefiles.address.AddressLoader;
 import services.shapefiles.bus.BusRoutesMaximalLoader;
 import services.shapefiles.bus.BusStopLoader;
-import services.shapefiles.bus.ControlPointLoader;
 import services.shapefiles.corner.CornerLoader;
 import services.shapefiles.streets.StreetLoader;
 import services.streets.abbreviations.AbbreviationService;
@@ -69,9 +68,6 @@ public class InformationUpdateService {
 
 	@EJB(name = "BusRoutesMaximalLoader")
 	private BusRoutesMaximalLoader busRoutesMaximalLoader;
-
-	@EJB(name = "ControlPointLoader")
-	private ControlPointLoader controlPointLoader;
 
 	@EJB(name = "AddressLoader")
 	private AddressLoader addressLoader;
@@ -115,15 +111,15 @@ public class InformationUpdateService {
 				busStopLoader);
 	}
 
-	@POST
-	@Path("/uploadControlPoints")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public String controlPoints(@HeaderParam("Authorization") String token,
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-		return uploadShapefile(token, uploadedInputStream, fileDetail,
-				controlPointLoader);
-	}
+	// @POST
+	// @Path("/uploadControlPoints")
+	// @Consumes(MediaType.MULTIPART_FORM_DATA)
+	// public String controlPoints(@HeaderParam("Authorization") String token,
+	// @FormDataParam("file") InputStream uploadedInputStream,
+	// @FormDataParam("file") FormDataContentDisposition fileDetail) {
+	// return uploadShapefile(token, uploadedInputStream, fileDetail,
+	// controlPointLoader);
+	// }
 
 	@POST
 	@Path("/uploadBusRoutesMaximal")

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -49,6 +50,7 @@ public class StreetLoaderImpl implements StreetLoader {
 					.find(ShapefileWKT.STREET);
 			URL shapeURL = shapefile.toURI().toURL();
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -69,7 +71,9 @@ public class StreetLoaderImpl implements StreetLoader {
 							multiLine = (MultiLineString) value.getValue();
 							break;
 						case 1:
-							streetName = (String) value.getValue();
+							if (value.getValue() != null)
+								streetName = new String(value.getValue()
+										.toString().getBytes(encoding));
 							break;
 						case 9:
 							nameCode = (Long) value.getValue();

@@ -2,6 +2,7 @@ package services.shapefiles.bus;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -47,6 +48,7 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -67,16 +69,16 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 								.getValue());
 						break;
 					case 3:
-						busRouteMaximal
-								.setLineName(value.getValue().toString());
+						busRouteMaximal.setLineName(new String(value.getValue()
+								.toString().getBytes(encoding)));
 						break;
 					case 5:
 						busRouteMaximal.setSubLineCode(Integer.parseInt(value
 								.getValue().toString()));
 						break;
 					case 6:
-						busRouteMaximal.setSubLineDescription(value.getValue()
-								.toString());
+						busRouteMaximal.setSubLineDescription(new String(value
+								.getValue().toString().getBytes(encoding)));
 						break;
 					case 7:
 						busRouteMaximal.setVariantCode(Integer.parseInt(value
@@ -90,8 +92,8 @@ public class BusRoutesMaximalLoaderImpl implements BusRoutesMaximalLoader {
 							busRouteMaximal.setMaximalVariantCode(-1);
 						break;
 					case 13:
-						busRouteMaximal.setDestination(value.getValue()
-								.toString());
+						busRouteMaximal.setDestination(new String(value
+								.getValue().toString().getBytes(encoding)));
 						break;
 					}
 					propertyNumber++;

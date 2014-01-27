@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -35,7 +36,7 @@ public class CornerLoaderImpl implements CornerLoader {
 
 	@EJB(name = "ShapefileWKTDAO")
 	private ShapefileWKTDAO shapefileWKTDAO;
-	
+
 	@EJB(name = "ShapefileStatusService")
 	private ShapefileStatusService shapefileStatusService;
 
@@ -49,6 +50,7 @@ public class CornerLoaderImpl implements CornerLoader {
 					.find(ShapefileWKT.CORNER);
 			URL shapeURL = shapefile.toURI().toURL();
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -77,10 +79,14 @@ public class CornerLoaderImpl implements CornerLoader {
 							secondStreetNameCode = (Long) value.getValue();
 							break;
 						case 3:
-							firstStreetName = (String) value.getValue();
+							if (value.getValue() != null)
+								firstStreetName = new String(value.getValue()
+										.toString().getBytes(encoding));
 							break;
 						case 4:
-							secondStreetName = (String) value.getValue();
+							if (value.getValue() != null)
+								secondStreetName = new String(value.getValue()
+										.toString().getBytes(encoding));
 							break;
 						}
 					}
@@ -109,8 +115,8 @@ public class CornerLoaderImpl implements CornerLoader {
 			throw new IllegalArgumentException("Malformed URL");
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		}finally{
-			if(store != null)
+		} finally {
+			if (store != null)
 				store.dispose();
 		}
 	}

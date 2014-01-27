@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -49,6 +50,7 @@ public class AddressLoaderImpl implements AddressLoader {
 					.find(ShapefileWKT.ADDRESS);
 			URL shapeURL = shapefile.toURI().toURL();
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -79,16 +81,22 @@ public class AddressLoaderImpl implements AddressLoader {
 							nameCode = (Long) value.getValue();
 							break;
 						case 3:
-							streetName = (String) value.getValue();
+							if (value.getValue() != null)
+								streetName = new String(value.getValue()
+										.toString().getBytes(encoding));
 							break;
 						case 4:
 							number = (Integer) value.getValue();
 							break;
 						case 5:
-							letter = (String) value.getValue();
+							if (value.getValue() != null)
+								letter = new String(value.getValue().toString()
+										.getBytes(encoding));
 							break;
 						case 6:
-							paridad = (String) value.getValue();
+							if (value.getValue() != null)
+								paridad = new String(value.getValue()
+										.toString().getBytes(encoding));
 							break;
 						}
 					}

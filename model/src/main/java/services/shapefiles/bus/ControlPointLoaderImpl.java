@@ -2,6 +2,7 @@ package services.shapefiles.bus;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -47,6 +48,7 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -78,8 +80,8 @@ public class ControlPointLoaderImpl implements ControlPointLoader {
 								.getValue().toString()));
 						break;
 					case 5:
-						controlPoint.setLocationDescription(value.getValue()
-								.toString());
+						controlPoint.setLocationDescription(new String(value
+								.getValue().toString().getBytes(encoding)));
 						break;
 					case 6:
 						controlPoint.setStreetCode((Long) value.getValue());

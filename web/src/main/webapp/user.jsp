@@ -56,7 +56,7 @@
 			xhr: function() {
 	            var myXhr = $.ajaxSettings.xhr();
 	            if(myXhr.upload){ // Check if upload property exists
-	                myXhr.upload.addEventListener('#shapefileProgress',progressHandlingFunction, false); // For handling the progress of the upload
+	                myXhr.upload.addEventListener('#shapefileProgress',progressHandlingFunctionShapefile, false); // For handling the progress of the upload
 	            }
 	            return myXhr;
 	        },
@@ -80,9 +80,15 @@
 		});
 	}
 	
-	function progressHandlingFunction(e){
+	function progressHandlingFunctionShapefile(e, progressSelector){
 	    if(e.lengthComputable){
-	        $('progress').attr({value:e.loaded,max:e.total});
+	        $('#shapefileProgress').attr({value:e.loaded,max:e.total});
+	    }
+	}
+	
+	function progressHandlingFunctionCsv(e, progressSelector){
+	    if(e.lengthComputable){
+	        $('#csvProgress').attr({value:e.loaded,max:e.total});
 	    }
 	}
 	
@@ -184,7 +190,7 @@
 			xhr: function() {
 	            var myXhr = $.ajaxSettings.xhr();
 	            if(myXhr.upload){ // Check if upload property exists
-	                myXhr.upload.addEventListener('#csvProgress',progressHandlingFunction, false); // For handling the progress of the upload
+	                myXhr.upload.addEventListener('#csvProgress',progressHandlingFunctionCsv, false); // For handling the progress of the upload
 	            }
 	            return myXhr;
 	        },

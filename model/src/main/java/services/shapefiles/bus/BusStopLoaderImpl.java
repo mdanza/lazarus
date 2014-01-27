@@ -2,6 +2,7 @@ package services.shapefiles.bus;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -47,6 +48,7 @@ public class BusStopLoaderImpl implements BusStopLoader {
 			URL shapeURL = shapefile.toURI().toURL();
 			// get feature results
 			store = new ShapefileDataStore(shapeURL);
+			Charset encoding = store.getCharset();
 			FeatureReader reader = store.getFeatureReader();
 			int count = 0;
 			long total = store.getCount(Query.ALL);
@@ -78,10 +80,12 @@ public class BusStopLoaderImpl implements BusStopLoader {
 								.toString()));
 						break;
 					case 5:
-						busStop.setStreetName(value.getValue().toString());
+						busStop.setStreetName(new String(value.getValue()
+								.toString().getBytes(encoding)));
 						break;
 					case 6:
-						busStop.setCornerStreetName(value.getValue().toString());
+						busStop.setCornerStreetName(new String(value.getValue()
+								.toString().getBytes(encoding)));
 						break;
 					case 7:
 						busStop.setStreetCode((Long) value.getValue());

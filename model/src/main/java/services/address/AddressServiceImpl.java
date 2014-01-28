@@ -90,6 +90,7 @@ public class AddressServiceImpl implements AddressService {
 
 	public List<String> getPossibleStreets(String approximate) {
 		approximate = approximate.toUpperCase();
+		approximate = abbreviationService.abbreviate(approximate);
 		List<String> parts = Arrays.asList(approximate.split(" "));
 		List<String> stringQueries;
 		if (parts.size() < 6) {
@@ -110,7 +111,7 @@ public class AddressServiceImpl implements AddressService {
 			for (int i = 0; i < toReturn.size(); i++) {
 				String street = toReturn.remove(i);
 				street = abbreviationService.expandAbbreviations(street);
-				toReturn.add(street);
+				toReturn.add(i,street);
 			}
 		}
 		return toReturn;

@@ -69,7 +69,7 @@ public class DestinationSetState extends LocationDependentState {
 				message = message + "para agregarlo a favoritos diga tres";
 			}
 			if (!hasFavourites) {
-				message = message + "usted puede agregar este destino a favoritos,, si lo hace podrá seleccionarlo en otras oportunidades por un nombre más corto,, para agregar este destino a favoritos diga tres, ";
+				message = message + "usted puede agregar este destino a favoritos, si lo hace podrá seleccionarlo en otras oportunidades por un nombre más corto,, para agregar este destino a favoritos diga tres, ";
 			}
 			context.speak(this.message);
 		}

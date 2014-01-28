@@ -35,8 +35,10 @@ public class RecognitionListenerImpl implements RecognitionListener {
 					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		if (stringResults != null && stringResults.size() > 3)
 			stringResults = stringResults.subList(0, 3);
-		voiceInterpreterActivity.getState().setResults(stringResults);
-		voiceInterpreterActivity.sayMessage();
+		if (voiceInterpreterActivity.getState() != null) {
+			voiceInterpreterActivity.getState().setResults(stringResults);
+			voiceInterpreterActivity.sayMessage();
+		}
 	}
 
 	@Override
@@ -90,8 +92,10 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			if (voiceInterpreterActivity.getState() instanceof WalkingDirectionsState) {
 				message = message + "La última instrucción fue, ";
 			}
-			message = message
-					+ voiceInterpreterActivity.getState().getMessage();
+			if (voiceInterpreterActivity.getState().getMessage() != null) {
+				message = message
+						+ voiceInterpreterActivity.getState().getMessage();
+			}
 		}
 		voiceInterpreterActivity.speak(message);
 	}

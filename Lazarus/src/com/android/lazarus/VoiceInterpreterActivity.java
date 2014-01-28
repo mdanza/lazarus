@@ -1,5 +1,6 @@
 package com.android.lazarus;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -214,11 +215,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (!testing)
-			setContentView(R.layout.activity_voice_interpreter);
-		else
-			setContentView(R.layout.activity_voice_interpreter_testing);
-		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
@@ -232,6 +228,13 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		// RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
 		// 100000);
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+
+		if (!testing)
+			setContentView(R.layout.activity_voice_interpreter);
+		else
+			setContentView(R.layout.activity_voice_interpreter_testing);
+
+		sensorEventListenerImpl = new SensorEventListenerImpl(this);
 
 		Button pushToTalkBtn = (Button) findViewById(R.id.pushToTalkButton);
 		pushToTalkBtn.setOnTouchListener(pushToTalkListener);
@@ -385,10 +388,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 					tts.stop();
 					return true;
 				case MotionEvent.ACTION_UP:
-					speechRecognizer.stopListening();
 					tts.speak(
 							". Espere mientras procesamos el resultado por favor",
 							TextToSpeech.QUEUE_FLUSH, null);
+					speechRecognizer.stopListening();
 					return true;
 				case MotionEvent.ACTION_MOVE:
 					return true;
@@ -419,11 +422,9 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		// check for successful instantiation
 		if (initStatus == TextToSpeech.SUCCESS) {
 			ttsInitialize = true;
-			// if (tts.isLanguageAvailable(Locale.US) ==
-			// TextToSpeech.LANG_AVAILABLE)
-			// tts.setLanguage(Locale.US);
-			// float rate = Float.parseFloat("1");
-			// tts.setSpeechRate(rate);
+			Locale loc = new Locale ("spa", "MEX");
+			if (tts.isLanguageAvailable(loc) != TextToSpeech.LANG_NOT_SUPPORTED && tts.isLanguageAvailable(loc)!=TextToSpeech.LANG_MISSING_DATA)
+				tts.setLanguage(loc);
 			if (state != null) {
 				speak(state.getMessage());
 			}

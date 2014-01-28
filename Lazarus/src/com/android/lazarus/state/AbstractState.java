@@ -78,7 +78,7 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "ayuda")) {
-				message = generalInstructions + message;
+				message = stateInstructions + generalInstructions + message;
 				return;
 			}
 			handleResults(results);

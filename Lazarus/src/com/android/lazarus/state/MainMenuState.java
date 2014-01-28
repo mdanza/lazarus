@@ -107,9 +107,6 @@ public class MainMenuState extends AbstractState {
 				DestinationSetState destinationSetState = new DestinationSetState(
 						this.context, favourite.getPoint(), true, true);
 				this.context.setState(destinationSetState);
-				// destinationSetState.handleResults(new
-				// ArrayList<String>(Arrays.asList(new String[]
-				// {"dos","dos","dos"})));
 				return;
 			}
 			if (stringPresent(results, "no")) {
@@ -216,9 +213,9 @@ public class MainMenuState extends AbstractState {
 
 		@Override
 		protected String doInBackground(String... args) {
+			String initialMessage = "Espere mientras cargamos sus datos";
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
-			String initialMessage = "";
 			if (args.length == 2 && args[1] != null) {
 				initialMessage = args[1];
 			}

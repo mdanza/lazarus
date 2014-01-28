@@ -129,7 +129,7 @@ public class StreetSetState extends AbstractState {
 			addressNumber = firstResults.get(position);
 			return;
 		}
-		message = "Espere mientras cargamos sus datos";
+		message = "";
 		if (getStreetNameTask.getStatus() != AsyncTask.Status.RUNNING) {
 			if (getStreetNameTask.getStatus() == AsyncTask.Status.PENDING) {
 				getStreetNameTask.execute();
@@ -139,6 +139,8 @@ public class StreetSetState extends AbstractState {
 					getStreetNameTask.execute();
 				}
 			}
+		}else{
+			message = "Espere mientras cargamos sus datos";
 		}
 	}
 

@@ -176,7 +176,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 		if (!state.equals(InternalState.WAITING_TO_START)) {
 			if (positions == null) {
-				message = "";
+				message = "Espere mientras se cargan las instrucciones para llegar a destino";
 				if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
 					if (getInstructionsTask.getStatus() == AsyncTask.Status.PENDING) {
 						getInstructionsTask.execute();
@@ -186,8 +186,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 							getInstructionsTask.execute();
 						}
 					}
-				} else {
-					message = "Espere mientras se cargan las instrucciones para llegar a destino";
 				}
 			} else {
 				if (position != null) {
@@ -409,6 +407,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				// end = new GeoPoint(-34.904507,-56.159493);
 				// start = new GeoPoint(-34.778024, -55.754501);
 				// end = new GeoPoint(-34.771635, -55.749975);
+				//end = new GeoPoint(-34.774473,-55.756437);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -445,8 +444,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.getSecondStreetIntruction(positions);
 						context.speak(message, true);
 					}
-					// TODO
-					// context.mockLocationListener.startMoving();
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
@@ -473,10 +470,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		obstacleToReport = null;
 		possibleDescriptions = null;
 		giveInstructions();
-		// TODO
-		// int position = context.mockLocationListener.counter;
-		// context.mockLocationListener.restartFromPosition(position);
-		// context.mockLocationListener.restart();
 	}
 
 	@Override

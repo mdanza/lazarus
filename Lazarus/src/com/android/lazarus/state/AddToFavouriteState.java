@@ -14,13 +14,16 @@ public class AddToFavouriteState extends AbstractState {
 
 	private Point point;
 	private int position = 0;
-	private boolean toConfirmName;
 	private String name;
 	private List<Favourite> favourites;
 	private FavouritesReportingServiceAdapter favouritesReportingServiceAdapter = new FavouritesReportingServiceAdapterImpl();
 	private List<String> possibleNames = null;
-	private boolean choosingToGoToFavourite = false;
 	AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
+	private InternalState state = InternalState.LOADING_FAVOURITES;
+
+	private enum InternalState {
+		LOADING_FAVOURITES, CHOOSING_NAME, CONFIRM_NAME, CHOOSING_TO_GO_TO_FAVOURITE
+	}
 
 	public AddToFavouriteState(VoiceInterpreterActivity context) {
 		super(context);
@@ -47,27 +50,30 @@ public class AddToFavouriteState extends AbstractState {
 					getFavouritesTask.execute(args);
 				}
 			}
+		} else {
+			message = "Espere mientras cargamos sus datos";
 		}
 	}
 
 	@Override
 	protected void handleResults(List<String> results) {
-		if (!toConfirmName && position < results.size()
-				&& !choosingToGoToFavourite) {
+		if (state.equals(InternalState.CHOOSING_NAME)) {
 			if (possibleNames == null) {
 				possibleNames = results;
 			}
+
 			name = possibleNames.get(position);
 			this.message = "¿Desea que el destino favorito se llame " + name
 					+ "?";
-			toConfirmName = true;
+			state = InternalState.CONFIRM_NAME;
+
 			return;
 		}
-		if (toConfirmName) {
-			toConfirmName = false;
+		if (state.equals(InternalState.CONFIRM_NAME)) {
 			if (stringPresent(results, "si")) {
 				if (favouriteWithName(favourites, name)) {
 					this.message = "Ya existe un favorito con este nombre, por favor elija otro";
+					state = InternalState.CHOOSING_NAME;
 					resetData();
 				} else {
 					String[] args = new String[3];
@@ -84,22 +90,24 @@ public class AddToFavouriteState extends AbstractState {
 								addToFavouriteTask.execute(args);
 							}
 						}
+					} else {
+						message = "Espere mientras agregamos el destino a favoritos";
 					}
 				}
 			}
 			if (stringPresent(results, "no")) {
 				position++;
-				this.handleResults(possibleNames);
+				state = InternalState.CHOOSING_NAME;
+				if (position == results.size()) {
+					this.message = "Por favor repita el nombre del favorito que desea agregar";
+					resetData();
+				} else {
+					this.handleResults(possibleNames);
+				}
 			}
 			return;
 		}
-		if (!toConfirmName && position == results.size()
-				&& !choosingToGoToFavourite) {
-			this.message = "Por favor repita el nombre del favorito que desea agregar";
-			resetData();
-		}
-		if (choosingToGoToFavourite) {
-			choosingToGoToFavourite = false;
+		if (state.equals(InternalState.CHOOSING_TO_GO_TO_FAVOURITE)) {
 			if (stringPresent(results, "si")) {
 				DestinationSetState destinationSetState = new DestinationSetState(
 						this.context, point, true, true);
@@ -109,17 +117,14 @@ public class AddToFavouriteState extends AbstractState {
 				MainMenuState mainMenuState = new MainMenuState(context);
 				context.setState(mainMenuState);
 			}
+			return;
 		}
-
 	}
 
 	private void resetData() {
 		position = 0;
-		toConfirmName = false;
 		name = null;
 		possibleNames = null;
-		loadFavourites();
-
 	}
 
 	private boolean favouriteWithName(List<Favourite> listOfFavourites,
@@ -155,10 +160,11 @@ public class AddToFavouriteState extends AbstractState {
 			if (added) {
 				message = "Se ha agregado " + args[2]
 						+ " a favoritos, ¿desea ir a " + args[2] + "?";
-				choosingToGoToFavourite = true;
+				state = InternalState.CHOOSING_TO_GO_TO_FAVOURITE;
 			} else {
 				message = "Ha ocurrido un error al agregar el favorito, por favor diga el nombre nuevamente";
 				resetData();
+				state = InternalState.CHOOSING_NAME;
 			}
 			context.sayMessage();
 			return null;
@@ -172,8 +178,9 @@ public class AddToFavouriteState extends AbstractState {
 			message = "Espere por favor";
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(context.getToken());
-			if(favourites!=null && favourites.isEmpty()){
-				favourites=null;
+			state = InternalState.CHOOSING_NAME;
+			if (favourites != null && favourites.isEmpty()) {
+				favourites = null;
 			}
 			message = defaultMessage;
 			context.speak(message);

@@ -3,6 +3,7 @@ package com.android.lazarus.serviceadapter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -37,8 +38,9 @@ public class AddressServiceAdapterImpl implements AddressServiceAdapter {
 			JsonObject jsonResponse = new JsonParser().parse(rd.readLine())
 					.getAsJsonObject();
 			if (jsonResponse.get("result").getAsString().equals("OK")) {
-				String jsonPossibleStreets = jsonResponse.get("data")
-						.getAsString();
+				//TODO
+				String jsonPossibleStreets = URLDecoder.decode(jsonResponse.get("data")
+						.getAsString(),ConstantsHelper.ENCODING);
 				Type type = new TypeToken<List<String>>() {
 				}.getType();
 				List<String> possibleStreets = SerializationHelper.gsonInvertedCoords

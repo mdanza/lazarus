@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageSplitter;
+import com.android.lazarus.helpers.MessageTransformer;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
@@ -127,6 +128,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 
 	public void speak(String message) {
 		int maximumLength = MAXIMUM_MESSAGE_LENGTH;
+		message = MessageTransformer.convertToSpeakableMessage(message);
 		if (message != null && !message.equals("")) {
 			tts.stop();
 			if (message.length() <= maximumLength) {
@@ -139,10 +141,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 				}
 			}
 		}
-		// walkingDirectionsTester.setResultsOnState();
 	}
 
 	public void speak(String message, boolean addQueue) {
+		message = MessageTransformer.convertToSpeakableMessage(message);
 		if (message != null) {
 			int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 			if (addQueue == true) {

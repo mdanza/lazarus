@@ -15,8 +15,9 @@ public abstract class AbstractState implements State {
 
 	protected VoiceInterpreterActivity context;
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
-	protected String instructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
-
+	protected String generalInstructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, si quiere que se le repita un mensaje, debe tocar la pantalla,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
+	protected String stateInstructions = "";
+	
 	private WhereAmITask whereAmITask = new WhereAmITask();
 
 	protected String message;
@@ -77,7 +78,7 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "ayuda")) {
-				message = instructions + message;
+				message = generalInstructions + message;
 				return;
 			}
 			handleResults(results);
@@ -326,6 +327,10 @@ public abstract class AbstractState implements State {
 			return null;
 		}
 
+	}
+	
+	public String getHelpMessage(){
+		return stateInstructions + ", " + "para obtener más ayuda diga ayuda, ";
 	}
 
 }

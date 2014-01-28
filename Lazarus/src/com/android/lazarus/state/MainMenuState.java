@@ -26,6 +26,8 @@ public class MainMenuState extends AbstractState {
 	private InternalState state = InternalState.GET_DESTINATION;
 	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 	PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
+	private String help = "";
+	
 
 	private enum InternalState {
 		GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
@@ -33,12 +35,14 @@ public class MainMenuState extends AbstractState {
 
 	public MainMenuState(VoiceInterpreterActivity context) {
 		super(context);
+		this.stateInstructions = help;
 		this.context = context;
 		loadFavourites("");
 	}
 
 	public MainMenuState(VoiceInterpreterActivity context, String initialText) {
 		super(context);
+		this.stateInstructions = help;
 		this.context = context;
 		loadFavourites(initialText);
 	}

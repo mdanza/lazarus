@@ -7,6 +7,8 @@ public interface State {
 	void setResults(List<String> results);
 
 	String getMessage();
+
+	String getHelpMessage();
 	
 
 }

@@ -151,7 +151,7 @@ public class SignUpState extends AbstractState {
 					context.getSharedPreferences("usrpref", 0).edit()
 							.putString("password", password).commit();
 					MainMenuState mainMenuState = new MainMenuState(context,
-							"Gracias por registrarse, " + instructions);
+							"Gracias por registrarse, " + generalInstructions);
 					context.setState(mainMenuState);
 					context.sayMessage();
 				}

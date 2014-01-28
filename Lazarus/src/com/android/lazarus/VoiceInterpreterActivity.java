@@ -69,6 +69,8 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	LogInTask logInTask = new LogInTask(this);
 
 	public MockLocationListener mockLocationListener;
+	private String saidMessage = null;
+	private int messageRepetitions = 0;
 
 	public void showToast(String content) {
 		handler.post(new ShowTextRunnable(content));
@@ -127,6 +129,9 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	}
 
 	public void speak(String message) {
+		if (needsHelp()) {
+			message = getHelp();
+		}
 		int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 		message = MessageTransformer.convertToSpeakableMessage(message);
 		if (message != null && !message.equals("")) {
@@ -144,6 +149,9 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	}
 
 	public void speak(String message, boolean addQueue) {
+		if (needsHelp()) {
+			message = getHelp();
+		}
 		message = MessageTransformer.convertToSpeakableMessage(message);
 		if (message != null) {
 			int maximumLength = MAXIMUM_MESSAGE_LENGTH;
@@ -163,6 +171,40 @@ public class VoiceInterpreterActivity extends MapActivity implements
 				speak(message);
 			}
 		}
+	}
+
+	private String getHelp() {
+		String newMessage = null;
+		if (state != null) {
+			String message = state.getMessage();
+			if (message != null) {
+				newMessage = this.state.getHelpMessage() + " " + message;
+			} else {
+				newMessage = this.state.getHelpMessage();
+			}
+		}
+		return newMessage;
+	}
+
+	private boolean needsHelp() {
+		boolean needsHelp = false;
+		if (state != null) {
+			String message = state.getMessage();
+			if (saidMessage == null) {
+				saidMessage = message;
+			} else {
+				if ((message == null && saidMessage == null)
+						|| message.equals(saidMessage)) {
+					messageRepetitions++;
+					if (messageRepetitions == 3) {
+						message = null;
+						messageRepetitions = 0;
+						needsHelp = true;
+					}
+				}
+			}
+		}
+		return needsHelp;
 	}
 
 	public void sayMessage() {

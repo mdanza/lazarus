@@ -219,8 +219,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		speechRecognizer = new AndroidSpeechRecognizer(this,
 				recognitionListener);
 		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		// recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-		// "es-ES");
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-AR");
 		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
 				"voice.recognition.test");
 		// recognizerIntent
@@ -422,8 +421,9 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		// check for successful instantiation
 		if (initStatus == TextToSpeech.SUCCESS) {
 			ttsInitialize = true;
-			Locale loc = new Locale ("spa", "MEX");
-			if (tts.isLanguageAvailable(loc) != TextToSpeech.LANG_NOT_SUPPORTED && tts.isLanguageAvailable(loc)!=TextToSpeech.LANG_MISSING_DATA)
+			Locale loc = new Locale("spa", "ARG");
+			if (tts.isLanguageAvailable(loc) != TextToSpeech.LANG_NOT_SUPPORTED
+					&& tts.isLanguageAvailable(loc) != TextToSpeech.LANG_MISSING_DATA)
 				tts.setLanguage(loc);
 			if (state != null) {
 				speak(state.getMessage());

@@ -64,7 +64,7 @@ public class DestinationSetState extends LocationDependentState {
 
 	private String generateMessage() {
 		String newMessage = "";
-		if (!firstIntructionPassed && destination != null && position != null) {
+		if (destination != null && position != null) {
 			Double approximateDistance = GPScoordinateHelper
 					.getDistanceBetweenPoints(this.position.getLatitude(),
 							destination.getLatitude(),
@@ -76,10 +76,10 @@ public class DestinationSetState extends LocationDependentState {
 					+ approximateDistance
 					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, ";
 			if (!fromFavourite && hasFavourites) {
-				newMessage = message + "para agregarlo a favoritos diga tres";
+				newMessage = newMessage + "para agregarlo a favoritos diga tres";
 			}
 			if (!hasFavourites) {
-				newMessage = message
+				newMessage = newMessage
 						+ "usted puede agregar este destino a favoritos, si lo hace podrá seleccionarlo en otras oportunidades por un nombre más corto,, para agregar este destino a favoritos diga tres, ";
 			}
 		}

@@ -322,7 +322,6 @@ public abstract class AbstractState implements State {
 						+ ", esquina, " + corner + ",,";
 			} else
 				message = "No se pudo obtener información sobre su posición,,";
-			message += defaultMessage;
 			context.speak(message);
 			return null;
 		}

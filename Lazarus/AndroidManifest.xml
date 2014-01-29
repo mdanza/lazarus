@@ -33,6 +33,7 @@
         <activity
             android:name="com.android.lazarus.VoiceInterpreterActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" >
             <intent-filter>

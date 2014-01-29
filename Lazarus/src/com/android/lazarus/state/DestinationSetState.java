@@ -11,10 +11,10 @@ import com.android.lazarus.model.Point;
 public class DestinationSetState extends LocationDependentState {
 
 	Point destination;
-	boolean firstIntructionPassed;
+	boolean firstIntructionPassed = false;
 	boolean fromFavourite = false;
 	boolean hasFavourites = false;
-	private static final int NEEDED_ACCURACY = 2000;
+	private static final int NEEDED_ACCURACY = 200;
 
 	public DestinationSetState(VoiceInterpreterActivity context,
 			Point destination, boolean fromFavourite, boolean hasFavourites) {
@@ -22,7 +22,9 @@ public class DestinationSetState extends LocationDependentState {
 		this.destination = destination;
 		this.fromFavourite = fromFavourite;
 		this.hasFavourites = hasFavourites;
-		giveInstructions();
+		if (destination != null && position != null) {
+			message = generateMessage();
+		}
 	}
 
 	public DestinationSetState(VoiceInterpreterActivity context) {
@@ -55,6 +57,14 @@ public class DestinationSetState extends LocationDependentState {
 	protected void giveInstructions() {
 		if (!firstIntructionPassed && destination != null && position != null) {
 			firstIntructionPassed = true;
+			message = generateMessage();
+			context.speak(message);
+		}
+	}
+
+	private String generateMessage() {
+		String newMessage = "";
+		if (!firstIntructionPassed && destination != null && position != null) {
 			Double approximateDistance = GPScoordinateHelper
 					.getDistanceBetweenPoints(this.position.getLatitude(),
 							destination.getLatitude(),
@@ -62,17 +72,18 @@ public class DestinationSetState extends LocationDependentState {
 							destination.getLongitude());
 			approximateDistance = approximateDistance / 1000;
 			approximateDistance = Math.floor(approximateDistance * 10) / 10;
-			this.message = "Usted se encuentra aproximadamente a "
+			newMessage = "Usted se encuentra aproximadamente a "
 					+ approximateDistance
 					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, ";
 			if (!fromFavourite && hasFavourites) {
-				message = message + "para agregarlo a favoritos diga tres";
+				newMessage = message + "para agregarlo a favoritos diga tres";
 			}
 			if (!hasFavourites) {
-				message = message + "usted puede agregar este destino a favoritos, si lo hace podrá seleccionarlo en otras oportunidades por un nombre más corto,, para agregar este destino a favoritos diga tres, ";
+				newMessage = message
+						+ "usted puede agregar este destino a favoritos, si lo hace podrá seleccionarlo en otras oportunidades por un nombre más corto,, para agregar este destino a favoritos diga tres, ";
 			}
-			context.speak(this.message);
 		}
+		return newMessage;
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private int currentWalkingPosition = 0;
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
-	private static final int NEEDED_ACCURACY = 2000;
+	private static final int NEEDED_ACCURACY = 50;
 	private BusRideState parentState;
 	private InternalState state = InternalState.WAITING_TO_START;
 	private Obstacle obstacleToReport = null;
@@ -41,9 +41,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 	GetInstructionsTask getInstructionsTask = new GetInstructionsTask();
 	String secondStreetInstruction = null;
 	private String defaultMessage = "Párese sobre la vereda, y sostenga el celular frente a usted, paralelo al suelo, cuando esté listo, diga comenzar, ";
+	private boolean defaultMessageSaid = false;
 
 	private enum InternalState {
-		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION
+		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
@@ -84,6 +85,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 				this.state = InternalState.WALKING_INSTRUCTIONS;
 				giveInstructions();
 			}
+			return;
+		}
+		if (state.equals(InternalState.WAITING_TO_RECALCULATE)) {
+			if (stringPresent(results, "recalcular")) {
+				restartAllState();
+			}
+			return;
 		}
 		if (state.equals(InternalState.WALKING_INSTRUCTIONS)) {
 			if (stringPresent(results, "destino")) {
@@ -172,9 +180,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 			initialMessage = null;
 		}
 		if (state.equals(InternalState.WAITING_TO_START)) {
-			context.speak(defaultMessage, true);
+			message = defaultMessage;
+			if (!defaultMessageSaid) {
+				defaultMessageSaid = true;
+				context.speak(defaultMessage, true);
+			}
 		}
-		if (!state.equals(InternalState.WAITING_TO_START)) {
+		if (!state.equals(InternalState.WAITING_TO_START) && !state.equals(InternalState.WAITING_TO_RECALCULATE)) {
 			if (positions == null) {
 				message = "Espere mientras se cargan las instrucciones para llegar a destino";
 				if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
@@ -186,6 +198,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 							getInstructionsTask.execute();
 						}
 					}
+				} else {
+					message = "Espere mientras se cargan las instrucciones para llegar a destino";
 				}
 			} else {
 				if (position != null) {
@@ -262,7 +276,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	private void recalculate() {
-		restartState("Usted se está alejando del camino pautado, espere mientras recalculamos su camino, ");
+		state = InternalState.RECALCULATE;
+		restartStateToRecalculate("Usted se está alejando del camino pautado, espere mientras recalculamos su camino, ");
 	}
 
 	private boolean conditionsToRecalculate() {
@@ -407,7 +422,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				// end = new GeoPoint(-34.904507,-56.159493);
 				// start = new GeoPoint(-34.778024, -55.754501);
 				// end = new GeoPoint(-34.771635, -55.749975);
-				//end = new GeoPoint(-34.774473,-55.756437);
+				// end = new GeoPoint(-34.774473,-55.756437);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -425,24 +440,33 @@ public class WalkingDirectionsState extends LocationDependentState {
 							positions.get(0).getInstruction(), position,
 							positions.get(currentWalkingPosition + 1), context
 									.getSensorEventListenerImpl().getAzimuth());
-					boolean firstTurnMissed = false;
-					if (secondStreetInstruction != null) {
-						firstTurnMissed = WalkingPositionHelper
-								.checkForFirstTurnMissed(
-										secondStreetInstruction, positions);
+					if (state.equals(InternalState.RECALCULATE)) {
+						boolean firstTurnMissed = false;
+						if (secondStreetInstruction != null) {
+							firstTurnMissed = WalkingPositionHelper
+									.checkForFirstTurnMissed(
+											secondStreetInstruction, positions);
+						}
+						if (!firstTurnMissed) {
+							restartAllState();
+							return null;
+						} else {
+							message = "No ha doblado en la esquina en que debía, es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
+									+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo recalcular. Si no es este el caso, diga recalcular ahora, ";
+							state = InternalState.WAITING_TO_RECALCULATE;
+							secondStreetInstruction = null;
+							context.speak(message, true);
+							return null;
+						}
 					}
-					if (!firstTurnMissed) {
-						message = initialMessage + message;
+					if (!state.equals(InternalState.RECALCULATE)) {
+						message = initialMessage
+								+ message
+								+ ". Ya no necesita sostener el celular frente a usted, ";
 						context.speak(message, true);
 						secondStreetInstruction = WalkingPositionHelper
 								.getSecondStreetIntruction(positions);
-					} else {
-						message = "No ha doblado en la esquina en que debía, es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
-								+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo cancelar. Si no es este el caso, "
-								+ message;
-						secondStreetInstruction = WalkingPositionHelper
-								.getSecondStreetIntruction(positions);
-						context.speak(message, true);
+						return null;
 					}
 				} else {
 					message = initialMessage
@@ -450,6 +474,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					context.speak(message);
 					MainMenuState mainMenuState = new MainMenuState(context);
 					context.setState(mainMenuState);
+					return null;
 				}
 			}
 			return null;
@@ -458,23 +483,34 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	}
 
-	protected void restartState(String initialMessage) {
+	protected void restartStateToRecalculate(String initialMessage) {
 		positions = null;
 		obstacles = null;
 		currentWalkingPosition = 0;
 		this.initialMessage = initialMessage;
 		distanceToFinalPosition = -1;
-		if (!state.equals(InternalState.WAITING_TO_START)) {
-			state = InternalState.WALKING_INSTRUCTIONS;
-		}
 		obstacleToReport = null;
 		possibleDescriptions = null;
+		defaultMessageSaid = false;
+		giveInstructions();
+	}
+
+	public void restartAllState() {
+		positions = null;
+		obstacles = null;
+		currentWalkingPosition = 0;
+		distanceToFinalPosition = -1;
+		obstacleToReport = null;
+		possibleDescriptions = null;
+		secondStreetInstruction = null;
+		defaultMessageSaid = false;
+		state = InternalState.WAITING_TO_START;
 		giveInstructions();
 	}
 
 	@Override
 	protected void restartState() {
-		restartState("");
+		restartAllState();
 	}
 
 	@Override

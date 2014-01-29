@@ -23,14 +23,14 @@ public class MainMenuState extends AbstractState {
 	Favourite favourite = null;
 	List<String> firstResults;
 	List<Favourite> favourites = null;
-	private InternalState state = InternalState.GET_DESTINATION;
+	private InternalState state = InternalState.LOADING_FAVOURITES;
 	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 	PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 	private String help = "";
 	
 
 	private enum InternalState {
-		GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
+		LOADING_FAVOURITES, GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
 	}
 
 	public MainMenuState(VoiceInterpreterActivity context) {
@@ -217,7 +217,8 @@ public class MainMenuState extends AbstractState {
 
 		@Override
 		protected String doInBackground(String... args) {
-			String initialMessage = "Espere mientras cargamos sus datos";
+			String message = "Espere mientras cargamos sus datos";
+			String initialMessage = "";
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
 			if (args.length == 2 && args[1] != null) {
@@ -229,6 +230,7 @@ public class MainMenuState extends AbstractState {
 			} else {
 				message = "Diga, Sin el número de puerta, el nombre de la calle a la que quiere dirigirse, o nombre favorito de destino, para más opciones diga más";
 			}
+			state = InternalState.GET_DESTINATION;
 			defaultMessage = message;
 			message = initialMessage + message;
 			context.speak(message);

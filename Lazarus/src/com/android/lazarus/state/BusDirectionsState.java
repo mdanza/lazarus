@@ -36,7 +36,8 @@ public class BusDirectionsState extends LocationDependentState {
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
-		giveInstructions();
+		if (position != null)
+			giveInstructions();
 	}
 
 	@Override

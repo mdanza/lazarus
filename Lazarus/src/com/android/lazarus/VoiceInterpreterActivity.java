@@ -194,8 +194,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			if (saidMessage == null) {
 				saidMessage = message;
 			} else {
-				if ((message == null && saidMessage == null)
-						|| (message != null && message.equals(saidMessage))) {
+				if ((message != null && !message.equals("") && message.equals(saidMessage))) {
 					messageRepetitions++;
 					if (messageRepetitions == 3) {
 						message = null;
@@ -303,7 +302,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 				Location location = new Location("");
 				location.setLatitude(center.getLatitude());
 				location.setLongitude(center.getLongitude());
-				location.setAccuracy(100);
+				location.setAccuracy(19);
 				location.setAltitude(0);
 				location.setTime(System.currentTimeMillis());
 				location.setBearing(0F);

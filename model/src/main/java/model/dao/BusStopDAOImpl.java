@@ -51,11 +51,15 @@ public class BusStopDAOImpl implements BusStopDAO {
 	}
 
 	@Override
-	public List<BusStop> getDistinctLocationCodeBusStops() {
+	public List<BusStop> getDistinctLocationCodeBusStops(int page) {
+		final int pageSize = 1000;
 		List<BusStop> result = null;
-		List<Object[]> queryResult = entityManager
+		Query q = entityManager
 				.createQuery(
-						"SELECT DISTINCT busStopLocationCode, point, active FROM BusStop b")
+						"SELECT DISTINCT busStopLocationCode, point, active FROM BusStop b");
+		q.setMaxResults(pageSize);
+		q.setFirstResult(page * pageSize);
+		List<Object[]> queryResult = q
 				.getResultList();
 		if (queryResult != null && queryResult.size() != 0) {
 			result = new ArrayList<BusStop>();

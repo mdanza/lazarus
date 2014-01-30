@@ -183,7 +183,7 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	protected void cancel() {
-		state = InternalState.WALKING_TO_START_STOP;
+		context.setState(new MainMenuState(context));
 	}
 
 	@Override

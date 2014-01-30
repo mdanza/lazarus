@@ -13,7 +13,7 @@ public interface BusStopDAO extends ModelDAO<BusStop, Long> {
 
 	public void removeAll();
 
-	public List<BusStop> getDistinctLocationCodeBusStops();
+	public List<BusStop> getDistinctLocationCodeBusStops(int page);
 
 	public void changeActiveFieldByLocationCode(long locationCode,
 			boolean active);

@@ -64,7 +64,7 @@ public class TransshipmentState extends LocationDependentState {
 
 	@Override
 	protected void cancel() {
-		state = InternalState.FIRST_ROUTE;
+		context.setState(new MainMenuState(context));
 	}
 
 	@Override

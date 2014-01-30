@@ -186,7 +186,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 				context.speak(defaultMessage, true);
 			}
 		}
-		if (!state.equals(InternalState.WAITING_TO_START) && !state.equals(InternalState.WAITING_TO_RECALCULATE)) {
+		if (!state.equals(InternalState.WAITING_TO_START)
+				&& !state.equals(InternalState.WAITING_TO_RECALCULATE)) {
 			if (positions == null) {
 				message = "Espere mientras se cargan las instrucciones para llegar a destino";
 				if (getInstructionsTask.getStatus() != AsyncTask.Status.RUNNING) {
@@ -213,7 +214,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 					if (conditionsToRecalculate()) {
 						recalculate();
 					} else {
-						if (olderPosition != currentWalkingPosition || currentWalkingPosition == positions.size() - 1) {
+						if (olderPosition != currentWalkingPosition
+								|| currentWalkingPosition == positions.size() - 1) {
 							String instruction = getInstructionForCurrentWalkingPosition();
 							if (instruction != null) {
 								message = instruction;
@@ -451,7 +453,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 							restartAllState();
 							return null;
 						} else {
-							message = WalkingPositionHelper.getFirstTurnMissedInstruction(secondStreetInstruction);
+							message = WalkingPositionHelper
+									.getFirstTurnMissedInstruction(secondStreetInstruction);
 							state = InternalState.WAITING_TO_RECALCULATE;
 							secondStreetInstruction = null;
 							context.speak(message, true);

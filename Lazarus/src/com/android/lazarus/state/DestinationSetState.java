@@ -76,7 +76,8 @@ public class DestinationSetState extends LocationDependentState {
 					+ approximateDistance
 					+ " kilómetros del destino, si quiere ir en bus diga uno, si quiere ir a pie diga dos, ";
 			if (!fromFavourite && hasFavourites) {
-				newMessage = newMessage + "para agregarlo a favoritos diga tres";
+				newMessage = newMessage
+						+ "para agregarlo a favoritos diga tres";
 			}
 			if (!hasFavourites) {
 				newMessage = newMessage
@@ -91,7 +92,6 @@ public class DestinationSetState extends LocationDependentState {
 		DestinationSetState destinationSetState = new DestinationSetState(
 				context, destination, fromFavourite, hasFavourites);
 		context.setState(destinationSetState);
-
 	}
 
 	@Override

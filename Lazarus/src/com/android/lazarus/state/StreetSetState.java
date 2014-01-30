@@ -27,7 +27,8 @@ public class StreetSetState extends AbstractState {
 	GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
 	private boolean hasFavourites = false;
 
-	public StreetSetState(VoiceInterpreterActivity context, String street, boolean hasFavourites) {
+	public StreetSetState(VoiceInterpreterActivity context, String street,
+			boolean hasFavourites) {
 		super(context);
 		firstStreet = street;
 		this.message = defaultMessage;
@@ -139,7 +140,7 @@ public class StreetSetState extends AbstractState {
 					getStreetNameTask.execute();
 				}
 			}
-		}else{
+		} else {
 			message = "Espere mientras cargamos sus datos";
 		}
 	}

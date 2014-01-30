@@ -27,7 +27,6 @@ public class MainMenuState extends AbstractState {
 	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 	PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 	private String help = "";
-	
 
 	private enum InternalState {
 		LOADING_FAVOURITES, GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
@@ -243,7 +242,6 @@ public class MainMenuState extends AbstractState {
 	protected void cancel() {
 		MainMenuState mainMenuState = new MainMenuState(context);
 		this.context.setState(mainMenuState);
-
 	}
 
 }

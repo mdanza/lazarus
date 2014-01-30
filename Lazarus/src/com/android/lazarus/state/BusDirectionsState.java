@@ -71,7 +71,7 @@ public class BusDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < busRides.size(); i++) {
-				message += ",,diga " + getStringDigits(i + 1)
+				message += ",, diga " + getStringDigits(i + 1)
 						+ " , para tomar un " + busRides.get(i).getLineName()
 						+ ", " + busRides.get(i).getDestination();
 				appendDistanceToStop(busRides.get(i).getStartStop());
@@ -82,7 +82,7 @@ public class BusDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_TRANSSHIPMENT)) {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < transshipments.size(); i++) {
-				message += ",,diga "
+				message += ",, diga "
 						+ getStringDigits(i + 1)
 						+ " , para tomar un "
 						+ transshipments.get(i).getFirstRoute().getLineName()
@@ -123,7 +123,7 @@ public class BusDirectionsState extends LocationDependentState {
 		message += " a las";
 		int counter = 0;
 		for (String time : schedule.get(pos)) {
-			message += ",," + time;
+			message += ",, " + time;
 			counter++;
 			if (counter == 3)
 				break;
@@ -143,7 +143,7 @@ public class BusDirectionsState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		state = InternalState.SEARCH_OPTIONS;
 	}
 

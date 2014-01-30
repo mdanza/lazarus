@@ -33,7 +33,7 @@ public class ModifyPasswordState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		this.state = InternalState.AWAITING_OLD_PASSWORD;
 		this.oldPasswordAttempts = 0;
 	}

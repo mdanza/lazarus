@@ -69,7 +69,7 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "cancelar")) {
-				this.restartState();
+				this.cancel();
 			}
 			if (stringPresent(results, "menu")) {
 				if (context.getToken() != null) {
@@ -85,7 +85,7 @@ public abstract class AbstractState implements State {
 		}
 	}
 
-	protected abstract void restartState();
+	protected abstract void cancel();
 
 	private ArrayList<String> stripAccents(List<String> results) {
 		ArrayList<String> stripedStrings = new ArrayList<String>();

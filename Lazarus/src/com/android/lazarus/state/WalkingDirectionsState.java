@@ -508,7 +508,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		restartAllState();
 	}
 

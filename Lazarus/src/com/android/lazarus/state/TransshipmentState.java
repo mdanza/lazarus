@@ -63,7 +63,7 @@ public class TransshipmentState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		state = InternalState.FIRST_ROUTE;
 	}
 

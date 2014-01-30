@@ -79,7 +79,7 @@ public class MoreMainMenuState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		MoreMainMenuState moreMainMenuState = new MoreMainMenuState(context);
 		this.context.setState(moreMainMenuState);
 		state = InternalState.AWAITING_USER_OPTION;

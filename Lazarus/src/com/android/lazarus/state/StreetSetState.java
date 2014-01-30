@@ -230,7 +230,7 @@ public class StreetSetState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		MainMenuState mainMenuState = new MainMenuState(context);
 		context.setState(mainMenuState);
 	}

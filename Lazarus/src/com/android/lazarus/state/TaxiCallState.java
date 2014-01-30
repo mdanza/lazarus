@@ -26,7 +26,7 @@ public class TaxiCallState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		state = InternalState.SEARCHING_OPTIONS;
 	}
 

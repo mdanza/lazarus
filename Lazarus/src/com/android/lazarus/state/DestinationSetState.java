@@ -87,7 +87,7 @@ public class DestinationSetState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		DestinationSetState destinationSetState = new DestinationSetState(
 				context, destination, fromFavourite, hasFavourites);
 		context.setState(destinationSetState);

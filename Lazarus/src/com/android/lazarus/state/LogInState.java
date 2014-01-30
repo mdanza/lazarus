@@ -141,7 +141,7 @@ public class LogInState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		LogInState logInState = new LogInState(context);
 		this.context.setState(logInState);		
 	}

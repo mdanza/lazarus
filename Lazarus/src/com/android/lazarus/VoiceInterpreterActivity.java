@@ -303,7 +303,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 				Location location = new Location("");
 				location.setLatitude(center.getLatitude());
 				location.setLongitude(center.getLongitude());
-				location.setAccuracy(19);
+				location.setAccuracy(100);
 				location.setAltitude(0);
 				location.setTime(System.currentTimeMillis());
 				location.setBearing(0F);

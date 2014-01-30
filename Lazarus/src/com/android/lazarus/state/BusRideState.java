@@ -179,7 +179,7 @@ public class BusRideState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void cancel() {
 		state = InternalState.WALKING_TO_START_STOP;
 	}
 

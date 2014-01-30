@@ -63,7 +63,7 @@ public class TransshipmentState extends LocationDependentState {
 	}
 
 	@Override
-	protected void onCancel() {
+	protected void cancel() {
 		context.setState(new MainMenuState(context));
 	}
 

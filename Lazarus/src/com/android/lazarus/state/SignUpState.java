@@ -158,7 +158,8 @@ public class SignUpState extends AbstractState {
 					context.sayMessage();
 				}
 				if (result == null) {
-					LogInState logInState = new LogInState(context, "Gracias por registrarse, ");
+					LogInState logInState = new LogInState(context,
+							"Gracias por registrarse, ");
 					context.setState(logInState);
 					context.sayMessage();
 				}
@@ -174,9 +175,8 @@ public class SignUpState extends AbstractState {
 	}
 
 	@Override
-	protected void onCancel() {
+	protected void cancel() {
 		SignUpState signUpState = new SignUpState(context);
 		context.setState(signUpState);
-
 	}
 }

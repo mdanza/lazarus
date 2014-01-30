@@ -17,7 +17,7 @@ public abstract class AbstractState implements State {
 	AddressServiceAdapter addressServiceAdapter = new AddressServiceAdapterImpl();
 	protected String generalInstructions = "Usted puede decir en cualquier momento,, ayuda,, dónde estóii,, cancelar,, o menú,, Si dice ayuda,, obtendrá más instrucciones,, si dice dónde estóii,, obtendrá información de lugares cercanos,, si dice cancelar,, se iniciará nuevamente la acción que esté realizando,, si dice menú,, será dirigido al menú principal,, si quiere que se le repita un mensaje, debe tocar la pantalla,, para escuchar nuevamente estas instrucciones diga ayuda,, ";
 	protected String stateInstructions = "";
-	
+
 	private WhereAmITask whereAmITask = new WhereAmITask();
 
 	protected String message;
@@ -69,7 +69,7 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "cancelar")) {
-				this.onCancel();
+				this.cancel();
 			}
 			if (stringPresent(results, "menu")) {
 				if (context.getToken() != null) {
@@ -85,7 +85,7 @@ public abstract class AbstractState implements State {
 		}
 	}
 
-	protected abstract void onCancel();
+	protected abstract void cancel();
 
 	private ArrayList<String> stripAccents(List<String> results) {
 		ArrayList<String> stripedStrings = new ArrayList<String>();
@@ -327,8 +327,8 @@ public abstract class AbstractState implements State {
 		}
 
 	}
-	
-	public String getHelpMessage(){
+
+	public String getHelpMessage() {
 		return stateInstructions + ", " + "para obtener más ayuda diga ayuda, ";
 	}
 

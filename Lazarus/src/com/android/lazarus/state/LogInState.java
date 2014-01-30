@@ -65,10 +65,10 @@ public class LogInState extends AbstractState {
 				}
 				message = "";
 				if (logInTask.getStatus() != AsyncTask.Status.RUNNING) {
-					if (logInTask.getStatus() == AsyncTask.Status.PENDING){
+					if (logInTask.getStatus() == AsyncTask.Status.PENDING) {
 						logInTask.execute(args);
-					}else{
-						if(logInTask.getStatus() == AsyncTask.Status.FINISHED){
+					} else {
+						if (logInTask.getStatus() == AsyncTask.Status.FINISHED) {
 							logInTask = new LogInTask();
 							logInTask.execute(args);
 						}
@@ -95,7 +95,7 @@ public class LogInState extends AbstractState {
 		waitingForUsername = false;
 		message = "";
 	}
-	
+
 	private void cleanValuesForTryAgain() {
 		usernamePresent = false;
 		usernames = null;
@@ -112,7 +112,7 @@ public class LogInState extends AbstractState {
 			boolean validCredentialsFound = false;
 			for (String arg : args) {
 				if (!validCredentialsFound) {
-					if(isNumber(arg)){
+					if (isNumber(arg)) {
 						arg = getNumber(arg);
 					}
 					String possibleToken = userServiceAdapter.login(
@@ -141,9 +141,9 @@ public class LogInState extends AbstractState {
 	}
 
 	@Override
-	protected void onCancel() {
+	protected void cancel() {
 		LogInState logInState = new LogInState(context);
-		this.context.setState(logInState);		
+		this.context.setState(logInState);
 	}
 
 }

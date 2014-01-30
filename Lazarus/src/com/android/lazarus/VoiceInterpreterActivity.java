@@ -194,8 +194,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			if (saidMessage == null) {
 				saidMessage = message;
 			} else {
-				if ((message == null && saidMessage == null)
-						|| (message != null && message.equals(saidMessage))) {
+				if ((message != null && !message.equals("") && message.equals(saidMessage))) {
 					messageRepetitions++;
 					if (messageRepetitions == 3) {
 						message = null;

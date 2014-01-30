@@ -26,7 +26,7 @@ public class TaxiCallState extends AbstractState {
 	}
 
 	@Override
-	protected void onCancel() {
+	protected void cancel() {
 		context.setState(new MainMenuState(context));
 	}
 

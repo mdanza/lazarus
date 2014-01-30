@@ -179,7 +179,7 @@ public class BusRideState extends LocationDependentState {
 	}
 
 	@Override
-	protected void onCancel() {
+	protected void cancel() {
 		context.setState(new MainMenuState(context));
 	}
 

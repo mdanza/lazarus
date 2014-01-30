@@ -13,7 +13,6 @@ public class ModifyPasswordState extends AbstractState {
 	private int confirmationAttempts = 0;
 	private InternalState state;
 	private String oldPassword;
-	private String username;
 	private AsyncTask<Void, Void, Void> task;
 	private String newPassword;
 
@@ -26,8 +25,6 @@ public class ModifyPasswordState extends AbstractState {
 		this.context = context;
 		this.state = InternalState.AWAITING_OLD_PASSWORD;
 		this.message = "Diga su contraseña actual";
-		this.username = context.getSharedPreferences("usrpref", 0).getString(
-				"username", null);
 		this.oldPassword = context.getSharedPreferences("usrpref", 0)
 				.getString("password", null);
 	}

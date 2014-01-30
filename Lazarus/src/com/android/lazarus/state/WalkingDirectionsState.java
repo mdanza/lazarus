@@ -213,7 +213,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					if (conditionsToRecalculate()) {
 						recalculate();
 					} else {
-						if (olderPosition != currentWalkingPosition) {
+						if (olderPosition != currentWalkingPosition || currentWalkingPosition == positions.size() - 1) {
 							String instruction = getInstructionForCurrentWalkingPosition();
 							if (instruction != null) {
 								message = instruction;
@@ -451,8 +451,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 							restartAllState();
 							return null;
 						} else {
-							message = "No ha doblado en la esquina en que debía, es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
-									+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo recalcular. Si no es este el caso, diga recalcular ahora, ";
+							message = WalkingPositionHelper.getFirstTurnMissedInstruction(secondStreetInstruction);
 							state = InternalState.WAITING_TO_RECALCULATE;
 							secondStreetInstruction = null;
 							context.speak(message, true);

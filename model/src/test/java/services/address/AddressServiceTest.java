@@ -57,7 +57,7 @@ public class AddressServiceTest {
 		CloseLocationData closeLocationData = addressService.getCloseLocationData(new Coordinate(-34.901806,-56.140385));
 		System.out.println(gson.toJson(closeLocationData));
 */
-		List<String> possible = addressService.getPossibleStreets("blanco");
+		List<String> possible = addressService.getPossibleStreets("benito blanco");
 		for(String one:possible){
 			System.out.println(one);
 		}

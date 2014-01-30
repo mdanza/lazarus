@@ -381,4 +381,50 @@ public class WalkingPositionHelper {
 
 	}
 
+	public static String getFirstTurnMissedInstruction(
+			String secondStreetInstruction) {
+		String street = null;
+		String turnDirection = null;
+		if(secondStreetInstruction!=null){
+			if(hasRight(secondStreetInstruction)){
+				turnDirection = "hacia la derecha";
+			}else{
+				if(hasLeft(secondStreetInstruction)){
+					turnDirection = "hacia la izquierda";
+				}
+			}
+			street = getStreet(secondStreetInstruction);
+		}
+		if(street==null){
+			street = "la esquina en que debía";
+		}
+		if(turnDirection==null){
+			turnDirection = "";
+		}
+		String message = "No ha doblado "+turnDirection+" en "+street+", es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
+				+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo recalcular. Si no es este el caso, diga recalcular ahora, ";
+		return message;
+	}
+
+	private static String getStreet(String secondStreetInstruction) {
+		String street = null;
+		if (secondStreetInstruction != null) {
+			String[] partsOfSecondStreet = secondStreetInstruction.split("\\ ");
+			if (partsOfSecondStreet != null) {
+				if (partsOfSecondStreet.length > 2) {
+					String possibleIn = partsOfSecondStreet[partsOfSecondStreet.length - 2];
+					if (!hasString(possibleIn, "en")
+							|| !hasString(possibleIn, "por")) {
+						street = partsOfSecondStreet[partsOfSecondStreet.length - 1];
+					} else {
+						street = partsOfSecondStreet[partsOfSecondStreet.length - 2]
+								+ " "
+								+ partsOfSecondStreet[partsOfSecondStreet.length - 1];
+					}
+				}
+			}
+		}
+		return street;
+	}
+
 }

@@ -85,7 +85,7 @@ public class SignUpState extends AbstractState {
 				String[] args = new String[3];
 				args[0] = username;
 				args[1] = password;
-				message = "";
+				message = "Espere mientras guardamos sus datos";
 				if (saveDataTask.getStatus() != AsyncTask.Status.RUNNING) {
 					if (saveDataTask.getStatus() == AsyncTask.Status.PENDING) {
 						saveDataTask.execute(args);
@@ -95,6 +95,8 @@ public class SignUpState extends AbstractState {
 							saveDataTask.execute(args);
 						}
 					}
+				} else {
+					message = "Espere mientras guardamos sus datos";
 				}
 			}
 			return;
@@ -155,8 +157,13 @@ public class SignUpState extends AbstractState {
 					context.setState(mainMenuState);
 					context.sayMessage();
 				}
+				if (result == null) {
+					LogInState logInState = new LogInState(context, "Gracias por registrarse, ");
+					context.setState(logInState);
+					context.sayMessage();
+				}
 			}
-			if (!success || result == null) {
+			if (!success) {
 				SignUpState signUpState = new SignUpState(context,
 						"Ha ocurrido un error al registrar sus datos, ");
 				context.setState(signUpState);

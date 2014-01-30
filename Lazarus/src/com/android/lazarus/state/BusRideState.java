@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.GPScoordinateHelper;
+import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.model.Bus;
 import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.Point;
@@ -120,7 +121,7 @@ public class BusRideState extends LocationDependentState {
 					message += "diga " + getStringDigits(i + 1)
 							+ " si se tomó un "
 							+ otherRides.get(i).getLineName() + " "
-							+ otherRides.get(i).getDestination() + ",";
+							+ otherRides.get(i).getDestination() + ", ";
 				context.speak(message);
 			} else
 				context.setState(new MainMenuState(context,
@@ -133,7 +134,7 @@ public class BusRideState extends LocationDependentState {
 		}
 		if (state.equals(InternalState.WAITING_BUS)) {
 			if (bus == null) {
-				message = "No se encontraron coches cercanos,";
+				message = "No se encontraron coches cercanos, ";
 				appendSchedule();
 			} else {
 				message = "El coche más cercano está a "
@@ -147,12 +148,12 @@ public class BusRideState extends LocationDependentState {
 				busUpdateTask = scheduledExecutorService.scheduleAtFixedRate(
 						new UpdateBusTask(), 10, 10, TimeUnit.SECONDS);
 			}
-			message += ", diga,, arriba,, cuando aborde el coche, diga,, recalcular,, si desea buscar nuevamente";
+			message += ", diga arriba,, cuando aborde el coche, diga recalcular,, si desea buscar nuevamente";
 			if (otherRides != null && otherRides.size() > 0) {
-				message += ",,En esta parada también le sirve tomarse un ";
+				message += ",, En esta parada también le sirve tomarse un ";
 				for (BusRide otherRide : otherRides)
 					message += otherRide.getLineName() + " "
-							+ otherRide.getDestination() + ",";
+							+ otherRide.getDestination() + ", ";
 			}
 			context.speak(message);
 		}
@@ -161,16 +162,18 @@ public class BusRideState extends LocationDependentState {
 			context.speak(message);
 			new BusFinderTask().execute();
 		}
-		if (state.equals(InternalState.WALKING_TO_START_STOP))
-			context.setState(new WalkingDirectionsState(context, ride
-					.getStartStop().getPoint(), this));
+		if (state.equals(InternalState.WALKING_TO_START_STOP)){
+			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(context, ride
+					.getStartStop().getPoint(), this);
+			context.setState(walkingDirectionsState);
+		}
 	}
 
 	private void appendSchedule() {
 		message += " las próximas pasadas están agendadas para las";
 		int counter = 0;
 		for (String time : schedule) {
-			message += ",," + time;
+			message += ",, " + MessageHelper.formatTime(time);
 			counter++;
 			if (counter == 3)
 				break;

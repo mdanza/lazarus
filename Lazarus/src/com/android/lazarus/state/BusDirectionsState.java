@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.GPScoordinateHelper;
+import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.model.BusRide;
 import com.android.lazarus.model.BusStop;
 import com.android.lazarus.model.Point;
@@ -27,6 +28,7 @@ public class BusDirectionsState extends LocationDependentState {
 	private List<List<String>> schedule;
 	private int pageNumber = 0;
 	private InternalState state = InternalState.SEARCH_OPTIONS;
+	private String loadingMessage = "Espere por favor unos instantes, estamos cargando sus opciones, ";
 
 	private enum InternalState {
 		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND
@@ -45,10 +47,12 @@ public class BusDirectionsState extends LocationDependentState {
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			for (int i = 0; i < busRides.size(); i++) {
 				if (containsNumber(results, i + 1)) {
-					context.setState(new BusRideState(this.context,
+					BusRideState busRideState = new BusRideState(this.context,
 							destination, busRides.get(i),
 							getOtherRidesWithSameStartStop(busRides,
-									busRides.get(i))));
+									busRides.get(i)));
+					context.setState(busRideState);
+					busRideState.giveInstructions();
 					return;
 				}
 			}
@@ -67,8 +71,10 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void giveInstructions() {
-		if (state.equals(InternalState.SEARCH_OPTIONS))
+		if (state.equals(InternalState.SEARCH_OPTIONS)){
 			new LoadBusRidesTask().execute();
+			message = "Espere por favor unos instantes, mientras cargamos las opciones de ómnibus para llegar a su destino";
+		}
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
 			message = "Las opciones de bus son";
 			for (int i = 0; i < busRides.size(); i++) {
@@ -124,7 +130,7 @@ public class BusDirectionsState extends LocationDependentState {
 		message += " a las";
 		int counter = 0;
 		for (String time : schedule.get(pos)) {
-			message += ",, " + time;
+			message += ",, " + MessageHelper.formatTime(time);
 			counter++;
 			if (counter == 3)
 				break;
@@ -220,22 +226,27 @@ public class BusDirectionsState extends LocationDependentState {
 					position.getLongitude(), position.getLatitude(),
 					destination.getLongitude(), destination.getLatitude(), 100,
 					pageNumber, context.getToken());
-			if (busRides == null)
+			if (busRides == null){
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						200, pageNumber, context.getToken());
-			if (busRides == null)
+			}
+			if (busRides == null){
+				sayWaitMessage();
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						300, pageNumber, context.getToken());
-			if (busRides == null)
+			}
+			if (busRides == null){
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						400, pageNumber, context.getToken());
-			if (busRides == null)
+			}
+			if (busRides == null){
+				sayWaitMessage();
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -243,7 +254,8 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLongitude(),
 								destination.getLatitude(), 100, pageNumber,
 								context.getToken());
-			if (busRides == null && transshipments == null)
+			}
+			if (busRides == null && transshipments == null){
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -251,7 +263,9 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLongitude(),
 								destination.getLatitude(), 200, pageNumber,
 								context.getToken());
-			if (busRides == null && transshipments == null)
+			}
+			if (busRides == null && transshipments == null){
+				sayWaitMessage();
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -259,7 +273,8 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLongitude(),
 								destination.getLatitude(), 300, pageNumber,
 								context.getToken());
-			if (busRides == null && transshipments == null)
+			}
+			if (busRides == null && transshipments == null){
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -267,6 +282,7 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLongitude(),
 								destination.getLatitude(), 400, pageNumber,
 								context.getToken());
+			}
 			if (busRides == null && transshipments == null)
 				state = InternalState.NO_OPTIONS_FOUND;
 			else {
@@ -291,6 +307,11 @@ public class BusDirectionsState extends LocationDependentState {
 			return null;
 		}
 
+		private void sayWaitMessage() {
+			message = loadingMessage;
+			context.sayMessage();			
+		}
+
 		private void moreOptions() {
 			pageNumber++;
 			doInBackground();
@@ -302,6 +323,9 @@ public class BusDirectionsState extends LocationDependentState {
 			DateTime now = new DateTime();
 			if (busRides != null)
 				for (int i = 0; i < busRides.size(); i++) {
+					if(i%5==0){
+						sayWaitMessage();
+					}
 					List<String> times = scheduleServiceAdapter.getBusSchedule(
 							context.getToken(), busRides.get(i).getLineName(),
 							busRides.get(i).getSubLineDescription(), busRides
@@ -317,6 +341,9 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			if (transshipments != null)
 				for (int i = 0; i < transshipments.size(); i++) {
+					if(i%5==0){
+						sayWaitMessage();
+					}
 					List<String> times = scheduleServiceAdapter.getBusSchedule(
 							context.getToken(), transshipments.get(i)
 									.getFirstRoute().getLineName(),

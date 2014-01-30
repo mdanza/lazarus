@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageSplitter;
-import com.android.lazarus.helpers.MessageTransformer;
+import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
@@ -134,7 +134,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			message = getHelp();
 		}
 		int maximumLength = MAXIMUM_MESSAGE_LENGTH;
-		message = MessageTransformer.convertToSpeakableMessage(message);
+		message = MessageHelper.convertToSpeakableMessage(message);
 		if (message != null && !message.equals("")) {
 			tts.stop();
 			if (message.length() <= maximumLength) {
@@ -153,7 +153,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		if (needsHelp()) {
 			message = getHelp();
 		}
-		message = MessageTransformer.convertToSpeakableMessage(message);
+		message = MessageHelper.convertToSpeakableMessage(message);
 		if (message != null) {
 			int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 			if (addQueue == true) {

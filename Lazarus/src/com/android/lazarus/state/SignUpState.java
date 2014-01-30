@@ -174,7 +174,7 @@ public class SignUpState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void onCancel() {
 		SignUpState signUpState = new SignUpState(context);
 		context.setState(signUpState);
 

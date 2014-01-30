@@ -12,7 +12,7 @@ public interface BusStopService {
 
 	public void deactivateStops(long locationCode);
 
-	public List<BusStop> findAllDistinctLocationCodes();
+	public List<BusStop> findAllDistinctLocationCodes(int page);
 
 	public List<BusStop> getLineStops(long variantCode);
 }

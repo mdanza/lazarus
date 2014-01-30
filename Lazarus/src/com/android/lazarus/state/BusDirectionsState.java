@@ -143,8 +143,8 @@ public class BusDirectionsState extends LocationDependentState {
 	}
 
 	@Override
-	protected void restartState() {
-		state = InternalState.SEARCH_OPTIONS;
+	protected void onCancel() {
+		context.setState(new MainMenuState(context));
 	}
 
 	private void filterBusRides() {

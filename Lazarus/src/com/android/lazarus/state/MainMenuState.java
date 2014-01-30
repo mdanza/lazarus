@@ -240,7 +240,7 @@ public class MainMenuState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void onCancel() {
 		MainMenuState mainMenuState = new MainMenuState(context);
 		this.context.setState(mainMenuState);
 

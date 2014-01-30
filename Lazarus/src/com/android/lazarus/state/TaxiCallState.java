@@ -26,8 +26,8 @@ public class TaxiCallState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
-		state = InternalState.SEARCHING_OPTIONS;
+	protected void onCancel() {
+		context.setState(new MainMenuState(context));
 	}
 
 	@Override

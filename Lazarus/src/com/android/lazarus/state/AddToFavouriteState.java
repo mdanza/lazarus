@@ -141,7 +141,7 @@ public class AddToFavouriteState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void onCancel() {
 		AddToFavouriteState addToFavouriteState = new AddToFavouriteState(
 				context, point);
 		context.setState(addToFavouriteState);

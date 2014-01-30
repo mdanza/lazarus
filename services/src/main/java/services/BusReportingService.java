@@ -16,6 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import model.Bus;
 import model.BusStop;
@@ -211,14 +212,18 @@ public class BusReportingService {
 
 	@GET
 	@Path("/all/all-stops")
-	public String getBusStops(@HeaderParam("Authorization") String token) {
+	public String getBusStops(@HeaderParam("Authorization") String token,
+			@QueryParam("page") int page) {
 		if (token == null || token == "")
 			return restResultsHelper
 					.resultWrapper(false, "Empty or null token");
+		if (page < 0)
+			return restResultsHelper.resultWrapper(false,
+					"Negative page number");
 		try {
 			authenticationService.authenticate(token);
 			List<BusStop> result = busStopService
-					.findAllDistinctLocationCodes();
+					.findAllDistinctLocationCodes(page);
 			if (result != null) {
 				List<BusStop> stops = new ArrayList<BusStop>();
 				for (BusStop stop : result) {

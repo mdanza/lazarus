@@ -33,9 +33,11 @@ public class ModifyPasswordState extends AbstractState {
 	}
 
 	@Override
-	protected void restartState() {
+	protected void onCancel() {
 		this.state = InternalState.AWAITING_OLD_PASSWORD;
 		this.oldPasswordAttempts = 0;
+		this.message = "Diga su contraseña actual";
+		context.speak(message);
 	}
 
 	@Override

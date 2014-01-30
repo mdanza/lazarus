@@ -24,8 +24,8 @@ public class BusStopServiceImpl implements BusStopService {
 	}
 
 	@Override
-	public List<BusStop> findAllDistinctLocationCodes() {
-		return busStopDAO.getDistinctLocationCodeBusStops();
+	public List<BusStop> findAllDistinctLocationCodes(int page) {
+		return busStopDAO.getDistinctLocationCodeBusStops(page);
 	}
 
 	@Override

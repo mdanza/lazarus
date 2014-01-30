@@ -233,7 +233,6 @@ public class BusDirectionsState extends LocationDependentState {
 						200, pageNumber, context.getToken());
 			}
 			if (busRides == null){
-				sayWaitMessage();
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
@@ -265,7 +264,6 @@ public class BusDirectionsState extends LocationDependentState {
 								context.getToken());
 			}
 			if (busRides == null && transshipments == null){
-				sayWaitMessage();
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),

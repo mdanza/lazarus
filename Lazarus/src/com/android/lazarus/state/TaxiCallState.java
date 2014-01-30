@@ -62,7 +62,7 @@ public class TaxiCallState extends AbstractState {
 			message = "Las opciones encontradas son, ";
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				message += "diga " + (i + 1) + " para llamar a "
-						+ taxiOptions.get(i).getName() + ",,";
+						+ taxiOptions.get(i).getName() + ",, ";
 			}
 			context.speak(message);
 		}

@@ -364,17 +364,22 @@ public class WalkingPositionHelper {
 						.toLowerCase();
 				newSecondStreetInstruction = newSecondStreetInstruction
 						.toLowerCase();
+				boolean hasRightOrLeft = false;
 				if (oldSecondStreetInstruction.contains("derecha")) {
+					hasRightOrLeft = true;
 					newSecondStreetInstruction = newSecondStreetInstruction
 							.replace("izquierda", "derecha");
 				} else {
 					if (oldSecondStreetInstruction.contains("izquierda")) {
+						hasRightOrLeft = true;
 						newSecondStreetInstruction = newSecondStreetInstruction
 								.replace("derecha", "izquierda");
 					}
 				}
-				firstTurnMissed = newSecondStreetInstruction
-						.equals(oldSecondStreetInstruction);
+				if (hasRightOrLeft) {
+					firstTurnMissed = newSecondStreetInstruction
+							.equals(oldSecondStreetInstruction);
+				}
 			}
 		}
 		return firstTurnMissed;
@@ -385,24 +390,28 @@ public class WalkingPositionHelper {
 			String secondStreetInstruction) {
 		String street = null;
 		String turnDirection = null;
-		if(secondStreetInstruction!=null){
-			if(hasRight(secondStreetInstruction)){
+		if (secondStreetInstruction != null) {
+			if (hasRight(secondStreetInstruction)) {
 				turnDirection = "hacia la derecha";
-			}else{
-				if(hasLeft(secondStreetInstruction)){
+			} else {
+				if (hasLeft(secondStreetInstruction)) {
 					turnDirection = "hacia la izquierda";
 				}
 			}
 			street = getStreet(secondStreetInstruction);
 		}
-		if(street==null){
+		if (street == null) {
 			street = "la esquina en que debía";
 		}
-		if(turnDirection==null){
+		if (turnDirection == null) {
 			turnDirection = "";
 		}
-		String message = "No ha doblado "+turnDirection+" en "+street+", es posible que la esquina se encuentre sólo en la vereda opuesta, si puede ser este el caso, "
-				+ "por favor busque un cruce hacia la vereda opuesta, una vez en la misma puede reiniciar las instrucciones diciendo recalcular. Si no es este el caso, diga recalcular ahora, ";
+		String message = "No ha doblado "
+				+ turnDirection
+				+ " en "
+				+ street
+				+ ", es posible que la esquina se encuentre sólo en la vereda opuesta, si es así, "
+				+ "por favor busque un cruce hacia la vereda opuesta,, una vez en la misma, puede reiniciar las instrucciones diciendo recalcular.. Si no es este el caso, diga recalcular ahora, ";
 		return message;
 	}
 

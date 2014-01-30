@@ -104,6 +104,8 @@ public class StreetSetState extends AbstractState {
 					setDestinationTask.execute();
 				}
 			}
+		}else{
+			message = "Espere mientras cargamos los datos";
 		}
 	}
 
@@ -225,6 +227,7 @@ public class StreetSetState extends AbstractState {
 				DestinationSetState destinationSetState = new DestinationSetState(
 						context, destination, false, hasFavourites);
 				context.setState(destinationSetState);
+				context.sayMessage();
 			}
 			return null;
 		}

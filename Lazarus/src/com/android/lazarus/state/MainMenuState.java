@@ -244,4 +244,10 @@ public class MainMenuState extends AbstractState {
 		this.context.setState(mainMenuState);
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

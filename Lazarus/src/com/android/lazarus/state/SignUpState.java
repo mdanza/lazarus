@@ -179,4 +179,10 @@ public class SignUpState extends AbstractState {
 		SignUpState signUpState = new SignUpState(context);
 		context.setState(signUpState);
 	}
+
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -569,4 +569,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

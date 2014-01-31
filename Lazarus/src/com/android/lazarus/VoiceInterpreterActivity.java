@@ -23,8 +23,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.lazarus.helpers.ConstantsHelper;
-import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.helpers.MessageHelper;
+import com.android.lazarus.helpers.MessageSplitter;
 import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
@@ -111,6 +111,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 
 	public void setState(State state) {
 		this.state = state;
+		this.state.onAttach();
 	}
 
 	public LocationListenerImpl getLocationListener() {
@@ -194,7 +195,8 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			if (saidMessage == null) {
 				saidMessage = message;
 			} else {
-				if ((message != null && !message.equals("") && message.equals(saidMessage))) {
+				if ((message != null && !message.equals("") && message
+						.equals(saidMessage))) {
 					messageRepetitions++;
 					if (messageRepetitions == 3) {
 						message = null;

@@ -146,4 +146,10 @@ public class LogInState extends AbstractState {
 		this.context.setState(logInState);
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

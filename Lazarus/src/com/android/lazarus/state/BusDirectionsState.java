@@ -40,10 +40,6 @@ public class BusDirectionsState extends LocationDependentState {
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
-		if (position != null) {
-			giveInstructions();
-			instructionsGivenOnConstructor = true;
-		}
 	}
 
 	@Override
@@ -56,7 +52,6 @@ public class BusDirectionsState extends LocationDependentState {
 							getOtherRidesWithSameStartStop(busRides,
 									busRides.get(i)));
 					context.setState(busRideState);
-					busRideState.giveInstructions();
 					return;
 				}
 			}
@@ -208,7 +203,7 @@ public class BusDirectionsState extends LocationDependentState {
 	@Override
 	public void setPosition(Location position) {
 		if (position == null) {
-			fromNotEnoughAccuraccyMessage  = true;
+			fromNotEnoughAccuraccyMessage = true;
 			oldMessage = message;
 			message = notEnoughAccuracyMessage;
 			context.speak(notEnoughAccuracyMessage);
@@ -220,9 +215,9 @@ public class BusDirectionsState extends LocationDependentState {
 				enoughAccuraccy = false;
 				context.speak(notEnoughAccuracyMessage);
 			} else {
-				if(fromNotEnoughAccuraccyMessage){
+				if (fromNotEnoughAccuraccyMessage) {
 					message = oldMessage;
-					context.speak(accuraccyObtainedMessage+" "+oldMessage);
+					context.speak(accuraccyObtainedMessage + " " + oldMessage);
 					fromNotEnoughAccuraccyMessage = false;
 				}
 				enoughAccuraccy = true;
@@ -380,8 +375,10 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+		if (position != null) {
+			giveInstructions();
+			instructionsGivenOnConstructor = true;
+		}
 	}
 
 }

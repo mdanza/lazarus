@@ -60,13 +60,15 @@ public class BusRideState extends LocationDependentState {
 
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
 			BusRide ride, TransshipmentState parent,
-			InternalState initialState, List<BusRide> otherRides) {
+			InternalState initialState, List<BusRide> otherRides, boolean selfAttach) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.ride = ride;
 		this.parent = parent;
 		this.state = initialState;
 		this.otherRides = otherRides;
+		if(selfAttach)
+			context.setState(this);
 		if (position != null) {
 			giveInstructions();
 			instructionsGivenOnConstruct = true;
@@ -114,8 +116,7 @@ public class BusRideState extends LocationDependentState {
 	@Override
 	protected void giveInstructions() {
 		if (state.equals(InternalState.WALKING_TO_DESTINATION)) {
-			context.setState(new WalkingDirectionsState(context, destination,
-					this));
+			new WalkingDirectionsState(context, destination, this, true);
 		}
 		if (state.equals(InternalState.WAITING_END_STOP)) {
 			message = "Disfrute su viaje, le informaremos algunas paradas antes de que deba bajarse";
@@ -170,9 +171,8 @@ public class BusRideState extends LocationDependentState {
 			new BusFinderTask().execute();
 		}
 		if (state.equals(InternalState.WALKING_TO_START_STOP)) {
-			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
-					context, ride.getStartStop().getPoint(), this);
-			context.setState(walkingDirectionsState);
+			new WalkingDirectionsState(context, ride.getStartStop().getPoint(),
+					this, true);
 		}
 	}
 
@@ -196,7 +196,7 @@ public class BusRideState extends LocationDependentState {
 	@Override
 	public void setPosition(Location position) {
 		if (position == null) {
-			fromNotEnoughAccuraccyMessage  = true;
+			fromNotEnoughAccuraccyMessage = true;
 			oldMessage = message;
 			message = notEnoughAccuracyMessage;
 			context.speak(notEnoughAccuracyMessage);
@@ -208,9 +208,9 @@ public class BusRideState extends LocationDependentState {
 				enoughAccuraccy = false;
 				context.speak(notEnoughAccuracyMessage);
 			} else {
-				if(fromNotEnoughAccuraccyMessage){
+				if (fromNotEnoughAccuraccyMessage) {
 					message = oldMessage;
-					context.speak(accuraccyObtainedMessage+" "+oldMessage);
+					context.speak(accuraccyObtainedMessage + " " + oldMessage);
 					fromNotEnoughAccuraccyMessage = false;
 				}
 				enoughAccuraccy = true;

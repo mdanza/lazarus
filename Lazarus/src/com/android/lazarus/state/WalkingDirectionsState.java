@@ -61,11 +61,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	public WalkingDirectionsState(VoiceInterpreterActivity context,
-			Point destination, BusRideState parentState) {
+			Point destination, BusRideState parentState, boolean selfAttach) {
 		super(context, NEEDED_ACCURACY);
 		this.parentState = parentState;
 		this.destination = destination;
 		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
+		if(selfAttach)
+			context.setState(this);
 		giveInstructions();
 	}
 

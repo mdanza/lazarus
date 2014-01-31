@@ -43,13 +43,13 @@ public class TransshipmentState extends LocationDependentState {
 	@Override
 	protected void giveInstructions() {
 		if (state.equals(InternalState.FIRST_ROUTE)) {
-			context.setState(new BusRideState(
+			new BusRideState(
 					context,
 					transshipment.getSecondRoute().getStartStop().getPoint(),
 					transshipment.getFirstRoute(),
 					this,
 					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP,
-					null));
+					null, true);
 		}
 		if (state.equals(InternalState.SECOND_ROUTE)) {
 			com.android.lazarus.state.BusRideState.InternalState initialState;
@@ -57,8 +57,9 @@ public class TransshipmentState extends LocationDependentState {
 				initialState = com.android.lazarus.state.BusRideState.InternalState.SEARCHING_BUS;
 			else
 				initialState = com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP;
-			context.setState(new BusRideState(context, destination,
-					transshipment.getSecondRoute(), this, initialState, null));
+			new BusRideState(context, destination,
+					transshipment.getSecondRoute(), this, initialState, null,
+					true);
 		}
 	}
 
@@ -70,7 +71,7 @@ public class TransshipmentState extends LocationDependentState {
 	@Override
 	public void setPosition(Location position) {
 		if (position == null) {
-			fromNotEnoughAccuraccyMessage  = true;
+			fromNotEnoughAccuraccyMessage = true;
 			oldMessage = message;
 			message = notEnoughAccuracyMessage;
 			context.speak(notEnoughAccuracyMessage);
@@ -82,9 +83,9 @@ public class TransshipmentState extends LocationDependentState {
 				enoughAccuraccy = false;
 				context.speak(notEnoughAccuracyMessage);
 			} else {
-				if(fromNotEnoughAccuraccyMessage){
+				if (fromNotEnoughAccuraccyMessage) {
 					message = oldMessage;
-					context.speak(accuraccyObtainedMessage+" "+oldMessage);
+					context.speak(accuraccyObtainedMessage + " " + oldMessage);
 					fromNotEnoughAccuraccyMessage = false;
 				}
 				enoughAccuraccy = true;

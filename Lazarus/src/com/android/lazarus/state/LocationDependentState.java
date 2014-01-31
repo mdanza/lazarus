@@ -11,8 +11,11 @@ public abstract class LocationDependentState extends AbstractState {
 	float minimumAccuraccy;
 	Location position;
 	boolean enoughAccuraccy = true;
-	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, si se encuentra en un lugar abierto y ha encendido el g p s por favor espere unos instantes mientras obtenemos su ubicación";
-
+	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, ";
+	protected boolean fromNotEnoughAccuraccyMessage = false;
+	protected String accuraccyObtainedMessage = "Se pudo obtener su ubicación, ";
+	protected String oldMessage = "";
+	
 	public LocationDependentState(VoiceInterpreterActivity context) {
 		super(context);
 	}

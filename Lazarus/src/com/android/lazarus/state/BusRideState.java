@@ -40,6 +40,7 @@ public class BusRideState extends LocationDependentState {
 	private TransshipmentState parent;
 	private boolean instructionsGivenOnConstruct = false;
 	private BusFinderTask busFinderTask;
+	private boolean transhipmentIntermediaryStopSameForBothRoutes;
 
 	public enum InternalState {
 		INITIALIZING, WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
@@ -57,7 +58,8 @@ public class BusRideState extends LocationDependentState {
 
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
 			BusRide ride, TransshipmentState parent,
-			InternalState initialState, List<BusRide> otherRides) {
+			InternalState initialState, List<BusRide> otherRides,
+			boolean transhipmentIntermediaryStopSameForBothRoutes) {
 		super(context, NEEDED_ACCURACY);
 		this.message = "";
 		this.destination = destination;
@@ -65,10 +67,7 @@ public class BusRideState extends LocationDependentState {
 		this.parent = parent;
 		this.state = initialState;
 		this.otherRides = otherRides;
-		if (position != null) {
-			giveInstructions();
-			instructionsGivenOnConstruct = true;
-		}
+		this.transhipmentIntermediaryStopSameForBothRoutes = transhipmentIntermediaryStopSameForBothRoutes;
 	}
 
 	@Override
@@ -78,6 +77,11 @@ public class BusRideState extends LocationDependentState {
 				if (checkEndStopTask != null)
 					checkEndStopTask.cancel(true);
 				state = InternalState.WALKING_TO_DESTINATION;
+				if (parent != null
+						&& transhipmentIntermediaryStopSameForBothRoutes) {
+					arrivedToDestination();
+					return;
+				}
 			}
 		}
 		if (state.equals(InternalState.AWAITING_USER_CONFIRMATION_STEP_TWO)) {

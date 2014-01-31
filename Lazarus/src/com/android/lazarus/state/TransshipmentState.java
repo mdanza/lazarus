@@ -50,16 +50,13 @@ public class TransshipmentState extends LocationDependentState {
 					transshipment.getFirstRoute(),
 					this,
 					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP,
-					null));
+					null, sameIntermediateStop));
 		}
 		if (state.equals(InternalState.SECOND_ROUTE)) {
-			com.android.lazarus.state.BusRideState.InternalState initialState;
-			if (sameIntermediateStop)
-				initialState = com.android.lazarus.state.BusRideState.InternalState.SEARCHING_BUS;
-			else
-				initialState = com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP;
+			com.android.lazarus.state.BusRideState.InternalState initialState = com.android.lazarus.state.BusRideState.InternalState.SEARCHING_BUS;
 			context.setState(new BusRideState(context, destination,
-					transshipment.getSecondRoute(), this, initialState, null));
+					transshipment.getSecondRoute(), this, initialState, null,
+					sameIntermediateStop));
 		}
 	}
 

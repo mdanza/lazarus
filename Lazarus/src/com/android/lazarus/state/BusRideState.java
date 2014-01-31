@@ -138,9 +138,17 @@ public class BusRideState extends LocationDependentState {
 		if (state.equals(InternalState.WAITING_BUS)) {
 			if (bus == null) {
 				message = "No se encontraron coches cercanos, ";
+				if(ride!=null){
+					message += "para el "+ ride.getLineName() + " " + ride.getDestination()+", ";
+				}
 				appendSchedule();
 			} else {
-				message = "El coche más cercano está a "
+				if(ride!=null){
+					message = "El "+ ride.getLineName() + " " + ride.getDestination()+" ";
+				}else{
+					message = "El coche ";
+				}
+				message += " más cercano está a "
 						+ Double.valueOf(
 								GPScoordinateHelper.getDistanceBetweenPoints(
 										position.getLatitude(),
@@ -153,7 +161,13 @@ public class BusRideState extends LocationDependentState {
 			}
 			message += ", diga arriba,, cuando aborde el coche, diga recalcular,, si desea buscar nuevamente";
 			if (otherRides != null && otherRides.size() > 0) {
-				message += ",, En esta parada también le sirve tomarse un ";
+				if (ride != null) {
+					message += ",, En esta parada, además del "
+							+ ride.getLineName() + " " + ride.getDestination()
+							+ ", también le sirve tomarse un ";
+				} else {
+					message += ",, En esta parada también le sirve tomarse un ";
+				}
 				for (BusRide otherRide : otherRides)
 					message += otherRide.getLineName() + " "
 							+ otherRide.getDestination() + ", ";

@@ -378,4 +378,10 @@ public class BusDirectionsState extends LocationDependentState {
 		}
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

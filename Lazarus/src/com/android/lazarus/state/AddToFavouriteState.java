@@ -189,4 +189,10 @@ public class AddToFavouriteState extends AbstractState {
 
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

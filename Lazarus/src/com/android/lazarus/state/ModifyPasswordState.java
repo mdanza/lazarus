@@ -104,4 +104,10 @@ public class ModifyPasswordState extends AbstractState {
 
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

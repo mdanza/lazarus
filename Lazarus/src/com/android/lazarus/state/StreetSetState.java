@@ -238,4 +238,10 @@ public class StreetSetState extends AbstractState {
 		MainMenuState mainMenuState = new MainMenuState(context);
 		context.setState(mainMenuState);
 	}
+
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
 }

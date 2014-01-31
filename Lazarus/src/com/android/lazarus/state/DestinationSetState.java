@@ -121,4 +121,10 @@ public class DestinationSetState extends LocationDependentState {
 		}
 	}
 
+	@Override
+	public void onAttach() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

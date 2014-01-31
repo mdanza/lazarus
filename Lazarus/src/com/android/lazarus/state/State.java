@@ -10,5 +10,5 @@ public interface State {
 
 	String getHelpMessage();
 	
-
+	public void onAttach();
 }

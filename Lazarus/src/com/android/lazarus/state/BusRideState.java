@@ -26,7 +26,6 @@ public class BusRideState extends LocationDependentState {
 	private BusRide ride;
 	private List<BusRide> otherRides;
 	private Point destination;
-	private String message = "";
 	private Bus bus;
 	private List<String> schedule;
 	private static final int NEEDED_ACCURACY = 100;
@@ -40,6 +39,7 @@ public class BusRideState extends LocationDependentState {
 	private Location lastSpokenLocation;
 	private TransshipmentState parent;
 	private boolean instructionsGivenOnConstruct = false;
+	private BusFinderTask busFinderTask;
 
 	public enum InternalState {
 		INITIALIZING, WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
@@ -48,6 +48,7 @@ public class BusRideState extends LocationDependentState {
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
 			BusRide ride, List<BusRide> otherRides) {
 		super(context, NEEDED_ACCURACY);
+		this.message = "";
 		this.destination = destination;
 		this.ride = ride;
 		this.state = InternalState.INITIALIZING;
@@ -58,6 +59,7 @@ public class BusRideState extends LocationDependentState {
 			BusRide ride, TransshipmentState parent,
 			InternalState initialState, List<BusRide> otherRides) {
 		super(context, NEEDED_ACCURACY);
+		this.message = "";
 		this.destination = destination;
 		this.ride = ride;
 		this.parent = parent;
@@ -181,7 +183,10 @@ public class BusRideState extends LocationDependentState {
 		if (state.equals(InternalState.SEARCHING_BUS)) {
 			message = "Buscando coche más cercano a su parada";
 			context.speak(message);
-			new BusFinderTask().execute();
+			if (busFinderTask == null) {
+				busFinderTask = new BusFinderTask();
+				busFinderTask.execute();
+			}
 		}
 		if (state.equals(InternalState.WALKING_TO_START_STOP)) {
 			context.setState(new WalkingDirectionsState(context, ride
@@ -293,7 +298,7 @@ public class BusRideState extends LocationDependentState {
 									.getPoint().getLatitude(),
 							position.getLongitude(), ride.getEndStop()
 									.getPoint().getLongitude())).intValue();
-			if (distanceToLastStop < minimumAccuraccy
+			if ((distanceToLastStop < 80 || distanceToLastStop < 20)
 					&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 				passedSecondLastStop = true;
 				message = "Usted se encuentra a "

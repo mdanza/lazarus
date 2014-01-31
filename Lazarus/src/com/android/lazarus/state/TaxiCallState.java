@@ -22,7 +22,6 @@ public class TaxiCallState extends AbstractState {
 		super(context);
 		this.context = context;
 		this.state = InternalState.SEARCHING_OPTIONS;
-		giveInstructions();
 	}
 
 	@Override
@@ -35,8 +34,8 @@ public class TaxiCallState extends AbstractState {
 		if (state.equals(InternalState.WAITING_USER_DECISION)) {
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				if (containsNumber(results, i + 1)) {
-					context.makeCall(taxiOptions.get(i).getPhone());
 					context.setState(new MainMenuState(context));
+					context.makeCall(taxiOptions.get(i).getPhone());
 				}
 			}
 		}
@@ -93,7 +92,6 @@ public class TaxiCallState extends AbstractState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+		giveInstructions();	
 	}
 }

@@ -42,7 +42,7 @@ public class BusRideState extends LocationDependentState {
 	private boolean instructionsGivenOnConstruct = false;
 
 	public enum InternalState {
-		WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
+		INITIALIZING, WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
 	}
 
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
@@ -50,7 +50,7 @@ public class BusRideState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.ride = ride;
-		this.state = InternalState.WALKING_TO_START_STOP;
+		this.state = InternalState.INITIALIZING;
 		this.otherRides = otherRides;
 	}
 
@@ -109,6 +109,8 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	protected void giveInstructions() {
+		if (state.equals(InternalState.INITIALIZING))
+			state = InternalState.WALKING_TO_START_STOP;
 		if (state.equals(InternalState.WALKING_TO_DESTINATION)) {
 			context.setState(new WalkingDirectionsState(context, destination,
 					this));
@@ -138,14 +140,16 @@ public class BusRideState extends LocationDependentState {
 		if (state.equals(InternalState.WAITING_BUS)) {
 			if (bus == null) {
 				message = "No se encontraron coches cercanos, ";
-				if(ride!=null){
-					message += "para el "+ ride.getLineName() + " " + ride.getDestination()+", ";
+				if (ride != null) {
+					message += "para el " + ride.getLineName() + " "
+							+ ride.getDestination() + ", ";
 				}
 				appendSchedule();
 			} else {
-				if(ride!=null){
-					message = "El "+ ride.getLineName() + " " + ride.getDestination()+" ";
-				}else{
+				if (ride != null) {
+					message = "El " + ride.getLineName() + " "
+							+ ride.getDestination() + " ";
+				} else {
 					message = "El coche ";
 				}
 				message += " más cercano está a "

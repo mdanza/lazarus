@@ -73,12 +73,19 @@ public class WalkingPositionHelper {
 	}
 
 	public static String translateFirstInstruction(
-			String firstMapQuestInstruction, Location currentLocation,
+			String firstMapQuestInstruction,
+			WalkingPosition firstWalkingPosition,
 			WalkingPosition secondWalkingPosition, float azimuth) {
-		String street = getStreetFromMapQuestFirstInstruction(firstMapQuestInstruction);
-		String returnInstruction = "Avanza por ";
-		if (azimuth != -1000) {
+
+		if (azimuth != -1000 && firstMapQuestInstruction != null
+				&& firstWalkingPosition != null
+				&& firstWalkingPosition.getPoint() != null
+				&& secondWalkingPosition != null
+				&& secondWalkingPosition.getPoint() != null) {
+			String returnInstruction = "Avanza por ";
+			String street = getStreetFromMapQuestFirstInstruction(firstMapQuestInstruction);
 			Location secondLocation = createLocation(secondWalkingPosition);
+			Location currentLocation = createLocation(firstWalkingPosition);
 			azimuth = (float) Math.toDegrees(azimuth);
 			GeomagneticField geoField = new GeomagneticField(Double.valueOf(
 					currentLocation.getLatitude()).floatValue(), Double
@@ -113,18 +120,9 @@ public class WalkingPositionHelper {
 				returnInstruction = TURN_RIGHT_INSTRUCTION;
 			returnInstruction += street + ", ";
 			return returnInstruction;
+		} else {
+			return "Avanza por la calle en que te encuentras, ";
 		}
-		/*
-		 * if (walkingPosition != null && walkingPosition.getInstruction() !=
-		 * null) { String instruction = walkingPosition.getInstruction();
-		 * String[] words = instruction.split("\\ "); String cardinalTarget =
-		 * null; for (String cardinal : MAPQUEST_ORIENTATIONS) { if
-		 * (stringPresent(words, cardinal)) { cardinalTarget = cardinal; } } if
-		 * (cardinalTarget != null) { String cardinalDestination =
-		 * translateCardinalDestination(cardinalTarget); returnInstruction =
-		 * getInstruction(cardinalDestination, cardinalDevice); } }
-		 */
-		return returnInstruction;
 	}
 
 	private static Location createLocation(WalkingPosition walkingPosition) {

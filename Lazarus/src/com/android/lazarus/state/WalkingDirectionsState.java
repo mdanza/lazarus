@@ -443,8 +443,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 				if (positions != null && positions.size() > 1) {
 					message = WalkingPositionHelper.translateFirstInstruction(
-							positions.get(0).getInstruction(), position,
-							positions.get(currentWalkingPosition + 1), context
+							positions.get(0).getInstruction(), positions.get(0),
+							positions.get(1), context
 									.getSensorEventListenerImpl().getAzimuth());
 					if (state.equals(InternalState.RECALCULATE)) {
 						boolean firstTurnMissed = false;

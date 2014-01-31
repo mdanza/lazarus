@@ -15,6 +15,7 @@ public class TransshipmentState extends LocationDependentState {
 	private static final int NEEDED_ACCURACY = 200;
 	private InternalState state = InternalState.FIRST_ROUTE;
 	private boolean sameIntermediateStop;
+	private boolean postConstruct;
 
 	private enum InternalState {
 		FIRST_ROUTE, SECOND_ROUTE
@@ -32,6 +33,7 @@ public class TransshipmentState extends LocationDependentState {
 			sameIntermediateStop = true;
 		else
 			sameIntermediateStop = false;
+		postConstruct = true;
 	}
 
 	@Override
@@ -105,7 +107,9 @@ public class TransshipmentState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		giveInstructions();
+		if (postConstruct) {
+			giveInstructions();
+			postConstruct = false;
+		}
 	}
-
 }

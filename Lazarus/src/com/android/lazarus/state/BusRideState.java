@@ -348,9 +348,12 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		if (position != null) {
-			giveInstructions();
-			instructionsGivenOnConstruct = true;
+		if (!state.equals(InternalState.WALKING_TO_START_STOP)
+				&& !state.equals(InternalState.WALKING_TO_DESTINATION)) {
+			if (position != null) {
+				giveInstructions();
+				instructionsGivenOnConstruct = true;
+			}
 		}
 	}
 

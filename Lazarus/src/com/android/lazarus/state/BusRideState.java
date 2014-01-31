@@ -29,7 +29,7 @@ public class BusRideState extends LocationDependentState {
 	private String message = "";
 	private Bus bus;
 	private List<String> schedule;
-	private static final int NEEDED_ACCURACY = 50;
+	private static final int NEEDED_ACCURACY = 100;
 	private InternalState state;
 	private ScheduledExecutorService scheduledExecutorService = Executors
 			.newScheduledThreadPool(1);
@@ -39,6 +39,7 @@ public class BusRideState extends LocationDependentState {
 	private boolean passedThirdLastStop = false;
 	private Location lastSpokenLocation;
 	private TransshipmentState parent;
+	private boolean instructionsGivenOnConstruct = false;
 
 	public enum InternalState {
 		WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
@@ -51,7 +52,10 @@ public class BusRideState extends LocationDependentState {
 		this.ride = ride;
 		this.state = InternalState.WALKING_TO_START_STOP;
 		this.otherRides = otherRides;
-		giveInstructions();
+		if (position != null) {
+			giveInstructions();
+			instructionsGivenOnConstruct = true;
+		}
 	}
 
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
@@ -63,7 +67,10 @@ public class BusRideState extends LocationDependentState {
 		this.parent = parent;
 		this.state = initialState;
 		this.otherRides = otherRides;
-		giveInstructions();
+		if (position != null) {
+			giveInstructions();
+			instructionsGivenOnConstruct = true;
+		}
 	}
 
 	@Override
@@ -162,9 +169,9 @@ public class BusRideState extends LocationDependentState {
 			context.speak(message);
 			new BusFinderTask().execute();
 		}
-		if (state.equals(InternalState.WALKING_TO_START_STOP)){
-			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(context, ride
-					.getStartStop().getPoint(), this);
+		if (state.equals(InternalState.WALKING_TO_START_STOP)) {
+			WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
+					context, ride.getStartStop().getPoint(), this);
 			context.setState(walkingDirectionsState);
 		}
 	}
@@ -199,6 +206,10 @@ public class BusRideState extends LocationDependentState {
 			} else {
 				enoughAccuraccy = true;
 				this.position = position;
+				if (!instructionsGivenOnConstruct) {
+					giveInstructions();
+					instructionsGivenOnConstruct = true;
+				}
 				changedPosition();
 			}
 		}
@@ -316,13 +327,17 @@ public class BusRideState extends LocationDependentState {
 			BusReportingServiceAdapter busReportingServiceAdapter = new BusReportingServiceAdapterImpl();
 			bus = busReportingServiceAdapter.getBus(context.getToken(),
 					bus.getId());
-			message = "El coche más cercano está a aproximadamente "
-					+ Double.valueOf(
-							GPScoordinateHelper.getDistanceBetweenPoints(
-									position.getLatitude(), bus.getLatitude(),
-									position.getLongitude(), bus.getLongitude()))
-							.intValue() + " metros";
-			context.speak(message);
+			if (position != null) {
+				message = "El coche más cercano está a aproximadamente "
+						+ Double.valueOf(
+								GPScoordinateHelper.getDistanceBetweenPoints(
+										position.getLatitude(),
+										bus.getLatitude(),
+										position.getLongitude(),
+										bus.getLongitude())).intValue()
+						+ " metros";
+				context.speak(message);
+			}
 		}
 
 	}

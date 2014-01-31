@@ -22,13 +22,15 @@ import com.android.lazarus.serviceadapter.ScheduleServiceAdapterImpl;
 
 public class BusDirectionsState extends LocationDependentState {
 	private Point destination;
-	private static final int NEEDED_ACCURACY = 50;
+	private static final int NEEDED_ACCURACY = 200;
 	private List<BusRide> busRides;
 	private List<Transshipment> transshipments;
 	private List<List<String>> schedule;
 	private int pageNumber = 0;
 	private InternalState state = InternalState.SEARCH_OPTIONS;
 	private String loadingMessage = "Espere por favor unos instantes, estamos cargando sus opciones, ";
+	LoadBusRidesTask loadBusRidesTask = new LoadBusRidesTask();
+	private boolean instructionsGivenOnConstructor = false;
 
 	private enum InternalState {
 		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND
@@ -38,8 +40,10 @@ public class BusDirectionsState extends LocationDependentState {
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
-		if (position != null)
+		if (position != null) {
 			giveInstructions();
+			instructionsGivenOnConstructor = true;
+		}
 	}
 
 	@Override
@@ -71,8 +75,11 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void giveInstructions() {
-		if (state.equals(InternalState.SEARCH_OPTIONS)){
-			new LoadBusRidesTask().execute();
+		if (state.equals(InternalState.SEARCH_OPTIONS)) {
+			// Runs only one time per instance
+			if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING) {
+				loadBusRidesTask.execute();
+			}
 			message = "Espere por favor unos instantes, mientras cargamos las opciones de ómnibus para llegar a su destino";
 		}
 		if (state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE)) {
@@ -212,7 +219,10 @@ public class BusDirectionsState extends LocationDependentState {
 			} else {
 				enoughAccuraccy = true;
 				this.position = position;
-				giveInstructions();
+				if (!instructionsGivenOnConstructor) {
+					giveInstructions();
+					instructionsGivenOnConstructor = true;
+				}
 			}
 		}
 	}
@@ -226,25 +236,25 @@ public class BusDirectionsState extends LocationDependentState {
 					position.getLongitude(), position.getLatitude(),
 					destination.getLongitude(), destination.getLatitude(), 100,
 					pageNumber, context.getToken());
-			if (busRides == null){
+			if (busRides == null) {
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						200, pageNumber, context.getToken());
 			}
-			if (busRides == null){
+			if (busRides == null) {
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						300, pageNumber, context.getToken());
 			}
-			if (busRides == null){
+			if (busRides == null) {
 				busRides = busDirectionsServiceAdapter.getBusDirections(
 						position.getLongitude(), position.getLatitude(),
 						destination.getLongitude(), destination.getLatitude(),
 						400, pageNumber, context.getToken());
 			}
-			if (busRides == null){
+			if (busRides == null) {
 				sayWaitMessage();
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
@@ -254,7 +264,7 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLatitude(), 100, pageNumber,
 								context.getToken());
 			}
-			if (busRides == null && transshipments == null){
+			if (busRides == null && transshipments == null) {
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -263,7 +273,7 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLatitude(), 200, pageNumber,
 								context.getToken());
 			}
-			if (busRides == null && transshipments == null){
+			if (busRides == null && transshipments == null) {
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -272,7 +282,7 @@ public class BusDirectionsState extends LocationDependentState {
 								destination.getLatitude(), 300, pageNumber,
 								context.getToken());
 			}
-			if (busRides == null && transshipments == null){
+			if (busRides == null && transshipments == null) {
 				transshipments = busDirectionsServiceAdapter
 						.getBusDirectionsWithTransshipment(
 								position.getLongitude(),
@@ -307,7 +317,7 @@ public class BusDirectionsState extends LocationDependentState {
 
 		private void sayWaitMessage() {
 			message = loadingMessage;
-			context.sayMessage();			
+			context.sayMessage();
 		}
 
 		private void moreOptions() {
@@ -321,7 +331,7 @@ public class BusDirectionsState extends LocationDependentState {
 			DateTime now = new DateTime();
 			if (busRides != null)
 				for (int i = 0; i < busRides.size(); i++) {
-					if(i%5==0){
+					if (i % 5 == 0) {
 						sayWaitMessage();
 					}
 					List<String> times = scheduleServiceAdapter.getBusSchedule(
@@ -339,7 +349,7 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			if (transshipments != null)
 				for (int i = 0; i < transshipments.size(); i++) {
-					if(i%5==0){
+					if (i % 5 == 0) {
 						sayWaitMessage();
 					}
 					List<String> times = scheduleServiceAdapter.getBusSchedule(

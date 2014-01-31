@@ -52,23 +52,17 @@ public class BusRideState extends LocationDependentState {
 		this.ride = ride;
 		this.state = InternalState.WALKING_TO_START_STOP;
 		this.otherRides = otherRides;
-		if (position != null) {
-			giveInstructions();
-			instructionsGivenOnConstruct = true;
-		}
 	}
 
 	public BusRideState(VoiceInterpreterActivity context, Point destination,
 			BusRide ride, TransshipmentState parent,
-			InternalState initialState, List<BusRide> otherRides, boolean selfAttach) {
+			InternalState initialState, List<BusRide> otherRides) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
 		this.ride = ride;
 		this.parent = parent;
 		this.state = initialState;
 		this.otherRides = otherRides;
-		if(selfAttach)
-			context.setState(this);
 		if (position != null) {
 			giveInstructions();
 			instructionsGivenOnConstruct = true;
@@ -116,7 +110,8 @@ public class BusRideState extends LocationDependentState {
 	@Override
 	protected void giveInstructions() {
 		if (state.equals(InternalState.WALKING_TO_DESTINATION)) {
-			new WalkingDirectionsState(context, destination, this, true);
+			context.setState(new WalkingDirectionsState(context, destination,
+					this));
 		}
 		if (state.equals(InternalState.WAITING_END_STOP)) {
 			message = "Disfrute su viaje, le informaremos algunas paradas antes de que deba bajarse";
@@ -185,8 +180,8 @@ public class BusRideState extends LocationDependentState {
 			new BusFinderTask().execute();
 		}
 		if (state.equals(InternalState.WALKING_TO_START_STOP)) {
-			new WalkingDirectionsState(context, ride.getStartStop().getPoint(),
-					this, true);
+			context.setState(new WalkingDirectionsState(context, ride
+					.getStartStop().getPoint(), this));
 		}
 	}
 
@@ -367,8 +362,10 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+		if (position != null) {
+			giveInstructions();
+			instructionsGivenOnConstruct = true;
+		}
 	}
 
 }

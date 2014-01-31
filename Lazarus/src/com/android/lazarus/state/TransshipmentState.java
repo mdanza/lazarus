@@ -32,7 +32,6 @@ public class TransshipmentState extends LocationDependentState {
 			sameIntermediateStop = true;
 		else
 			sameIntermediateStop = false;
-		giveInstructions();
 	}
 
 	@Override
@@ -43,13 +42,13 @@ public class TransshipmentState extends LocationDependentState {
 	@Override
 	protected void giveInstructions() {
 		if (state.equals(InternalState.FIRST_ROUTE)) {
-			new BusRideState(
+			context.setState(new BusRideState(
 					context,
 					transshipment.getSecondRoute().getStartStop().getPoint(),
 					transshipment.getFirstRoute(),
 					this,
 					com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP,
-					null, true);
+					null));
 		}
 		if (state.equals(InternalState.SECOND_ROUTE)) {
 			com.android.lazarus.state.BusRideState.InternalState initialState;
@@ -57,9 +56,8 @@ public class TransshipmentState extends LocationDependentState {
 				initialState = com.android.lazarus.state.BusRideState.InternalState.SEARCHING_BUS;
 			else
 				initialState = com.android.lazarus.state.BusRideState.InternalState.WALKING_TO_START_STOP;
-			new BusRideState(context, destination,
-					transshipment.getSecondRoute(), this, initialState, null,
-					true);
+			context.setState(new BusRideState(context, destination,
+					transshipment.getSecondRoute(), this, initialState, null));
 		}
 	}
 
@@ -107,8 +105,7 @@ public class TransshipmentState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+		giveInstructions();
 	}
 
 }

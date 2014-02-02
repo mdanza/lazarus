@@ -69,9 +69,10 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "cancelar")) {
-				this.cancel();
+				this.onCancel();
 			}
 			if (stringPresent(results, "menu")) {
+				this.cancelAsyncTasks();
 				if (context.getToken() != null) {
 					initializeMainMenu();
 				}
@@ -84,6 +85,13 @@ public abstract class AbstractState implements State {
 			handleResults(results);
 		}
 	}
+	
+	protected void onCancel(){
+		cancelAsyncTasks();
+		cancel();
+	}
+	
+	protected abstract void cancelAsyncTasks();
 
 	protected abstract void cancel();
 

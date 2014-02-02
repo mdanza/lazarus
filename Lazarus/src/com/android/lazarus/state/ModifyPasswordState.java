@@ -13,7 +13,7 @@ public class ModifyPasswordState extends AbstractState {
 	private int confirmationAttempts = 0;
 	private InternalState state;
 	private String oldPassword;
-	private AsyncTask<Void, Void, Void> task;
+	private ChangePasswordTask task = new ChangePasswordTask();
 	private String newPassword;
 
 	private enum InternalState {
@@ -63,8 +63,14 @@ public class ModifyPasswordState extends AbstractState {
 		if (state.equals(InternalState.AWAITING_NEW_PASSWORD_CONFIRMATION)) {
 			if (stringPresent(results, "si")) {
 				if (task == null) {
-					task = new ChangePasswordTask();
-					task.execute();
+					if (task.getStatus() == AsyncTask.Status.PENDING) {
+						task.execute();
+					} else {
+						if (task.getStatus() == AsyncTask.Status.FINISHED) {
+							task = new ChangePasswordTask();
+							task.execute();
+						}
+					}
 				}
 				message = "Espere mientras cambiamos su contraseña";
 				return;
@@ -88,6 +94,8 @@ public class ModifyPasswordState extends AbstractState {
 		@Override
 		protected Void doInBackground(Void... args) {
 			UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
+			if (isCancelled())
+				return null;
 			boolean success = userServiceAdapter.modifyPassword(
 					context.getToken(), newPassword);
 			String nextMessage = "";
@@ -98,6 +106,8 @@ public class ModifyPasswordState extends AbstractState {
 			} else {
 				nextMessage = "Hubo un error al modificar su contraseña,,";
 			}
+			if (isCancelled())
+				return null;
 			context.setState(new MainMenuState(context, nextMessage));
 			return null;
 		}
@@ -106,8 +116,11 @@ public class ModifyPasswordState extends AbstractState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	protected void cancelAsyncTasks() {
+		task.cancel(true);
 	}
 
 }

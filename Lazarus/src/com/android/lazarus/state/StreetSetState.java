@@ -25,6 +25,7 @@ public class StreetSetState extends AbstractState {
 	private String addressNumber = null;
 	private boolean passedFirstTime = false;
 	GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
+	SetDestinationTask setDestinationTask = new SetDestinationTask();
 	private boolean hasFavourites = false;
 
 	public StreetSetState(VoiceInterpreterActivity context, String street,
@@ -93,7 +94,6 @@ public class StreetSetState extends AbstractState {
 	}
 
 	private void goToDestinationSetState() {
-		SetDestinationTask setDestinationTask = new SetDestinationTask();
 		message = "";
 		if (setDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
 			if (setDestinationTask.getStatus() == AsyncTask.Status.PENDING) {
@@ -104,7 +104,7 @@ public class StreetSetState extends AbstractState {
 					setDestinationTask.execute();
 				}
 			}
-		}else{
+		} else {
 			message = "Espere mientras cargamos los datos";
 		}
 	}
@@ -175,6 +175,8 @@ public class StreetSetState extends AbstractState {
 		@Override
 		protected Void doInBackground(Void... voids) {
 			message = "Espere mientras cargamos sus datos";
+			if(isCancelled())
+				return null;
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), firstResults.get(position));
 			if (streets != null && !streets.isEmpty()) {
@@ -187,10 +189,14 @@ public class StreetSetState extends AbstractState {
 				}
 				String finalMessage = " para obtener otros resultados posibles diga más";
 				message = message + finalMessage;
+				if(isCancelled())
+					return null;
 				context.speak(message);
 				return null;
 			}
 			if (position < firstResults.size()) {
+				if(isCancelled())
+					return null;
 				goToNextPosition();
 			}
 			return null;
@@ -205,6 +211,8 @@ public class StreetSetState extends AbstractState {
 			message = "Espere mientras cargamos los datos";
 			Point destination = null;
 			if (secondStreet != null) {
+				if(isCancelled())
+					return null;
 				destination = addressServiceAdapter.getCorner(
 						context.getToken(), firstStreet, secondStreet);
 			}
@@ -212,6 +220,8 @@ public class StreetSetState extends AbstractState {
 				List<String> address = getAddressNumberString(firstResults
 						.get(position));
 				int number = Integer.parseInt(address.get(0));
+				if(isCancelled())
+					return null;
 				destination = addressServiceAdapter.getByDoorNumber(
 						context.getToken(),
 						firstStreet,
@@ -222,8 +232,12 @@ public class StreetSetState extends AbstractState {
 			if (destination == null) {
 				resetData();
 				message = "No se han encontrado resultados, " + defaultMessage;
+				if(isCancelled())
+					return null;
 				context.speak(message);
 			} else {
+				if(isCancelled())
+					return null;
 				DestinationSetState destinationSetState = new DestinationSetState(
 						context, destination, false, hasFavourites);
 				context.setState(destinationSetState);
@@ -242,6 +256,12 @@ public class StreetSetState extends AbstractState {
 	@Override
 	public void onAttach() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	protected void cancelAsyncTasks() {
+		getStreetNameTask.cancel(true);
+		setDestinationTask.cancel(true);
 	}
 }

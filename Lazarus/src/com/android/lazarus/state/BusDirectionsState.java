@@ -31,15 +31,19 @@ public class BusDirectionsState extends LocationDependentState {
 	private String loadingMessage = "Espere por favor unos instantes, estamos cargando sus opciones, ";
 	LoadBusRidesTask loadBusRidesTask = new LoadBusRidesTask();
 	private boolean instructionsGivenOnConstructor = false;
+	private boolean fromFavourite;
+	private boolean hasFavourite;
 
 	private enum InternalState {
 		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND
 	}
 
 	public BusDirectionsState(VoiceInterpreterActivity context,
-			Point destination) {
+			Point destination, boolean fromFavourite, boolean hasFavourite) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
+		this.fromFavourite = fromFavourite;
+		this.hasFavourite = hasFavourite;
 	}
 
 	@Override
@@ -153,7 +157,8 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void cancel() {
-		context.setState(new MainMenuState(context));
+		context.setState(new DestinationSetState(context, destination,
+				fromFavourite, hasFavourite));
 	}
 
 	private void filterBusRides() {
@@ -235,68 +240,42 @@ public class BusDirectionsState extends LocationDependentState {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			DirectionsServiceAdapter busDirectionsServiceAdapter = new DirectionsServiceAdapterImpl();
-			busRides = busDirectionsServiceAdapter.getBusDirections(
-					position.getLongitude(), position.getLatitude(),
-					destination.getLongitude(), destination.getLatitude(), 100,
-					pageNumber, context.getToken());
-			if (busRides == null) {
-				busRides = busDirectionsServiceAdapter.getBusDirections(
-						position.getLongitude(), position.getLatitude(),
-						destination.getLongitude(), destination.getLatitude(),
-						200, pageNumber, context.getToken());
+			for (int i = 100; i < 500; i += 100) {
+				if (isCancelled())
+					return null;
+				if (i == 100 || busRides == null) {
+					busRides = busDirectionsServiceAdapter.getBusDirections(
+							position.getLongitude(), position.getLatitude(),
+							destination.getLongitude(),
+							destination.getLatitude(), i, pageNumber,
+							context.getToken());
+				}
 			}
 			if (busRides == null) {
-				busRides = busDirectionsServiceAdapter.getBusDirections(
-						position.getLongitude(), position.getLatitude(),
-						destination.getLongitude(), destination.getLatitude(),
-						300, pageNumber, context.getToken());
-			}
-			if (busRides == null) {
-				busRides = busDirectionsServiceAdapter.getBusDirections(
-						position.getLongitude(), position.getLatitude(),
-						destination.getLongitude(), destination.getLatitude(),
-						400, pageNumber, context.getToken());
-			}
-			if (busRides == null) {
+				if (isCancelled())
+					return null;
 				sayWaitMessage();
-				transshipments = busDirectionsServiceAdapter
-						.getBusDirectionsWithTransshipment(
-								position.getLongitude(),
-								position.getLatitude(),
-								destination.getLongitude(),
-								destination.getLatitude(), 100, pageNumber,
-								context.getToken());
-			}
-			if (busRides == null && transshipments == null) {
-				transshipments = busDirectionsServiceAdapter
-						.getBusDirectionsWithTransshipment(
-								position.getLongitude(),
-								position.getLatitude(),
-								destination.getLongitude(),
-								destination.getLatitude(), 200, pageNumber,
-								context.getToken());
-			}
-			if (busRides == null && transshipments == null) {
-				transshipments = busDirectionsServiceAdapter
-						.getBusDirectionsWithTransshipment(
-								position.getLongitude(),
-								position.getLatitude(),
-								destination.getLongitude(),
-								destination.getLatitude(), 300, pageNumber,
-								context.getToken());
-			}
-			if (busRides == null && transshipments == null) {
-				transshipments = busDirectionsServiceAdapter
-						.getBusDirectionsWithTransshipment(
-								position.getLongitude(),
-								position.getLatitude(),
-								destination.getLongitude(),
-								destination.getLatitude(), 400, pageNumber,
-								context.getToken());
+				for (int i = 100; i < 500; i += 100) {
+					if (isCancelled())
+						return null;
+					if (i == 100
+							|| (busRides == null && transshipments == null)) {
+						transshipments = busDirectionsServiceAdapter
+								.getBusDirectionsWithTransshipment(
+										position.getLongitude(),
+										position.getLatitude(),
+										destination.getLongitude(),
+										destination.getLatitude(), i,
+										pageNumber, context.getToken());
+					}
+				}
+
 			}
 			if (busRides == null && transshipments == null)
 				state = InternalState.NO_OPTIONS_FOUND;
 			else {
+				if (isCancelled())
+					return null;
 				if (busRides != null) {
 					filterBusRides();
 					loadSchedule();
@@ -314,6 +293,8 @@ public class BusDirectionsState extends LocationDependentState {
 						moreOptions();
 				}
 			}
+			if (isCancelled())
+				return null;
 			giveInstructions();
 			return null;
 		}
@@ -334,6 +315,8 @@ public class BusDirectionsState extends LocationDependentState {
 			DateTime now = new DateTime();
 			if (busRides != null)
 				for (int i = 0; i < busRides.size(); i++) {
+					if (isCancelled())
+						return;
 					if (i % 5 == 0) {
 						sayWaitMessage();
 					}
@@ -352,6 +335,8 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			if (transshipments != null)
 				for (int i = 0; i < transshipments.size(); i++) {
+					if (isCancelled())
+						return;
 					if (i % 5 == 0) {
 						sayWaitMessage();
 					}
@@ -363,7 +348,17 @@ public class BusDirectionsState extends LocationDependentState {
 									.get(i).getFirstRoute().getStartStop()
 									.getBusStopLocationCode(),
 							now.getMinuteOfDay());
-					if (times != null && !times.isEmpty())
+					List<String> secondTimes = scheduleServiceAdapter
+							.getBusSchedule(context.getToken(), transshipments
+									.get(i).getSecondRoute().getLineName(),
+									transshipments.get(i).getSecondRoute()
+											.getSubLineDescription(),
+									transshipments.get(i).getSecondRoute()
+											.getStartStop()
+											.getBusStopLocationCode(),
+									now.getMinuteOfDay());
+					if (times != null && !times.isEmpty()
+							&& secondTimes != null && !secondTimes.isEmpty())
 						schedule.add(times);
 					else {
 						transshipments.remove(i);
@@ -379,6 +374,11 @@ public class BusDirectionsState extends LocationDependentState {
 			giveInstructions();
 			instructionsGivenOnConstructor = true;
 		}
+	}
+
+	@Override
+	protected void cancelAsyncTasks() {
+		this.loadBusRidesTask.cancel(true);
 	}
 
 }

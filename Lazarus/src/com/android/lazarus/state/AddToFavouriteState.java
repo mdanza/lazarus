@@ -19,6 +19,7 @@ public class AddToFavouriteState extends AbstractState {
 	private FavouritesReportingServiceAdapter favouritesReportingServiceAdapter = new FavouritesReportingServiceAdapterImpl();
 	private List<String> possibleNames = null;
 	AddToFavouriteTask addToFavouriteTask = new AddToFavouriteTask();
+	GetFavouritesTask getFavouritesTask = new GetFavouritesTask();
 	private InternalState state = InternalState.LOADING_FAVOURITES;
 
 	private enum InternalState {
@@ -37,7 +38,6 @@ public class AddToFavouriteState extends AbstractState {
 	}
 
 	private void loadFavourites() {
-		GetFavouritesTask getFavouritesTask = new GetFavouritesTask();
 		String[] args = new String[1];
 		args[0] = context.getToken();
 		message = "";
@@ -154,6 +154,8 @@ public class AddToFavouriteState extends AbstractState {
 			message = "Espere mientras agregamos el favorito";
 			boolean added = false;
 			if (args != null && args.length == 3) {
+				if(isCancelled())
+					return null;
 				added = favouritesReportingServiceAdapter.addToFavourite(
 						args[0], args[1], args[2]);
 			}
@@ -166,6 +168,8 @@ public class AddToFavouriteState extends AbstractState {
 				resetData();
 				state = InternalState.CHOOSING_NAME;
 			}
+			if(isCancelled())
+				return null;
 			context.sayMessage();
 			return null;
 		}
@@ -176,6 +180,8 @@ public class AddToFavouriteState extends AbstractState {
 		@Override
 		protected Void doInBackground(String... args) {
 			message = "Espere por favor";
+			if(isCancelled())
+				return null;
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(context.getToken());
 			state = InternalState.CHOOSING_NAME;
@@ -183,6 +189,8 @@ public class AddToFavouriteState extends AbstractState {
 				favourites = null;
 			}
 			message = defaultMessage;
+			if(isCancelled())
+				return null;
 			context.speak(message);
 			return null;
 		}
@@ -195,4 +203,9 @@ public class AddToFavouriteState extends AbstractState {
 		
 	}
 
+	@Override
+	protected void cancelAsyncTasks() {
+		getFavouritesTask.cancel(true);
+		addToFavouriteTask.cancel(true);
+	}
 }

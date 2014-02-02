@@ -17,6 +17,7 @@ public class SignUpState extends AbstractState {
 	private boolean toChoosePassword = false;
 	private boolean toConfirmPassword = false;
 	CheckUsernameAvailableTask checkUsernameAvailableTask = new CheckUsernameAvailableTask();
+	SaveDataTask saveDataTask = new SaveDataTask();
 
 	public SignUpState(VoiceInterpreterActivity context) {
 		super(context);
@@ -81,7 +82,6 @@ public class SignUpState extends AbstractState {
 				toChoosePassword();
 			}
 			if (stringPresent(results, "si")) {
-				SaveDataTask saveDataTask = new SaveDataTask();
 				String[] args = new String[3];
 				args[0] = username;
 				args[1] = password;
@@ -118,35 +118,45 @@ public class SignUpState extends AbstractState {
 	}
 
 	private class CheckUsernameAvailableTask extends
-			AsyncTask<String, Void, String> {
+			AsyncTask<String, Void, Void> {
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			message = "Espere mientras cargamos sus datos por favor";
 			String username = args[0];
+			if(isCancelled())
+				return null;
 			boolean validUsername = !userServiceAdapter.usernameInUse(username);
+			if(isCancelled())
+				return null;
 			if (validUsername) {
 				toChoosePassword();
 			} else {
 				resetData("El nombre de usuario ya está en uso, diga otro");
 			}
 			context.sayMessage();
-			return message;
+			return null;
 		}
 	}
 
-	private class SaveDataTask extends AsyncTask<String, Void, String> {
+	private class SaveDataTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			message = "Espere mientras guardamos sus datos";
 			String username = args[0];
 			String password = args[1];
+			if(isCancelled())
+				return null;
 			boolean success = userServiceAdapter.register(username, password,
 					"");
 			String result = null;
 			if (success) {
+				if(isCancelled())
+					return null;
 				result = userServiceAdapter.login(args[0], args[1]);
 				if (result != null) {
+					if(isCancelled())
+						return null;
 					context.setToken(result);
 					context.getSharedPreferences("usrpref", 0).edit()
 							.putString("username", username).commit();
@@ -155,9 +165,10 @@ public class SignUpState extends AbstractState {
 					MainMenuState mainMenuState = new MainMenuState(context,
 							"Gracias por registrarse, " + generalInstructions);
 					context.setState(mainMenuState);
-					context.sayMessage();
 				}
 				if (result == null) {
+					if(isCancelled())
+						return null;
 					LogInState logInState = new LogInState(context,
 							"Gracias por registrarse, ");
 					context.setState(logInState);
@@ -167,10 +178,12 @@ public class SignUpState extends AbstractState {
 			if (!success) {
 				SignUpState signUpState = new SignUpState(context,
 						"Ha ocurrido un error al registrar sus datos, ");
+				if(isCancelled())
+					return null;
 				context.setState(signUpState);
 				context.sayMessage();
 			}
-			return message;
+			return null;
 		}
 	}
 
@@ -182,7 +195,11 @@ public class SignUpState extends AbstractState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	protected void cancelAsyncTasks() {
+		checkUsernameAvailableTask.cancel(true);
+		saveDataTask.cancel(true);
 	}
 }

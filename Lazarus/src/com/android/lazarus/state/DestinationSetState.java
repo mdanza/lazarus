@@ -22,9 +22,7 @@ public class DestinationSetState extends LocationDependentState {
 		this.destination = destination;
 		this.fromFavourite = fromFavourite;
 		this.hasFavourites = hasFavourites;
-		if (destination != null && position != null) {
-			message = generateMessage();
-		}
+		message = "";
 	}
 
 	public DestinationSetState(VoiceInterpreterActivity context) {
@@ -35,7 +33,7 @@ public class DestinationSetState extends LocationDependentState {
 	protected void handleResults(List<String> results) {
 		if (this.containsNumber(results, 1)) {
 			BusDirectionsState busDirectionsState = new BusDirectionsState(
-					this.context, destination);
+					this.context, destination, fromFavourite, hasFavourites);
 			this.context.setState(busDirectionsState);
 			return;
 		}
@@ -123,8 +121,11 @@ public class DestinationSetState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+		giveInstructions();
+	}
+	
+	@Override
+	protected void cancelAsyncTasks() {	
 	}
 
 }

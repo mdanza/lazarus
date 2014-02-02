@@ -109,4 +109,8 @@ public class TransshipmentState extends LocationDependentState {
 			postConstruct = false;
 		}
 	}
+	
+	@Override
+	protected void cancelAsyncTasks() {	
+	}
 }

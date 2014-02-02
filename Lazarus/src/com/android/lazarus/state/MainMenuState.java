@@ -132,7 +132,7 @@ public class MainMenuState extends AbstractState {
 		if (position < firstResults.size()) {
 			favourite = null;
 			streets = null;
-			PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
+			possibleDestinationTask = new PossibleDestinationTask();
 			message = "";
 			if (possibleDestinationTask.getStatus() != AsyncTask.Status.RUNNING) {
 				if (possibleDestinationTask.getStatus() == AsyncTask.Status.PENDING) {
@@ -180,16 +180,22 @@ public class MainMenuState extends AbstractState {
 		@Override
 		protected String doInBackground(String... args) {
 			message = "Espere mientras cargamos sus resultados";
+			if(isCancelled())
+				return null;
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), args[0]);
 			favourite = getFavourite(args[0], favourites);
 			if (favourite == null && (streets == null || streets.isEmpty())) {
+				if(isCancelled())
+					return null;
 				goToNextPosition();
 				return null;
 			}
 			if (favourite != null) {
 				state = InternalState.TO_CONFIRM_FAVOURITE;
 				message = "Desea dirigirse a " + favourite.getName() + "?";
+				if(isCancelled())
+					return null;
 				context.speak(message);
 				return favourite.getName();
 			}
@@ -203,6 +209,8 @@ public class MainMenuState extends AbstractState {
 				}
 				String finalMessage = " para obtener otros resultados posibles diga más";
 				message = message + finalMessage;
+				if(isCancelled())
+					return null;
 				context.speak(message);
 				return null;
 			}
@@ -218,6 +226,8 @@ public class MainMenuState extends AbstractState {
 		protected String doInBackground(String... args) {
 			String message = "Espere mientras cargamos sus datos";
 			String initialMessage = "";
+			if(isCancelled())
+				return null;
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
 			if (args.length == 2 && args[1] != null) {
@@ -232,6 +242,8 @@ public class MainMenuState extends AbstractState {
 			state = InternalState.GET_DESTINATION;
 			defaultMessage = message;
 			message = initialMessage + message;
+			if(isCancelled())
+				return null;
 			context.speak(message);
 			return message;
 		}
@@ -246,8 +258,12 @@ public class MainMenuState extends AbstractState {
 
 	@Override
 	public void onAttach() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	protected void cancelAsyncTasks() {
+		loadFavouritesTask.cancel(true);
+		possibleDestinationTask.cancel(true);
 	}
 
 }

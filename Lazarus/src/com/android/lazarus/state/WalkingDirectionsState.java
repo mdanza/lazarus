@@ -424,18 +424,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
-				// SImon bolivar
-				// end = new GeoPoint(-34.904507,-56.159493);
-				// start = new GeoPoint(-34.778024, -55.754501);
-				// end = new GeoPoint(-34.771635, -55.749975);
 				// end = new GeoPoint(-34.774473,-55.756437);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
+				if(isCancelled())
+					return null;
 				Road road = roadManager.getRoad(waypoints);
 				ArrayList<GeoPoint> route = road.mRouteHigh;
 				ArrayList<RoadNode> nodes = road.mNodes;
 
+
+				if(isCancelled())
+					return null;
 				obstacles = obstacleReportingServiceAdapter
 						.getObstaclesForRoute(route, context.getToken());
 				positions = WalkingPositionHelper.createWalkingPositions(route,
@@ -461,6 +462,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getFirstTurnMissedInstruction(secondStreetInstruction);
 							state = InternalState.WAITING_TO_RECALCULATE;
 							secondStreetInstruction = null;
+							if(isCancelled())
+								return null;
 							context.speak(message, true);
 							return null;
 						}
@@ -468,7 +471,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 					if (!state.equals(InternalState.RECALCULATE)) {
 						message = initialMessage
 								+ message
-								+ ". Ya no necesita sostener el celular frente a usted, ";
+								+ ". Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
+						if(isCancelled())
+							return null;
 						context.speak(message, true);
 						secondStreetInstruction = WalkingPositionHelper
 								.getSecondStreetIntruction(positions);
@@ -477,6 +482,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
+					if(isCancelled())
+						return null;
 					context.speak(message);
 					MainMenuState mainMenuState = new MainMenuState(context);
 					context.setState(mainMenuState);
@@ -502,17 +509,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	public void restartAllState() {
-		positions = null;
-		obstacles = null;
-		currentWalkingPosition = 0;
-		distanceToFinalPosition = -1;
-		obstacleToReport = null;
-		possibleDescriptions = null;
-		secondStreetInstruction = null;
-		defaultMessageSaid = false;
-		state = InternalState.WAITING_TO_START;
-		giveInstructions();
+		WalkingDirectionsState walkingDirectionsState = 
+				new WalkingDirectionsState(context, destination, parentState);
+		context.setState(walkingDirectionsState);
 	}
+	
 
 	@Override
 	protected void cancel() {
@@ -546,10 +547,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		}
 	}
 
-	private class ReportObstacleTask extends AsyncTask<String, Void, String> {
+	private class ReportObstacleTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			message = "Registrando el obstáculo, por favor espere, ";
 			ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 			boolean succeded = obstacleReportingServiceAdapter.reportObstacle(
@@ -562,8 +563,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 				possibleDescriptions = null;
 				state = InternalState.SELECTING_OBSTACLE_DESCRIPTION;
 			}
+			if(isCancelled())
+				return null;
 			context.sayMessage();
-			return message;
+			return null;
 		}
 	}
 
@@ -571,6 +574,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 	public void onAttach() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected void cancelAsyncTasks() {
+		reportObstacleTask.cancel(true);
+		getInstructionsTask.cancel(true);	
 	}
 
 }

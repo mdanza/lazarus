@@ -78,12 +78,16 @@ public class TaxiCallState extends AbstractState {
 		protected Void doInBackground(Void... arg0) {
 			message = "Buscando opciones de taxi";
 			TaxiServicesAdapter taxiServicesAdapter = new TaxiServicesAdapterImpl();
+			if(isCancelled())
+				return null;
 			taxiOptions = taxiServicesAdapter.getAllTaxiServices(context
 					.getToken());
 			if (taxiOptions == null)
 				state = InternalState.NO_OPTIONS;
 			else
 				state = InternalState.WAITING_USER_DECISION;
+			if(isCancelled())
+				return null;
 			giveInstructions();
 			return null;
 		}
@@ -94,4 +98,10 @@ public class TaxiCallState extends AbstractState {
 	public void onAttach() {
 		giveInstructions();	
 	}
+	
+	@Override
+	protected void cancelAsyncTasks() {
+		findTaxiOptions.cancel(true);		
+	}
+	
 }

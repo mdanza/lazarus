@@ -11,7 +11,7 @@ import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 public class MoreMainMenuState extends AbstractState {
 
 	private InternalState state;
-	private AsyncTask<Void, Void, Void> task;
+	private DeactivateAccountTask task = new DeactivateAccountTask();
 
 	private enum InternalState {
 		AWAITING_USER_OPTION, DELETE_PHONE_DATA_SELECTED, DEACTIVATE_ACCOUNT_SELECTED
@@ -64,9 +64,15 @@ public class MoreMainMenuState extends AbstractState {
 		if (state.equals(InternalState.DEACTIVATE_ACCOUNT_SELECTED)) {
 			if (stringPresent(results, "si")) {
 				message = "Espere mientras desactivamos su cuenta";
-				if (task == null) {
-					task = new DeactivateAccountTask();
-					task.execute();
+				if (task.getStatus() != AsyncTask.Status.RUNNING) {
+					if (task.getStatus() == AsyncTask.Status.PENDING) {
+						task.execute();
+					} else {
+						if (task.getStatus() == AsyncTask.Status.FINISHED) {
+							task = new DeactivateAccountTask();
+							task.execute();
+						}
+					}
 				}
 				return;
 			}
@@ -90,6 +96,8 @@ public class MoreMainMenuState extends AbstractState {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
+			if(isCancelled())
+				return null;
 			boolean success = userServiceAdapter.deactivateUser(context
 					.getToken());
 			String nextMessage = "";
@@ -107,7 +115,12 @@ public class MoreMainMenuState extends AbstractState {
 	@Override
 	public void onAttach() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	protected void cancelAsyncTasks() {
+		task.cancel(true);
 	}
 
 }

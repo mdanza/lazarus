@@ -384,4 +384,10 @@ public class BusRideState extends LocationDependentState {
 		}
 	}
 
+	@Override
+	protected void cancelAsyncTasks() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

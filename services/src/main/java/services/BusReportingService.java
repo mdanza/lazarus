@@ -70,8 +70,8 @@ public class BusReportingService {
 	public String registerBus(@HeaderParam("Authorization") String token,
 			@FormParam("variantCode") Long variantCode,
 			@FormParam("subLineCode") Long subLineCode,
-			@FormParam("longitude") Double latitude,
-			@FormParam("latitude") Double longitude) {
+			@FormParam("longitude") Double longitude,
+			@FormParam("latitude") Double latitude) {
 		if (token == null || token == "" || variantCode == null
 				|| subLineCode == null || latitude == null || longitude == null)
 			return restResultsHelper.resultWrapper(false,
@@ -103,8 +103,8 @@ public class BusReportingService {
 	public String updateBus(@HeaderParam("Authorization") String token,
 			@FormParam("variantCode") Long variantCode,
 			@FormParam("subLineCode") Long subLineCode,
-			@FormParam("longitude") Double latitude,
-			@FormParam("latitude") Double longitude,
+			@FormParam("longitude") Double longitude,
+			@FormParam("latitude") Double latitude,
 			@PathParam("busId") String busId,
 			@FormParam("lastPassedStopOrdinal") Long lastPassedStopOrdinal) {
 		if (token == null || token == "" || variantCode == null

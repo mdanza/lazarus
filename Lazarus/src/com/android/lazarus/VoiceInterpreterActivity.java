@@ -499,6 +499,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			Intent callIntent = new Intent(Intent.ACTION_CALL);
 			callIntent.setData(Uri.parse("tel:" + number));
 			startActivity(callIntent);
+			System.exit(0);
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "Could not make phone call");
 		}

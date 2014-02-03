@@ -3,7 +3,9 @@ package com.android.lazarus.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osmdroid.bonuspack.routing.GoogleRoadManager;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
@@ -416,10 +418,18 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (position != null && destination != null) {
 				ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 
-				RoadManager roadManager = new MapQuestRoadManager(
+				/*RoadManager roadManager = new MapQuestRoadManager(
 						ConstantsHelper.MAP_QUEST_API_KEY);
 				roadManager.addRequestOption("routeType=pedestrian");
 				roadManager.addRequestOption("locale=es_ES");
+				*/
+				
+				//GOOGLE
+				RoadManager roadManager = new GoogleRoadManager();
+				roadManager.addRequestOption("mode=walking");
+				roadManager.addRequestOption("units=mertics");
+				roadManager.addRequestOption("language=es_ES");
+				
 				GeoPoint start = new GeoPoint(position.getLatitude(),
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),

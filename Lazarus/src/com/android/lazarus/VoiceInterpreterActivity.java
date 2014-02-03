@@ -451,6 +451,8 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	protected void onResume() {
 		super.onResume();
 		sensorEventListenerImpl.resume();
+		if(state instanceof MainMenuState)
+			sayMessage();
 	}
 
 	@Override

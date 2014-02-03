@@ -64,7 +64,7 @@ public class RecognitionListenerImpl implements RecognitionListener {
 			message = "Ha ocurrido un error al grabar el audio, ";
 			break;
 		case SpeechRecognizer.ERROR_CLIENT:
-			message = "Ha ocurrido un error, verifique su conexión con Internet";
+			message = "Ha ocurrido un error, verifique su conexión con Internet, ";
 			break;
 		case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
 			message = "Ha ocurrido un error de permisos, ";

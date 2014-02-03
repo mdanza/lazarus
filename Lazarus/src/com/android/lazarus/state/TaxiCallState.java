@@ -15,7 +15,7 @@ public class TaxiCallState extends AbstractState {
 	private FindTaxiOptions findTaxiOptions = new FindTaxiOptions();
 
 	private enum InternalState {
-		SEARCHING_OPTIONS, WAITING_USER_DECISION, NO_OPTIONS
+		SEARCHING_OPTIONS, WAITING_USER_DECISION, NO_OPTIONS, CALLING
 	}
 
 	public TaxiCallState(VoiceInterpreterActivity context) {
@@ -34,6 +34,7 @@ public class TaxiCallState extends AbstractState {
 		if (state.equals(InternalState.WAITING_USER_DECISION)) {
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				if (containsNumber(results, i + 1)) {
+					this.state = InternalState.CALLING;
 					context.setState(new MainMenuState(context));
 					context.makeCall(taxiOptions.get(i).getPhone());
 				}
@@ -78,7 +79,7 @@ public class TaxiCallState extends AbstractState {
 		protected Void doInBackground(Void... arg0) {
 			message = "Buscando opciones de taxi";
 			TaxiServicesAdapter taxiServicesAdapter = new TaxiServicesAdapterImpl();
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			taxiOptions = taxiServicesAdapter.getAllTaxiServices(context
 					.getToken());
@@ -86,7 +87,7 @@ public class TaxiCallState extends AbstractState {
 				state = InternalState.NO_OPTIONS;
 			else
 				state = InternalState.WAITING_USER_DECISION;
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			giveInstructions();
 			return null;
@@ -96,12 +97,12 @@ public class TaxiCallState extends AbstractState {
 
 	@Override
 	public void onAttach() {
-		giveInstructions();	
+		giveInstructions();
 	}
-	
+
 	@Override
 	protected void cancelAsyncTasks() {
-		findTaxiOptions.cancel(true);		
+		findTaxiOptions.cancel(true);
 	}
-	
+
 }

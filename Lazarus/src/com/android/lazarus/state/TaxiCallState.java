@@ -35,7 +35,6 @@ public class TaxiCallState extends AbstractState {
 			for (int i = 0; i < taxiOptions.size(); i++) {
 				if (containsNumber(results, i + 1)) {
 					this.state = InternalState.CALLING;
-					context.setState(new MainMenuState(context));
 					context.makeCall(taxiOptions.get(i).getPhone());
 				}
 			}

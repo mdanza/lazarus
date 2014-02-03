@@ -452,7 +452,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		super.onResume();
 		sensorEventListenerImpl.resume();
 		if(state instanceof MainMenuState)
-			sayMessage();
+			this.setState(new MainMenuState(this));
 	}
 
 	@Override
@@ -501,6 +501,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			Intent callIntent = new Intent(Intent.ACTION_CALL);
 			callIntent.setData(Uri.parse("tel:" + number));
 			startActivity(callIntent);
+			this.setState(new MainMenuState(this));
 			System.exit(0);
 		} catch (ActivityNotFoundException e) {
 			Log.e(TAG, "Could not make phone call");

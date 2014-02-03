@@ -30,7 +30,7 @@ public class TransshipmentState extends LocationDependentState {
 		BusRide rideTwo = transshipment.getSecondRoute();
 		if (rideOne.getEndStop().getBusStopLocationCode() == rideTwo
 				.getStartStop().getBusStopLocationCode())
-			sameIntermediateStop = true;
+			sameIntermediateStop = false;
 		else
 			sameIntermediateStop = false;
 		postConstruct = true;

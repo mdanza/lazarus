@@ -114,6 +114,12 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		this.state.onAttach();
 	}
 
+	public void setState(State state, boolean runOnAttach) {
+		this.state = state;
+		if (runOnAttach)
+			this.state.onAttach();
+	}
+
 	public LocationListenerImpl getLocationListener() {
 		return locationListener;
 	}

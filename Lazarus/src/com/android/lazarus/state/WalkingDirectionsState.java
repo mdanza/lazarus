@@ -99,7 +99,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					MainMenuState mainMenuState = new MainMenuState(context);
 					context.setState(mainMenuState);
 				} else {
-					context.setState(parentState);
+					context.setState(parentState,false);
 					parentState.arrivedToDestination();
 					return;
 				}
@@ -471,7 +471,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					if (!state.equals(InternalState.RECALCULATE)) {
 						message = initialMessage
 								+ message
-								+ ". Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
+								+ ",, Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
 						if(isCancelled())
 							return null;
 						context.speak(message, true);

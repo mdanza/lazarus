@@ -41,6 +41,7 @@ public class BusRideState extends LocationDependentState {
 	private boolean instructionsGivenOnConstruct = false;
 	private BusFinderTask busFinderTask;
 	private boolean transhipmentIntermediaryStopSameForBothRoutes;
+	private boolean enjoyMessageGiven = false;
 
 	public enum InternalState {
 		INITIALIZING, WALKING_TO_START_STOP, SEARCHING_BUS, WAITING_BUS, AWAITING_USER_CONFIRMATION_STEP_ONE, AWAITING_USER_CONFIRMATION_STEP_TWO, WAITING_END_STOP, WALKING_TO_DESTINATION
@@ -122,8 +123,11 @@ public class BusRideState extends LocationDependentState {
 					this));
 		}
 		if (state.equals(InternalState.WAITING_END_STOP)) {
-			message = "Disfrute su viaje, le informaremos algunas paradas antes de que deba bajarse";
-			context.speak(message);
+			if (!enjoyMessageGiven) {
+				enjoyMessageGiven = true;
+				message = "Disfrute su viaje, le informaremos algunas paradas antes de que deba bajarse";
+				context.speak(message);
+			}
 		}
 		if (state.equals(InternalState.AWAITING_USER_CONFIRMATION_STEP_TWO)) {
 			if (otherRides != null && otherRides.size() > 0) {
@@ -169,7 +173,7 @@ public class BusRideState extends LocationDependentState {
 				busUpdateTask = scheduledExecutorService.scheduleAtFixedRate(
 						new UpdateBusTask(), 10, 10, TimeUnit.SECONDS);
 			}
-			message += ", diga arriba,, cuando aborde el coche, diga recalcular,, si desea buscar nuevamente";
+			message += ", diga arriba,, cuando aborde el coche, diga recalcular,, si desea buscar coches cercanos nuevamente";
 			if (otherRides != null && otherRides.size() > 0) {
 				if (ride != null) {
 					message += ",, En esta parada, además del "
@@ -324,7 +328,7 @@ public class BusRideState extends LocationDependentState {
 				MainMenuState mainMenuState = new MainMenuState(context);
 				context.setState(mainMenuState);
 			} else {
-				context.setState(parent);
+				context.setState(parent, false);
 				parent.arrivedToDestination();
 			}
 		}
@@ -375,19 +379,33 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	public void onAttach() {
-		if (!state.equals(InternalState.WALKING_TO_START_STOP)
-				&& !state.equals(InternalState.WALKING_TO_DESTINATION)) {
-			if (position != null) {
+		if (position != null) {
+			if (!state.equals(InternalState.WALKING_TO_START_STOP)
+					&& !state.equals(InternalState.WALKING_TO_DESTINATION)) {
 				giveInstructions();
+				instructionsGivenOnConstruct = true;
+
+			}
+			if (state.equals(InternalState.WALKING_TO_START_STOP)
+					&& parent != null) {
+				context.setState(new WalkingDirectionsState(context, ride
+						.getStartStop().getPoint(), this));
 				instructionsGivenOnConstruct = true;
 			}
 		}
 	}
 
+	/*
+	 * @Override public void onAttach() { if
+	 * (!state.equals(InternalState.WALKING_TO_START_STOP) &&
+	 * !state.equals(InternalState.WALKING_TO_DESTINATION)) { if (position !=
+	 * null) { giveInstructions(); instructionsGivenOnConstruct = true; } } }
+	 */
+
 	@Override
 	protected void cancelAsyncTasks() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

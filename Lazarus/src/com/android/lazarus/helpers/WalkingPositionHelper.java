@@ -77,7 +77,7 @@ public class WalkingPositionHelper {
 			WalkingPosition firstWalkingPosition,
 			WalkingPosition secondWalkingPosition, float azimuth) {
 
-		if (azimuth != -1000 && firstMapQuestInstruction != null
+		if (azimuth != -1000 
 				&& firstWalkingPosition != null
 				&& firstWalkingPosition.getPoint() != null
 				&& secondWalkingPosition != null
@@ -408,8 +408,8 @@ public class WalkingPositionHelper {
 				+ turnDirection
 				+ " en "
 				+ street
-				+ ", es posible que la esquina se encuentre sólo en la vereda opuesta, si es así, "
-				+ "por favor busque un cruce hacia la vereda opuesta,, una vez en la misma, puede reiniciar las instrucciones diciendo recalcular.. Si no es este el caso, diga recalcular ahora, ";
+				+ ",, es posible que la esquina se encuentre sólo en la vereda opuesta,, si es así,, "
+				+ "busque un cruce hacia la vereda opuesta,, una vez en la misma,, puede reiniciar las instrucciones diciendo recalcular.. Si no es este el caso, diga recalcular ahora, ";
 		return message;
 	}
 

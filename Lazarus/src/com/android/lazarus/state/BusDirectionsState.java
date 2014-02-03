@@ -252,10 +252,10 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			}
 			if (busRides == null) {
-				if (isCancelled())
-					return null;
-				sayWaitMessage();
 				for (int i = 100; i < 500; i += 100) {
+					if (isCancelled())
+						return null;
+					sayWaitMessage();
 					if (isCancelled())
 						return null;
 					if (i == 100

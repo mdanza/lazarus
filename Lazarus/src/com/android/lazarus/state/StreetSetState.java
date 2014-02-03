@@ -130,6 +130,8 @@ public class StreetSetState extends AbstractState {
 					+ getAddressNumberString(firstResults.get(position)).get(1)
 					+ "?";
 			addressNumber = firstResults.get(position);
+			if(position>0)
+				context.sayMessage();
 			return;
 		}
 		message = "";

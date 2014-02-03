@@ -54,7 +54,7 @@ public class TaxiCallState extends AbstractState {
 					}
 				}
 			}
-			message = "";
+			message = "Buscando opciones de taxi";
 			context.speak(message);
 		}
 		if (state.equals(InternalState.WAITING_USER_DECISION)) {

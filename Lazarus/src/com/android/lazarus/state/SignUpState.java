@@ -123,10 +123,10 @@ public class SignUpState extends AbstractState {
 		protected Void doInBackground(String... args) {
 			message = "Espere mientras cargamos sus datos por favor";
 			String username = args[0];
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			boolean validUsername = !userServiceAdapter.usernameInUse(username);
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			if (validUsername) {
 				toChoosePassword();
@@ -145,17 +145,17 @@ public class SignUpState extends AbstractState {
 			message = "Espere mientras guardamos sus datos";
 			String username = args[0];
 			String password = args[1];
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			boolean success = userServiceAdapter.register(username, password,
 					"");
 			String result = null;
 			if (success) {
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				result = userServiceAdapter.login(args[0], args[1]);
 				if (result != null) {
-					if(isCancelled())
+					if (isCancelled())
 						return null;
 					context.setToken(result);
 					context.getSharedPreferences("usrpref", 0).edit()
@@ -167,7 +167,7 @@ public class SignUpState extends AbstractState {
 					context.setState(mainMenuState);
 				}
 				if (result == null) {
-					if(isCancelled())
+					if (isCancelled())
 						return null;
 					LogInState logInState = new LogInState(context,
 							"Gracias por registrarse, ");
@@ -178,7 +178,7 @@ public class SignUpState extends AbstractState {
 			if (!success) {
 				SignUpState signUpState = new SignUpState(context,
 						"Ha ocurrido un error al registrar sus datos, ");
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				context.setState(signUpState);
 				context.sayMessage();
@@ -196,10 +196,12 @@ public class SignUpState extends AbstractState {
 	@Override
 	public void onAttach() {
 	}
-	
+
 	@Override
 	protected void cancelAsyncTasks() {
-		checkUsernameAvailableTask.cancel(true);
-		saveDataTask.cancel(true);
+		if (checkUsernameAvailableTask != null)
+			checkUsernameAvailableTask.cancel(true);
+		if (saveDataTask != null)
+			saveDataTask.cancel(true);
 	}
 }

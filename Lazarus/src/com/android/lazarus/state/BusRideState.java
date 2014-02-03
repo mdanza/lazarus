@@ -33,13 +33,12 @@ public class BusRideState extends LocationDependentState {
 	private ScheduledExecutorService scheduledExecutorService = Executors
 			.newScheduledThreadPool(1);
 	private ScheduledFuture<?> busUpdateTask;
-	private ScheduledFuture<?> checkEndStopTask;
 	private boolean passedSecondLastStop = false;
 	private boolean passedThirdLastStop = false;
 	private Location lastSpokenLocation;
 	private TransshipmentState parent;
 	private boolean instructionsGivenOnConstruct = false;
-	private BusFinderTask busFinderTask;
+	private BusFinderTask busFinderTask = new BusFinderTask();
 	private boolean transhipmentIntermediaryStopSameForBothRoutes;
 	private boolean enjoyMessageGiven = false;
 
@@ -75,8 +74,6 @@ public class BusRideState extends LocationDependentState {
 	protected void handleResults(List<String> results) {
 		if (state.equals(InternalState.WAITING_END_STOP)) {
 			if (stringPresent(results, "abajo")) {
-				if (checkEndStopTask != null)
-					checkEndStopTask.cancel(true);
 				state = InternalState.WALKING_TO_DESTINATION;
 				if (parent != null
 						&& transhipmentIntermediaryStopSameForBothRoutes) {
@@ -171,7 +168,7 @@ public class BusRideState extends LocationDependentState {
 										bus.getLongitude())).intValue()
 						+ " metros, lo mantendremos actualizado";
 				busUpdateTask = scheduledExecutorService.scheduleAtFixedRate(
-						new UpdateBusTask(), 10, 10, TimeUnit.SECONDS);
+						new UpdateBusTask(), 10, 20, TimeUnit.SECONDS);
 			}
 			message += ", diga arriba,, cuando aborde el coche, diga recalcular,, si desea buscar coches cercanos nuevamente";
 			if (otherRides != null && otherRides.size() > 0) {
@@ -191,9 +188,15 @@ public class BusRideState extends LocationDependentState {
 		if (state.equals(InternalState.SEARCHING_BUS)) {
 			message = "Buscando coche más cercano a su parada";
 			context.speak(message);
-			if (busFinderTask == null) {
-				busFinderTask = new BusFinderTask();
-				busFinderTask.execute();
+			if (busFinderTask.getStatus() != AsyncTask.Status.RUNNING) {
+				if (busFinderTask.getStatus() == AsyncTask.Status.PENDING) {
+					busFinderTask.execute();
+				} else {
+					if (busFinderTask.getStatus() == AsyncTask.Status.FINISHED) {
+						busFinderTask = new BusFinderTask();
+						busFinderTask.execute();
+					}
+				}
 			}
 		}
 		if (state.equals(InternalState.WALKING_TO_START_STOP)) {
@@ -339,6 +342,8 @@ public class BusRideState extends LocationDependentState {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			ScheduleServiceAdapter scheduleServiceAdapter = new ScheduleServiceAdapterImpl();
+			if (isCancelled())
+				return null;
 			bus = scheduleServiceAdapter.getClosestBus(context.getToken(), ride
 					.getStartStop().getVariantCode(), ride.getSubLineCode(),
 					ride.getStartStop().getOrdinal());
@@ -350,6 +355,8 @@ public class BusRideState extends LocationDependentState {
 						.getBusStopLocationCode(), now.getMinuteOfDay());
 			}
 			state = InternalState.WAITING_BUS;
+			if (isCancelled())
+				return null;
 			giveInstructions();
 			return null;
 		}
@@ -364,13 +371,13 @@ public class BusRideState extends LocationDependentState {
 					bus.getId());
 			if (position != null) {
 				message = "El coche más cercano está a aproximadamente "
-						+ Double.valueOf(
+						+ Math.ceil(Double.valueOf(
 								GPScoordinateHelper.getDistanceBetweenPoints(
 										position.getLatitude(),
 										bus.getLatitude(),
 										position.getLongitude(),
-										bus.getLongitude())).intValue()
-						+ " metros";
+										bus.getLongitude())).intValue())
+						+ " metros, diga arriba,, cuando aborde el coche";
 				context.speak(message);
 			}
 		}
@@ -384,7 +391,6 @@ public class BusRideState extends LocationDependentState {
 					&& !state.equals(InternalState.WALKING_TO_DESTINATION)) {
 				giveInstructions();
 				instructionsGivenOnConstruct = true;
-
 			}
 			if (state.equals(InternalState.WALKING_TO_START_STOP)
 					&& parent != null) {
@@ -404,8 +410,10 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		// TODO Auto-generated method stub
-
+		if (busFinderTask != null)
+			busFinderTask.cancel(true);
+		if (busUpdateTask != null)
+			busUpdateTask.cancel(true);
 	}
 
 }

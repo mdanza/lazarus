@@ -120,7 +120,8 @@ public class ModifyPasswordState extends AbstractState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		task.cancel(true);
+		if (task != null)
+			task.cancel(true);
 	}
 
 }

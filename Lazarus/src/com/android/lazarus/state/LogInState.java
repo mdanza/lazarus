@@ -115,7 +115,7 @@ public class LogInState extends AbstractState {
 					if (isNumber(arg)) {
 						arg = getNumber(arg);
 					}
-					if(isCancelled())
+					if (isCancelled())
 						return null;
 					String possibleToken = userServiceAdapter.login(
 							usernames.get(0), arg);
@@ -126,7 +126,7 @@ public class LogInState extends AbstractState {
 								.commit();
 						context.getSharedPreferences("usrpref", 0).edit()
 								.putString("password", arg).commit();
-						if(isCancelled())
+						if (isCancelled())
 							return null;
 						initializeMainMenu("Gracias por loguearse, ");
 						validCredentialsFound = true;
@@ -137,7 +137,7 @@ public class LogInState extends AbstractState {
 			if (!validCredentialsFound) {
 				cleanValuesForTryAgain();
 				message = "Nombre de usuario o contraseña incorrecto, diga su nombre de usuario";
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				context.sayMessage();
 			}
@@ -158,6 +158,7 @@ public class LogInState extends AbstractState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		logInTask.cancel(true);
+		if (logInTask != null)
+			logInTask.cancel(true);
 	}
 }

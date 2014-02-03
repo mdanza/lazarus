@@ -180,13 +180,13 @@ public class MainMenuState extends AbstractState {
 		@Override
 		protected String doInBackground(String... args) {
 			message = "Espere mientras cargamos sus resultados";
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			streets = addressServiceAdapter.getPossibleStreets(
 					context.getToken(), args[0]);
 			favourite = getFavourite(args[0], favourites);
 			if (favourite == null && (streets == null || streets.isEmpty())) {
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				goToNextPosition();
 				return null;
@@ -194,7 +194,7 @@ public class MainMenuState extends AbstractState {
 			if (favourite != null) {
 				state = InternalState.TO_CONFIRM_FAVOURITE;
 				message = "Desea dirigirse a " + favourite.getName() + "?";
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				context.speak(message);
 				return favourite.getName();
@@ -209,7 +209,7 @@ public class MainMenuState extends AbstractState {
 				}
 				String finalMessage = " para obtener otros resultados posibles diga más";
 				message = message + finalMessage;
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				context.speak(message);
 				return null;
@@ -226,7 +226,7 @@ public class MainMenuState extends AbstractState {
 		protected String doInBackground(String... args) {
 			String message = "Espere mientras cargamos sus datos";
 			String initialMessage = "";
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(args[0]);
@@ -242,7 +242,7 @@ public class MainMenuState extends AbstractState {
 			state = InternalState.GET_DESTINATION;
 			defaultMessage = message;
 			message = initialMessage + message;
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			context.speak(message);
 			return message;
@@ -259,11 +259,13 @@ public class MainMenuState extends AbstractState {
 	@Override
 	public void onAttach() {
 	}
-	
+
 	@Override
 	protected void cancelAsyncTasks() {
-		loadFavouritesTask.cancel(true);
-		possibleDestinationTask.cancel(true);
+		if (loadFavouritesTask != null)
+			loadFavouritesTask.cancel(true);
+		if (possibleDestinationTask != null)
+			possibleDestinationTask.cancel(true);
 	}
 
 }

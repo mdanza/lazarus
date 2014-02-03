@@ -96,7 +96,7 @@ public class MoreMainMenuState extends AbstractState {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			UserServiceAdapter userServiceAdapter = new UserServiceAdapterImpl();
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			boolean success = userServiceAdapter.deactivateUser(context
 					.getToken());
@@ -120,7 +120,8 @@ public class MoreMainMenuState extends AbstractState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		task.cancel(true);
+		if (task != null)
+			task.cancel(true);
 	}
 
 }

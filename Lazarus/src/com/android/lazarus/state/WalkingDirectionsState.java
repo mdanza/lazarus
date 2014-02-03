@@ -99,7 +99,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					MainMenuState mainMenuState = new MainMenuState(context);
 					context.setState(mainMenuState);
 				} else {
-					context.setState(parentState,false);
+					context.setState(parentState, false);
 					parentState.arrivedToDestination();
 					return;
 				}
@@ -428,14 +428,13 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				Road road = roadManager.getRoad(waypoints);
 				ArrayList<GeoPoint> route = road.mRouteHigh;
 				ArrayList<RoadNode> nodes = road.mNodes;
 
-
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				obstacles = obstacleReportingServiceAdapter
 						.getObstaclesForRoute(route, context.getToken());
@@ -444,8 +443,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 				if (positions != null && positions.size() > 1) {
 					message = WalkingPositionHelper.translateFirstInstruction(
-							positions.get(0).getInstruction(), positions.get(0),
-							positions.get(1), context
+							positions.get(0).getInstruction(),
+							positions.get(0), positions.get(1), context
 									.getSensorEventListenerImpl().getAzimuth());
 					if (state.equals(InternalState.RECALCULATE)) {
 						boolean firstTurnMissed = false;
@@ -462,7 +461,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 									.getFirstTurnMissedInstruction(secondStreetInstruction);
 							state = InternalState.WAITING_TO_RECALCULATE;
 							secondStreetInstruction = null;
-							if(isCancelled())
+							if (isCancelled())
 								return null;
 							context.speak(message, true);
 							return null;
@@ -472,7 +471,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						message = initialMessage
 								+ message
 								+ ",, Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
-						if(isCancelled())
+						if (isCancelled())
 							return null;
 						context.speak(message, true);
 						secondStreetInstruction = WalkingPositionHelper
@@ -482,7 +481,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				} else {
 					message = initialMessage
 							+ "No se han podido obtener resultados para dirigirse a destino";
-					if(isCancelled())
+					if (isCancelled())
 						return null;
 					context.speak(message);
 					MainMenuState mainMenuState = new MainMenuState(context);
@@ -509,11 +508,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	public void restartAllState() {
-		WalkingDirectionsState walkingDirectionsState = 
-				new WalkingDirectionsState(context, destination, parentState);
+		WalkingDirectionsState walkingDirectionsState = new WalkingDirectionsState(
+				context, destination, parentState);
 		context.setState(walkingDirectionsState);
 	}
-	
 
 	@Override
 	protected void cancel() {
@@ -523,7 +521,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	@Override
 	public void setPosition(Location position) {
 		if (position == null) {
-			fromNotEnoughAccuraccyMessage  = true;
+			fromNotEnoughAccuraccyMessage = true;
 			oldMessage = message;
 			message = notEnoughAccuracyMessage;
 			context.speak(notEnoughAccuracyMessage);
@@ -535,9 +533,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 				enoughAccuraccy = false;
 				context.speak(notEnoughAccuracyMessage);
 			} else {
-				if(fromNotEnoughAccuraccyMessage){
+				if (fromNotEnoughAccuraccyMessage) {
 					message = oldMessage;
-					context.speak(accuraccyObtainedMessage+" "+oldMessage);
+					context.speak(accuraccyObtainedMessage + " " + oldMessage);
 					fromNotEnoughAccuraccyMessage = false;
 				}
 				enoughAccuraccy = true;
@@ -563,7 +561,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				possibleDescriptions = null;
 				state = InternalState.SELECTING_OBSTACLE_DESCRIPTION;
 			}
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			context.sayMessage();
 			return null;
@@ -573,13 +571,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 	@Override
 	public void onAttach() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	protected void cancelAsyncTasks() {
-		reportObstacleTask.cancel(true);
-		getInstructionsTask.cancel(true);	
+		if (reportObstacleTask != null)
+			reportObstacleTask.cancel(true);
+		if (getInstructionsTask != null)
+			getInstructionsTask.cancel(true);
 	}
 
 }

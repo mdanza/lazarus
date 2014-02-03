@@ -154,7 +154,7 @@ public class AddToFavouriteState extends AbstractState {
 			message = "Espere mientras agregamos el favorito";
 			boolean added = false;
 			if (args != null && args.length == 3) {
-				if(isCancelled())
+				if (isCancelled())
 					return null;
 				added = favouritesReportingServiceAdapter.addToFavourite(
 						args[0], args[1], args[2]);
@@ -168,7 +168,7 @@ public class AddToFavouriteState extends AbstractState {
 				resetData();
 				state = InternalState.CHOOSING_NAME;
 			}
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			context.sayMessage();
 			return null;
@@ -180,7 +180,7 @@ public class AddToFavouriteState extends AbstractState {
 		@Override
 		protected Void doInBackground(String... args) {
 			message = "Espere por favor";
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			favourites = favouritesReportingServiceAdapter
 					.getFavourites(context.getToken());
@@ -189,7 +189,7 @@ public class AddToFavouriteState extends AbstractState {
 				favourites = null;
 			}
 			message = defaultMessage;
-			if(isCancelled())
+			if (isCancelled())
 				return null;
 			context.speak(message);
 			return null;
@@ -200,12 +200,14 @@ public class AddToFavouriteState extends AbstractState {
 	@Override
 	public void onAttach() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void cancelAsyncTasks() {
-		getFavouritesTask.cancel(true);
-		addToFavouriteTask.cancel(true);
+		if (getFavouritesTask != null)
+			getFavouritesTask.cancel(true);
+		if (addToFavouriteTask != null)
+			addToFavouriteTask.cancel(true);
 	}
 }

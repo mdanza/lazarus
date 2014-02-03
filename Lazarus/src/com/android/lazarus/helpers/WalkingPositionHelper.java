@@ -168,11 +168,11 @@ public class WalkingPositionHelper {
 						street = "";
 					}
 				} else {
-					if (i < splitted.length - 1) {
-						street = word + " ";
-					} else {
-						street = street + word;
-					}
+					//if (i < splitted.length - 1) {
+					//	street = word + " ";
+					//} else {
+						street = street + " " + word;
+					//}
 				}
 			}
 		}

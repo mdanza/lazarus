@@ -102,7 +102,8 @@ public class TaxiCallState extends AbstractState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		findTaxiOptions.cancel(true);
+		if (findTaxiOptions != null)
+			findTaxiOptions.cancel(true);
 	}
 
 }

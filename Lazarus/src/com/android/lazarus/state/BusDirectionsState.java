@@ -378,7 +378,8 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	protected void cancelAsyncTasks() {
-		this.loadBusRidesTask.cancel(true);
+		if (loadBusRidesTask != null)
+			this.loadBusRidesTask.cancel(true);
 	}
 
 }

@@ -222,67 +222,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		speechRecognizer = new AndroidSpeechRecognizer(this,
-				recognitionListener);
-		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-AR");
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-				"voice.recognition.test");
-		// recognizerIntent
-		// .putExtra(
-		// RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
-		// 100000);
-		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-
-		if (!testing)
-			setContentView(R.layout.activity_voice_interpreter);
-		else
-			setContentView(R.layout.activity_voice_interpreter_testing);
-
-		sensorEventListenerImpl = new SensorEventListenerImpl(this);
-
-		Button pushToTalkBtn = (Button) findViewById(R.id.pushToTalkButton);
-		pushToTalkBtn.setOnTouchListener(pushToTalkListener);
-		pushToTalkBtn.setSoundEffectsEnabled(false);
-
 		Intent checkTTSIntent = new Intent();
 		checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-		if (!testing)
-			locationListener = new LocationListenerImpl(this);
-		else {
-			mockLocationListener = new MockLocationListener(this);
-			locationListener = mockLocationListener;
-			setUpMap();
-		}
-		initializeFirstState();
-		scheduledThreadPoolExecutor.scheduleAtFixedRate(
-				new Runnable() {
 
-					@Override
-					public void run() {
-						String username = VoiceInterpreterActivity.this
-								.getSharedPreferences("usrpref", 0).getString(
-										"username", null);
-						String password = VoiceInterpreterActivity.this
-								.getSharedPreferences("usrpref", 0).getString(
-										"password", null);
-						String result = null;
-						if (username != null && password != null)
-							result = userServiceAdapter.login(username,
-									password);
-						if (result != null)
-							token = result;
-						else
-							VoiceInterpreterActivity.this
-									.setState(new LogInState(
-											VoiceInterpreterActivity.this,
-											initialMessage));
-
-					}
-				}, ConstantsHelper.REFRESH_TOKEN_RATE,
-				ConstantsHelper.REFRESH_TOKEN_RATE, TimeUnit.MINUTES);
 	}
 
 	private void setUpMap() {
@@ -432,26 +375,85 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			if (tts.isLanguageAvailable(loc) != TextToSpeech.LANG_NOT_SUPPORTED
 					&& tts.isLanguageAvailable(loc) != TextToSpeech.LANG_MISSING_DATA)
 				tts.setLanguage(loc);
-			if (state != null) {
-				speak(state.getMessage());
-			}
+
+			initializeApp();
+
 		} else if (initStatus == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
 					Toast.LENGTH_LONG).show();
 		}
 	}
 
+	private void initializeApp() {
+		speechRecognizer = new AndroidSpeechRecognizer(this,
+				recognitionListener);
+		recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-AR");
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+				"voice.recognition.test");
+		recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+
+		if (!testing)
+			setContentView(R.layout.activity_voice_interpreter);
+		else
+			setContentView(R.layout.activity_voice_interpreter_testing);
+
+		sensorEventListenerImpl = new SensorEventListenerImpl(this);
+
+		Button pushToTalkBtn = (Button) findViewById(R.id.pushToTalkButton);
+		pushToTalkBtn.setOnTouchListener(pushToTalkListener);
+		pushToTalkBtn.setSoundEffectsEnabled(false);
+
+		if (!testing)
+			locationListener = new LocationListenerImpl(this);
+		else {
+			mockLocationListener = new MockLocationListener(this);
+			locationListener = mockLocationListener;
+			setUpMap();
+		}
+		initializeFirstState();
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(
+				new Runnable() {
+
+					@Override
+					public void run() {
+						String username = VoiceInterpreterActivity.this
+								.getSharedPreferences("usrpref", 0).getString(
+										"username", null);
+						String password = VoiceInterpreterActivity.this
+								.getSharedPreferences("usrpref", 0).getString(
+										"password", null);
+						String result = null;
+						if (username != null && password != null)
+							result = userServiceAdapter.login(username,
+									password);
+						if (result != null)
+							token = result;
+						else
+							VoiceInterpreterActivity.this
+									.setState(new LogInState(
+											VoiceInterpreterActivity.this,
+											initialMessage));
+
+					}
+				}, ConstantsHelper.REFRESH_TOKEN_RATE,
+				ConstantsHelper.REFRESH_TOKEN_RATE, TimeUnit.MINUTES);
+
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		sensorEventListenerImpl.pause();
+		if (sensorEventListenerImpl != null)
+			sensorEventListenerImpl.pause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		sensorEventListenerImpl.resume();
-		if(state instanceof MainMenuState)
+		if (sensorEventListenerImpl != null)
+			sensorEventListenerImpl.resume();
+		if (state!=null && state instanceof MainMenuState)
 			sayMessage();
 	}
 

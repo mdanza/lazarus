@@ -3,7 +3,6 @@ package com.android.lazarus.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.osmdroid.bonuspack.routing.GoogleRoadManager;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
@@ -44,6 +43,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	String secondStreetInstruction = null;
 	private String defaultMessage = "Párese sobre la vereda, y sostenga el celular frente a usted, paralelo al suelo, cuando esté listo, diga comenzar, ";
 	private boolean defaultMessageSaid = false;
+	private boolean hasSpoken = false;
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -212,12 +212,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 					if (closestPosition != -1
 							&& olderPosition + 1 == closestPosition) {
 						currentWalkingPosition = getClosestPosition();
+						hasSpoken = false;
 					}
 					if (conditionsToRecalculate()) {
 						recalculate();
 					} else {
-						if (olderPosition != currentWalkingPosition
-								|| currentWalkingPosition == positions.size() - 1) {
+						if (hasToSpeakInstruction()) {
 							String instruction = getInstructionForCurrentWalkingPosition();
 							if (instruction != null) {
 								message = instruction;
@@ -234,6 +234,35 @@ public class WalkingDirectionsState extends LocationDependentState {
 			}
 		}
 
+	}
+
+	private boolean hasToSpeakInstruction() {
+		boolean hasToSpeak = false;
+		if (currentWalkingPosition > -1) {
+			if (currentWalkingPosition == positions.size() - 1) {
+				hasToSpeak = true;
+			}
+			if (currentWalkingPosition < positions.size() - 1
+					&& currentWalkingPosition > 0) {
+				if (!hasSpoken
+						&& position != null
+						&& positions != null
+						&& positions.get(currentWalkingPosition) != null
+						&& positions.get(currentWalkingPosition).getPoint() != null
+						&& positions.get(currentWalkingPosition)
+								.getInstruction() != null) {
+					Point point = positions.get(currentWalkingPosition)
+							.getPoint();
+					if (GPScoordinateHelper.getDistanceBetweenPoints(
+							position.getLatitude(), point.getLatitude(),
+							position.getLongitude(), point.getLongitude()) < 50) {
+						hasToSpeak = true;
+						hasSpoken = true;
+					}
+				}
+			}
+		}
+		return hasToSpeak;
 	}
 
 	private String getInstructionForCurrentWalkingPosition() {
@@ -418,23 +447,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (position != null && destination != null) {
 				ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 
-				/*RoadManager roadManager = new MapQuestRoadManager(
+				RoadManager roadManager = new MapQuestRoadManager(
 						ConstantsHelper.MAP_QUEST_API_KEY);
 				roadManager.addRequestOption("routeType=pedestrian");
 				roadManager.addRequestOption("locale=es_ES");
-				*/
-				
-				//GOOGLE
-				RoadManager roadManager = new GoogleRoadManager();
-				roadManager.addRequestOption("mode=walking");
-				roadManager.addRequestOption("units=mertics");
-				roadManager.addRequestOption("language=es_ES");
-				
 				GeoPoint start = new GeoPoint(position.getLatitude(),
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
 						destination.getLongitude());
-				// end = new GeoPoint(-34.774473,-55.756437);
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
@@ -443,15 +463,24 @@ public class WalkingDirectionsState extends LocationDependentState {
 				Road road = roadManager.getRoad(waypoints);
 				ArrayList<GeoPoint> route = road.mRouteHigh;
 				ArrayList<RoadNode> nodes = road.mNodes;
+				positions = WalkingPositionHelper.createWalkingPositions(route,
+						nodes,WalkingPositionHelper.MAP_QUEST);
+				
+				if (!WalkingPositionHelper.isValidPositions(positions)) {
+					roadManager = new OSRMRoadManager();
+					road = roadManager.getRoad(waypoints);
+					route = road.mRouteHigh;
+					nodes = road.mNodes;
+					positions = WalkingPositionHelper.createWalkingPositions(
+							route, nodes,WalkingPositionHelper.OSRM);
+				}
 
 				if (isCancelled())
 					return null;
 				obstacles = obstacleReportingServiceAdapter
 						.getObstaclesForRoute(route, context.getToken());
-				positions = WalkingPositionHelper.createWalkingPositions(route,
-						nodes);
 
-				if (positions != null && positions.size() > 1) {
+				if (WalkingPositionHelper.isValidPositions(positions)) {
 					message = WalkingPositionHelper.translateFirstInstruction(
 							positions.get(0).getInstruction(),
 							positions.get(0), positions.get(1), context

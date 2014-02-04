@@ -14,17 +14,36 @@ import com.android.lazarus.model.WalkingPosition;
 
 public class WalkingPositionHelper {
 
-	private static final String[] MAPQUEST_ORIENTATIONS = { "sur", "suroeste",
-			"oeste", "noroeste", "norte", "noreste", "este", "sureste", "sur" };
-	private static final String[] SENSOR_ORIENTATIONS = { "S", "SW", "W", "NW",
-			"N", "NE", "E", "SE", "S" };
 	private static final String TURN_OPOSSITE_INTRUCTION = "Avanza en la dirección opuesta a la que apunta el celular por ";
 	private static final String CONTINUE_INSTRUCCION = "Avanza en la dirección a la que apunta el celular por ";
 	private static final String TURN_LEFT_INSTRUCTION = "Avanza hacia la izquierda por ";
 	private static final String TURN_RIGHT_INSTRUCTION = "Avanza hacia la derecha por ";
+	public static final int MAP_QUEST = 0;
+	public static final int OSRM = 1;
+	private static final String[] OSRM_INSTRUCTIONS = { "Unknown instruction",
+			"Continue", "Turn slight right", "Turn right", "Turn sharp right",
+			"U-Turn", "Turn sharp left", "Turn left", "Turn slight left",
+			"You have reached a waypoint of your trip",
+			"Enter roundabout and leave at first exit",
+			"Enter roundabout and leave at second exit",
+			"Enter roundabout and leave at third exit",
+			"Enter roundabout and leave at fourth exit",
+			"Enter roundabout and leave at fifth exit",
+			"Enter roundabout and leave at sixth exit",
+			"Enter roundabout and leave at seventh exit",
+			"Enter roundabout and leave at eighth exit",
+			"Enter roundabout and leave at nineth exit",
+			"You have reached your destination" };
+	private static final String[] TRANSLATED_INSTRUCTIONS = { "Avanza",
+			"Continúa avanzando por", "Gira ligeramente a la derecha en",
+			"Gira a la derecha en", "Gire totalmente a la derecha en",
+			"Haz un giro en U en", "Gira totalmente a la izquierda en",
+			"Gira a la izquierda en", "Gira ligeramente a la izquierda en",
+			"Continúa avanzando", "Gira en", "Gira en", "Gira en", "Gira en",
+			"Gira en", "Gira en", "Gira en", "Gira en", "Gira en", "Destino" };
 
 	public static List<WalkingPosition> createWalkingPositions(
-			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes) {
+			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes, int provider) {
 		List<WalkingPosition> walkingPositions = new ArrayList<WalkingPosition>();
 		if (route != null) {
 			for (int i = 0; i < route.size(); i++) {
@@ -38,9 +57,58 @@ public class WalkingPositionHelper {
 				}
 				walkingPositions.add(walkingPosition);
 			}
+			if (provider == OSRM)
+				walkingPositions = translateWalklingPositions(walkingPositions);
 		}
 		return walkingPositions;
 
+	}
+
+	private static List<WalkingPosition> translateWalklingPositions(
+			List<WalkingPosition> walkingPositions) {
+		ArrayList<WalkingPosition> newWalkingPositions = null;
+		if (walkingPositions != null) {
+			newWalkingPositions = new ArrayList<WalkingPosition>();
+			for (int i = 0; i < walkingPositions.size(); i++) {
+				if (walkingPositions.get(i) != null) {
+					WalkingPosition walkingPosition = walkingPositions.get(i);
+					if (walkingPosition.getInstruction() != null) {
+						walkingPosition = translateInstruction(walkingPosition);
+					}
+					newWalkingPositions.add(walkingPosition);
+				}
+			}
+		}
+		return newWalkingPositions;
+	}
+
+	private static WalkingPosition translateInstruction(
+			WalkingPosition walkingPosition) {
+		WalkingPosition newWalkingPosition = null;
+		if (walkingPosition != null) {
+			newWalkingPosition = new WalkingPosition();
+			newWalkingPosition.setPoint(walkingPosition.getPoint());
+			newWalkingPosition
+					.setInstruction(translateInstruction(walkingPosition
+							.getInstruction()));
+		}
+		return walkingPosition;
+	}
+
+	private static String translateInstruction(String instruction) {
+		String newInstruction = null;
+		if (instruction != null) {
+			newInstruction = instruction;
+			for (int i = 0; i < OSRM_INSTRUCTIONS.length; i++) {
+				String oSRMInstruction = OSRM_INSTRUCTIONS[i];
+				if (newInstruction.contains(oSRMInstruction)) {
+					newInstruction = newInstruction.replace(" on ", " ");
+					newInstruction = newInstruction.replace(oSRMInstruction,
+							TRANSLATED_INSTRUCTIONS[i]);
+				}
+			}
+		}
+		return newInstruction;
 	}
 
 	private static String getInstructionForPoint(ArrayList<RoadNode> nodes,
@@ -77,8 +145,7 @@ public class WalkingPositionHelper {
 			WalkingPosition firstWalkingPosition,
 			WalkingPosition secondWalkingPosition, float azimuth) {
 
-		if (azimuth != -1000 
-				&& firstWalkingPosition != null
+		if (azimuth != -1000 && firstWalkingPosition != null
 				&& firstWalkingPosition.getPoint() != null
 				&& secondWalkingPosition != null
 				&& secondWalkingPosition.getPoint() != null) {
@@ -132,28 +199,6 @@ public class WalkingPositionHelper {
 		return location;
 	}
 
-	private static String getInstruction(String cardinalDestination,
-			String cardinalDevice) {
-		String[] cardinals = rotateToCenter(cardinalDevice);
-		for (int i = 0; i < cardinals.length; i++) {
-			if (cardinals[i].equals(cardinalDestination)) {
-				if (i == 0 || i == 8) {
-					return TURN_OPOSSITE_INTRUCTION;
-				}
-				if (i == 4) {
-					return CONTINUE_INSTRUCCION;
-				}
-				if (0 < i && i < 4) {
-					return TURN_LEFT_INSTRUCTION;
-				}
-				if (8 > i && i > 4) {
-					return TURN_RIGHT_INSTRUCTION;
-				}
-			}
-		}
-		return null;
-	}
-
 	private static String getStreetFromMapQuestFirstInstruction(
 			String firstMapQuestInstruction) {
 		String street = "la calle en que te encuentras";
@@ -168,62 +213,15 @@ public class WalkingPositionHelper {
 						street = "";
 					}
 				} else {
-					//if (i < splitted.length - 1) {
-					//	street = word + " ";
-					//} else {
-						street = street + " " + word;
-					//}
+					// if (i < splitted.length - 1) {
+					// street = word + " ";
+					// } else {
+					street = street + " " + word;
+					// }
 				}
 			}
 		}
 		return street;
-	}
-
-	private static String[] rotateToCenter(String cardinalDevice) {
-		String[] rotated = new String[9];
-		for (int i = 0; i < SENSOR_ORIENTATIONS.length; i++) {
-			rotated[i] = SENSOR_ORIENTATIONS[i];
-		}
-		int maximumRotations = 30;
-		int i = 0;
-		while (i < maximumRotations && !rotated[4].equals(cardinalDevice)) {
-			rotated = rotateRight(rotated);
-		}
-		return rotated;
-	}
-
-	private static String[] rotateRight(String[] toRotate) {
-		String[] rotated = new String[toRotate.length];
-		for (int i = 0; i < toRotate.length; i++) {
-			if (i != toRotate.length - 1 && i != 0) {
-				rotated[i] = toRotate[i - 1];
-			}
-			if (i == toRotate.length - 1) {
-				rotated[i] = toRotate[i - 1];
-				rotated[0] = rotated[i];
-			}
-		}
-		return rotated;
-	}
-
-	private static String translateCardinalDestination(String cardinalTarget) {
-		for (int i = 0; i < MAPQUEST_ORIENTATIONS.length; i++) {
-			String cardinal = MAPQUEST_ORIENTATIONS[i];
-			if (cardinal.equals(cardinalTarget)) {
-				return SENSOR_ORIENTATIONS[i];
-			}
-		}
-		return null;
-	}
-
-	private static boolean stringPresent(String[] results, String search) {
-		boolean stringPresent = false;
-		for (String result : results) {
-			if (search.equals(result)) {
-				stringPresent = true;
-			}
-		}
-		return stringPresent;
 	}
 
 	public static String generateInstructionForNotFinalWalkingPosition(
@@ -418,20 +416,39 @@ public class WalkingPositionHelper {
 		if (secondStreetInstruction != null) {
 			String[] partsOfSecondStreet = secondStreetInstruction.split("\\ ");
 			if (partsOfSecondStreet != null) {
-				if (partsOfSecondStreet.length > 2) {
-					String possibleIn = partsOfSecondStreet[partsOfSecondStreet.length - 2];
-					if (!hasString(possibleIn, "en")
-							|| !hasString(possibleIn, "por")) {
-						street = partsOfSecondStreet[partsOfSecondStreet.length - 1];
+				for (int i = 0; i < partsOfSecondStreet.length; i++) {
+					boolean afterIn = false;
+					String possibleIn = partsOfSecondStreet[i];
+					if (!afterIn
+							&& (hasString(possibleIn, "en") || hasString(
+									possibleIn, "por"))) {
+						afterIn = true;
+						street = "";
 					} else {
-						street = partsOfSecondStreet[partsOfSecondStreet.length - 2]
-								+ " "
-								+ partsOfSecondStreet[partsOfSecondStreet.length - 1];
+						street = street + " " + partsOfSecondStreet[i];
 					}
 				}
 			}
 		}
 		return street;
+	}
+
+	public static boolean isValidPositions(List<WalkingPosition> positions) {
+		boolean validPositions = false;
+		if (positions != null && positions.size() > 1) {
+			validPositions = true;
+			if (positions.size() == 2) {
+				if (positions.get(0) != null && positions.get(1) != null) {
+					if (positions.get(0).getInstruction() == null
+							&& positions.get(1).getInstruction() == null) {
+						validPositions = false;
+					}
+				} else {
+					validPositions = false;
+				}
+			}
+		}
+		return validPositions;
 	}
 
 }

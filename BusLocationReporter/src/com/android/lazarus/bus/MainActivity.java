@@ -47,7 +47,8 @@ import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends Activity implements LocationListener {
 	// in meters
-	private static final double MINIMUM_ACCEPTABLE_PRECISION = 100;
+	private static final double MINIMUM_ACCEPTABLE_PRECISION = 200;
+	private static final int SEND_LOCATION_DATA_RATE = 10;
 	public static final String REST_API_URL = "https://ec2-54-84-7-43.compute-1.amazonaws.com:8443/services-1.0-SNAPSHOT/v1/api";
 	// public static final String REST_API_URL =
 	// "https://10.0.2.2:8443/services-1.0-SNAPSHOT/v1/api";
@@ -182,8 +183,8 @@ public class MainActivity extends Activity implements LocationListener {
 			loginTaskExecutor = scheduledExecutorService.scheduleAtFixedRate(
 					new LoginTask(), 0, 30 * 60, TimeUnit.SECONDS);
 			locationSenderTaskExecutor = scheduledExecutorService
-					.scheduleAtFixedRate(new LocationSenderTask(), 10, 60,
-							TimeUnit.SECONDS);
+					.scheduleAtFixedRate(new LocationSenderTask(), 10,
+							SEND_LOCATION_DATA_RATE, TimeUnit.SECONDS);
 		}
 	}
 
@@ -256,7 +257,7 @@ public class MainActivity extends Activity implements LocationListener {
 			for (BusStop stop : stops) {
 				if (GPScoordinateHelper.getDistanceBetweenPoints(
 						lastReportedlatitude, stop.getLatitude(),
-						lastReportedlongitude, stop.getLongitude()) <= 2 * MINIMUM_ACCEPTABLE_PRECISION) {
+						lastReportedlongitude, stop.getLongitude()) <= MINIMUM_ACCEPTABLE_PRECISION / 2) {
 					lastPassedStopOrdinal = stop.getOrdinal();
 					break;
 				}

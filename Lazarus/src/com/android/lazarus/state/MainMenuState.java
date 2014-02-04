@@ -175,10 +175,10 @@ public class MainMenuState extends AbstractState {
 	}
 
 	private class PossibleDestinationTask extends
-			AsyncTask<String, Void, String> {
+			AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... args) {
 			message = "Espere mientras cargamos sus resultados";
 			if (isCancelled())
 				return null;
@@ -197,7 +197,7 @@ public class MainMenuState extends AbstractState {
 				if (isCancelled())
 					return null;
 				context.speak(message);
-				return favourite.getName();
+				return null;
 			}
 			if (streets != null && !streets.isEmpty()) {
 				state = InternalState.TO_CHOOSE_STREET;
@@ -220,11 +220,11 @@ public class MainMenuState extends AbstractState {
 
 	}
 
-	private class LoadFavouritesTask extends AsyncTask<String, Void, String> {
+	private class LoadFavouritesTask extends AsyncTask<String, Void, Void> {
 
 		@Override
-		protected String doInBackground(String... args) {
-			String message = "Espere mientras cargamos sus datos";
+		protected Void doInBackground(String... args) {
+			message = "Espere mientras cargamos sus datos";
 			String initialMessage = "";
 			if (isCancelled())
 				return null;
@@ -245,7 +245,7 @@ public class MainMenuState extends AbstractState {
 			if (isCancelled())
 				return null;
 			context.speak(message);
-			return message;
+			return null;
 		}
 
 	}

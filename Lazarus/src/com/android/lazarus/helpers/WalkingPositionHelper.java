@@ -92,7 +92,7 @@ public class WalkingPositionHelper {
 					.setInstruction(translateInstruction(walkingPosition
 							.getInstruction()));
 		}
-		return walkingPosition;
+		return newWalkingPosition;
 	}
 
 	private static String translateInstruction(String instruction) {
@@ -105,6 +105,7 @@ public class WalkingPositionHelper {
 					newInstruction = newInstruction.replace(" on ", " ");
 					newInstruction = newInstruction.replace(oSRMInstruction,
 							TRANSLATED_INSTRUCTIONS[i]);
+					return newInstruction;
 				}
 			}
 		}
@@ -281,7 +282,7 @@ public class WalkingPositionHelper {
 
 	public static double distanceToWalkingPosition(Location position,
 			WalkingPosition walkingPosition) {
-		if (walkingPosition != null) {
+		if (walkingPosition != null && position!=null) {
 			return GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
 					.getPoint().getLatitude(), position.getLatitude(),
 					walkingPosition.getPoint().getLongitude(), walkingPosition

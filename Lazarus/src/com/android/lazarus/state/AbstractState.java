@@ -70,6 +70,7 @@ public abstract class AbstractState implements State {
 			}
 			if (stringPresent(results, "cancelar")) {
 				this.onCancel();
+				return;
 			}
 			if (stringPresent(results, "menu")) {
 				this.cancelAsyncTasks();

@@ -238,26 +238,43 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	private boolean hasToSpeakInstruction() {
 		boolean hasToSpeak = false;
-		if (currentWalkingPosition > -1) {
-			if (currentWalkingPosition == positions.size() - 1) {
-				hasToSpeak = true;
-			}
-			if (currentWalkingPosition < positions.size() - 1
-					&& currentWalkingPosition > 0) {
-				if (!hasSpoken
+		if (positions != null) {
+			if (currentWalkingPosition > 0) {
+				if (currentWalkingPosition == positions.size() - 1
 						&& position != null
-						&& positions != null
-						&& positions.get(currentWalkingPosition) != null
-						&& positions.get(currentWalkingPosition).getPoint() != null
-						&& positions.get(currentWalkingPosition)
-								.getInstruction() != null) {
-					Point point = positions.get(currentWalkingPosition)
-							.getPoint();
-					if (GPScoordinateHelper.getDistanceBetweenPoints(
-							position.getLatitude(), point.getLatitude(),
-							position.getLongitude(), point.getLongitude()) < 50) {
+						&& positions.get(currentWalkingPosition) != null) {
+					WalkingPosition nowWalkingPosition = positions
+							.get(currentWalkingPosition);
+					if (!hasSpoken && nowWalkingPosition != null
+							&& nowWalkingPosition.getPoint() != null
+							&& GPScoordinateHelper.getDistanceBetweenPoints(
+									position.getLatitude(), nowWalkingPosition
+											.getPoint().getLatitude(), position
+											.getLongitude(), nowWalkingPosition
+											.getPoint().getLongitude()) < 50) {
 						hasToSpeak = true;
 						hasSpoken = true;
+					}else{
+						if(hasSpoken)
+							hasToSpeak = true;
+					}
+				}
+				if (currentWalkingPosition < positions.size() - 1) {
+					if (!hasSpoken
+							&& position != null
+							&& positions != null
+							&& positions.get(currentWalkingPosition) != null
+							&& positions.get(currentWalkingPosition).getPoint() != null
+							&& positions.get(currentWalkingPosition)
+									.getInstruction() != null) {
+						Point point = positions.get(currentWalkingPosition)
+								.getPoint();
+						if (GPScoordinateHelper.getDistanceBetweenPoints(
+								position.getLatitude(), point.getLatitude(),
+								position.getLongitude(), point.getLongitude()) < 50) {
+							hasToSpeak = true;
+							hasSpoken = true;
+						}
 					}
 				}
 			}
@@ -464,15 +481,22 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<GeoPoint> route = road.mRouteHigh;
 				ArrayList<RoadNode> nodes = road.mNodes;
 				positions = WalkingPositionHelper.createWalkingPositions(route,
-						nodes,WalkingPositionHelper.MAP_QUEST);
-				
+						nodes, WalkingPositionHelper.MAP_QUEST);
+				positions = null;
+
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
+					if (isCancelled())
+						return null;
+					context.sayMessage();
+					if (isCancelled())
+						return null;
 					road = roadManager.getRoad(waypoints);
 					route = road.mRouteHigh;
 					nodes = road.mNodes;
+					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
 					positions = WalkingPositionHelper.createWalkingPositions(
-							route, nodes,WalkingPositionHelper.OSRM);
+							route, nodes, WalkingPositionHelper.OSRM);
 				}
 
 				if (isCancelled())
@@ -519,11 +543,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 					}
 				} else {
 					message = initialMessage
-							+ "No se han podido obtener resultados para dirigirse a destino";
+							+ "No se han podido obtener resultados para dirigirse a destino, ";
 					if (isCancelled())
 						return null;
-					context.speak(message);
-					MainMenuState mainMenuState = new MainMenuState(context);
+					MainMenuState mainMenuState = new MainMenuState(context,message);
 					context.setState(mainMenuState);
 					return null;
 				}

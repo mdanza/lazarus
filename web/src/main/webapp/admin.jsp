@@ -32,8 +32,8 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="city-reports.jsp">Mapa</a></li>
         <li><a href="user.jsp">Usuario</a></li>
-        <li class="active"><a href="thanks.jsp">Agradecimientos</a></li>
-        <li><a href="admin.jsp">Admimistración</a></li>
+        <li><a href="thanks.jsp">Agradecimientos</a></li>
+        <li class="active"><a href="admin.jsp">Admimistración</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

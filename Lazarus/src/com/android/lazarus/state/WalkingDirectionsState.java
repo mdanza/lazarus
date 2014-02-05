@@ -23,7 +23,6 @@ import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapter;
 import com.android.lazarus.serviceadapter.ObstacleReportingServiceAdapterImpl;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 
 public class WalkingDirectionsState extends LocationDependentState {
@@ -44,6 +43,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private String defaultMessage = "Párese sobre la vereda, y sostenga el celular frente a usted, paralelo al suelo, cuando esté listo, diga comenzar, ";
 	private boolean defaultMessageSaid = false;
 	private boolean hasSpoken = false;
+	private boolean secondStreetInstructionGiven = false;
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -58,7 +58,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 			Point destination) {
 		super(context, NEEDED_ACCURACY);
 		this.destination = destination;
-		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 
@@ -67,7 +66,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.parentState = parentState;
 		this.destination = destination;
-		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 
@@ -76,7 +74,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		super(context, NEEDED_ACCURACY);
 		this.initialMessage = initialMessage;
 		this.destination = destination;
-		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
 		giveInstructions();
 	}
 
@@ -221,6 +218,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 							String instruction = getInstructionForCurrentWalkingPosition();
 							if (instruction != null) {
 								message = instruction;
+								if (currentWalkingPosition > 0) {
+									secondStreetInstructionGiven = true;
+								}
 								if (currentWalkingPosition == positions.size() - 1) {
 									context.speak(instruction);
 								} else {
@@ -245,7 +245,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 						&& positions.get(currentWalkingPosition) != null) {
 					WalkingPosition nowWalkingPosition = positions
 							.get(currentWalkingPosition);
-					if (!hasSpoken && nowWalkingPosition != null
+					if (!hasSpoken
+							&& nowWalkingPosition != null
 							&& nowWalkingPosition.getPoint() != null
 							&& GPScoordinateHelper.getDistanceBetweenPoints(
 									position.getLatitude(), nowWalkingPosition
@@ -254,8 +255,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 											.getPoint().getLongitude()) < 50) {
 						hasToSpeak = true;
 						hasSpoken = true;
-					}else{
-						if(hasSpoken)
+					} else {
+						if (hasSpoken)
 							hasToSpeak = true;
 					}
 				}
@@ -422,17 +423,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	}
 
-	private com.vividsolutions.jts.geom.Point createJTSPoint(Point currentPoint) {
-		if (currentPoint != null) {
-			GeometryFactory geometryFactory = new GeometryFactory();
-			Coordinate coordinate = new Coordinate(currentPoint.getLongitude(),
-					currentPoint.getLatitude());
-			return geometryFactory.createPoint(coordinate);
-		} else {
-			return null;
-		}
-	}
-
 	private int getClosestPosition() {
 		int closestPosition = -1;
 		if (positions != null) {
@@ -464,10 +454,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (position != null && destination != null) {
 				ObstacleReportingServiceAdapter obstacleReportingServiceAdapter = new ObstacleReportingServiceAdapterImpl();
 
-				RoadManager roadManager = new MapQuestRoadManager(
-						ConstantsHelper.MAP_QUEST_API_KEY);
-				roadManager.addRequestOption("routeType=pedestrian");
-				roadManager.addRequestOption("locale=es_ES");
 				GeoPoint start = new GeoPoint(position.getLatitude(),
 						position.getLongitude());
 				GeoPoint end = new GeoPoint(destination.getLatitude(),
@@ -475,6 +461,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
 				waypoints.add(start);
 				waypoints.add(end);
+
+				context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
+				RoadManager roadManager = new MapQuestRoadManager(
+						ConstantsHelper.MAP_QUEST_API_KEY);
+				roadManager.addRequestOption("routeType=pedestrian");
+				roadManager.addRequestOption("locale=es_ES");
 				if (isCancelled())
 					return null;
 				Road road = roadManager.getRoad(waypoints);
@@ -482,13 +474,39 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<RoadNode> nodes = road.mNodes;
 				positions = WalkingPositionHelper.createWalkingPositions(route,
 						nodes, WalkingPositionHelper.MAP_QUEST);
-				positions = null;
+				//positions = null;
 
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
+					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
+					if (isCancelled())
+						return null;
+					road = roadManager.getRoad(waypoints);
+					route = road.mRouteHigh;
+					nodes = road.mNodes;
+					positions = WalkingPositionHelper.createWalkingPositions(
+							route, nodes, WalkingPositionHelper.OSRM);
+				}
+
+				if (!WalkingPositionHelper.isValidPositions(positions)) {
+					roadManager = new MapQuestRoadManager(
+							ConstantsHelper.MAP_QUEST_API_KEY);
+					roadManager.addRequestOption("routeType=pedestrian");
+					roadManager.addRequestOption("locale=es_ES");
 					if (isCancelled())
 						return null;
 					context.sayMessage();
+					if (isCancelled())
+						return null;
+					road = roadManager.getRoad(waypoints);
+					route = road.mRouteHigh;
+					nodes = road.mNodes;
+					positions = WalkingPositionHelper.createWalkingPositions(
+							route, nodes, WalkingPositionHelper.MAP_QUEST);
+				}
+
+				if (!WalkingPositionHelper.isValidPositions(positions)) {
+					roadManager = new OSRMRoadManager();
 					if (isCancelled())
 						return null;
 					road = roadManager.getRoad(waypoints);
@@ -514,7 +532,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 						if (secondStreetInstruction != null) {
 							firstTurnMissed = WalkingPositionHelper
 									.checkForFirstTurnMissed(
-											secondStreetInstruction, positions);
+											secondStreetInstruction, positions)
+									&& secondStreetInstructionGiven;
 						}
 						if (!firstTurnMissed) {
 							restartAllState();
@@ -542,13 +561,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 						return null;
 					}
 				} else {
-					message = initialMessage
-							+ "No se han podido obtener resultados para dirigirse a destino, ";
-					if (isCancelled())
+					if (state.equals(InternalState.RECALCULATE)) {
+						restartAllState();
 						return null;
-					MainMenuState mainMenuState = new MainMenuState(context,message);
-					context.setState(mainMenuState);
-					return null;
+					} else {
+						message = initialMessage
+								+ "No se han podido obtener resultados para dirigirse a destino, ";
+						if (isCancelled())
+							return null;
+						MainMenuState mainMenuState = new MainMenuState(
+								context, message);
+						context.setState(mainMenuState);
+						return null;
+					}
 				}
 			}
 			return null;

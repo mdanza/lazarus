@@ -28,6 +28,7 @@ public class StreetSetState extends AbstractState {
 	SetDestinationTask setDestinationTask = new SetDestinationTask();
 	private boolean hasFavourites = false;
 	private boolean fromAsync;
+	private boolean allowedMultiple = false;
 
 	public StreetSetState(VoiceInterpreterActivity context, String street,
 			boolean hasFavourites) {
@@ -119,13 +120,13 @@ public class StreetSetState extends AbstractState {
 			}
 			this.message = message + defaultMessage;
 			resetData();
-			if(fromAsync){
+			if (fromAsync) {
 				context.sayMessage();
 				fromAsync = false;
 			}
 			return;
 		}
-		if(fromAsync){
+		if (fromAsync) {
 			fromAsync = false;
 		}
 		if (isAddressNumber(firstResults.get(position))) {
@@ -153,7 +154,13 @@ public class StreetSetState extends AbstractState {
 				}
 			}
 		} else {
-			message = "Espere mientras cargamos sus datos";
+			if (allowedMultiple) {
+				allowedMultiple = false;
+				GetStreetNameTask getStreetNameTask = new GetStreetNameTask();
+				getStreetNameTask.execute();
+			} else {
+				message = "Espere mientras cargamos sus datos";
+			}
 		}
 	}
 
@@ -208,6 +215,7 @@ public class StreetSetState extends AbstractState {
 				fromAsync = true;
 				if (isCancelled())
 					return null;
+				allowedMultiple = true;
 				goToNextPosition();
 			}
 			return null;
@@ -242,7 +250,8 @@ public class StreetSetState extends AbstractState {
 			}
 			if (destination == null) {
 				resetData();
-				message = "No se ha encontrado la esquina o el número de puerta que desea, " + defaultMessage;
+				message = "No se ha encontrado la esquina o el número de puerta que desea, "
+						+ defaultMessage;
 				if (isCancelled())
 					return null;
 				context.speak(message);

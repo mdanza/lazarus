@@ -556,14 +556,26 @@ public class WalkingDirectionsState extends LocationDependentState {
 						}
 					}
 					if (!state.equals(InternalState.RECALCULATE)) {
-						message = initialMessage
-								+ message
-								+ ",, Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
+						if (WalkingPositionHelper.distanceToWalkingPosition(position,
+								positions.get(positions.size() - 1)) < 15) {
+							currentWalkingPosition = positions.size();
+							distanceToFinalPosition = WalkingPositionHelper.distanceToWalkingPosition(position,
+									positions.get(positions.size() - 1));
+							message = "Usted se encuentra aproximadamente a "
+									+ Math.ceil(distanceToFinalPosition)
+									+ " metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga destino";
+						} else {
+							message = initialMessage
+									+ message
+									+ ",, Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
+							if (isCancelled())
+								return null;
+							secondStreetInstruction = WalkingPositionHelper
+									.getSecondStreetIntruction(positions);
+						}
 						if (isCancelled())
 							return null;
 						context.speak(message, true);
-						secondStreetInstruction = WalkingPositionHelper
-								.getSecondStreetIntruction(positions);
 						return null;
 					}
 				} else {

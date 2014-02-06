@@ -179,9 +179,11 @@ public class BusRideState extends LocationDependentState {
 				} else {
 					message += ",, En esta parada también le sirve tomarse un ";
 				}
-				for (BusRide otherRide : otherRides)
+				for (BusRide otherRide : otherRides){
 					message += otherRide.getLineName() + " "
 							+ otherRide.getDestination() + ", ";
+				}
+				message += "diga arriba,, cuando aborde el coche";
 			}
 			context.speak(message);
 		}

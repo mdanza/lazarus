@@ -32,7 +32,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private int currentWalkingPosition = 0;
 	private String initialMessage = "";
 	private double distanceToFinalPosition = -1;
-	private static final int NEEDED_ACCURACY = 50;
+	private static final int NEEDED_ACCURACY = 70;
 	private BusRideState parentState;
 	private InternalState state = InternalState.WAITING_TO_START;
 	private Obstacle obstacleToReport = null;
@@ -203,37 +203,38 @@ public class WalkingDirectionsState extends LocationDependentState {
 				}
 			} else {
 				if (position != null) {
-					checkForObstacles();
-					int olderPosition = currentWalkingPosition;
-					int closestPosition = getClosestPosition();
-					if (closestPosition != -1
-							&& olderPosition + 1 == closestPosition) {
-						currentWalkingPosition = getClosestPosition();
-						hasSpoken = false;
-					}
-					if (conditionsToRecalculate()) {
-						recalculate();
-					} else {
-						if (hasToSpeakInstruction()) {
-							String instruction = getInstructionForCurrentWalkingPosition();
-							if (instruction != null) {
-								message = instruction;
-								if (currentWalkingPosition > 0) {
-									secondStreetInstructionGiven = true;
-								}
-								if (currentWalkingPosition == positions.size() - 1) {
-									context.speak(instruction);
-								} else {
-									context.speak(instruction, true);
+					if (!state.equals(InternalState.RECALCULATE)) {
+						checkForObstacles();
+						int olderPosition = currentWalkingPosition;
+						int closestPosition = getClosestPosition();
+						if (closestPosition != -1
+								&& olderPosition + 1 == closestPosition) {
+							currentWalkingPosition = getClosestPosition();
+							hasSpoken = false;
+						}
+						if (conditionsToRecalculate()) {
+							recalculate();
+						} else {
+							if (hasToSpeakInstruction()) {
+								String instruction = getInstructionForCurrentWalkingPosition();
+								if (instruction != null) {
+									message = instruction;
+									if (currentWalkingPosition > 0) {
+										secondStreetInstructionGiven = true;
+									}
+									if (currentWalkingPosition == positions
+											.size() - 1) {
+										context.speak(instruction);
+									} else {
+										context.speak(instruction, true);
+									}
 								}
 							}
 						}
 					}
 				}
-
 			}
 		}
-
 	}
 
 	private boolean hasToSpeakInstruction() {
@@ -474,7 +475,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<RoadNode> nodes = road.mNodes;
 				positions = WalkingPositionHelper.createWalkingPositions(route,
 						nodes, WalkingPositionHelper.MAP_QUEST);
-				//positions = null;
 
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
@@ -488,6 +488,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 							route, nodes, WalkingPositionHelper.OSRM);
 				}
 
+				
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new MapQuestRoadManager(
 							ConstantsHelper.MAP_QUEST_API_KEY);

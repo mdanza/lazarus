@@ -115,7 +115,8 @@ public class BusDirectionsState extends LocationDependentState {
 		}
 		if (state.equals(InternalState.NO_OPTIONS_FOUND)) {
 			message = "No se encontraron buses hacia ese destino, ni siquiera con conexión";
-			context.speak(message);
+			MainMenuState mainMenuState = new MainMenuState(context, message);
+			context.setState(mainMenuState);
 		}
 	}
 
@@ -207,31 +208,9 @@ public class BusDirectionsState extends LocationDependentState {
 
 	@Override
 	public void setPosition(Location position) {
-		if (position == null) {
-			fromNotEnoughAccuraccyMessage = true;
-			oldMessage = message;
-			message = notEnoughAccuracyMessage;
-			context.speak(notEnoughAccuracyMessage);
-		} else {
-			if (!(position.getAccuracy() < minimumAccuraccy)) {
-				oldMessage = message;
-				message = notEnoughAccuracyMessage;
-				fromNotEnoughAccuraccyMessage = true;
-				enoughAccuraccy = false;
-				context.speak(notEnoughAccuracyMessage);
-			} else {
-				if (fromNotEnoughAccuraccyMessage) {
-					message = oldMessage;
-					context.speak(accuraccyObtainedMessage + " " + oldMessage);
-					fromNotEnoughAccuraccyMessage = false;
-				}
-				enoughAccuraccy = true;
-				this.position = position;
-				if (!instructionsGivenOnConstructor) {
-					giveInstructions();
-					instructionsGivenOnConstructor = true;
-				}
-			}
+		if (!instructionsGivenOnConstructor) {
+			giveInstructions();
+			instructionsGivenOnConstructor = true;
 		}
 	}
 

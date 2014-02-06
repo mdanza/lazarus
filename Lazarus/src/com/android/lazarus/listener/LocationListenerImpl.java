@@ -28,6 +28,8 @@ public class LocationListenerImpl implements LocationListener {
 		this.voiceInterpreterActivity = voiceInterpreterActivity;
 		locationManager = (LocationManager) voiceInterpreterActivity
 				.getSystemService(Activity.LOCATION_SERVICE);
+		requestUpdatesFromAllProviders();
+		/*
 		Criteria criteria = new Criteria();
 		String bestProvider = locationManager.getBestProvider(criteria, true);
 		if (bestProvider != null) {
@@ -43,13 +45,22 @@ public class LocationListenerImpl implements LocationListener {
 		}else{
 			requestUpdates(LocationManager.GPS_PROVIDER);
 		}
+		*/
 
 	}
 
+	private void requestUpdatesFromAllProviders() {
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+		locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 1, this);
+	}
+
+	/*
 	private void requestUpdates(String updatesForProvider) {
 			locationManager.requestLocationUpdates(updatesForProvider, 1000, 1,
 					this);
 	}
+	*/
 
 	@Override
 	public void onLocationChanged(final Location location) {
@@ -62,36 +73,33 @@ public class LocationListenerImpl implements LocationListener {
 			}
 		}
 		if (location != null && location.getProvider() != null
-				&& location.getProvider().equals(provider)) {
+				&& (location.getProvider().equals(provider) || provider == null)) {
 			if (voiceInterpreterActivity.getState() instanceof LocationDependentState) {
 				((LocationDependentState) voiceInterpreterActivity.getState())
-						.setPosition(location);
+						.positionChanged(location);
 			}
-			Context context = voiceInterpreterActivity.getApplicationContext();
-			CharSequence text = "Accuracy = "+location.getAccuracy();
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(context, text, duration);
-			toast.show();
 			this.location = location;
 		}
+		Context context = voiceInterpreterActivity.getApplicationContext();
+		CharSequence text = "Accuracy = "+location.getAccuracy()+" Provided by: "+location.getProvider()+" actual provider: " +provider;
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		if (provider.equals(this.provider)) {
-			Criteria criteria = new Criteria();
-			String bestProvider = locationManager.getBestProvider(criteria,
-					true);
-			if (bestProvider != null) {
-				provider = bestProvider;
-				requestUpdates(bestProvider);
-			}
+			provider = null;
 		}
+		requestUpdatesFromAllProviders();
 	}
 
 	@Override
 	public void onProviderEnabled(String newProvider) {
+		requestUpdatesFromAllProviders();
+		/*
 		Criteria criteria = new Criteria();
 		String bestProvider = locationManager.getBestProvider(criteria, true);
 		provider = bestProvider;
@@ -99,12 +107,12 @@ public class LocationListenerImpl implements LocationListener {
 		if (LocationManager.GPS_PROVIDER.equals(newProvider)) {
 			requestUpdates(newProvider);
 		}
+		*/
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
+		requestUpdatesFromAllProviders();
 	}
 
 	public Location getLocation() {

@@ -11,7 +11,7 @@ public abstract class LocationDependentState extends AbstractState {
 	float minimumAccuraccy;
 	Location position;
 	boolean enoughAccuraccy = true;
-	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s, en caso de tenerlo encendido ya por favor diríjase a un lugar abierto,, ";
+	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s y el wifi, en caso de tenerlos encendidos ya diríjase a un lugar abierto,, ";
 	protected boolean fromNotEnoughAccuraccyMessage = false;
 	protected String accuraccyObtainedMessage = "Se pudo obtener su ubicación, ";
 	protected String oldMessage = "";
@@ -59,6 +59,36 @@ public abstract class LocationDependentState extends AbstractState {
 		}
 	}
 
+	public void positionChanged(Location position){
+		if (position == null) {
+			fromNotEnoughAccuraccyMessage = true;
+			if (!message.equals(notEnoughAccuracyMessage)) {
+				oldMessage = message;
+				message = notEnoughAccuracyMessage;
+				context.speak(notEnoughAccuracyMessage);
+			}
+		} else {
+			if (!(position.getAccuracy() < minimumAccuraccy)) {
+				if (!message.equals(notEnoughAccuracyMessage)) {
+					oldMessage = message;
+					message = notEnoughAccuracyMessage;
+					context.speak(notEnoughAccuracyMessage);
+				}
+				fromNotEnoughAccuraccyMessage = true;
+				enoughAccuraccy = false;
+			} else {
+				if (fromNotEnoughAccuraccyMessage) {
+					message = oldMessage;
+					context.speak(accuraccyObtainedMessage + " " + oldMessage);
+					fromNotEnoughAccuraccyMessage = false;
+				}
+				enoughAccuraccy = true;
+				this.position = position;
+				setPosition(position);
+			}
+		}
+	}
+	
 	public abstract void setPosition(Location position);
 
 	public boolean isEnoughAccuraccy() {
@@ -67,12 +97,6 @@ public abstract class LocationDependentState extends AbstractState {
 
 	public void setEnoughAccuraccy(boolean enoughAccuraccy) {
 		this.enoughAccuraccy = enoughAccuraccy;
-	}
-
-	@Override
-	protected void handleResults(List<String> results) {
-		// TODO Auto-generated method stub
-
 	}
 
 	protected abstract void giveInstructions();

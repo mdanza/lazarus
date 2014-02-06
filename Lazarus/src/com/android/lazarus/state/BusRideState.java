@@ -224,33 +224,7 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	public void setPosition(Location position) {
-		if (position == null) {
-			fromNotEnoughAccuraccyMessage = true;
-			oldMessage = message;
-			message = notEnoughAccuracyMessage;
-			context.speak(notEnoughAccuracyMessage);
-		} else {
-			if (!(position.getAccuracy() < minimumAccuraccy)) {
-				oldMessage = message;
-				message = notEnoughAccuracyMessage;
-				fromNotEnoughAccuraccyMessage = true;
-				enoughAccuraccy = false;
-				context.speak(notEnoughAccuracyMessage);
-			} else {
-				if (fromNotEnoughAccuraccyMessage) {
-					message = oldMessage;
-					context.speak(accuraccyObtainedMessage + " " + oldMessage);
-					fromNotEnoughAccuraccyMessage = false;
-				}
-				enoughAccuraccy = true;
-				this.position = position;
-				if (!instructionsGivenOnConstruct) {
-					giveInstructions();
-					instructionsGivenOnConstruct = true;
-				}
 				changedPosition();
-			}
-		}
 	}
 
 	private void changedPosition() {
@@ -278,7 +252,7 @@ public class BusRideState extends LocationDependentState {
 						&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 					passedThirdLastStop = true;
 					message = "Usted se encuentra a " + distance
-							+ " metros de su ante penúltima parada";
+							+ " metros de su ante penúltima parada, diga,, abajo,, cuando se haya bajado del coche";
 					context.speak(message);
 					lastSpokenLocation = position;
 				}
@@ -297,7 +271,7 @@ public class BusRideState extends LocationDependentState {
 						&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 					passedSecondLastStop = true;
 					message = "Usted se encuentra a " + distance
-							+ " metros de su penúltima parada";
+							+ " metros de su penúltima parada, diga,, abajo,, cuando se haya bajado del coche";
 					context.speak(message);
 					lastSpokenLocation = position;
 				}
@@ -314,7 +288,7 @@ public class BusRideState extends LocationDependentState {
 				passedSecondLastStop = true;
 				message = "Usted se encuentra a "
 						+ distanceToLastStop
-						+ " metros de su parada de descenso, diga,, abajo,, cuando se halla bajado del coche";
+						+ " metros de su parada de descenso, diga,, abajo,, cuando se haya bajado del coche";
 				context.speak(message);
 				lastSpokenLocation = position;
 			}

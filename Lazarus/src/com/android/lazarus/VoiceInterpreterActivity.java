@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -21,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.helpers.MessageSplitter;
@@ -36,6 +34,7 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.android.lazarus.R;
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.MapActivity;
@@ -61,7 +60,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
-	private final boolean testing = true;
+	private final boolean testing = false;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlay;
 	private ScheduledExecutorService scheduledThreadPoolExecutor = Executors

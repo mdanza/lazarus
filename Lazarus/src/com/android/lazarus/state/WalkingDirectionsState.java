@@ -44,6 +44,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private boolean defaultMessageSaid = false;
 	private boolean hasSpoken = false;
 	private boolean secondStreetInstructionGiven = false;
+	private int walkingPositionProvider = WalkingPositionHelper.OSRM;
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -273,7 +274,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.getPoint();
 						if (GPScoordinateHelper.getDistanceBetweenPoints(
 								position.getLatitude(), point.getLatitude(),
-								position.getLongitude(), point.getLongitude()) < 50) {
+								position.getLongitude(), point.getLongitude()) < 100
+								|| walkingPositionProvider == WalkingPositionHelper.MAP_QUEST) {
 							hasToSpeak = true;
 							hasSpoken = true;
 						}
@@ -475,6 +477,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 				ArrayList<RoadNode> nodes = road.mNodes;
 				positions = WalkingPositionHelper.createWalkingPositions(route,
 						nodes, WalkingPositionHelper.MAP_QUEST);
+				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
@@ -486,9 +489,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 					nodes = road.mNodes;
 					positions = WalkingPositionHelper.createWalkingPositions(
 							route, nodes, WalkingPositionHelper.OSRM);
+					walkingPositionProvider = WalkingPositionHelper.OSRM;
 				}
 
-				
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new MapQuestRoadManager(
 							ConstantsHelper.MAP_QUEST_API_KEY);
@@ -504,6 +507,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					nodes = road.mNodes;
 					positions = WalkingPositionHelper.createWalkingPositions(
 							route, nodes, WalkingPositionHelper.MAP_QUEST);
+					walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 				}
 
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
@@ -516,6 +520,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
 					positions = WalkingPositionHelper.createWalkingPositions(
 							route, nodes, WalkingPositionHelper.OSRM);
+					walkingPositionProvider = WalkingPositionHelper.OSRM;
 				}
 
 				if (isCancelled())
@@ -608,29 +613,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	@Override
 	public void setPosition(Location position) {
-		if (position == null) {
-			fromNotEnoughAccuraccyMessage = true;
-			oldMessage = message;
-			message = notEnoughAccuracyMessage;
-			context.speak(notEnoughAccuracyMessage);
-		} else {
-			if (!(position.getAccuracy() < minimumAccuraccy)) {
-				oldMessage = message;
-				message = notEnoughAccuracyMessage;
-				fromNotEnoughAccuraccyMessage = true;
-				enoughAccuraccy = false;
-				context.speak(notEnoughAccuracyMessage);
-			} else {
-				if (fromNotEnoughAccuraccyMessage) {
-					message = oldMessage;
-					context.speak(accuraccyObtainedMessage + " " + oldMessage);
-					fromNotEnoughAccuraccyMessage = false;
-				}
-				enoughAccuraccy = true;
-				this.position = position;
-				giveInstructions();
-			}
-		}
+		giveInstructions();
 	}
 
 	private class ReportObstacleTask extends AsyncTask<String, Void, Void> {

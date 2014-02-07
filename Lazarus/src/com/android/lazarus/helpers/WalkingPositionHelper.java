@@ -496,4 +496,30 @@ public class WalkingPositionHelper {
 		return validPositions;
 	}
 
+	public static boolean alwaysOnTheSameStreet(List<WalkingPosition> positions) {
+		boolean alwaysOnTheSameStreet = false;
+		if (positions != null) {
+			alwaysOnTheSameStreet = true;
+			String street = null;
+			for (int i = 0; i < positions.size(); i++) {
+				if (positions.get(i) != null
+						&& positions.get(i).getInstruction() != null) {
+					String instruction = positions.get(i).getInstruction();
+					if (i == 0) {
+						street = getFirstStreet(instruction);
+					} else {
+						if (street == null) {
+							street = getStreet(instruction);
+						} else {
+							if (!street.equals(getStreet(instruction)) && i!=positions.size()-1) {
+								alwaysOnTheSameStreet = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return alwaysOnTheSameStreet;
+	}
+
 }

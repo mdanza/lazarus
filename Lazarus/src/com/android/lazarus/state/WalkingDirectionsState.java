@@ -557,8 +557,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 					}
 					if (!state.equals(InternalState.RECALCULATE)) {
 						if (WalkingPositionHelper.distanceToWalkingPosition(position,
-								positions.get(positions.size() - 1)) < 15) {
-							currentWalkingPosition = positions.size();
+								positions.get(positions.size() - 1)) < 20 && WalkingPositionHelper.alwaysOnTheSameStreet(positions)) {
+							currentWalkingPosition = positions.size()-1;
 							distanceToFinalPosition = WalkingPositionHelper.distanceToWalkingPosition(position,
 									positions.get(positions.size() - 1));
 							message = "Usted se encuentra aproximadamente a "

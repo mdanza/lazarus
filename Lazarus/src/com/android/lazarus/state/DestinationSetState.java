@@ -94,29 +94,7 @@ public class DestinationSetState extends LocationDependentState {
 
 	@Override
 	public void setPosition(Location position) {
-		if (position == null) {
-			fromNotEnoughAccuraccyMessage  = true;
-			oldMessage = message;
-			message = notEnoughAccuracyMessage;
-			context.speak(notEnoughAccuracyMessage);
-		} else {
-			if (!(position.getAccuracy() < minimumAccuraccy)) {
-				oldMessage = message;
-				message = notEnoughAccuracyMessage;
-				fromNotEnoughAccuraccyMessage = true;
-				enoughAccuraccy = false;
-				context.speak(notEnoughAccuracyMessage);
-			} else {
-				if(fromNotEnoughAccuraccyMessage){
-					message = oldMessage;
-					context.speak(accuraccyObtainedMessage+" "+oldMessage);
-					fromNotEnoughAccuraccyMessage = false;
-				}
-				enoughAccuraccy = true;
-				this.position = position;
 				giveInstructions();
-			}
-		}
 	}
 
 	@Override

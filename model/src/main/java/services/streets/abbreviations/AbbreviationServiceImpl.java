@@ -111,24 +111,139 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 	}
 
 	public String abbreviate(String street) {
-		loadData();
-		if (routeTypes != null) {
-			for (RouteType routeType : routeTypes) {
-				String abbreviation = routeType.getAbbreviateDescription();
-				String description = routeType.getDescription();
-				if (!"CALLE".equals(description)) {
-					street = replace(street, description, abbreviation);
+		if (street != null) {
+			loadData();
+			if (routeTypes != null) {
+				for (RouteType routeType : routeTypes) {
+					String abbreviation = routeType.getAbbreviateDescription();
+					String description = routeType.getDescription();
+					if (description != null && abbreviation != null) {
+						street = abbreviate(street, description, abbreviation);
+					}
+				}
+			}
+			if (routeTitles != null) {
+				for (RouteTitle routeTitle : routeTitles) {
+					String abbreviation = routeTitle.getAbbreviateDescription();
+					String description = routeTitle.getDescription();
+					if (description != null && abbreviation != null) {
+						street = abbreviate(street, description, abbreviation);
+					}
 				}
 			}
 		}
-		if (routeTitles != null) {
-			for (RouteTitle routeTitle : routeTitles) {
-				String abbreviation = routeTitle.getAbbreviateDescription();
-				String description = routeTitle.getDescription();
-				street = replace(street, description, abbreviation);
+		return street;
+	}
+
+	private String abbreviate(String street, String description,
+			String abbreviation) {
+		String newStreet = street;
+		if (street != null && description != null && abbreviation != null) {
+			String[] partsOfStreet = street.split("\\ ");
+			String[] partsOfDescription = description.split("\\ ");
+			String[] partsOfAbbreviation = abbreviation.split("\\ ");
+			if (partsOfDescription.length == 1) {
+				for (int i = 0; i < partsOfStreet.length; i++) {
+					if (partsOfStreet[i] != null
+							&& partsOfStreet[i].equals(description)) {
+						if (!description.equals("CALLE")) {
+							partsOfStreet[i] = abbreviation;
+						} else {
+							partsOfStreet[i] = "";
+						}
+					}
+				}
+			} else {
+				for (int i = 0; i < partsOfDescription.length; i++) {
+					for (int j = 0; j < partsOfStreet.length; j++) {
+						if (partsOfStreet[j] != null
+								&& partsOfStreet[j]
+										.equals(partsOfDescription[i])) {
+							if (partsOfStreet[j].equals("DE")) {
+								if (ofDescription(partsOfStreet,
+										partsOfDescription, i, j)) {
+									partsOfStreet[j] = "";
+								}
+							} else {
+								if (partsOfAbbreviation.length == partsOfDescription.length) {
+									partsOfStreet[j] = partsOfAbbreviation[i];
+								} else {
+									if (containsDeBefore(partsOfDescription, i)) {
+										if (i - 1 < partsOfAbbreviation.length
+												&& i - 1 > 0) {
+											partsOfStreet[j] = partsOfAbbreviation[i - 1];
+										} else {
+											partsOfStreet[j] = "";
+										}
+									} else {
+										partsOfStreet[j] = partsOfAbbreviation[i];
+									}
+								}
+							}
+						}
+					}
+				}
 			}
+			newStreet = createNewStreet(partsOfStreet);
+		}
+		return newStreet;
+	}
+
+	private String createNewStreet(String[] partsOfStreet) {
+		String street = null;
+		if (partsOfStreet != null && 0 < partsOfStreet.length) {
+			StringBuilder stringBuilder = new StringBuilder();
+			boolean firstWordAppended = false;
+			for (String part : partsOfStreet) {
+				if (part != null && !"".equals(part)) {
+					if (!firstWordAppended) {
+						stringBuilder.append(part);
+						firstWordAppended = true;
+					} else {
+						stringBuilder.append(" ");
+						stringBuilder.append(part);
+					}
+				}
+			}
+			street = stringBuilder.toString();
 		}
 		return street;
+	}
+
+	private boolean containsDeBefore(String[] partsOfDescription, int i) {
+		boolean containsDeBefore = false;
+		if (partsOfDescription != null && i > 0
+				&& i < partsOfDescription.length) {
+			for (int j = 0; j < i; j++) {
+				if ("DE".equals(partsOfDescription[j])) {
+					containsDeBefore = true;
+				}
+			}
+		}
+		return containsDeBefore;
+	}
+
+	private boolean ofDescription(String[] partsOfStreet,
+			String[] partsOfDescription, int i, int j) {
+		boolean ofDescription = false;
+		if (partsOfStreet != null && partsOfDescription != null) {
+			if (j < partsOfStreet.length - 1
+					&& i < partsOfDescription.length - 1) {
+				if ((partsOfStreet[j + 1] != null
+						&& partsOfDescription[i + 1] != null && partsOfStreet[j + 1]
+						.equals(partsOfDescription[i + 1]))) {
+					ofDescription = true;
+				}
+			}
+			if (j != 0 && i != 0) {
+				if ((partsOfStreet[j - 1] != null
+						&& partsOfDescription[i - 1] != null && partsOfStreet[j - 1]
+						.equals(partsOfDescription[i - 1]))) {
+					ofDescription = true;
+				}
+			}
+		}
+		return ofDescription;
 	}
 
 	private String constructStreet(String[] partsOfStreet) {
@@ -236,7 +351,7 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 				String abbreviation = routeType.getAbbreviateDescription();
 				String description = routeType.getDescription();
 				if (!"CALLE".equals(description)) {
-					street = replace(street, abbreviation, description);
+					street = expand(street, abbreviation, description);
 				}
 			}
 		}
@@ -244,39 +359,48 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 			for (RouteTitle routeTitle : routeTitles) {
 				String abbreviation = routeTitle.getAbbreviateDescription();
 				String description = routeTitle.getDescription();
-				street = replace(street, abbreviation, description);
+				street = expand(street, abbreviation, description);
 			}
 		}
 		return street;
 	}
 
-	private String replace(String street, String toMatch, String toReplace) {
+	private String expand(String street, String abbreviation, String description) {
 		if (street != null) {
 			String[] partsOfStreet = street.split("\\ ");
 			for (int i = 0; i < partsOfStreet.length; i++) {
 				String part = partsOfStreet[i];
-				if (toMatch != null && toReplace != null) {
-					if (toMatch.split("\\ ").length == 1) {
-						if (part.equals(toMatch)) {
-							partsOfStreet[i] = toReplace;
+				if (abbreviation != null && description != null) {
+					if (abbreviation.split("\\ ").length == 1) {
+						if (part.equals(abbreviation)) {
+							partsOfStreet[i] = description;
 						}
 					} else {
-						int length = toMatch.split("\\ ").length;
+						int length = abbreviation.split("\\ ").length;
 						if (length + i < partsOfStreet.length) {
 							boolean match = true;
 							for (int j = 0; j < length; j++) {
 								int positionInPartOfStreet = j + i;
-								if (!toMatch.split("\\ ")[j]
+								if (!abbreviation.split("\\ ")[j]
 										.equals(partsOfStreet[positionInPartOfStreet])) {
 									match = false;
 								}
 							}
 							if (match) {
-								for (int j = 0; j < length; j++) {
-									int positionInPartOfStreet = j + i;
-									partsOfStreet[positionInPartOfStreet] = toReplace
-											.split("\\ ")[j];
+								if (description.split("\\ ").length == length) {
+									for (int j = 0; j < length; j++) {
+										int positionInPartOfStreet = j + i;
+										partsOfStreet[positionInPartOfStreet] = description
+												.split("\\ ")[j];
+									}
+								} else {
+									partsOfStreet = instertInPartsOfStreet(
+											partsOfStreet,
+											description.split("\\ "), i,
+											description.split("\\ ").length
+													- length);
 								}
+
 							}
 						}
 
@@ -287,4 +411,36 @@ public class AbbreviationServiceImpl implements AbbreviationService {
 		}
 		return street;
 	}
+
+	private String[] instertInPartsOfStreet(String[] partsOfStreet,
+			String[] toInstert, int indexToInsert,
+			int numberOfStringsInPartsOfStreetToOverWrite) {
+		String[] newPartsOfString = null;
+		if (partsOfStreet != null && toInstert != null
+				&& indexToInsert < partsOfStreet.length
+				&& numberOfStringsInPartsOfStreetToOverWrite > 0) {
+			newPartsOfString = new String[partsOfStreet.length
+					+ (toInstert.length - 1 - numberOfStringsInPartsOfStreetToOverWrite)];
+			int j = 0;
+			for (int i = 0; i < newPartsOfString.length; i++) {
+				if (i != indexToInsert) {
+					if (j == 0) {
+						newPartsOfString[i] = partsOfStreet[i];
+					} else {
+						newPartsOfString[i] = partsOfStreet[i
+								- numberOfStringsInPartsOfStreetToOverWrite];
+					}
+				} else {
+					for (j = 0; j < toInstert.length; j++) {
+						newPartsOfString[i] = toInstert[j];
+						if (j != toInstert.length - 1) {
+							i++;
+						}
+					}
+				}
+			}
+		}
+		return newPartsOfString;
+	}
+
 }

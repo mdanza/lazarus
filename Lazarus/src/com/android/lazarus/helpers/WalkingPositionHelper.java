@@ -41,6 +41,7 @@ public class WalkingPositionHelper {
 			"Gira a la izquierda en", "Gira ligeramente a la izquierda en",
 			"Continúa avanzando", "Gira en", "Gira en", "Gira en", "Gira en",
 			"Gira en", "Gira en", "Gira en", "Gira en", "Gira en", "Destino" };
+	private static final int OPENING_ANGLE = 45;
 
 	public static List<WalkingPosition> createWalkingPositions(
 			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes, int provider) {
@@ -170,11 +171,11 @@ public class WalkingPositionHelper {
 			// bearing += 180;
 			float direction = bearing - azimuth;
 			boolean headingFound = false;
-			if (Math.abs(direction) > 150 && Math.abs(direction) < 180) {
+			if (Math.abs(direction) > 180-OPENING_ANGLE && Math.abs(direction) < 180 + OPENING_ANGLE) {
 				returnInstruction = TURN_OPOSSITE_INTRUCTION;
 				headingFound = true;
 			}
-			if (Math.abs(direction) > 330 || Math.abs(direction) < 30) {
+			if (Math.abs(direction) > 360-OPENING_ANGLE || Math.abs(direction) < OPENING_ANGLE) {
 				returnInstruction = CONTINUE_INSTRUCCION;
 				headingFound = true;
 			}
@@ -230,7 +231,8 @@ public class WalkingPositionHelper {
 		String instruction = null;
 		String currentInstruction = positions.get(walkingPosition)
 				.getInstruction();
-		if (currentInstruction != null) {
+		if (currentInstruction != null
+				&& !streetRepeated(walkingPosition, positions)) {
 			boolean currentHasRight = hasRight(currentInstruction);
 			boolean currentHasLeft = hasLeft(currentInstruction);
 			boolean nextHasRight = false;
@@ -253,6 +255,46 @@ public class WalkingPositionHelper {
 			}
 		}
 		return instruction;
+	}
+
+	private static boolean streetRepeated(int walkingPosition,
+			List<WalkingPosition> positions) {
+		boolean streetRepeated = false;
+		if (positions != null && walkingPosition < positions.size()) {
+			String lastStreet = getLastStreet(positions, walkingPosition);
+			String thisStreet = getStreet(positions.get(walkingPosition)
+					.getInstruction());
+			if (lastStreet != null && thisStreet != null
+					&& lastStreet.equals(thisStreet)) {
+				streetRepeated = true;
+			}
+		}
+		return streetRepeated;
+	}
+
+	private static String getLastStreet(List<WalkingPosition> positions,
+			int walkingPosition) {
+		String lastStreet = null;
+		if (positions != null && positions.size() > walkingPosition) {
+			for (int i = 0; i < walkingPosition; i++) {
+				if (lastStreet == null) {
+					if (i == 0) {
+						lastStreet = getFirstStreet(positions.get(i)
+								.getInstruction());
+					} else {
+						lastStreet = getStreet(positions.get(i)
+								.getInstruction());
+					}
+				} else {
+					if (getStreet(positions.get(i).getInstruction()) != null) {
+						lastStreet = getStreet(positions.get(i)
+								.getInstruction());
+					}
+				}
+
+			}
+		}
+		return lastStreet;
 	}
 
 	private static boolean hasRight(String instruction) {
@@ -282,13 +324,13 @@ public class WalkingPositionHelper {
 
 	public static double distanceToWalkingPosition(Location position,
 			WalkingPosition walkingPosition) {
-		if (walkingPosition != null && position!=null) {
+		if (walkingPosition != null && position != null) {
 			return GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
 					.getPoint().getLatitude(), position.getLatitude(),
 					walkingPosition.getPoint().getLongitude(), walkingPosition
 							.getPoint().getLongitude());
 		}
-		return 0;
+		return 10000;
 	}
 
 	public static String getSecondStreetIntruction(
@@ -302,13 +344,11 @@ public class WalkingPositionHelper {
 					String instruction = position.getInstruction();
 					if (instruction != null) {
 						if (firstStreet == null) {
-							firstStreet = getFirstStreet(instruction
-									.toLowerCase());
+							firstStreet = getFirstStreet(instruction);
 						} else {
 							if (secondStreetInstruction == null) {
 								secondStreetInstruction = getSecondStreetInstruction(
-										instruction.toLowerCase(),
-										firstStreet.toLowerCase());
+										instruction, firstStreet);
 							}
 						}
 					}
@@ -321,30 +361,27 @@ public class WalkingPositionHelper {
 	private static String getSecondStreetInstruction(String instruction,
 			String firstStreet) {
 		String secondStreetInstruction = null;
-		if (instruction != null
-				&& !instruction.toLowerCase().contains(
-						firstStreet.toLowerCase())) {
-			secondStreetInstruction = instruction.toLowerCase();
+		if (instruction != null && !instruction.contains(firstStreet)) {
+			secondStreetInstruction = instruction;
 		}
 		return secondStreetInstruction;
 	}
 
 	private static String getFirstStreet(String instruction) {
-		instruction = instruction.toLowerCase();
 		String firstStreet = null;
 		if (instruction != null) {
 			String[] words = instruction.split("\\ ");
 			boolean passedOn = false;
 			for (int i = 0; i < words.length; i++) {
-				if (!passedOn && ("on".equals(words[i]))) {
-					passedOn = true;
-				}
 				if (passedOn) {
 					if (firstStreet == null) {
 						firstStreet = words[i];
 					} else {
-						firstStreet = firstStreet + words[i];
+						firstStreet = firstStreet + " " + words[i];
 					}
+				}
+				if (!passedOn && ("on".equals(words[i]))) {
+					passedOn = true;
 				}
 			}
 		}
@@ -357,20 +394,24 @@ public class WalkingPositionHelper {
 		if (oldSecondStreetInstruction != null && positions != null) {
 			String newSecondStreetInstruction = getSecondStreetIntruction(positions);
 			if (newSecondStreetInstruction != null) {
-				oldSecondStreetInstruction = oldSecondStreetInstruction
-						.toLowerCase();
-				newSecondStreetInstruction = newSecondStreetInstruction
-						.toLowerCase();
 				boolean hasRightOrLeft = false;
-				if (oldSecondStreetInstruction.contains("derecha")) {
+				if (hasRight(oldSecondStreetInstruction)) {
 					hasRightOrLeft = true;
 					newSecondStreetInstruction = newSecondStreetInstruction
 							.replace("izquierda", "derecha");
+					newSecondStreetInstruction = newSecondStreetInstruction
+							.replace("Izquierda", "Derecha");
+					newSecondStreetInstruction = newSecondStreetInstruction
+							.replace("IZQUIERDA", "DERECHA");
 				} else {
-					if (oldSecondStreetInstruction.contains("izquierda")) {
+					if (hasLeft(oldSecondStreetInstruction)) {
 						hasRightOrLeft = true;
 						newSecondStreetInstruction = newSecondStreetInstruction
 								.replace("derecha", "izquierda");
+						newSecondStreetInstruction = newSecondStreetInstruction
+								.replace("Derecha", "Izquierda");
+						newSecondStreetInstruction = newSecondStreetInstruction
+								.replace("DERECHA", "IZQUIERDA");
 					}
 				}
 				if (hasRightOrLeft) {
@@ -412,10 +453,10 @@ public class WalkingPositionHelper {
 		return message;
 	}
 
-	private static String getStreet(String secondStreetInstruction) {
+	private static String getStreet(String streetInstruction) {
 		String street = null;
-		if (secondStreetInstruction != null) {
-			String[] partsOfSecondStreet = secondStreetInstruction.split("\\ ");
+		if (streetInstruction != null) {
+			String[] partsOfSecondStreet = streetInstruction.split("\\ ");
 			if (partsOfSecondStreet != null) {
 				for (int i = 0; i < partsOfSecondStreet.length; i++) {
 					boolean afterIn = false;
@@ -426,7 +467,11 @@ public class WalkingPositionHelper {
 						afterIn = true;
 						street = "";
 					} else {
-						street = street + " " + partsOfSecondStreet[i];
+						if (!"".equals(street)) {
+							street = street + " " + partsOfSecondStreet[i];
+						} else {
+							street += partsOfSecondStreet[i];
+						}
 					}
 				}
 			}
@@ -450,6 +495,32 @@ public class WalkingPositionHelper {
 			}
 		}
 		return validPositions;
+	}
+
+	public static boolean alwaysOnTheSameStreet(List<WalkingPosition> positions) {
+		boolean alwaysOnTheSameStreet = false;
+		if (positions != null) {
+			alwaysOnTheSameStreet = true;
+			String street = null;
+			for (int i = 0; i < positions.size(); i++) {
+				if (positions.get(i) != null
+						&& positions.get(i).getInstruction() != null) {
+					String instruction = positions.get(i).getInstruction();
+					if (i == 0) {
+						street = getFirstStreet(instruction);
+					} else {
+						if (street == null) {
+							street = getStreet(instruction);
+						} else {
+							if (!street.equals(getStreet(instruction)) && i!=positions.size()-1) {
+								alwaysOnTheSameStreet = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return alwaysOnTheSameStreet;
 	}
 
 }

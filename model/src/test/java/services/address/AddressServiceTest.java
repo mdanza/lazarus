@@ -57,15 +57,71 @@ public class AddressServiceTest {
 		CloseLocationData closeLocationData = addressService.getCloseLocationData(new Coordinate(-34.901806,-56.140385));
 		System.out.println(gson.toJson(closeLocationData));
 */
+		/*
 		List<String> possible = addressService.getPossibleStreets("benito blanco");
 		for(String one:possible){
 			System.out.println(one);
 		}
 		
-		List<String> possible2 = addressService.getPossibleStreets("avenida italia");
+		List<String> possible2 = addressService.getPossibleStreets("libertador");
 		for(String one:possible2){
 			System.out.println(one);
 		}
+		
+		List<String> possible3 = addressService.getPossibleStreets("marco");
+		for(String one:possible3){
+			System.out.println(one);
+		}
+		List<String> possible4 = addressService.getPossibleStreets("de navio");
+		for(String one:possible4){
+			System.out.println(one);
+		}
+		
+		List<String> possible5 = addressService.getPossibleStreets("teniente de navio");
+		for(String one:possible5){
+			System.out.println(one);
+		}
+		
+		List<String> possible6 = addressService.getPossibleStreets("curso de agua");
+		for(String one:possible6){
+			System.out.println(one);
+		}
+		List<String> possible7 = addressService.getPossibleStreets("cierre de");
+		for(String one:possible7){
+			System.out.println(one);
+		}
+		
+		List<String> possible8 = addressService.getPossibleStreets("de navio");
+		for(String one:possible8){
+			System.out.println(one);
+		}
+		
+		List<String> possible9 = addressService.getPossibleStreets("navio");
+		for(String one:possible9){
+			System.out.println(one);
+		}
+*/
+		List<String> possible9 = addressService.getPossibleStreets("de herrera");
+		for(String one:possible9){
+			System.out.println(one);
+		}
+		
+		List<String> possible5 = addressService.getPossibleStreets("alberto de herrera");
+		for(String one:possible5){
+			System.out.println(one);
+		}
+		
+		List<String> possible4 = addressService.getPossibleStreets("avenida italia");
+		for(String one:possible4){
+			System.out.println(one);
+		}
+		
+		List<String> possible3 = addressService.getPossibleStreets("rivera");
+		for(String one:possible3){
+			System.out.println(one);
+		}
+		
+		assert(true);
 		/*
 		System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", 1417, ""));
 		System.out.println(addressService.parseAddressToCoordinates("MARCO BRUTO", "AVENIDA GENERAL RIVERA"));

@@ -29,12 +29,6 @@ public class MessageSplitter {
 						} else {
 							if (i < pieces.length - 1) {
 								if ((piece.length() + pieces[i + 1].length() + 2) <= maximumSize) {
-									if (piece.length() + pieces[i + 1].length() == maximumSize) {
-										int length1 = piece.length();
-										int length2 = pieces[i + 1].length();
-										int legth3 = 55;
-										int length34 = 44;
-									}
 									String strippedRegExp = regExp.replaceAll(
 											"\\\\", "");
 									pieces = joinPieces(pieces, i,

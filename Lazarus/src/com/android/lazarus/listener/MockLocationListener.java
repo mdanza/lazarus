@@ -124,7 +124,7 @@ public class MockLocationListener extends LocationListenerImpl {
 	public void onLocationChanged(final Location location) {
 		if (voiceInterpreterActivity.getState() instanceof LocationDependentState) {
 			((LocationDependentState) voiceInterpreterActivity.getState())
-					.setPosition(location);
+					.positionChanged(location);
 		}
 		this.location = location;
 

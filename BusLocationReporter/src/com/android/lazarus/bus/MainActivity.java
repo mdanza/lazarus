@@ -74,6 +74,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private List<BusStop> stops;
 	private Handler handler;
 	private Gson gson = createGson();
+	private Location location;
 
 	private class ShowTextRunnable implements Runnable {
 
@@ -108,10 +109,13 @@ public class MainActivity extends Activity implements LocationListener {
 		// Define the criteria how to select the location provider -> use
 		// default
 		Criteria criteria = new Criteria();
-		provider = locationManager.getBestProvider(criteria, false);
-		Location location = locationManager.getLastKnownLocation(provider);
+		Location location = locationManager
+				.getLastKnownLocation(locationManager.getBestProvider(criteria,
+						false));
 		if (location != null)
 			onLocationChanged(location);
+
+		requestUpdatesFromAllProviders();
 
 		actionBtn.setOnClickListener(new Button.OnClickListener() {
 
@@ -166,14 +170,12 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		locationManager.requestLocationUpdates(provider, 400, 1, this);
 	}
 
 	/* Remove the location listener updates when Activity is paused */
 	@Override
 	protected void onPause() {
 		super.onPause();
-		locationManager.removeUpdates(this);
 	}
 
 	private class HttpHelper implements Runnable {
@@ -362,31 +364,59 @@ public class MainActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		double accuracy = location.getAccuracy();
-		if (accuracy <= MINIMUM_ACCEPTABLE_PRECISION) {
-			lastReportedlatitude = location.getLatitude();
-			lastReportedlongitude = location.getLongitude();
-			isLastReportSent = false;
-			if (active)
-				handler.post(new ShowTextRunnable("lat: "
-						+ lastReportedlatitude + "; lng: "
-						+ lastReportedlongitude));
+		// Check if the provider has better accuracy
+		if (location != null
+				&& (this.location == null || location.getAccuracy() < this.location
+						.getAccuracy())) {
+			if (!location.getProvider().equals(provider)) {
+				provider = location.getProvider();
+			}
 		}
+		if (location != null && location.getProvider() != null
+				&& (location.getProvider().equals(provider) || provider == null)) {
+			double accuracy = location.getAccuracy();
+			if (accuracy <= MINIMUM_ACCEPTABLE_PRECISION) {
+				lastReportedlatitude = location.getLatitude();
+				lastReportedlongitude = location.getLongitude();
+				isLastReportSent = false;
+				if (active)
+					handler.post(new ShowTextRunnable("lat: "
+							+ lastReportedlatitude + "; lng: "
+							+ lastReportedlongitude));
+			}
+			this.location = location;
+		}
+		
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
+		requestUpdatesFromAllProviders();
 		handler.post(new ShowTextRunnable("Enabled new provider " + provider));
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
+		if (provider!=null && provider.equals(this.provider)) {
+			provider = null;
+		}
+		requestUpdatesFromAllProviders();
 		handler.post(new ShowTextRunnable("Disabled provider " + provider));
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
+		requestUpdatesFromAllProviders();
+	}
 
+	private void requestUpdatesFromAllProviders() {
+		if (locationManager != null) {
+			locationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, 1000, 1, this);
+			locationManager.requestLocationUpdates(
+					LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+			locationManager.requestLocationUpdates(
+					LocationManager.PASSIVE_PROVIDER, 1000, 1, this);
+		}
 	}
 }

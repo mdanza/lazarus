@@ -41,7 +41,7 @@
 </div>
 <div id="footer">
    <div class="container">
-     <p class="text-muted">Lazarus</p>
+     <a href="LogoutServlet" class="text-muted"><span class="pull-right">Logout</span></a>
    </div>
 </div>
 <script src="assets/js/jquery-1.9.1.min.js"></script>

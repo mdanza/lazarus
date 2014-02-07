@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" import="helpers.SettingsHelper"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,10 +11,11 @@
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/sticky-footer-navbar.css" rel="stylesheet">
     <link href="assets/css/toastr.css" rel="stylesheet">
+    <link href="assets/css/signin.css" rel="stylesheet">
 </head>
 <body>
 <div id="wrap">
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -38,15 +39,30 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+<div class="container">
+      <form class="form-signin" role="form" method="post" id="userForm" action="<%=SettingsHelper.REST_API_URL + "/users"%>">
+        <h2 class="form-signin-heading">Tus datos:</h2>
+        <input id="inputUsername" type="text" class="form-control" placeholder="Usuario" required="">
+        <input id="inputEmail" type="email" class="form-control" placeholder="Ingrese su email" required="">
+        <input id="inputPassword" type="password" class="form-control hidden" placeholder="Nueva contraseña" required="">
+        <button id="toggler" type="button" class="btn btn-block btn-lg btn-info" onclick="toggleEditability();">Modificar</button>
+        <button id="submitBtn" data-loading-text="Espere.." class="btn btn-lg btn-success btn-block hidden" type="submit">Enviar</button>
+      </form>
+</div>
 </div>
 <div id="footer">
    <div class="container">
-     <p class="text-muted">Lazarus</p>
+     <a href="LogoutServlet" class="text-muted"><span class="pull-right">Logout</span></a>
    </div>
 </div>
+<input id="hiddenToken" type="hidden"
+		value="<%=request.getSession().getAttribute("token") != null ? request
+					.getSession().getAttribute("token") : ""%>">
+<input type="hidden" id="servicesUrl" value="<%=SettingsHelper.REST_API_URL%>"/>
 <script src="assets/js/jquery-1.9.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="assets/js/toastr.min.js"></script>
+<script src="assets/js/user.js"></script>
 </body>
 </html>

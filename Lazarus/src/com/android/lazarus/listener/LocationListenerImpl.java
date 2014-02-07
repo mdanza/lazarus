@@ -80,12 +80,14 @@ public class LocationListenerImpl implements LocationListener {
 			}
 			this.location = location;
 		}
+		/*
 		Context context = voiceInterpreterActivity.getApplicationContext();
 		CharSequence text = "Accuracy = "+location.getAccuracy()+" Provided by: "+location.getProvider()+" actual provider: " +provider;
 		int duration = Toast.LENGTH_SHORT;
 
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
+		*/
 	}
 
 	@Override

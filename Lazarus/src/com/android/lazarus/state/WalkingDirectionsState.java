@@ -208,6 +208,21 @@ public class WalkingDirectionsState extends LocationDependentState {
 						checkForObstacles();
 						int olderPosition = currentWalkingPosition;
 						int closestPosition = getClosestPosition();
+
+						context.showToast("Closest position: "
+								+ closestPosition
+								+ "\n"
+								+ positions.get(closestPosition)
+										.getInstruction()
+								+ "\nCurrent position: "
+								+ currentWalkingPosition
+								+ " \n"
+								+ positions.get(currentWalkingPosition)
+										.getInstruction()
+								+ " \nDistance to closest walking position: "
+								+ WalkingPositionHelper
+										.distanceToWalkingPosition(position,
+												positions.get(closestPosition)));
 						if (closestPosition != -1
 								&& olderPosition + 1 == closestPosition) {
 							currentWalkingPosition = getClosestPosition();
@@ -274,7 +289,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.getPoint();
 						if (GPScoordinateHelper.getDistanceBetweenPoints(
 								position.getLatitude(), point.getLatitude(),
-								position.getLongitude(), point.getLongitude()) < (40 + position.getAccuracy())
+								position.getLongitude(), point.getLongitude()) < (40 + position
+								.getAccuracy())
 								|| walkingPositionProvider == WalkingPositionHelper.MAP_QUEST) {
 							hasToSpeak = true;
 							hasSpoken = true;
@@ -479,7 +495,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
-				positions = null;
+				//positions=null;
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
 					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
@@ -557,11 +573,14 @@ public class WalkingDirectionsState extends LocationDependentState {
 						}
 					}
 					if (!state.equals(InternalState.RECALCULATE)) {
-						if (WalkingPositionHelper.distanceToWalkingPosition(position,
-								positions.get(positions.size() - 1)) < 20 && WalkingPositionHelper.alwaysOnTheSameStreet(positions)) {
-							currentWalkingPosition = positions.size()-1;
-							distanceToFinalPosition = WalkingPositionHelper.distanceToWalkingPosition(position,
-									positions.get(positions.size() - 1));
+						if (WalkingPositionHelper.distanceToWalkingPosition(
+								position, positions.get(positions.size() - 1)) < 20
+								&& WalkingPositionHelper
+										.alwaysOnTheSameStreet(positions)) {
+							currentWalkingPosition = positions.size() - 1;
+							distanceToFinalPosition = WalkingPositionHelper
+									.distanceToWalkingPosition(position,
+											positions.get(positions.size() - 1));
 							message = "Usted se encuentra aproximadamente a "
 									+ Math.ceil(distanceToFinalPosition)
 									+ " metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga destino";

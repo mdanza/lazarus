@@ -41,6 +41,7 @@ public class WalkingPositionHelper {
 			"Gira a la izquierda en", "Gira ligeramente a la izquierda en",
 			"Continúa avanzando", "Gira en", "Gira en", "Gira en", "Gira en",
 			"Gira en", "Gira en", "Gira en", "Gira en", "Gira en", "Destino" };
+	private static final int OPENING_ANGLE = 45;
 
 	public static List<WalkingPosition> createWalkingPositions(
 			ArrayList<GeoPoint> route, ArrayList<RoadNode> nodes, int provider) {
@@ -170,11 +171,11 @@ public class WalkingPositionHelper {
 			// bearing += 180;
 			float direction = bearing - azimuth;
 			boolean headingFound = false;
-			if (Math.abs(direction) > 150 && Math.abs(direction) < 180) {
+			if (Math.abs(direction) > 180-OPENING_ANGLE && Math.abs(direction) < 180 + OPENING_ANGLE) {
 				returnInstruction = TURN_OPOSSITE_INTRUCTION;
 				headingFound = true;
 			}
-			if (Math.abs(direction) > 330 || Math.abs(direction) < 30) {
+			if (Math.abs(direction) > 360-OPENING_ANGLE || Math.abs(direction) < OPENING_ANGLE) {
 				returnInstruction = CONTINUE_INSTRUCCION;
 				headingFound = true;
 			}

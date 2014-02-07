@@ -90,7 +90,7 @@ public class LocationListenerImpl implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		if (provider.equals(this.provider)) {
+		if (provider!=null && provider.equals(this.provider)) {
 			provider = null;
 		}
 		requestUpdatesFromAllProviders();

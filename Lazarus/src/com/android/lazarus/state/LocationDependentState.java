@@ -1,7 +1,5 @@
 package com.android.lazarus.state;
 
-import java.util.List;
-
 import android.location.Location;
 
 import com.android.lazarus.VoiceInterpreterActivity;
@@ -11,9 +9,9 @@ public abstract class LocationDependentState extends AbstractState {
 	float minimumAccuraccy;
 	Location position;
 	boolean enoughAccuraccy = true;
-	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s y el wifi, en caso de tenerlos encendidos ya diríjase a un lugar abierto,, ";
+	String notEnoughAccuracyMessage = "No se puede obtener su posición actual con la suficiente precisión, por favor encienda el g p s y el wi fi, en caso de tenerlos encendidos ya diríjase a un lugar abierto,, ";
 	protected boolean fromNotEnoughAccuraccyMessage = false;
-	protected String accuraccyObtainedMessage = "Se pudo obtener su ubicación, ";
+	protected String accuraccyObtainedMessage = "Se pudo obtener su ubicación, la última instrucción fue, ";
 	protected String oldMessage = "";
 	
 	public LocationDependentState(VoiceInterpreterActivity context) {

@@ -274,7 +274,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.getPoint();
 						if (GPScoordinateHelper.getDistanceBetweenPoints(
 								position.getLatitude(), point.getLatitude(),
-								position.getLongitude(), point.getLongitude()) < 100
+								position.getLongitude(), point.getLongitude()) < (40 + position.getAccuracy())
 								|| walkingPositionProvider == WalkingPositionHelper.MAP_QUEST) {
 							hasToSpeak = true;
 							hasSpoken = true;
@@ -479,6 +479,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
+				positions = null;
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
 					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);

@@ -57,8 +57,6 @@ function loadUserData(){
 				$("#inputUsername").attr('readonly', true);
 				$("#inputEmail").val(jsonData.email);
 				$("#inputEmail").attr('readonly', true);
-				if (jsonData.role == "ADMIN")
-					loadAdminMenu();
 			} else
 				window.location.replace("index.jsp");
 		},

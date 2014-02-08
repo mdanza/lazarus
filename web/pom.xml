@@ -30,6 +30,12 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<excludes>
+						<exclude>**/src/main/webapp/assets/css/original/*.css</exclude>
+					</excludes>
+					<excludes>
+						<exclude>**/src/main/webapp/assets/js/original/*.js</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

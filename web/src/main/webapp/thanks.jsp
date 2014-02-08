@@ -9,12 +9,11 @@
     <title>Lazarus</title>
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/sticky-footer-navbar.css" rel="stylesheet">
-    <link href="assets/css/toastr.css" rel="stylesheet">
+    <link href="assets/css/sticky-footer-navbar.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="wrap">
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -33,20 +32,39 @@
         <li><a href="city-reports.jsp">Mapa</a></li>
         <li><a href="user.jsp">Usuario</a></li>
         <li class="active"><a href="thanks.jsp">Agradecimientos</a></li>
-        <li><a href="admin.jsp">Admimistración</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+<div class="container">
+		<div class="jumbotron">
+			<h1>Agradecemos a:</h1>
+			<p>
+				<a href="http://www.graphicsfuel.com">http://www.graphicsfuel.com</a>
+				por sus íconos
+			</p>
+			<p>
+				<a href="http://www.mapquest.com">http://www.mapquest.com</a> por
+				servicios Open de mapas y navegación  
+			</p>
+			<p>
+				<a href="http://www.montevideo.gub.uy">http://www.montevideo.gub.uy/</a>
+				por sus datos abiertos
+			</p>
+		</div>
+	</div>
 </div>
 <div id="footer">
    <div class="container">
      <a href="LogoutServlet" class="text-muted"><span class="pull-right">Logout</span></a>
    </div>
 </div>
+<input id="hiddenToken" type="hidden"
+		value="<%=request.getSession().getAttribute("token") != null ? request
+					.getSession().getAttribute("token") : ""%>">
 <script src="assets/js/jquery-1.9.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/toastr.min.js"></script>
+<script src="assets/js/thanks.min.js"></script>
 </body>
 </html>

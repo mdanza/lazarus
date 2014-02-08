@@ -14,6 +14,16 @@ $(document).ready(function() {
 });
 
 function uploadShapefile(){
+	var file = $("#inputFile").val();
+	var type = $("#selectedShapefile").val();
+	if(file == ""){
+		toastr.error("No ha seleccionado un archivo");
+		return;
+	}
+	if(type == ""){
+		toastr.error("No ha seleccionado un tipo de archivo");
+		return;
+	}
 	form = $("#shapefileUpdateForm");
 	url = form.attr('action') + $("#selectedShapefileType").val();
 	formData = new FormData(form[0]);
@@ -97,15 +107,25 @@ function loadAdminMenu() {
 										Math
 												.round(100 * jsonData.streetsUploadPercentage) / 100);
 					} else
-						alert(jsonResponse.data);
+						toastr.error("No se pudieron cargar los datos");
 				},
 				error : function(jqXHR, textStatus, errorThrown) {
-					alert("No se pudo completar su solicitud");
+					toastr.error("No se pudo completar su solicitud");
 				}
 			});
 }
 
 function uploadCsv(){
+	var file = $("#inputCsvFile").val();
+	var type = $("#selectedCsvfile").val();
+	if(file == ""){
+		toastr.error("No ha seleccionado un archivo");
+		return;
+	}
+	if(type == ""){
+		toastr.error("No ha seleccionado un tipo de archivo");
+		return;
+	}
 	form = $("#csvUpdateForm");
 	url = form.attr('action') + $("#selectedCsvType").val();
 	formData = new FormData(form[0]);

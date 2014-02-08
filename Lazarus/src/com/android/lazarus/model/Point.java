@@ -28,4 +28,8 @@ public class Point {
 		this.longitude = longitude;
 	}
 
+	@Override
+	public String toString() {
+		return this.latitude+","+this.longitude;
+	}
 }

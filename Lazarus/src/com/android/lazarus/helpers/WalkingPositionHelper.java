@@ -526,4 +526,31 @@ public class WalkingPositionHelper {
 		return alwaysOnTheSameStreet;
 	}
 
+	public static int getNextPositionWithInstruction(
+			int currentWalkingPosition, List<WalkingPosition> positions) {
+		int nextPositionWithInstruction = 100000;
+		if (positions != null && currentWalkingPosition < positions.size() - 1) {
+			for (int i = currentWalkingPosition+1; i < positions.size(); i++) {
+				if (positions.get(i) != null
+						&& positions.get(i).getInstruction() != null) {
+					return i;
+				}
+			}
+		}
+		return nextPositionWithInstruction;
+	}
+
+	public static double distance(WalkingPosition walkingPosition,
+			WalkingPosition walkingPosition2) {
+		double distance = 10000000;
+		if (walkingPosition != null && walkingPosition2 != null
+				&& walkingPosition.getPoint() != null
+				&& walkingPosition2.getPoint() != null) {
+			GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
+					.getPoint().getLatitude(), walkingPosition2.getPoint()
+					.getLatitude(), walkingPosition.getPoint().getLongitude(),
+					walkingPosition2.getPoint().getLongitude());
+		}
+		return distance;
+	}
 }

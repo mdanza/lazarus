@@ -37,9 +37,14 @@
 			window.location.replace("index.jsp");
 		else {
 			MQA.EventUtil.observe(window, 'load', initializeMap);
-			MQA.EventUtil.observe(window, 'resize', initializeMap);
+			MQA.EventUtil.observe(window, 'resize', resizeMapWidth);
 		}
 	});
+	
+	function resizeMapWidth(){
+		var mapCanvas = $('#map_canvas');
+		mapCanvas.children('div:first-child').css('width', mapCanvas.css('width'));
+	}
 	
 	function searchCoords(){
 		form = $("#searchCoordinatesForm");
@@ -148,7 +153,7 @@
 			    $('#addObstacleModal').modal();
 			  });
 			loadObstacles();
-			stopsLoadingTimer = setInterval(loadStops, 2000);
+			loadStops();
 		});
 	}
 	function placeObstacle(location, description, mRadius, id) {
@@ -293,6 +298,7 @@
 						jsonStop = jsonData[i];
 						placeStop({lat:parseFloat(jsonStop.latitude), lng:parseFloat(jsonStop.longitude)}, jsonStop.locationCode, jsonStop.active);			
 					}
+					loadStops();
 				} else{
 					$("#switchStops").button('reset');
 					clearInterval(stopsLoadingTimer);

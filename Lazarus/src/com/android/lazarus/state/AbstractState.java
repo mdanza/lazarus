@@ -45,7 +45,7 @@ public abstract class AbstractState implements State {
 	protected String getWhereAmIMessage() {
 		Location location = this.context.getLocationListener().getLocation();
 		if (location == null) {
-			return "No se puede obtener información de su posición, por favor encienda el g p s,,";
+			return "No se puede obtener información de su posición, por favor encienda el g p s, y el wi fi,, ";
 		} else {
 			if (whereAmITask.getStatus() != AsyncTask.Status.RUNNING) {
 				if (whereAmITask.getStatus() == AsyncTask.Status.PENDING) {
@@ -327,8 +327,8 @@ public abstract class AbstractState implements State {
 						: closeLocationData.getClosestCorner()
 								.getFirstStreetName();
 				message = "Usted se encuentra en, "
-						+ closeLocationData.getClosestStreet().getName()
-						+ ", esquina, " + corner + ",,";
+						+ closeLocationData.getClosestStreet().getName().toLowerCase()
+						+ ", esquina, " + corner.toLowerCase() + ". la precisión de su ubicación es de "+Math.ceil(location.getAccuracy())+" metros ";
 			} else
 				message = "No se pudo obtener información sobre su posición,,";
 			context.speak(message);

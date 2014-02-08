@@ -72,7 +72,9 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private String saidMessage = null;
 	private int messageRepetitions = 0;
 
+	
 	public void showToast(String content) {
+		handler.removeCallbacksAndMessages(null);
 		handler.post(new ShowTextRunnable(content));
 	}
 

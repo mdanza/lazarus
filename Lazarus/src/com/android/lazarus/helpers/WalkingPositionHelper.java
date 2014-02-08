@@ -171,11 +171,13 @@ public class WalkingPositionHelper {
 			// bearing += 180;
 			float direction = bearing - azimuth;
 			boolean headingFound = false;
-			if (Math.abs(direction) > 180-OPENING_ANGLE && Math.abs(direction) < 180 + OPENING_ANGLE) {
+			if (Math.abs(direction) > 180 - OPENING_ANGLE
+					&& Math.abs(direction) < 180 + OPENING_ANGLE) {
 				returnInstruction = TURN_OPOSSITE_INTRUCTION;
 				headingFound = true;
 			}
-			if (Math.abs(direction) > 360-OPENING_ANGLE || Math.abs(direction) < OPENING_ANGLE) {
+			if (Math.abs(direction) > 360 - OPENING_ANGLE
+					|| Math.abs(direction) < OPENING_ANGLE) {
 				returnInstruction = CONTINUE_INSTRUCCION;
 				headingFound = true;
 			}
@@ -327,8 +329,8 @@ public class WalkingPositionHelper {
 		if (walkingPosition != null && position != null) {
 			return GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
 					.getPoint().getLatitude(), position.getLatitude(),
-					walkingPosition.getPoint().getLongitude(), walkingPosition
-							.getPoint().getLongitude());
+					walkingPosition.getPoint().getLongitude(), position
+							.getLongitude());
 		}
 		return 10000;
 	}
@@ -512,7 +514,8 @@ public class WalkingPositionHelper {
 						if (street == null) {
 							street = getStreet(instruction);
 						} else {
-							if (!street.equals(getStreet(instruction)) && i!=positions.size()-1) {
+							if (!street.equals(getStreet(instruction))
+									&& i != positions.size() - 1) {
 								alwaysOnTheSameStreet = false;
 							}
 						}

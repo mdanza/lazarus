@@ -1,5 +1,6 @@
 package com.android.lazarus.state;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ public class MainMenuState extends AbstractState {
 	LoadFavouritesTask loadFavouritesTask = new LoadFavouritesTask();
 	PossibleDestinationTask possibleDestinationTask = new PossibleDestinationTask();
 	private String help = "";
+	private List<Favourite> alreadyChosenFavourites = new ArrayList<Favourite>();
 
 	private enum InternalState {
 		LOADING_FAVOURITES, GET_DESTINATION, DESTINATION_SAID, TO_CHOOSE_STREET, TO_CONFIRM_FAVOURITE
@@ -113,6 +115,7 @@ public class MainMenuState extends AbstractState {
 				return;
 			}
 			if (stringPresent(results, "no")) {
+				position--;
 				goToNextPosition();
 			}
 		}
@@ -165,7 +168,8 @@ public class MainMenuState extends AbstractState {
 	private Favourite getFavourite(String string, List<Favourite> favourites) {
 		if (favourites != null) {
 			for (Favourite favourite : favourites) {
-				if (favourite != null && favourite.getName().equals(string)) {
+				if (favourite != null && favourite.getName().equals(string) && !alreadyChosenFavourites.contains(favourite)) {
+					alreadyChosenFavourites.add(favourite);
 					return favourite;
 				}
 			}

@@ -43,6 +43,7 @@ import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.MapActivity;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.MapView.MapViewEventListener;
+import com.mapquest.android.maps.MyLocationOverlay;
 import com.mapquest.android.maps.OverlayItem;
 
 public class VoiceInterpreterActivity extends MapActivity implements
@@ -64,6 +65,8 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
 	private final boolean testing = true;
+	private final boolean useRealLocationInTesting = true;
+	private MyLocationOverlay myLocationOverlay;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlayMyPosition;
 	private DefaultItemizedOverlay itemizedOverlayWalkingWaypoints;
@@ -272,75 +275,90 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private void setUpMap() {
 		map = (MapView) findViewById(R.id.map);
 		map.getController().setZoom(16);
-		map.getController().setCenter(new GeoPoint(-34.910099,-56.158787));
+		map.getController().setCenter(new GeoPoint(-34.910099, -56.158787));
 		map.setBuiltInZoomControls(true);
-		map.addMapViewEventListener(new MapViewEventListener() {
+		if (useRealLocationInTesting) {
+			myLocationOverlay = new MyLocationOverlay(this, map);
+			myLocationOverlay.enableMyLocation();
+			myLocationOverlay.runOnFirstFix(new Runnable() {
+				@Override
+				public void run() {
+					GeoPoint currentLocation = myLocationOverlay
+							.getMyLocation();
+					map.getController().animateTo(currentLocation);
+					map.getOverlays().add(myLocationOverlay);
+					myLocationOverlay.setFollowing(true);
+				}
+			});
+		} else {
+			map.addMapViewEventListener(new MapViewEventListener() {
 
-			@Override
-			public void longTouch(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void longTouch(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void mapLoaded(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void mapLoaded(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void move(MapView map) {
-				GeoPoint center = map.getMapCenter();
-				Location location = new Location("");
-				location.setLatitude(center.getLatitude());
-				location.setLongitude(center.getLongitude());
-				location.setAccuracy(19);
-				location.setAltitude(0);
-				location.setTime(System.currentTimeMillis());
-				location.setBearing(0F);
-				locationListener.onLocationChanged(location);
-				if (itemizedOverlayMyPosition != null)
-					map.getOverlays().remove(itemizedOverlayMyPosition);
-				Drawable icon = getResources().getDrawable(
-						R.drawable.location_marker);
-				itemizedOverlayMyPosition = new DefaultItemizedOverlay(icon);
-				OverlayItem myPosition = new OverlayItem(center, "", "");
-				itemizedOverlayMyPosition.addItem(myPosition);
-				map.getOverlays().add(itemizedOverlayMyPosition);
-				map.invalidate();
-			}
+				@Override
+				public void move(MapView map) {
+					GeoPoint center = map.getMapCenter();
+					Location location = new Location("");
+					location.setLatitude(center.getLatitude());
+					location.setLongitude(center.getLongitude());
+					location.setAccuracy(19);
+					location.setAltitude(0);
+					location.setTime(System.currentTimeMillis());
+					location.setBearing(0F);
+					locationListener.onLocationChanged(location);
+					if (itemizedOverlayMyPosition != null)
+						map.getOverlays().remove(itemizedOverlayMyPosition);
+					Drawable icon = getResources().getDrawable(
+							R.drawable.location_marker);
+					itemizedOverlayMyPosition = new DefaultItemizedOverlay(icon);
+					OverlayItem myPosition = new OverlayItem(center, "", "");
+					itemizedOverlayMyPosition.addItem(myPosition);
+					map.getOverlays().add(itemizedOverlayMyPosition);
+					map.invalidate();
+				}
 
-			@Override
-			public void moveEnd(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void moveEnd(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void moveStart(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void moveStart(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void touch(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void touch(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void zoomEnd(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void zoomEnd(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-			@Override
-			public void zoomStart(MapView arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void zoomStart(MapView arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-		});
+			});
+		}
 	}
 
 	private void initializeFirstState() {
@@ -448,8 +466,12 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		if (!testing)
 			locationListener = new LocationListenerImpl(this);
 		else {
-			mockLocationListener = new MockLocationListener(this);
-			locationListener = mockLocationListener;
+			if (useRealLocationInTesting)
+				locationListener = new LocationListenerImpl(this);
+			else {
+				mockLocationListener = new MockLocationListener(this);
+				locationListener = mockLocationListener;
+			}
 			setUpMap();
 		}
 		initializeFirstState();
@@ -487,6 +509,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		super.onPause();
 		if (sensorEventListenerImpl != null)
 			sensorEventListenerImpl.pause();
+		if (myLocationOverlay != null) {
+			myLocationOverlay.disableCompass();
+			myLocationOverlay.disableMyLocation();
+		}
 	}
 
 	@Override
@@ -496,6 +522,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			sensorEventListenerImpl.resume();
 		if (state != null && state instanceof MainMenuState)
 			sayMessage();
+		if (myLocationOverlay != null) {
+			myLocationOverlay.enableMyLocation();
+			myLocationOverlay.enableCompass();
+		}
 	}
 
 	@Override

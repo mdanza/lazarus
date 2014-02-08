@@ -546,11 +546,18 @@ public class WalkingPositionHelper {
 		if (walkingPosition != null && walkingPosition2 != null
 				&& walkingPosition.getPoint() != null
 				&& walkingPosition2.getPoint() != null) {
-			GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
+			distance = GPScoordinateHelper.getDistanceBetweenPoints(walkingPosition
 					.getPoint().getLatitude(), walkingPosition2.getPoint()
 					.getLatitude(), walkingPosition.getPoint().getLongitude(),
 					walkingPosition2.getPoint().getLongitude());
 		}
 		return distance;
+	}
+
+	public static boolean checkForValidPositionsForAheadInstruction(
+			List<WalkingPosition> positions,int currentWalkingPosition, Location position) {
+		return positions != null && currentWalkingPosition < positions.size() - 2 && position != null
+				&& positions.get(currentWalkingPosition) != null
+				&& positions.get(currentWalkingPosition).getPoint() != null;
 	}
 }

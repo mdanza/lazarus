@@ -12,7 +12,6 @@ import org.osmdroid.util.GeoPoint;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import com.android.lazarus.VoiceInterpreterActivity;
 import com.android.lazarus.helpers.ConstantsHelper;
@@ -46,7 +45,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private boolean hasSpoken = false;
 	private boolean secondStreetInstructionGiven = false;
 	private int walkingPositionProvider = WalkingPositionHelper.OSRM;
-	//private int skipInstructionFrom = -1;
+	private boolean hasSpokenAheadPosition = false;
+	private int skipInstructionFrom = -1;
+	private double lastDistanceToWalkingPosition = -1;
+	private int b = -1; // Used to check if has to speak ahead instruction
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -168,7 +170,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	private void initializeSelectingObstacleName() {
-
 		message = "Diga la descripción del obstáculo que desea registrar, ";
 		obstacleToReport = new Obstacle();
 		Point point = new Point(position.getLatitude(), position.getLongitude());
@@ -176,7 +177,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 		Double radius = Double.valueOf((Math.ceil(position.getAccuracy())));
 		obstacleToReport.setRadius(radius.intValue());
 		state = InternalState.SELECTING_OBSTACLE_DESCRIPTION;
-
 	}
 
 	@Override
@@ -211,63 +211,47 @@ public class WalkingDirectionsState extends LocationDependentState {
 			} else {
 				if (position != null) {
 					if (!state.equals(InternalState.RECALCULATE)) {
-						checkForObstacles();
-						int olderPosition = currentWalkingPosition;
-						int closestPosition = getClosestPosition();
-
-						String text = "Closest position: "
-								+ closestPosition
-								+ "\n"
-								+ positions.get(closestPosition)
-										.getInstruction()
-								+ "\nCurrent position: "
-								+ currentWalkingPosition
-								+ " \n"
-								+ positions.get(currentWalkingPosition)
-										.getInstruction()
-								+ " \nDistance to closest walking position: "
-								+ WalkingPositionHelper
-										.distanceToWalkingPosition(position,
-												positions.get(closestPosition))
-								+ "\nAccuraccy: " + position.getAccuracy();
-
-						Toast.makeText(context, text, Toast.LENGTH_SHORT)
-								.show();
-						if (closestPosition != -1
-								&& olderPosition + 1 == closestPosition) {
-							currentWalkingPosition = getClosestPosition();
-							hasSpoken = false;
-						}
-						if (conditionsToRecalculate()) {
-							recalculate();
-						} else {
-							String instruction = null;
-							if (hasToSpeakInstruction()) {
-								instruction = getInstructionForCurrentWalkingPosition();
-							} /*else {
-								if (hasToSpeakAheadInstruction()) {
-									instruction = getAheadInstruction();
-								}
-							}*/
-							if (instruction != null) {
-								message = instruction;
-								if (currentWalkingPosition > 0) {
-									secondStreetInstructionGiven = true;
-								}
-								if (currentWalkingPosition == positions.size() - 1) {
-									context.speak(instruction);
-								} else {
-									context.speak(instruction, true);
-								}
-							}
-						}
+						giveWalkingInstruction();
 					}
 				}
 			}
 		}
 	}
 
-	/*
+	private void giveWalkingInstruction() {
+		checkForObstacles();
+		int olderPosition = currentWalkingPosition;
+		int closestPosition = getClosestPosition();
+		showDebugMessage(closestPosition);
+		if (closestPosition != -1 && olderPosition + 1 == closestPosition) {
+			currentWalkingPosition = getClosestPosition();
+			hasSpoken = false;
+		}
+		if (conditionsToRecalculate()) {
+			recalculate();
+		} else {
+			String instruction = null;
+			if (hasToSpeakInstruction()) {
+				instruction = getInstructionForCurrentWalkingPosition();
+			} else {
+				if (hasToSpeakAheadInstruction()) {
+					instruction = getAheadInstruction();
+				}
+			}
+			if (instruction != null) {
+				message = instruction;
+				if (currentWalkingPosition > 0) {
+					secondStreetInstructionGiven = true;
+				}
+				if (currentWalkingPosition == positions.size() - 1) {
+					context.speak(instruction);
+				} else {
+					context.speak(instruction, true);
+				}
+			}
+		}
+	}
+
 	private String getAheadInstruction() {
 		String instruction = null;
 		if (positions != null && currentWalkingPosition < positions.size() - 1) {
@@ -275,9 +259,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 					.getNextPositionWithInstruction(currentWalkingPosition,
 							positions);
 			if (nextWithInstruction < positions.size() - 1) {
-				instruction = positions.get(nextWithInstruction)
-						.getInstruction();
+				instruction = WalkingPositionHelper
+						.generateInstructionForNotFinalWalkingPosition(
+								nextWithInstruction, positions);
 				skipInstructionFrom = nextWithInstruction;
+				hasSpokenAheadPosition = true;
 			}
 		}
 		return instruction;
@@ -285,71 +271,65 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	private boolean hasToSpeakAheadInstruction() {
 		boolean hasToSpeak = false;
-		if (positions != null && currentWalkingPosition < positions.size() - 2) {
-			if (!hasSpoken
-					&& position != null
-					&& positions.get(currentWalkingPosition) != null
-					&& positions.get(currentWalkingPosition + 1) != null
-					&& positions.get(currentWalkingPosition).getPoint() != null
-					&& positions.get(currentWalkingPosition + 1).getPoint() != null) {
-				int nextWithInstruction = WalkingPositionHelper
-						.getNextPositionWithInstruction(currentWalkingPosition,
-								positions);
-				if(nextWithInstruction<positions.size()-1){
-				double distanceToNextWithInstruction = WalkingPositionHelper.distanceToWalkingPosition(position, positions.get(nextWithInstruction));
-				double distanceFromCurrentToNextWithInstruction = WalkingPositionHelper.
-						distance(
-								positions.get(currentWalkingPosition), positions.get(nextWithInstruction));
-				if (distanceToNextWithInstruction < 80
-						&& nextWithInstruction < positions.size() - 1
-						&& nextWithInstruction != skipInstructionFrom) {
-					if (currentWalkingPosition == 0
-							|| positions.get(currentWalkingPosition)
-									.getInstruction() == null) {
-						if (distanceToNextWithInstruction < 20) {
+		if (WalkingPositionHelper.checkForValidPositionsForAheadInstruction(
+				positions, currentWalkingPosition, position)) {
+			if (!hasSpokenAheadPosition) {
+				int c = WalkingPositionHelper.getNextPositionWithInstruction(
+						currentWalkingPosition, positions); // Next position
+															// with instruction
+				Location p = position;
+				if (c < positions.size() - 1) {
+					if (d(currentWalkingPosition, c) < 80) {
+						if (b == -1 || d(currentWalkingPosition, c) > 20) {
+							b = currentWalkingPosition; // Walking position to
+														// track
+														// distance with next
+														// walking
+														// position with
+														// instruction
+						}
+						int a = b - 1; // Previous walking position
+						if (d(c, p) < 20) {
 							hasToSpeak = true;
-						} else {
-							if (nextWithInstruction == currentWalkingPosition + 1) {
-								if (currentWalkingPosition == 0) {
-									hasToSpeak = true;
-								} else {
-									double distanceToPreviousWalkingPosition = WalkingPositionHelper
-											.distanceToWalkingPosition(
-													position,
-													positions
-															.get(currentWalkingPosition - 1));
-									double distanceToNextWalkingPosition = WalkingPositionHelper
-											.distanceToWalkingPosition(
-													position,
-													positions
-															.get(currentWalkingPosition + 1));
-									if (distanceFromCurrentToNextWithInstruction < 20) {
-										if (distanceToPreviousWalkingPosition > distanceToNextWalkingPosition) {
-											hasToSpeak = true;
-										}
-									}
-									if (distanceFromCurrentToNextWithInstruction > 20
-											&& distanceFromCurrentToNextWithInstruction < 80) {
-										if (distanceToNextWalkingPosition < (distanceFromCurrentToNextWithInstruction / 2 + 10)) {
-											hasToSpeak = true;
-										}
-									}
-								}
+						}
+						if (d(b, c) < 20) {
+							if (b == 0 || d(a, p) > d(c, p)) {
+								hasToSpeak = true;
+							}
+						}
+						if (c == b + 1 || (c != b + 1 && d(b + 1, c) < 20)) {
+							if (d(c, p) < (d(b, c) / 2) + 10) {
+								hasToSpeak = true;
 							}
 						}
 					}
 				}
 			}
-			}
 		}
 		return hasToSpeak;
 	}
-*/
+
+	private double d(int b, int c) {
+		double distance = 100000;
+		if (b < positions.size() && c < positions.size())
+			distance = WalkingPositionHelper.distance(positions.get(b),
+					positions.get(c));
+		return distance;
+	}
+
+	private double d(int c, Location p) {
+		double distance = 100000;
+		if (p != null && c < positions.size())
+			distance = WalkingPositionHelper.distanceToWalkingPosition(p,
+					positions.get(c));
+		return distance;
+	}
+
 	private boolean hasToSpeakInstruction() {
 		boolean hasToSpeak = false;
 		if (positions != null) {
 			if (currentWalkingPosition > 0
-					) { //&& currentWalkingPosition != skipInstructionFrom
+					&& currentWalkingPosition != skipInstructionFrom) {
 				if (currentWalkingPosition == positions.size() - 1
 						&& position != null
 						&& positions.get(currentWalkingPosition) != null) {
@@ -390,15 +370,38 @@ public class WalkingDirectionsState extends LocationDependentState {
 						}
 					}
 				}
-			} /*else {
+			} else {
 				if (currentWalkingPosition == skipInstructionFrom) {
 					skipInstructionFrom = -1;
 					hasSpoken = true;
+					hasSpokenAheadPosition = false;
+					b = -1;
 				}
 			}
-			*/
 		}
 		return hasToSpeak;
+	}
+
+	private void showDebugMessage(int closestPosition) {
+		double newDistance = WalkingPositionHelper.distanceToWalkingPosition(
+				position, positions.get(closestPosition));
+		if (lastDistanceToWalkingPosition == -1
+				|| Math.abs((newDistance - lastDistanceToWalkingPosition)) > 4) {
+			lastDistanceToWalkingPosition = newDistance;
+			String text = "Closest position: "
+					+ closestPosition
+					+ "\n"
+					+ positions.get(closestPosition).getInstruction()
+					+ "\n"+ "Now: "
+					+ currentWalkingPosition
+					+ "\n"
+					+ positions.get(currentWalkingPosition).getInstruction()
+					+ "Distance to current: "
+					+ WalkingPositionHelper.distanceToWalkingPosition(position,
+							positions.get(closestPosition)) + "\n"+ "Accuraccy: "
+					+ Math.ceil(position.getAccuracy());
+			context.showToast(text);
+		}
 	}
 
 	private String getInstructionForCurrentWalkingPosition() {
@@ -543,20 +546,19 @@ public class WalkingDirectionsState extends LocationDependentState {
 
 	private int getClosestPosition() {
 		int closestPosition = -1;
-		if (positions != null) {
-			double distance = -1;
-			for (int i = 0; i < positions.size(); i++) {
-				WalkingPosition walkingPosition = positions.get(i);
-				if (positions.get(i) != null) {
-					double newDistance = WalkingPositionHelper
-							.distanceToWalkingPosition(position,
-									walkingPosition);
-					if (distance == -1 || newDistance < distance) {
-						distance = newDistance;
-						closestPosition = i;
-					}
+		if (positions != null && currentWalkingPosition < positions.size()
+				&& position != null) {
+			if (currentWalkingPosition < positions.size() - 1) {
+				if (d(currentWalkingPosition, position) < d(
+						currentWalkingPosition + 1, position)) {
+					closestPosition = currentWalkingPosition;
+				} else {
+					closestPosition = currentWalkingPosition + 1;
 				}
+			} else {
+				closestPosition = currentWalkingPosition;
 			}
+
 		}
 		return closestPosition;
 	}

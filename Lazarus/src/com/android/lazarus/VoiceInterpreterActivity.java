@@ -1,9 +1,11 @@
 package com.android.lazarus;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.helpers.MessageSplitter;
@@ -27,6 +30,7 @@ import com.android.lazarus.listener.LocationListenerImpl;
 import com.android.lazarus.listener.MockLocationListener;
 import com.android.lazarus.listener.RecognitionListenerImpl;
 import com.android.lazarus.listener.SensorEventListenerImpl;
+import com.android.lazarus.model.WalkingPosition;
 import com.android.lazarus.serviceadapter.UserServiceAdapter;
 import com.android.lazarus.serviceadapter.UserServiceAdapterImpl;
 import com.android.lazarus.speechrecognizer.AndroidSpeechRecognizer;
@@ -34,7 +38,6 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
-import com.android.lazarus.R;
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.MapActivity;
@@ -60,9 +63,10 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
-	private final boolean testing = false;
+	private final boolean testing = true;
 	private MapView map;
-	private DefaultItemizedOverlay itemizedOverlay;
+	private DefaultItemizedOverlay itemizedOverlayMyPosition;
+	private DefaultItemizedOverlay itemizedOverlayWalkingWaypoints;
 	private ScheduledExecutorService scheduledThreadPoolExecutor = Executors
 			.newScheduledThreadPool(1);
 
@@ -72,7 +76,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private String saidMessage = null;
 	private int messageRepetitions = 0;
 
-	
 	public void showToast(String content) {
 		handler.removeCallbacksAndMessages(null);
 		handler.post(new ShowTextRunnable(content));
@@ -113,6 +116,44 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	public void setState(State state) {
 		this.state = state;
 		this.state.onAttach();
+		if (testing) {
+			if (itemizedOverlayWalkingWaypoints != null)
+				map.getOverlays().remove(itemizedOverlayWalkingWaypoints);
+		}
+	}
+
+	public void setWalkingWaypoints(List<WalkingPosition> positions) {
+		handler.post(new SetWalkingWaypointsRunnable(positions));
+	}
+
+	private class SetWalkingWaypointsRunnable implements Runnable {
+		private List<WalkingPosition> positions;
+
+		public SetWalkingWaypointsRunnable(List<WalkingPosition> positions) {
+			super();
+			this.positions = positions;
+		}
+
+		@Override
+		public void run() {
+			if (testing) {
+				if (itemizedOverlayWalkingWaypoints != null)
+					map.getOverlays().remove(itemizedOverlayWalkingWaypoints);
+				Drawable icon = getResources().getDrawable(R.drawable.black);
+				itemizedOverlayWalkingWaypoints = new DefaultItemizedOverlay(
+						icon);
+				for (WalkingPosition position : positions) {
+					GeoPoint point = new GeoPoint(position.getPoint()
+							.getLatitude(), position.getPoint().getLongitude());
+					OverlayItem myPosition = new OverlayItem(point, "", "");
+					itemizedOverlayWalkingWaypoints.addItem(myPosition);
+				}
+				map.getOverlays().add(itemizedOverlayWalkingWaypoints);
+				map.invalidate();
+			}
+
+		}
+
 	}
 
 	public void setState(State state, boolean runOnAttach) {
@@ -259,14 +300,14 @@ public class VoiceInterpreterActivity extends MapActivity implements
 				location.setTime(System.currentTimeMillis());
 				location.setBearing(0F);
 				locationListener.onLocationChanged(location);
-				if (itemizedOverlay != null)
-					map.getOverlays().remove(itemizedOverlay);
+				if (itemizedOverlayMyPosition != null)
+					map.getOverlays().remove(itemizedOverlayMyPosition);
 				Drawable icon = getResources().getDrawable(
 						R.drawable.location_marker);
-				itemizedOverlay = new DefaultItemizedOverlay(icon);
+				itemizedOverlayMyPosition = new DefaultItemizedOverlay(icon);
 				OverlayItem myPosition = new OverlayItem(center, "", "");
-				itemizedOverlay.addItem(myPosition);
-				map.getOverlays().add(itemizedOverlay);
+				itemizedOverlayMyPosition.addItem(myPosition);
+				map.getOverlays().add(itemizedOverlayMyPosition);
 				map.invalidate();
 			}
 

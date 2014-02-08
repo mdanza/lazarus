@@ -9,9 +9,9 @@
     <title>Lazarus</title>
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/sticky-footer-navbar.css" rel="stylesheet">
-    <link href="assets/css/toastr.css" rel="stylesheet">
-    <link href="assets/css/signin.css" rel="stylesheet">
+    <link href="assets/css/sticky-footer-navbar.min.css" rel="stylesheet">
+    <link href="assets/css/toastr.min.css" rel="stylesheet">
+    <link href="assets/css/signin.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="wrap">
@@ -34,7 +34,6 @@
         <li><a href="city-reports.jsp">Mapa</a></li>
         <li class="active"><a href="user.jsp">Usuario</a></li>
         <li><a href="thanks.jsp">Agradecimientos</a></li>
-        <li><a href="admin.jsp">Admimistración</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -62,7 +61,7 @@
 <script src="assets/js/jquery-1.9.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/toastr.min.js"></script>
-<script src="assets/js/user.js"></script>
+<script src="assets/js/plugins/toastr.min.js"></script>
+<script src="assets/js/user.min.js"></script>
 </body>
 </html>

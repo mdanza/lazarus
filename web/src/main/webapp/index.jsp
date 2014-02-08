@@ -9,8 +9,8 @@
     <title>Lazarus</title>
     <!-- Bootstrap -->
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link href="assets/css/signin.css" rel="stylesheet">
-	<link href="assets/css/toastr.css" rel="stylesheet">
+	<link href="assets/css/signin.min.css" rel="stylesheet">
+	<link href="assets/css/toastr.min.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-default" role="navigation">
@@ -54,7 +54,7 @@
 <script src="assets/js/jquery-1.9.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/toastr.min.js"></script>
-<script src="assets/js/index.js"></script>
+<script src="assets/js/plugins/toastr.min.js"></script>
+<script src="assets/js/index.min.js"></script>
 </body>
 </html>

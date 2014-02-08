@@ -60,7 +60,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private boolean ttsInitialize;
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
-	private final boolean testing = false;
+	private final boolean testing = true;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlay;
 	private ScheduledExecutorService scheduledThreadPoolExecutor = Executors
@@ -74,7 +74,6 @@ public class VoiceInterpreterActivity extends MapActivity implements
 
 	
 	public void showToast(String content) {
-		handler.removeCallbacksAndMessages(null);
 		handler.post(new ShowTextRunnable(content));
 	}
 
@@ -88,7 +87,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 
 		@Override
 		public void run() {
-			Toast.makeText(getApplicationContext(), content, Toast.LENGTH_SHORT)
+			Toast.makeText(getApplicationContext(), content, Toast.LENGTH_LONG)
 					.show();
 		}
 
@@ -232,7 +231,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private void setUpMap() {
 		map = (MapView) findViewById(R.id.map);
 		map.getController().setZoom(16);
-		map.getController().setCenter(new GeoPoint(-34.900557, -56.140355));
+		map.getController().setCenter(new GeoPoint(-34.910099,-56.158787));
 		map.setBuiltInZoomControls(true);
 		map.addMapViewEventListener(new MapViewEventListener() {
 

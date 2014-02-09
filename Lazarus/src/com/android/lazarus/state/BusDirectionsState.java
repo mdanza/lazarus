@@ -33,6 +33,7 @@ public class BusDirectionsState extends LocationDependentState {
 	private boolean instructionsGivenOnConstructor = false;
 	private boolean fromFavourite;
 	private boolean hasFavourite;
+	private int minimumSearchDistance = 100;
 
 	private enum InternalState {
 		SEARCH_OPTIONS, AWAITING_USER_DECISION_BUS_RIDE, AWAITING_USER_DECISION_TRANSSHIPMENT, NO_OPTIONS_FOUND
@@ -69,6 +70,15 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			}
 		}
+		if ((state.equals(InternalState.AWAITING_USER_DECISION_BUS_RIDE) || state
+				.equals(InternalState.AWAITING_USER_DECISION_TRANSSHIPMENT))
+				&& stringPresent(results, "mas")) {
+			if (minimumSearchDistance < 400) {
+				minimumSearchDistance += 100;
+				state.equals(InternalState.SEARCH_OPTIONS);
+			}
+
+		}
 		giveInstructions();
 	}
 
@@ -76,7 +86,8 @@ public class BusDirectionsState extends LocationDependentState {
 	protected void giveInstructions() {
 		if (state.equals(InternalState.SEARCH_OPTIONS)) {
 			// Runs only one time per instance
-			if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING) {
+			if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING
+					|| loadBusRidesTask.getStatus() == AsyncTask.Status.FINISHED) {
 				loadBusRidesTask.execute();
 			}
 			message = "Espere por favor unos instantes, mientras cargamos las opciones de ómnibus para llegar a su destino";
@@ -90,6 +101,7 @@ public class BusDirectionsState extends LocationDependentState {
 				appendDistanceToStop(busRides.get(i).getStartStop());
 				appendSchedule(i);
 			}
+			message += ", diga, más, para ampliar el radio de búsqueda";
 			context.speak(message);
 		}
 		if (state.equals(InternalState.AWAITING_USER_DECISION_TRANSSHIPMENT)) {
@@ -111,6 +123,7 @@ public class BusDirectionsState extends LocationDependentState {
 						.getStartStop());
 				appendSchedule(i);
 			}
+			message += ", diga, más, para ampliar el radio de búsqueda";
 			context.speak(message);
 		}
 		if (state.equals(InternalState.NO_OPTIONS_FOUND)) {
@@ -219,7 +232,7 @@ public class BusDirectionsState extends LocationDependentState {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			DirectionsServiceAdapter busDirectionsServiceAdapter = new DirectionsServiceAdapterImpl();
-			for (int i = 100; i < 500; i += 100) {
+			for (int i = minimumSearchDistance; i < 500; i += 100) {
 				if (isCancelled())
 					return null;
 				if (i == 100 || busRides == null) {
@@ -231,7 +244,7 @@ public class BusDirectionsState extends LocationDependentState {
 				}
 			}
 			if (busRides == null) {
-				for (int i = 100; i < 500; i += 100) {
+				for (int i = minimumSearchDistance; i < 500; i += 100) {
 					if (isCancelled())
 						return null;
 					sayWaitMessage();

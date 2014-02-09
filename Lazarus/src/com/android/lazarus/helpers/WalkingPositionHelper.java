@@ -397,7 +397,7 @@ public class WalkingPositionHelper {
 			String newSecondStreetInstruction = getSecondStreetIntruction(positions);
 			if (newSecondStreetInstruction != null) {
 				boolean hasRightOrLeft = false;
-				if (hasRight(oldSecondStreetInstruction)) {
+				if (hasRight(oldSecondStreetInstruction) && hasLeft(newSecondStreetInstruction)) {
 					hasRightOrLeft = true;
 					newSecondStreetInstruction = newSecondStreetInstruction
 							.replace("izquierda", "derecha");
@@ -406,7 +406,7 @@ public class WalkingPositionHelper {
 					newSecondStreetInstruction = newSecondStreetInstruction
 							.replace("IZQUIERDA", "DERECHA");
 				} else {
-					if (hasLeft(oldSecondStreetInstruction)) {
+					if (hasLeft(oldSecondStreetInstruction) && hasRight(newSecondStreetInstruction)) {
 						hasRightOrLeft = true;
 						newSecondStreetInstruction = newSecondStreetInstruction
 								.replace("derecha", "izquierda");

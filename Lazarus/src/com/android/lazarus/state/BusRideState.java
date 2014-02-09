@@ -285,7 +285,7 @@ public class BusRideState extends LocationDependentState {
 									.getPoint().getLatitude(),
 							position.getLongitude(), ride.getEndStop()
 									.getPoint().getLongitude())).intValue();
-			if ((distanceToLastStop < 80 || distanceToLastStop < 20)
+			if ((distanceToLastStop < 170 || distanceToLastStop < 20)
 					&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 				passedSecondLastStop = true;
 				message = "Usted se encuentra a "

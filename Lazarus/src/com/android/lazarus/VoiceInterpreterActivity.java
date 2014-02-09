@@ -5,7 +5,6 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -22,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.android.lazarus.helpers.ConstantsHelper;
 import com.android.lazarus.helpers.MessageHelper;
 import com.android.lazarus.helpers.MessageSplitter;
@@ -38,6 +36,7 @@ import com.android.lazarus.speechrecognizer.SpeechRecognizerInterface;
 import com.android.lazarus.state.LogInState;
 import com.android.lazarus.state.MainMenuState;
 import com.android.lazarus.state.State;
+import com.android.lazarus.R;
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.MapActivity;
@@ -65,7 +64,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
 	private final boolean testing = true;
-	private final boolean useRealLocationInTesting = false;
+	private final boolean useRealLocationInTesting = true;
 	private MyLocationOverlay myLocationOverlay;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlayMyPosition;
@@ -188,6 +187,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		message = MessageHelper.convertToSpeakableMessage(message);
 		if (message != null && !message.equals("")) {
 			tts.stop();
+			message = message.toLowerCase();
 			if (message.length() <= maximumLength) {
 				tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
 			} else {
@@ -209,6 +209,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 			int maximumLength = MAXIMUM_MESSAGE_LENGTH;
 			if (addQueue == true) {
 				if (message != null) {
+					message = message.toLowerCase();
 					if (message.length() <= maximumLength) {
 						tts.speak(message, TextToSpeech.QUEUE_ADD, null);
 					} else {

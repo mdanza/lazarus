@@ -236,9 +236,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 			String instruction = null;
 			if (hasToSpeakInstruction()) {
 				instruction = getInstructionForCurrentWalkingPosition();
-			} else {
-				if (hasToSpeakAheadInstruction()) {
+			}
+			if (hasToSpeakAheadInstruction()) {
+				if (instruction == null) {
 					instruction = getAheadInstruction();
+				} else {
+					instruction += ". luego de hacerlo,, "+getAheadInstruction();
 				}
 			}
 			if (instruction != null) {
@@ -615,7 +618,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
-				//positions = null;
+				// positions = null;
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
 					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
@@ -694,7 +697,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 						}
 					}
 					if (!state.equals(InternalState.RECALCULATE)) {
-						boolean messageIsFirstFromWalkingInstructions = false;
 						if (WalkingPositionHelper.distanceToWalkingPosition(
 								position, positions.get(positions.size() - 1)) < 20
 								&& WalkingPositionHelper
@@ -711,7 +713,9 @@ public class WalkingDirectionsState extends LocationDependentState {
 									+ ", Para reportar un obstáculo en el camino, diga obstáculo, "
 									+ ",, Ya no necesita sostener el celular frente a usted, "
 									+ message;
-							messageIsFirstFromWalkingInstructions = true;
+							if(hasToSpeakAheadInstruction()){
+								message += ". luego,, "+getAheadInstruction();
+							}
 							if (isCancelled())
 								return null;
 							secondStreetInstruction = WalkingPositionHelper

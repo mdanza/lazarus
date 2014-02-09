@@ -80,18 +80,27 @@ public abstract class AbstractState implements State {
 				return;
 			}
 			if (stringPresent(results, "ayuda")) {
-				message = stateInstructions + generalInstructions + message;
+				if (context.getState() != null) {
+					if (context.getState() instanceof WalkingDirectionsState) {
+						message = stateInstructions + generalInstructions + "La última instrucción dada fue,, " + message;
+					} else {
+						message = stateInstructions + generalInstructions
+								+ message;
+					}
+				} else {
+					message = stateInstructions + generalInstructions + message;
+				}
 				return;
 			}
 			handleResults(results);
 		}
 	}
-	
-	protected void onCancel(){
+
+	protected void onCancel() {
 		cancelAsyncTasks();
 		cancel();
 	}
-	
+
 	protected abstract void cancelAsyncTasks();
 
 	protected abstract void cancel();
@@ -327,8 +336,11 @@ public abstract class AbstractState implements State {
 						: closeLocationData.getClosestCorner()
 								.getFirstStreetName();
 				message = "Usted se encuentra en, "
-						+ closeLocationData.getClosestStreet().getName().toLowerCase()
-						+ ", esquina, " + corner.toLowerCase() + ". la precisión de su ubicación es de "+Math.ceil(location.getAccuracy())+" metros ";
+						+ closeLocationData.getClosestStreet().getName()
+								.toLowerCase() + ", esquina, "
+						+ corner.toLowerCase()
+						+ ". la precisión de su ubicación es de "
+						+ Math.ceil(location.getAccuracy()) + " metros ";
 			} else
 				message = "No se pudo obtener información sobre su posición,,";
 			context.speak(message);

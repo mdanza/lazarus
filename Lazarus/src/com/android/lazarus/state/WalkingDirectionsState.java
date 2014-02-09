@@ -51,6 +51,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private int b = -1; // Used to check if has to speak ahead instruction
 	boolean firstWalkingInstructionGiven = false;
 	private List<String> notGivenMessages = new ArrayList<String>();
+	private String oldMessageForObstacle;
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -172,6 +173,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	private void initializeSelectingObstacleName() {
+		oldMessageForObstacle = message;
 		message = "Diga la descripción del obstáculo que desea registrar, ";
 		obstacleToReport = new Obstacle();
 		Point point = new Point(position.getLatitude(), position.getLongitude());
@@ -241,7 +243,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 				if (instruction == null) {
 					instruction = getAheadInstruction();
 				} else {
-					instruction += ". luego de hacerlo,, "+getAheadInstruction();
+					instruction += ". luego de hacerlo,, "
+							+ getAheadInstruction();
 				}
 			}
 			if (instruction != null) {
@@ -618,51 +621,44 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
+				for (int i = 0; i < 3; i++) {
+					if (!WalkingPositionHelper.isValidPositions(positions)) {
+						roadManager = new MapQuestRoadManager(
+								ConstantsHelper.MAP_QUEST_API_KEY);
+						roadManager.addRequestOption("routeType=pedestrian");
+						roadManager.addRequestOption("locale=es_ES");
+						if (isCancelled())
+							return null;
+						context.sayMessage();
+						if (isCancelled())
+							return null;
+						road = roadManager.getRoad(waypoints);
+						route = road.mRouteHigh;
+						nodes = road.mNodes;
+						positions = WalkingPositionHelper
+								.createWalkingPositions(route, nodes,
+										WalkingPositionHelper.MAP_QUEST);
+						walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
+					}
+				}
 				// positions = null;
-				if (!WalkingPositionHelper.isValidPositions(positions)) {
-					roadManager = new OSRMRoadManager();
-					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
-					if (isCancelled())
-						return null;
-					road = roadManager.getRoad(waypoints);
-					route = road.mRouteHigh;
-					nodes = road.mNodes;
-					positions = WalkingPositionHelper.createWalkingPositions(
-							route, nodes, WalkingPositionHelper.OSRM);
-					walkingPositionProvider = WalkingPositionHelper.OSRM;
-				}
 
-				if (!WalkingPositionHelper.isValidPositions(positions)) {
-					roadManager = new MapQuestRoadManager(
-							ConstantsHelper.MAP_QUEST_API_KEY);
-					roadManager.addRequestOption("routeType=pedestrian");
-					roadManager.addRequestOption("locale=es_ES");
-					if (isCancelled())
-						return null;
-					context.sayMessage();
-					if (isCancelled())
-						return null;
-					road = roadManager.getRoad(waypoints);
-					route = road.mRouteHigh;
-					nodes = road.mNodes;
-					positions = WalkingPositionHelper.createWalkingPositions(
-							route, nodes, WalkingPositionHelper.MAP_QUEST);
-					walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
+				for (int i = 0; i < 2; i++) {
+					if (!WalkingPositionHelper.isValidPositions(positions)) {
+						roadManager = new OSRMRoadManager();
+						context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
+						if (isCancelled())
+							return null;
+						road = roadManager.getRoad(waypoints);
+						route = road.mRouteHigh;
+						nodes = road.mNodes;
+						positions = WalkingPositionHelper
+								.createWalkingPositions(route, nodes,
+										WalkingPositionHelper.OSRM);
+						walkingPositionProvider = WalkingPositionHelper.OSRM;
+					}
 				}
-
-				if (!WalkingPositionHelper.isValidPositions(positions)) {
-					roadManager = new OSRMRoadManager();
-					if (isCancelled())
-						return null;
-					road = roadManager.getRoad(waypoints);
-					route = road.mRouteHigh;
-					nodes = road.mNodes;
-					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
-					positions = WalkingPositionHelper.createWalkingPositions(
-							route, nodes, WalkingPositionHelper.OSRM);
-					walkingPositionProvider = WalkingPositionHelper.OSRM;
-				}
-
+				
 				if (isCancelled())
 					return null;
 				obstacles = obstacleReportingServiceAdapter
@@ -713,8 +709,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 									+ ", Para reportar un obstáculo en el camino, diga obstáculo, "
 									+ ",, Ya no necesita sostener el celular frente a usted, "
 									+ message;
-							if(hasToSpeakAheadInstruction()){
-								message += ". luego,, "+getAheadInstruction();
+							if (hasToSpeakAheadInstruction()) {
+								message += ". luego,, " + getAheadInstruction();
 							}
 							if (isCancelled())
 								return null;
@@ -786,7 +782,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 			boolean succeded = obstacleReportingServiceAdapter.reportObstacle(
 					args[0], args[1], args[2], args[3]);
 			if (succeded) {
-				message = "Se ha registrado el obstáculo, continúe avanzando, ";
+				message = "Se ha registrado el obstáculo, la última instrucción dada fue,, "
+						+ oldMessageForObstacle;
 				state = InternalState.WALKING_INSTRUCTIONS;
 			} else {
 				message = "Ha ocurrido un problema al registrar el obstáculo, por favor diga la descripción del obstáculo que desea registrar, ";

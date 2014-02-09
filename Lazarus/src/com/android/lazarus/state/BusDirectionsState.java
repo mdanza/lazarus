@@ -127,7 +127,7 @@ public class BusDirectionsState extends LocationDependentState {
 			context.speak(message);
 		}
 		if (state.equals(InternalState.NO_OPTIONS_FOUND)) {
-			message = "No se encontraron buses hacia ese destino, ni siquiera con conexión";
+			message = "No se encontraron buses hacia ese destino, ni siquiera con transbordo";
 			MainMenuState mainMenuState = new MainMenuState(context, message);
 			context.setState(mainMenuState);
 		}

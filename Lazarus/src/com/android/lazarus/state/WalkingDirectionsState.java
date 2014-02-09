@@ -56,6 +56,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
 	}
 
+	public List<WalkingPosition> getPositions() {
+		return positions;
+	}
+
 	public WalkingDirectionsState(VoiceInterpreterActivity context) {
 		super(context);
 		context.showToast(ConstantsHelper.OPEN_STREET_MAP_ACKNOWLEDGEMENT);
@@ -662,6 +666,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						.getObstaclesForRoute(route, context.getToken());
 
 				if (WalkingPositionHelper.isValidPositions(positions)) {
+					context.setWalkingWaypoints(positions);
 					message = WalkingPositionHelper.translateFirstInstruction(
 							positions.get(0).getInstruction(),
 							positions.get(0), positions.get(1), context

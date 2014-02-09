@@ -49,6 +49,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 	private int skipInstructionFrom = -1;
 	private double lastDistanceToWalkingPosition = -1;
 	private int b = -1; // Used to check if has to speak ahead instruction
+	boolean firstWalkingInstructionGiven = false;
+	private List<String> notGivenMessages = new ArrayList<String>();
 
 	private enum InternalState {
 		WAITING_TO_START, WALKING_INSTRUCTIONS, SELECTING_OBSTACLE_DESCRIPTION, CONFIRMING_DESCRIPTION, WAITING_TO_RECALCULATE, RECALCULATE
@@ -215,6 +217,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 	}
 
 	private void giveWalkingInstruction() {
+		checkForNotGivenMessages();
 		checkForObstacles();
 		int olderPosition = currentWalkingPosition;
 		int closestPosition = getClosestPosition();
@@ -235,15 +238,30 @@ public class WalkingDirectionsState extends LocationDependentState {
 				}
 			}
 			if (instruction != null) {
-				message = instruction;
-				if (currentWalkingPosition > 0) {
-					secondStreetInstructionGiven = true;
-				}
-				if (currentWalkingPosition == positions.size() - 1) {
-					context.speak(instruction);
+				if (firstWalkingInstructionGiven) {
+					message = instruction;
+					if (currentWalkingPosition > 0) {
+						secondStreetInstructionGiven = true;
+					}
+					if (currentWalkingPosition == positions.size() - 1) {
+						context.speak(instruction);
+					} else {
+						context.speak(instruction, true);
+					}
 				} else {
-					context.speak(instruction, true);
+					notGivenMessages.add(instruction);
 				}
+			}
+		}
+	}
+
+	private void checkForNotGivenMessages() {
+		if (firstWalkingInstructionGiven) {
+			if (notGivenMessages != null && !notGivenMessages.isEmpty()) {
+				for (int i = 0; i < notGivenMessages.size(); i++) {
+					context.speak(notGivenMessages.get(i), true);
+				}
+				notGivenMessages.clear();
 			}
 		}
 	}
@@ -388,14 +406,15 @@ public class WalkingDirectionsState extends LocationDependentState {
 					+ closestPosition
 					+ "\n"
 					+ positions.get(closestPosition).getInstruction()
-					+ "\n"+ "Now: "
+					+ "\n"
+					+ "Now: "
 					+ currentWalkingPosition
 					+ "\n"
 					+ positions.get(currentWalkingPosition).getInstruction()
 					+ "Distance to current: "
 					+ WalkingPositionHelper.distanceToWalkingPosition(position,
-							positions.get(closestPosition)) + "\n"+ "Accuraccy: "
-					+ Math.ceil(position.getAccuracy());
+							positions.get(closestPosition)) + "\n"
+					+ "Accuraccy: " + Math.ceil(position.getAccuracy());
 			context.showToast(text);
 		}
 	}
@@ -592,7 +611,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
-				// positions=null;
+				//positions = null;
 				if (!WalkingPositionHelper.isValidPositions(positions)) {
 					roadManager = new OSRMRoadManager();
 					context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
@@ -670,6 +689,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						}
 					}
 					if (!state.equals(InternalState.RECALCULATE)) {
+						boolean messageIsFirstFromWalkingInstructions = false;
 						if (WalkingPositionHelper.distanceToWalkingPosition(
 								position, positions.get(positions.size() - 1)) < 20
 								&& WalkingPositionHelper
@@ -683,8 +703,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 									+ " metros del destino, puede que tenga que cruzar la calle para llegar al mismo, al llegar diga destino";
 						} else {
 							message = initialMessage
-									+ message
-									+ ",, Ya no necesita sostener el celular frente a usted, Para reportar un obstáculo en el camino, diga obstáculo, ";
+									+ ", Para reportar un obstáculo en el camino, diga obstáculo, "
+									+ ",, Ya no necesita sostener el celular frente a usted, "
+									+ message;
+							messageIsFirstFromWalkingInstructions = true;
 							if (isCancelled())
 								return null;
 							secondStreetInstruction = WalkingPositionHelper
@@ -693,6 +715,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						if (isCancelled())
 							return null;
 						context.speak(message, true);
+						firstWalkingInstructionGiven = true;
 						return null;
 					}
 				} else {

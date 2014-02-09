@@ -134,6 +134,7 @@ public class BusRideState extends LocationDependentState {
 							+ " si se tomó un "
 							+ otherRides.get(i).getLineName() + " "
 							+ otherRides.get(i).getDestination() + ", ";
+				message += ", si no se ha subido a ninguno de estos coches, baje del ómnibus cuando le sea posible ";
 				context.speak(message);
 			} else
 				context.setState(new MainMenuState(context,

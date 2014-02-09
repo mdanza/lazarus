@@ -244,14 +244,12 @@ public class WalkingDirectionsState extends LocationDependentState {
 			if (instruction != null) {
 				if (firstWalkingInstructionGiven) {
 					message = instruction;
-					if (currentWalkingPosition > 0) {
-						secondStreetInstructionGiven = true;
-					}
 					if (currentWalkingPosition == positions.size() - 1) {
 						context.speak(instruction);
 					} else {
 						context.speak(instruction, true);
 					}
+					secondStreetInstructionGiven = true;
 				} else {
 					notGivenMessages.add(instruction);
 				}
@@ -263,8 +261,10 @@ public class WalkingDirectionsState extends LocationDependentState {
 		if (firstWalkingInstructionGiven) {
 			if (notGivenMessages != null && !notGivenMessages.isEmpty()) {
 				for (int i = 0; i < notGivenMessages.size(); i++) {
-					context.speak(notGivenMessages.get(i), true);
+					message = notGivenMessages.get(i);
+					context.speak(message, true);
 				}
+				secondStreetInstructionGiven = true;
 				notGivenMessages.clear();
 			}
 		}

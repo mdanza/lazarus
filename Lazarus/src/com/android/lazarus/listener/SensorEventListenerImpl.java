@@ -66,8 +66,9 @@ public class SensorEventListenerImpl implements SensorEventListener {
 	public void resume() {
 		mSensorManager.registerListener(this, accelerometer,
 				SensorManager.SENSOR_DELAY_UI);
-		mSensorManager.registerListener(this, magnetometer,
+		boolean registered = mSensorManager.registerListener(this, magnetometer,
 				SensorManager.SENSOR_DELAY_UI);
+		System.out.println("");
 	}
 
 	public void pause() {

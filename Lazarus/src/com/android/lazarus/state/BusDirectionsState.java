@@ -75,7 +75,7 @@ public class BusDirectionsState extends LocationDependentState {
 				&& stringPresent(results, "mas")) {
 			if (minimumSearchDistance < 400) {
 				minimumSearchDistance += 100;
-				state.equals(InternalState.SEARCH_OPTIONS);
+				state = InternalState.SEARCH_OPTIONS;
 			}
 
 		}
@@ -88,6 +88,9 @@ public class BusDirectionsState extends LocationDependentState {
 			// Runs only one time per instance
 			if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING
 					|| loadBusRidesTask.getStatus() == AsyncTask.Status.FINISHED) {
+				busRides = null;
+				transshipments = null;
+				loadBusRidesTask = new LoadBusRidesTask();
 				loadBusRidesTask.execute();
 			}
 			message = "Espere por favor unos instantes, mientras cargamos las opciones de ómnibus para llegar a su destino";

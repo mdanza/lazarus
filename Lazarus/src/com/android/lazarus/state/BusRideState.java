@@ -180,7 +180,7 @@ public class BusRideState extends LocationDependentState {
 				} else {
 					message += ",, En esta parada también le sirve tomarse un ";
 				}
-				for (BusRide otherRide : otherRides){
+				for (BusRide otherRide : otherRides) {
 					message += otherRide.getLineName() + " "
 							+ otherRide.getDestination() + ", ";
 				}
@@ -227,7 +227,7 @@ public class BusRideState extends LocationDependentState {
 
 	@Override
 	public void setPosition(Location position) {
-				changedPosition();
+		changedPosition();
 	}
 
 	private void changedPosition() {
@@ -254,7 +254,8 @@ public class BusRideState extends LocationDependentState {
 				if (distance < minimumAccuraccy
 						&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 					passedThirdLastStop = true;
-					message = "Usted se encuentra a " + distance
+					message = "Usted se encuentra a "
+							+ distance
 							+ " metros de su ante penúltima parada, diga,, abajo,, cuando se haya bajado del coche";
 					context.speak(message);
 					lastSpokenLocation = position;
@@ -273,7 +274,8 @@ public class BusRideState extends LocationDependentState {
 				if (distance < minimumAccuraccy
 						&& distanceFromLastSpokenLocation > minimumAccuraccy / 2) {
 					passedSecondLastStop = true;
-					message = "Usted se encuentra a " + distance
+					message = "Usted se encuentra a "
+							+ distance
 							+ " metros de su penúltima parada, diga,, abajo,, cuando se haya bajado del coche";
 					context.speak(message);
 					lastSpokenLocation = position;
@@ -346,7 +348,7 @@ public class BusRideState extends LocationDependentState {
 			BusReportingServiceAdapter busReportingServiceAdapter = new BusReportingServiceAdapterImpl();
 			bus = busReportingServiceAdapter.getBus(context.getToken(),
 					bus.getId());
-			if (position != null) {
+			if (position != null && bus != null) {
 				message = "El coche más cercano está a aproximadamente "
 						+ Math.ceil(Double.valueOf(
 								GPScoordinateHelper.getDistanceBetweenPoints(
@@ -355,6 +357,14 @@ public class BusRideState extends LocationDependentState {
 										position.getLongitude(),
 										bus.getLongitude())).intValue())
 						+ " metros, diga arriba,, cuando aborde el coche";
+				if (bus.getLastUpdated() != null) {
+					if (bus.getLastUpdated().before(
+							new DateTime().minusMinutes(5).toDate())) {
+						message += " la última actualización del coche se recibió hace cinco minutos, "
+								+ "es posible que el mismo haya dejado de enviar información, diga,, "
+								+ "recalcular, para buscar otro coche ";
+					}
+				}
 				context.speak(message);
 			}
 		}

@@ -621,6 +621,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
+				//positions = null;
 				for (int i = 0; i < 3; i++) {
 					if (!WalkingPositionHelper.isValidPositions(positions)) {
 						roadManager = new MapQuestRoadManager(
@@ -641,8 +642,8 @@ public class WalkingDirectionsState extends LocationDependentState {
 						walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 					}
 				}
-				// positions = null;
-
+				
+				//positions = null;
 				for (int i = 0; i < 2; i++) {
 					if (!WalkingPositionHelper.isValidPositions(positions)) {
 						roadManager = new OSRMRoadManager();

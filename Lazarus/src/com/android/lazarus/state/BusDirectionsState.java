@@ -86,11 +86,14 @@ public class BusDirectionsState extends LocationDependentState {
 	protected void giveInstructions() {
 		if (state.equals(InternalState.SEARCH_OPTIONS)) {
 			// Runs only one time per instance
-			if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING
-					|| loadBusRidesTask.getStatus() == AsyncTask.Status.FINISHED) {
+			if (loadBusRidesTask.getStatus() == AsyncTask.Status.FINISHED) {
+				loadBusRidesTask = new LoadBusRidesTask();
 				busRides = null;
 				transshipments = null;
-				loadBusRidesTask = new LoadBusRidesTask();
+				loadBusRidesTask.execute();
+			} else if (loadBusRidesTask.getStatus() == AsyncTask.Status.PENDING) {
+				busRides = null;
+				transshipments = null;
 				loadBusRidesTask.execute();
 			}
 			message = "Espere por favor unos instantes, mientras cargamos las opciones de ómnibus para llegar a su destino";

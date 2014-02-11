@@ -379,10 +379,10 @@ public class MainActivity extends Activity implements LocationListener {
 				lastReportedlatitude = location.getLatitude();
 				lastReportedlongitude = location.getLongitude();
 				isLastReportSent = false;
-				if (active)
-					handler.post(new ShowTextRunnable("lat: "
-							+ lastReportedlatitude + "; lng: "
-							+ lastReportedlongitude));
+//				if (active)
+//					handler.post(new ShowTextRunnable("lat: "
+//							+ lastReportedlatitude + "; lng: "
+//							+ lastReportedlongitude));
 			}
 			this.location = location;
 		}

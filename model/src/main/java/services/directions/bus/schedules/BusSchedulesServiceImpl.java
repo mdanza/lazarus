@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import model.Bus;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -33,10 +34,11 @@ public class BusSchedulesServiceImpl implements BusSchedulesService {
 	public Bus getClosestBus(long variantCode, long subLineCode,
 			long maximumBusStopOrdinal) {
 		Query q = entityManager
-				.createQuery("SELECT b FROM Bus b WHERE b.variantCode = :variantCode AND b.subLineCode = :subLineCode AND b.lastPassedStopOrdinal < :maximumOrdinal ORDER BY b.lastPassedStopOrdinal DESC");
+				.createQuery("SELECT b FROM Bus b WHERE b.variantCode = :variantCode AND b.subLineCode = :subLineCode AND b.lastPassedStopOrdinal < :maximumOrdinal AND b.lastUpdated > :date ORDER BY b.lastPassedStopOrdinal DESC");
 		q.setParameter("variantCode", variantCode);
 		q.setParameter("subLineCode", subLineCode);
 		q.setParameter("maximumOrdinal", maximumBusStopOrdinal);
+		q.setParameter("date", new DateTime().minusMinutes(5).toDate());
 		q.setMaxResults(1);
 		try {
 			return (Bus) q.getSingleResult();

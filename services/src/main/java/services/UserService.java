@@ -95,7 +95,7 @@ public class UserService {
 			return restResultsHelper.resultWrapper(true,
 					authenticationService.authenticate(username, password));
 		} catch (Exception e) {
-			return restResultsHelper.resultWrapper(false, "login failed");
+			return restResultsHelper.resultWrapper(false, "Login incorrecto");
 		}
 	}
 

@@ -356,10 +356,9 @@ public class BusRideState extends LocationDependentState {
 						.intValue();
 				if (distanceToBus > 250)
 					message = "El coche más cercano está a aproximadamente "
-							+ distanceToBus
-							+ " metros";
+							+ distanceToBus + " metros";
 				else
-					message = "Atención, el coche está próximo a usted, diga arriba, cuando aborde el coche";
+					message = "Atención, el coche está próximo a usted, diga arriba,, cuando aborde el coche";
 				if (bus.getLastUpdated() != null) {
 					if (bus.getLastUpdated().before(
 							new DateTime().minusMinutes(5).toDate())) {

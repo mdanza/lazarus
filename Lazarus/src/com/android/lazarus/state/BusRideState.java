@@ -349,14 +349,17 @@ public class BusRideState extends LocationDependentState {
 			bus = busReportingServiceAdapter.getBus(context.getToken(),
 					bus.getId());
 			if (position != null && bus != null) {
-				message = "El coche más cercano está a aproximadamente "
-						+ Math.ceil(Double.valueOf(
-								GPScoordinateHelper.getDistanceBetweenPoints(
-										position.getLatitude(),
-										bus.getLatitude(),
-										position.getLongitude(),
-										bus.getLongitude())).intValue())
-						+ " metros, diga arriba,, cuando aborde el coche";
+				int distanceToBus = Double.valueOf(
+						Math.ceil(GPScoordinateHelper.getDistanceBetweenPoints(
+								position.getLatitude(), bus.getLatitude(),
+								position.getLongitude(), bus.getLongitude())))
+						.intValue();
+				if (distanceToBus > 250)
+					message = "El coche más cercano está a aproximadamente "
+							+ distanceToBus
+							+ " metros";
+				else
+					message = "Atención, el coche está próximo a usted, diga arriba, cuando aborde el coche";
 				if (bus.getLastUpdated() != null) {
 					if (bus.getLastUpdated().before(
 							new DateTime().minusMinutes(5).toDate())) {

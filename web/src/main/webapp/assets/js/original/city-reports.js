@@ -88,16 +88,19 @@
 	
 	function addObstacle(){
 		form = $("#addObstacleForm");
+		$("#addObstcaleBtn").button('loading');
 		url = form.attr('action');
 		var coords = $("#coordinatesInput").val();
 		var radius = $("#radiusInput").val();
 		var description = $("#descriptionInput").val();
 		if(isNaN(parseInt(radius)) || parseInt(radius) < 1){
 			toastr.error("Radio debe ser mayor o igual a 1");
+			$("#addObstcaleBtn").button('reset');
 			return;
 		}
 		if(description === "" || description.length > 120){
 			toastr.error("Descripción no puede estar vacío y debe ser menor a 120 caracteres");
+			$("#addObstcaleBtn").button('reset');
 			return;
 		}
 		$.ajax({
@@ -115,9 +118,12 @@
 					toastr.success("Agregado correctamente");
 					$('#addObstacleModal').modal('hide');
 					placeObstacle({lat:$("#coordinatesInput").val().split(",")[0], lng:$("#coordinatesInput").val().split(",")[1]}, $("#descriptionInput").val(), parseInt($("#radiusInput").val()), jsonResponse.data);
+					$("#addObstcaleBtn").button('reset');
 				}
-				else
+				else{
 					toastr.error(jsonResponse.data);
+					$("#addObstcaleBtn").button('reset');
+				}
 			}
 		});
 	}

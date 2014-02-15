@@ -64,7 +64,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 	private Handler handler = new Handler();
 	private static final int MAXIMUM_MESSAGE_LENGTH = 185;
 	private final boolean testing = true;
-	private final boolean useRealLocationInTesting = true;
+	private final boolean useRealLocationInTesting = false;
 	private MyLocationOverlay myLocationOverlay;
 	private MapView map;
 	private DefaultItemizedOverlay itemizedOverlayMyPosition;

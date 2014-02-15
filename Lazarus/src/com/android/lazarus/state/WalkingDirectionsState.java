@@ -621,8 +621,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						nodes, WalkingPositionHelper.MAP_QUEST);
 				walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 
-				//positions = null;
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 10; i++) {
 					if (!WalkingPositionHelper.isValidPositions(positions)) {
 						roadManager = new MapQuestRoadManager(
 								ConstantsHelper.MAP_QUEST_API_KEY);
@@ -640,23 +639,6 @@ public class WalkingDirectionsState extends LocationDependentState {
 								.createWalkingPositions(route, nodes,
 										WalkingPositionHelper.MAP_QUEST);
 						walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
-					}
-				}
-				
-				//positions = null;
-				for (int i = 0; i < 2; i++) {
-					if (!WalkingPositionHelper.isValidPositions(positions)) {
-						roadManager = new OSRMRoadManager();
-						context.showToast(ConstantsHelper.OSRM_ACKNOWLEDGEMENT);
-						if (isCancelled())
-							return null;
-						road = roadManager.getRoad(waypoints);
-						route = road.mRouteHigh;
-						nodes = road.mNodes;
-						positions = WalkingPositionHelper
-								.createWalkingPositions(route, nodes,
-										WalkingPositionHelper.OSRM);
-						walkingPositionProvider = WalkingPositionHelper.OSRM;
 					}
 				}
 				
@@ -730,12 +712,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 						return null;
 					} else {
 						message = initialMessage
-								+ "No se han podido obtener resultados para dirigirse a destino, ";
+								+ "No se han podido obtener resultados para dirigirse a destino, para intentar obtener resultados nuevamente, diga recalcular ";
+						state = InternalState.WAITING_TO_RECALCULATE;
 						if (isCancelled())
 							return null;
-						MainMenuState mainMenuState = new MainMenuState(
-								context, message);
-						context.setState(mainMenuState);
+						context.speak(message, true);
 						return null;
 					}
 				}

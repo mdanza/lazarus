@@ -74,7 +74,7 @@ public abstract class AbstractState implements State {
 			}
 			if (stringPresent(results, "menu")) {
 				this.cancelAsyncTasks();
-				if (context.getToken() != null) {
+				if (context.getToken() != null && !context.getToken().equals("")) {
 					initializeMainMenu();
 				}
 				return;

@@ -51,7 +51,8 @@ public class MoreMainMenuState extends AbstractState {
 			if (stringPresent(results, "si")) {
 				context.getSharedPreferences("usrpref", 0).edit().clear()
 						.commit();
-				String nextMessage = "Sus datos fueron borrados del celular.";
+				context.setToken("");
+				String nextMessage = "Sus datos fueron borrados del celular. ";
 				State logInState = new LogInState(this.context, nextMessage);
 				this.context.setState(logInState);
 			}

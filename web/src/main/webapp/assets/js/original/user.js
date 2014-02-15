@@ -1,5 +1,6 @@
 var editable = false;
 var servicesUrl;
+var username;
 $(document).ready(function() {
 	servicesUrl = $("#servicesUrl").val();
 	if ($("#hiddenToken").val() == "")
@@ -53,6 +54,7 @@ function loadUserData(){
 			jsonResponse = JSON.parse(data);
 			if (jsonResponse.result == "OK") {
 				jsonData = JSON.parse(jsonResponse.data);
+				username = jsonData.username;
 				$("#inputUsername").val(jsonData.username);
 				$("#inputUsername").attr('readonly', true);
 				$("#inputEmail").val(jsonData.email);
@@ -90,4 +92,30 @@ function setCustomValidationMessages(){
 	        toastr.error("Campo " + e.target.placeholder + " vacío o con formato incorrecto");
 	    }, true);
 	}
+}
+
+function deactivateAccount(){
+	$('#deactivateAccountBtn').button('loading');
+	$.ajax({
+		url : servicesUrl + "/users?username=" + username,
+		type : "DELETE",
+		headers : {
+			Authorization : $("#hiddenToken").val()
+		},
+		success : function(data, textStatus, jqXHR) {
+			jsonResponse = JSON.parse(data);
+			if (jsonResponse.result == "OK") {
+				toastr.success("Cuenta desactivada con éxito");
+				$('#deactivateAccountBtn').button('reset');
+				window.location.replace("index.jsp");
+			} else{
+				toastr.error("No se pudo completar su solicitud");
+				$('#deactivateAccountBtn').button('reset');
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			toastr.error("No se pudo completar su solicitud");
+			$('#deactivateAccountBtn').button('reset');
+		}
+	});
 }

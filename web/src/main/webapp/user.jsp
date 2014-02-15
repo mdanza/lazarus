@@ -47,6 +47,7 @@
         <button id="toggler" type="button" class="btn btn-block btn-lg btn-info" onclick="toggleEditability();">Modificar</button>
         <button id="submitBtn" data-loading-text="Espere.." class="btn btn-lg btn-success btn-block hidden" type="submit">Enviar</button>
       </form>
+      <button class="btn btn-block btn-link" type="submit" data-toggle="modal" data-target="#confirmDeactivateAccountModal">Desactivar cuenta</button>
 </div>
 </div>
 <div id="footer">
@@ -54,6 +55,21 @@
      <a href="LogoutServlet" class="text-muted"><span class="pull-right">Logout</span></a>
    </div>
 </div>
+<div class="modal fade" id="confirmDeactivateAccountModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Desactivar cuenta</h4>
+      </div>
+      <h4 class="text-danger text-center">Está seguro de que desea desactivar su cuenta?</h4>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="deactivateAccountBtn" data-loading-text="Espere.." type="button" onclick="deactivateAccount();" class="btn btn-success">Desactivar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <input id="hiddenToken" type="hidden"
 		value="<%=request.getSession().getAttribute("token") != null ? request
 					.getSession().getAttribute("token") : ""%>">

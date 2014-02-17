@@ -384,6 +384,7 @@ public class VoiceInterpreterActivity extends MapActivity implements
 		} else {
 			LogInState logInState = new LogInState(this, initialMessage);
 			this.setState(logInState);
+			this.sayMessage();
 		}
 	}
 

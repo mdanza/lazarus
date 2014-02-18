@@ -5,8 +5,6 @@ import helpers.RestResultsHelper;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

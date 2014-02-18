@@ -21,6 +21,10 @@ public class FavouriteServiceImpl implements FavouriteService {
 		if (user == null || point == null || name == null)
 			throw new IllegalArgumentException(
 					"User, point or name cannot be null");
+		try {
+			removeFromFavourite(user, name);
+		} catch (Exception e) {
+		}
 		Favourite favourite = new Favourite(point, name, user);
 		favouriteDAO.add(favourite);
 	}
@@ -35,7 +39,7 @@ public class FavouriteServiceImpl implements FavouriteService {
 	}
 
 	public List<Favourite> getFavourites(User user) {
-		if(user==null)
+		if (user == null)
 			throw new IllegalArgumentException("User cannot be null");
 		return favouriteDAO.findByUser(user);
 	}

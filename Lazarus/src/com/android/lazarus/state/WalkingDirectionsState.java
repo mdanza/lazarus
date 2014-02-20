@@ -627,9 +627,11 @@ public class WalkingDirectionsState extends LocationDependentState {
 								ConstantsHelper.MAP_QUEST_API_KEY);
 						roadManager.addRequestOption("routeType=pedestrian");
 						roadManager.addRequestOption("locale=es_ES");
-						if (isCancelled())
-							return null;
-						context.sayMessage();
+						if (i == 5) {
+							if (isCancelled())
+								return null;
+							context.sayMessage();
+						}
 						if (isCancelled())
 							return null;
 						road = roadManager.getRoad(waypoints);
@@ -641,7 +643,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 						walkingPositionProvider = WalkingPositionHelper.MAP_QUEST;
 					}
 				}
-				
+
 				if (isCancelled())
 					return null;
 				obstacles = obstacleReportingServiceAdapter

@@ -15,24 +15,18 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 @Entity
 @Table(name = "obstacles")
 @NamedQueries({
 		@NamedQuery(name = "Obstacle.findByCentre", query = "select o FROM Obstacle o WHERE o.centre = :centre"),
-		@NamedQuery(name = "Obstacle.findByDistance", query = "select o FROM Obstacle o WHERE dwithin(o.circle, :geometry, :distance) = true"), 
 		@NamedQuery(name = "Obstacle.findAll", query = "select o FROM Obstacle o"),
-		@NamedQuery(name = "Obstacle.findById", query = "SELECT o FROM Obstacle o WHERE o.id = :id")})
+		@NamedQuery(name = "Obstacle.findById", query = "SELECT o FROM Obstacle o WHERE o.id = :id") })
 public class Obstacle {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
-	@Type(type = "org.hibernate.spatial.GeometryType")
-	private Polygon circle;
 
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	@Column(unique = true)
@@ -54,11 +48,6 @@ public class Obstacle {
 	public Obstacle(Point centre, long radius) {
 		this.centre = centre;
 		this.radius = radius;
-		GeometricShapeFactory fac = new GeometricShapeFactory();
-		fac.setSize(radius * 2.0);
-		fac.setNumPoints(360);
-		fac.setCentre(centre.getCoordinate());
-		this.circle = fac.createCircle();
 		this.createdAt = new Date();
 	}
 
@@ -66,24 +55,15 @@ public class Obstacle {
 		this.centre = centre;
 		this.radius = radius;
 		this.user = user;
-		GeometricShapeFactory fac = new GeometricShapeFactory();
-		fac.setSize(radius * 2.0);
-		fac.setNumPoints(360);
-		fac.setCentre(centre.getCoordinate());
-		this.circle = fac.createCircle();
 		this.createdAt = new Date();
 		this.description = description;
 	}
-	
-	public Obstacle(long id, Point centre, long radius, User user, String description) {
+
+	public Obstacle(long id, Point centre, long radius, User user,
+			String description) {
 		this.centre = centre;
 		this.radius = radius;
 		this.user = user;
-		GeometricShapeFactory fac = new GeometricShapeFactory();
-		fac.setSize(radius * 2.0);
-		fac.setNumPoints(360);
-		fac.setCentre(centre.getCoordinate());
-		this.circle = fac.createCircle();
 		this.createdAt = new Date();
 		this.description = description;
 		this.id = id;
@@ -97,21 +77,12 @@ public class Obstacle {
 		this.id = id;
 	}
 
-	public Polygon getCircle() {
-		return circle;
-	}
-
 	public Point getCentre() {
 		return centre;
 	}
 
 	public void setCentre(Point centre) {
 		this.centre = centre;
-		GeometricShapeFactory fac = new GeometricShapeFactory();
-		fac.setSize(radius * 2.0);
-		fac.setNumPoints(360);
-		fac.setCentre(centre.getCoordinate());
-		this.circle = fac.createCircle();
 	}
 
 	public long getRadius() {
@@ -120,11 +91,6 @@ public class Obstacle {
 
 	public void setRadius(long radius) {
 		this.radius = radius;
-		GeometricShapeFactory fac = new GeometricShapeFactory();
-		fac.setSize(radius * 2.0);
-		fac.setNumPoints(360);
-		fac.setCentre(centre.getCoordinate());
-		this.circle = fac.createCircle();
 	}
 
 	public User getUser() {

@@ -202,7 +202,7 @@ public class StreetSetState extends AbstractState {
 				for (int i = 1; i < streets.size() + 1; i++) {
 					message = message + "Si desea dirigirse a "
 							+ streets.get(i - 1) + " esquina " + firstStreet
-							+ " diga " + getStringDigits(i) + ",";
+							+ " diga " + getStringDigits(i) + ", ";
 				}
 				String finalMessage = " para obtener otros resultados posibles diga más";
 				message = message + finalMessage;

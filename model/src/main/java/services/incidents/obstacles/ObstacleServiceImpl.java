@@ -7,16 +7,13 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import model.Obstacle;
-import model.ShapefileWKT;
 import model.User;
 import model.dao.ObstacleDAO;
 import model.dao.UserDAO;
 
-import org.apache.log4j.Logger;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
+import services.incidents.obstacles.utils.GPScoordinateHelper;
 import services.shapefiles.utils.CoordinateConverter;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -24,12 +21,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 @Stateless(name = "ObstacleService")
 public class ObstacleServiceImpl implements ObstacleService {
-
-	private static Logger logger = Logger.getLogger(ObstacleServiceImpl.class);
-	private int duration = 6000;
 
 	@EJB(beanName = "UserDAO")
 	protected UserDAO userDAO;
@@ -70,7 +65,7 @@ public class ObstacleServiceImpl implements ObstacleService {
 			obstacleDAO.delete(possibleObstacle);
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		} 
+		}
 	}
 
 	@Override
@@ -91,45 +86,45 @@ public class ObstacleServiceImpl implements ObstacleService {
 		try {
 			if (route != null && !route.isEmpty()) {
 				List<Obstacle> toReturn = new ArrayList<Obstacle>();
-				for (int i = 0; i < route.size() - 1; i++) {
-
-					// Create LineString to find near obstacles
-					Coordinate firstCoordinate = route.get(i);
-					Coordinate secondCoordinate = route.get(i + 1);
-
-					List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
-					coordinatesList.add(firstCoordinate);
-					coordinatesList.add(secondCoordinate);
-
-					Coordinate[] coordinates = coordinatesList
-							.toArray(new Coordinate[0]);
-					CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(
-							coordinates);
-
-					GeometryFactory factory = new GeometryFactory();
-					LineString lineRoute = new LineString(
-							coordinateArraySequence, factory);
-
-					// Find near obstacles
-					List<Obstacle> nearObstacles = obstacleDAO.findByDistance(
-							lineRoute, 30.0);
-
-					if (nearObstacles != null && !nearObstacles.isEmpty()) {
-						for (Obstacle obstacle : nearObstacles) {
-							if (!toReturn.contains(obstacle)) {
-								toReturn.add(obstacle);
+				List<Obstacle> obstacles = obstacleDAO.findAll();
+				GeometryFactory factory = new GeometryFactory();
+				Coordinate[] coordinates = route.toArray(new Coordinate[1]);
+				CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(
+						coordinates);
+				LineString lineRoute = new LineString(coordinateArraySequence,
+						factory);
+				if (obstacles != null) {
+					for (int i = 0; i < obstacles.size(); i++) {
+						Obstacle obstacle = obstacles.get(i);
+						if (obstacle != null) {
+							Coordinate[] points = DistanceOp.nearestPoints(
+									lineRoute, obstacle.getCentre());
+							if (points != null
+									&& points.length == 2
+									&& getDistanceInMeters(points[0], points[1]) < 30 + obstacle.getRadius()) {
+								if (!toReturn.contains(obstacle)) {
+									toReturn.add(obstacle);
+								}
 							}
 						}
 					}
-
 				}
 				return toReturn;
-
 			} else {
 				return null;
 			}
 		} catch (MismatchedDimensionException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		} 
+		}
+	}
+
+	private double getDistanceInMeters(Coordinate coordinate,
+			Coordinate coordinate2) {
+		double distance = 100000;
+		if (coordinate != null && coordinate2 != null) {
+			distance = GPScoordinateHelper.getDistanceBetweenPoints(
+					coordinate.x, coordinate2.x, coordinate.y, coordinate2.y);
+		}
+		return distance;
 	}
 }

@@ -11,8 +11,6 @@ import javax.persistence.Query;
 
 import model.Obstacle;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 @Stateless(name = "ObstacleDAO")
@@ -30,8 +28,7 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 		if (find(obstacle.getCentre()) != null)
 			throw new IllegalArgumentException(
 					"Obstacle already exists in that position");
-		if (obstacle.getCentre() == null || obstacle.getCircle() == null
-				|| obstacle.getCreatedAt() == null
+		if (obstacle.getCentre() == null || obstacle.getCreatedAt() == null
 				|| obstacle.getUser() == null)
 			throw new IllegalArgumentException(
 					"Obstacle cannot contain null data");
@@ -81,23 +78,6 @@ public class ObstacleDAOImpl implements ObstacleDAO {
 			obstacle = null;
 		}
 		return obstacle;
-	}
-
-	public List<Obstacle> findByDistance(Geometry geometry, Double distance) {
-		List<Obstacle> obstacles = null;
-		try {
-			Query q = entityManager.createNamedQuery("Obstacle.findByDistance");
-			GeometryFactory factory = new GeometryFactory();
-			q.setParameter("geometry", geometry);
-			q.setParameter("distance", distance);
-			obstacles = (List<Obstacle>) q.getResultList();
-			if (obstacles != null && obstacles.isEmpty()) {
-				return null;
-			}
-		} catch (NoResultException e) {
-			obstacles = null;
-		}
-		return obstacles;
 	}
 
 	@Override

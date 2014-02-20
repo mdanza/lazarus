@@ -5,8 +5,6 @@ import helpers.RestResultsHelper;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -150,7 +148,7 @@ public class UserService {
 			try {
 				userDAO.modify(user, modifiedUser);
 				return restResultsHelper.resultWrapper(true,
-						"User modified successfuly");
+						"User modified successfully");
 			} catch (Exception e) {
 				return restResultsHelper.resultWrapper(false,
 						"could not modify user");
@@ -204,7 +202,7 @@ public class UserService {
 	@Path("/password")
 	public String resetPassword(@FormParam("username") String username) {
 		User user = userDAO.find(username);
-		if (user != null) {
+		if (user != null && user.getEmail() != null) {
 			User modifiedUser = new User();
 			modifiedUser.setId(user.getId());
 			modifiedUser.setUsername(username);

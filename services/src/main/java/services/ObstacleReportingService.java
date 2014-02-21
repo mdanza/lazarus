@@ -17,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import model.Obstacle;
-import model.ShapefileWKT;
 import model.User;
 import serialization.ObstacleSerializer;
 import services.authentication.AuthenticationService;
@@ -62,7 +61,8 @@ public class ObstacleReportingService {
 	@GET
 	public String getObstacles(@HeaderParam("Authorization") String token) {
 		if (token == null || token.equals(""))
-			return restResultsHelper.resultWrapper(false, "Empty or nul token");
+			return restResultsHelper
+					.resultWrapper(false, "Empty or null token");
 		try {
 			User user = authenticationService.authenticate(token);
 			try {

@@ -44,8 +44,8 @@
 				por sus íconos
 			</p>
 			<p>
-				<a href="http://www.mapquest.com">http://www.mapquest.com</a> por
-				servicios Open de mapas y navegación  
+				<a href="http://www.mapquest.com/">MapQuest</a><img src="http://developer.mapquest.com/content/osm/mq_logo.png"> por sus
+				servicios abiertos de navegación, y sus mapas basados en <a href="http://www.openstreetmap.org/">OpenStreetMap</a>  
 			</p>
 			<p>
 				<a href="http://www.montevideo.gub.uy">http://www.montevideo.gub.uy/</a>

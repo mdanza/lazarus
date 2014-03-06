@@ -209,7 +209,7 @@ public class MainMenuState extends AbstractState {
 				for (int i = 1; i < streets.size() + 1; i++) {
 					message = message + "Si desea dirigirse a "
 							+ streets.get(i - 1) + " diga "
-							+ getStringDigits(i) + ",";
+							+ getStringDigits(i) + ", ";
 				}
 				String finalMessage = " para obtener otros resultados posibles diga más";
 				message = message + finalMessage;

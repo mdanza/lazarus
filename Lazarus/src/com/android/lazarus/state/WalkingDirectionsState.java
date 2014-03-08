@@ -227,7 +227,7 @@ public class WalkingDirectionsState extends LocationDependentState {
 		checkForObstacles();
 		int olderPosition = currentWalkingPosition;
 		int closestPosition = getClosestPosition();
-		showDebugMessage(closestPosition);
+		//showDebugMessage(closestPosition);
 		if (closestPosition != -1 && olderPosition + 1 == closestPosition) {
 			currentWalkingPosition = getClosestPosition();
 			hasSpoken = false;
